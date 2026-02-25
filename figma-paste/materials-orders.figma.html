@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>发货清单 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f5f5f5;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 50px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 12px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .add-btn {
+            position: absolute;
+            right: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* 筛选标签 */
+        .filter-tabs {
+            display: flex;
+            background: #fff;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 24px;
+        }
+
+        .filter-tab {
+            padding: 14px 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-tab.active {
+            color: var(--primary-dark);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-badge {
+            background: var(--danger);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-left: 4px;
+            min-width: 16px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .tab-badge.show {
+            display: inline-block;
+        }
+        
+        .tab-badge.hide {
+            display: none;
+        }
+
+        /* 列表容器 */
+        .order-list {
+            padding: 12px 16px;
+            padding-bottom: 100px;
+        }
+
+        .order-card {
+            background: #fff;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .order-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-id {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+
+        .order-time {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .order-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .order-status.pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .order-status.completed {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .order-items {
+            padding: 12px 16px;
+            background: #fafafa;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .order-item-name {
+            color: var(--text-secondary);
+        }
+
+        .order-item-qty {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .order-footer {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-note {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-detail {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .btn-complete {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* 详情弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 130px);
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .detail-items {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-footer {
+            padding: 12px 20px 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-default {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 15px;
+        }
+
+        .empty-btn {
+            margin-top: 20px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <h1 class="header-title">发货清单</h1>
+        <button class="add-btn" onclick="goToAdd()">+ 添加</button>
+    </header>
+
+    <!-- 筛选标签 -->
+    <div class="filter-tabs">
+        <div class="filter-tab active" onclick="switchTab('all')">
+            <span>全部</span>
+            <span class="tab-badge hide" id="badgeAll">0</span>
+        </div>
+        <div class="filter-tab" onclick="switchTab('pending')">
+            <span>待发货</span>
+            <span class="tab-badge hide" id="badgePending">0</span>
+        </div>
+        <div class="filter-tab" onclick="switchTab('completed')">
+            <span>已完成</span>
+        </div>
+    </div>
+
+    <!-- 列表容器 -->
+    <div class="order-list" id="orderList">
+        <!-- 动态生成 -->
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">发货单详情</h3>
+                <button class="modal-close" onclick="closeDetailModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 动态生成 -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentFilter = 'all';
+        let currentOrders = [];
+
+        // 初始化
+        function init() {
+            loadOrders();
+        }
+
+        // 加载发货单
+        function loadOrders() {
+            let orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            // 容错处理：为没有 status 的订单添加默认值
+            orders = orders.map(o => {
+                if (!o.status) o.status = 'pending';
+                return o;
+            });
+            currentOrders = orders;
+            renderOrders();
+            updateBadges();
+        }
+
+        // 更新徽章数字
+        function updateBadges() {
+            // 重新从 localStorage 读取，确保数据同步
+            let orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            // 容错处理
+            orders = orders.map(o => {
+                if (!o.status) o.status = 'pending';
+                return o;
+            });
+            
+            // 只计算待处理的订单数（红点代表还需处理的工作量）
+            const pendingCount = orders.filter(o => o.status === 'pending').length;
+            
+            const badgeAll = document.getElementById('badgeAll');
+            const badgePending = document.getElementById('badgePending');
+            
+            // 更新全部徽章 - 显示待处理数量（不是总数）
+            badgeAll.textContent = pendingCount;
+            if (pendingCount > 0) {
+                badgeAll.classList.remove('hide');
+                badgeAll.classList.add('show');
+            } else {
+                badgeAll.classList.remove('show');
+                badgeAll.classList.add('hide');
+            }
+            
+            // 更新待发货徽章
+            badgePending.textContent = pendingCount;
+            if (pendingCount > 0) {
+                badgePending.classList.remove('hide');
+                badgePending.classList.add('show');
+            } else {
+                badgePending.classList.remove('show');
+                badgePending.classList.add('hide');
+            }
+        }
+
+        // 切换筛选
+        function switchTab(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // 找到点击的 tab 并激活
+            const tabs = document.querySelectorAll('.filter-tab');
+            if (filter === 'all') tabs[0].classList.add('active');
+            else if (filter === 'pending') tabs[1].classList.add('active');
+            else if (filter === 'completed') tabs[2].classList.add('active');
+            renderOrders();
+        }
+
+        // 渲染订单列表
+        function renderOrders() {
+            const list = document.getElementById('orderList');
+            
+            let filtered = currentOrders;
+            if (currentFilter === 'pending') {
+                filtered = currentOrders.filter(o => o.status === 'pending');
+            } else if (currentFilter === 'completed') {
+                filtered = currentOrders.filter(o => o.status === 'completed');
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div class="empty-text">暂无${currentFilter === 'pending' ? '待发货' : currentFilter === 'completed' ? '已完成' : ''}的发货单</div>
+                        ${currentFilter === 'all' || currentFilter === 'pending' ? '<button class="empty-btn" onclick="goToAdd()">去添加物料</button>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = filtered.map(order => {
+                const statusText = order.status === 'pending' ? '待发货' : '已完成';
+                const statusClass = order.status === 'pending' ? 'pending' : 'completed';
+                const timeStr = formatDateTime(order.deliveryTime);
+                const deviceInfo = order.deviceId ? `${order.deviceId} · ${order.location || ''}` : '未指定设备';
+                const requester = order.requestedBy || '未知';
+                
+                // 只显示前2项
+                const displayItems = order.items.slice(0, 2);
+                const moreCount = order.items.length - 2;
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+                                <div class="order-id">单号: ${order.id}</div>
+                                <div class="order-time">发货时间: ${timeStr}</div>
+                                <div class="order-device" style="font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">
+                                    📍 ${deviceInfo}
+                                </div>
+                                <div class="order-requester" style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">
+                                    👤 申请: ${requester}
+                                </div>
+                            </div>
+                            <span class="order-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="order-items">
+                            ${displayItems.map(item => `
+                                <div class="order-item">
+                                    <span class="order-item-name">${item.name}</span>
+                                    <span class="order-item-qty">+${item.quantity} ${item.unit}</span>
+                                </div>
+                            `).join('')}
+                            ${moreCount > 0 ? `<div class="order-item" style="color: var(--text-tertiary);">...还有 ${moreCount} 项</div>` : ''}
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-note">${order.note || '无备注'}</div>
+                            <div class="order-actions">
+                                <button class="btn-sm btn-detail" onclick="showDetail('${order.id}')">详情</button>
+                                ${order.status === 'pending' ? `<button class="btn-sm btn-complete" onclick="completeOrder('${order.id}')">完成</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 显示详情
+        function showDetail(orderId) {
+            const order = currentOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const statusText = order.status === 'pending' ? '待发货' : '已完成';
+            const timeStr = formatDateTime(order.deliveryTime);
+            const createStr = formatDateTime(order.createTime);
+            const deviceInfo = order.deviceId ? `${order.deviceId} · ${order.location || ''}` : '未指定';
+            const requester = order.requestedBy || '未知';
+
+            let handlerInfo = '';
+            if (order.status === 'completed' && order.completedBy) {
+                const completedStr = formatDateTime(order.completedTime);
+                handlerInfo = `
+                <div class="detail-section">
+                    <div class="detail-label">处理信息</div>
+                    <div class="detail-value" style="color: var(--success);">
+                        ✓ 由 ${order.completedBy} 于 ${completedStr} 完成
+                    </div>
+                </div>
+                `;
+            }
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-label">发货单号</div>
+                    <div class="detail-value">${order.id}</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">状态</div>
+                    <div class="detail-value" style="color: ${order.status === 'pending' ? 'var(--warning)' : 'var(--success)'};">${statusText}</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">申请信息</div>
+                    <div class="detail-value" style="font-size: 13px; line-height: 1.6;">
+                        <div>👤 申请人: ${requester}</div>
+                        <div>📍 设备: ${deviceInfo}</div>
+                        <div>🕐 创建时间: ${createStr}</div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">发货时间</div>
+                    <div class="detail-value">${timeStr}</div>
+                </div>
+                ${handlerInfo}
+                <div class="detail-section">
+                    <div class="detail-label">物料明细 (${order.items.length})</div>
+                    <div class="detail-items">
+                        ${order.items.map(item => `
+                            <div class="detail-item">
+                                <span>${item.name}</span>
+                                <span style="font-weight: 600;">+${item.quantity} ${item.unit}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ${order.note ? `
+                <div class="detail-section">
+                    <div class="detail-label">备注</div>
+                    <div class="detail-value" style="color: var(--text-secondary);">${order.note}</div>
+                </div>
+                ` : ''}
+            `;
+
+            // 根据状态显示不同按钮
+            const footer = document.getElementById('modalFooter');
+            if (order.status === 'pending') {
+                footer.innerHTML = `
+                    <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
+                    <button class="btn btn-primary" onclick="completeOrder('${order.id}'); closeDetailModal();">标记完成</button>
+                `;
+            } else {
+                footer.innerHTML = `
+                    <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
+                `;
+            }
+
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // 关闭详情弹窗
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // 完成订单
+        function completeOrder(orderId) {
+            const orderIndex = currentOrders.findIndex(o => o.id === orderId);
+            if (orderIndex === -1) return;
+
+            // 记录处理信息
+            currentOrders[orderIndex].status = 'completed';
+            currentOrders[orderIndex].completedBy = '当前用户'; // 实际应从登录信息获取
+            currentOrders[orderIndex].completedTime = new Date().toISOString();
+            
+            // 保存到 localStorage
+            localStorage.setItem('materialOrders', JSON.stringify(currentOrders));
+            
+            // 更新全局变量
+            currentOrders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            
+            showToast('发货单已完成', 'success');
+            
+            // 重新渲染列表
+            renderOrders();
+            
+            // 更新徽章（在渲染后执行，确保数据已同步）
+            setTimeout(() => {
+                updateBadges();
+            }, 50);
+        }
+
+        // 格式化日期时间
+        function formatDateTime(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            const pad = n => n.toString().padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
+        // 跳转添加物料
+        function goToAdd() {
+            window.location.href = 'materials-refill.html';
+        }
+
+        // 返回
+        function goBack() {
+            window.location.href = 'materials.html';
+        }
+
+        // 显示提示
+        function showToast(message, type = 'normal') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = type === 'success' ? 'toast success show' : 'toast show';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailModal();
+            }
+        });
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

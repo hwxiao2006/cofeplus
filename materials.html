@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物料管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0b132b;
+            --border: #e5e7eb;
+            --shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+            --radius: 14px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            color: #dbeafe;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: 0;
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: rgba(219, 234, 254, 0.55);
+            padding-left: 52px;
+        }
+
+        .sidebar-selectors {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .selector-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .device-search-input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            outline: none;
+            background: rgba(15, 23, 42, 0.42);
+        }
+
+        .device-search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .device-search-input::placeholder {
+            color: rgba(186, 230, 253, 0.55);
+        }
+
+        .device-search-wrap {
+            position: relative;
+        }
+
+        .device-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% - 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 20;
+        }
+
+        .device-dropdown.show {
+            display: block;
+        }
+
+        .device-option {
+            padding: 9px 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .device-option:hover {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .device-option.empty {
+            color: var(--text-tertiary);
+            cursor: default;
+        }
+
+        .selector select {
+            width: 100%;
+            padding: 10px 36px 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.42);
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: rgba(219, 234, 254, 0.88);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: rgba(46, 196, 182, 0.14);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(130deg, rgba(46, 196, 182, 0.38), rgba(56, 189, 248, 0.38));
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .menu-btn {
+            border: 1px solid var(--border);
+            width: 36px;
+            height: 32px;
+            border-radius: 10px;
+            background: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .header-title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .device-tag {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .header-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .platform-lang-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .platform-lang-selector::after {
+            content: '\25BE';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .platform-lang-select {
+            height: 34px;
+            min-width: 98px;
+            padding: 0 24px 0 8px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .platform-lang-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.18);
+        }
+
+        /* 全局补充物料按钮 */
+        .btn-primary {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.35);
+        }
+
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+        }
+
+        .main-device-filter {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .main-device-filter .device-search-wrap {
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .main-device-filter .search-box {
+            position: relative;
+        }
+
+        .main-device-filter .search-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 14px 0 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 0;
+        }
+
+        .main-device-filter .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .main-device-filter .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .main-device-filter .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .board {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .board-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .board-title {
+            font-size: 36px;
+            line-height: 1;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .board-subtitle {
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .board-count {
+            color: var(--text-tertiary);
+            margin-top: 8px;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .material-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 14px;
+            background: #fff;
+            min-height: 180px;
+            transition: all 0.2s;
+        }
+
+        .material-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.15);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .material-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .material-meta {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .detail-mini-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .detail-mini-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* 卡片内补充按钮 */
+        .refill-btn {
+            border: 1px solid var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .refill-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .stock-line {
+            margin-bottom: 8px;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .stock-line span {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .stock-bar {
+            position: relative;
+            height: 8px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .stock-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 0%;
+            background: #93d5d7;
+            transition: width 0.3s ease;
+        }
+
+        .threshold {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            transform: translateX(-1px);
+            opacity: 0.95;
+        }
+
+        .threshold.warning {
+            background: #f59e0b;
+        }
+
+        .threshold.critical {
+            background: #ef4444;
+        }
+
+        .threshold-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-tertiary);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .use-text {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .status-pill {
+            min-width: 66px;
+            text-align: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pill.healthy {
+            color: #0891b2;
+            background: #dff7f8;
+        }
+
+        .status-pill.critical {
+            color: #ef4444;
+            background: var(--danger-light);
+        }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-body);
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-select:focus,
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 6px;
+        }
+
+        .quantity-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            font-size: 18px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .quantity-input {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .current-stock {
+            background: var(--bg-body);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-stock-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .current-stock-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            padding: 16px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .btn-default {
+            background: var(--bg-body);
+            color: var(--text-secondary);
+        }
+
+        .btn-default:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-confirm {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-confirm:hover {
+            background: var(--primary-dark);
+        }
+
+        .toast {
+            position: fixed;
+            right: 18px;
+            top: 18px;
+            padding: 12px 20px;
+            background: #111827;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: 0.2s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.35);
+            z-index: 90;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 1180px) {
+            .materials-grid {
+                grid-template-columns: repeat(2, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .board {
+                border-radius: 18px;
+                padding: 14px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .main-device-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .main-device-filter .device-search-wrap {
+                max-width: none;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                max-width: 100%;
+                border-radius: 20px 20px 0 0;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                max-height: 85vh;
+            }
+
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+        }
+        /* 跨页统一优化（桌面 + 移动） */
+        .content {
+            width: 100%;
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+
+        .header {
+            padding: 18px 28px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 14px 14px 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-title {
+                font-size: 30px;
+                line-height: 1;
+            }
+
+            .header-right {
+                flex-direction: row;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .platform-lang-select {
+                min-width: 90px;
+                height: 32px;
+                font-size: 12px;
+                padding: 0 24px 0 8px;
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .board,
+            .material-card {
+                border-radius: 14px;
+                box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
+                    <a href="menu.html?tab=menu" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
+                    <a href="materials.html" class="nav-item active"><span class="nav-icon">📦</span><span>物料</span></a>
+                    <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
+                    <a href="faults.html" class="nav-item"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <strong>物料管理</strong>
+            </div>
+
+            <header class="header">
+                <div class="header-left">
+                    <div class="header-title-row">
+                        <h1 class="header-title">物料</h1>
+                        <span class="device-tag" id="deviceTag">RCK111</span>
+                    </div>
+                    <div class="header-desc">设备物料余量。 · 语言=中文</div>
+                </div>
+                <div class="header-right">
+                    <!-- 发货清单按钮 -->
+                    <button class="lang-btn" onclick="goToOrdersList()">
+                        <span>📋</span>
+                        <span>发货清单</span>
+                    </button>
+                    <!-- 全局补充物料按钮 -->
+                    <button class="btn-primary" onclick="goToRefillPage()">
+                        <span>➕</span>
+                        <span>补充物料</span>
+                    </button>
+                    <button class="lang-btn">只读</button>
+                    <div class="platform-lang-selector">
+                        <select class="platform-lang-select" aria-label="平台语言">
+                            <option selected>中文</option>
+                            <option>English</option>
+                            <option>日本語</option>
+                            <option>한국어</option>
+                            <option>ไทย</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="main-device-filter">
+                    <div class="device-search-wrap">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="deviceSearchInput" class="search-input" placeholder="搜索设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                        </div>
+                        <div id="deviceDropdown" class="device-dropdown"></div>
+                    </div>
+                </div>
+
+                <section class="board">
+                    <div class="board-head">
+                        <div>
+                            <div class="board-title" id="boardTitle">RCK111</div>
+                            <div class="board-subtitle">已选料仓</div>
+                        </div>
+                        <div class="board-count"><span id="materialCount">0</span> 个物料</div>
+                    </div>
+                    <div class="materials-grid" id="materialsGrid"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 补充物料模态框 -->
+    <div class="modal-overlay" id="refillModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">补充物料</h3>
+                <button class="modal-close" onclick="closeRefillModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" id="materialSelectGroup">
+                    <label class="form-label">选择物料 <span class="required">*</span></label>
+                    <select class="form-select" id="materialSelect">
+                        <option value="">请选择要补充的物料</option>
+                    </select>
+                </div>
+                <div class="form-group" id="currentStockGroup" style="display: none;">
+                    <div class="current-stock">
+                        <span class="current-stock-label">当前库存</span>
+                        <span class="current-stock-value" id="currentStockValue">--</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">补充数量 <span class="required">*</span></label>
+                    <div class="quantity-input-wrapper">
+                        <button class="quantity-btn" onclick="adjustQuantity(-10)">−10</button>
+                        <button class="quantity-btn" onclick="adjustQuantity(-1)">−</button>
+                        <input type="number" class="form-input quantity-input" id="refillQuantity" value="10" min="1">
+                        <button class="quantity-btn" onclick="adjustQuantity(1)">+</button>
+                        <button class="quantity-btn" onclick="adjustQuantity(10)">+10</button>
+                    </div>
+                    <div class="form-hint" id="quantityHint">输入补充数量</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注（可选）</label>
+                    <input type="text" class="form-input" id="refillNote" placeholder="输入补充备注">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeRefillModal()">取消</button>
+                <button class="btn btn-confirm" onclick="confirmRefill()">确认补充</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let materialsData = [
+            { name: "杯盖1", category: "杯盖", code: "83020300", index: 54, remaining: 100, unit: "个", warning: 10, critical: 1, max: 100, status: "healthy" },
+            { name: "椰蓉丝-4", category: "椰蓉丝", code: "76150500", index: 27, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { name: "麦片颗粒-2", category: "麦片颗粒", code: "76190100", index: 25, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { name: "榛果颗粒-1", category: "榛果颗粒", code: "76150200", index: 24, remaining: 0, unit: "g", warning: 10, critical: 0, max: 500, status: "critical" },
+            { name: "香草粉-4", category: "香草粉", code: "74180100", index: 23, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { name: "玉桂粉-1", category: "玉桂粉", code: "76170100", index: 20, remaining: 0, unit: "g", warning: 50, critical: 20, max: 500, status: "critical" },
+            { name: "抹茶粉-2", category: "抹茶粉", code: "74160101", index: 21, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { name: "可可粉-3", category: "可可粉", code: "74150400", index: 22, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { name: "前置抹茶粉", category: "前置抹茶粉", code: "74160100", index: 8, remaining: 135, unit: "g", warning: 50, critical: 10, max: 250, status: "healthy" },
+            { name: "前置可可粉", category: "前置可可粉", code: "74160200", index: 7, remaining: 435, unit: "g", warning: 10, critical: 0, max: 500, status: "healthy" },
+            { name: "冰", category: "冰", code: "10000005", index: 6, remaining: 4000, unit: "g", warning: 500, critical: 100, max: 4000, status: "healthy" },
+            { name: "纸杯-16oz", category: "纸杯", code: "81020100", index: 5, remaining: 0, unit: "个", warning: 10, critical: 1, max: 80, status: "critical" }
+        ];
+
+        let currentRefillCode = null;
+        let currentDevice = 'RCK111';
+        let allDeviceOptions = [];
+
+        function initDeviceSearch() {
+            allDeviceOptions = ['RCK111', 'RCK112', 'RCK113'];
+            document.getElementById('deviceSearchInput').value = currentDevice;
+        }
+
+        function handleDeviceInputEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                onDeviceChangeByInput();
+                hideDeviceDropdown();
+            }
+        }
+
+        function matchDeviceByInput(raw) {
+            const keyword = raw.trim().toLowerCase();
+            if (!keyword) return null;
+            const exact = allDeviceOptions.find(item => item.toLowerCase() === keyword);
+            if (exact) return exact;
+            const fuzzy = allDeviceOptions.filter(item => item.toLowerCase().includes(keyword));
+            return fuzzy.length === 1 ? fuzzy[0] : null;
+        }
+
+        function renderDeviceDropdown(keyword = '') {
+            const dropdown = document.getElementById('deviceDropdown');
+            const k = keyword.trim().toLowerCase();
+            const list = !k ? allDeviceOptions : allDeviceOptions.filter(item => item.toLowerCase().includes(k));
+            if (!list.length) {
+                dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
+                return;
+            }
+            dropdown.innerHTML = list.map(item => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${item}')">${item}</div>`).join('');
+        }
+
+        function showDeviceDropdown() {
+            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
+            document.getElementById('deviceDropdown').classList.add('show');
+        }
+
+        function hideDeviceDropdown() {
+            document.getElementById('deviceDropdown').classList.remove('show');
+        }
+
+        function onDeviceInputChange() {
+            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
+            showDeviceDropdown();
+        }
+
+        function selectDeviceFromDropdown(deviceId) {
+            const input = document.getElementById('deviceSearchInput');
+            input.value = deviceId;
+            onDeviceChangeByInput();
+            input.dataset.skipChange = '1';
+            hideDeviceDropdown();
+        }
+
+        function renderMaterials() {
+            const grid = document.getElementById("materialsGrid");
+            grid.innerHTML = materialsData.map(item => {
+                const fillPct = Math.max(0, Math.min(100, (item.remaining / item.max) * 100));
+                const warningPct = Math.max(0, Math.min(100, (item.warning / item.max) * 100));
+                const criticalPct = Math.max(0, Math.min(100, (item.critical / item.max) * 100));
+                const statusText = item.status === "healthy" ? "正常" : "告急";
+                const statusClass = item.status === "healthy" ? "healthy" : "critical";
+
+                return `
+                    <article class="material-card">
+                        <div class="card-top">
+                            <div>
+                                <h3 class="material-name">${item.name}</h3>
+                                <div class="material-meta">${item.index} · ${item.category} · ${item.code}</div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="refill-btn" onclick="goToRefillPage('${item.code}')">
+                                    <span>➕</span>
+                                    <span>补充</span>
+                                </button>
+                                <button class="detail-mini-btn" onclick="viewMaterial('${item.code}')">→</button>
+                            </div>
+                        </div>
+                        <div class="stock-line"><span>剩余:</span>${item.remaining} ${item.unit}</div>
+                        <div class="stock-bar">
+                            <div class="stock-fill" style="width:${fillPct}%;"></div>
+                            <span class="threshold warning" style="left:${warningPct}%;"></span>
+                            <span class="threshold critical" style="left:${criticalPct}%;"></span>
+                        </div>
+                        <div class="threshold-row">
+                            <span>预警 ${item.warning} ${item.unit}</span>
+                            <span>告警 ${item.critical} ${item.unit}</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="use-text">使用中</span>
+                            <span class="status-pill ${statusClass}">${statusText}</span>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            document.getElementById("materialCount").textContent = materialsData.length;
+        }
+
+        function viewMaterial(code) {
+            showToast(`查看物料 ${code} 详情`);
+        }
+
+        // 跳转到批量添加物料页面
+        function goToRefillPage(materialCode = null) {
+            // 保存当前设备信息
+            sessionStorage.setItem('currentDevice', currentDevice);
+            
+            if (materialCode) {
+                sessionStorage.setItem('preselectMaterial', materialCode);
+            }
+            window.location.href = 'materials-refill.html';
+        }
+
+        // 跳转到发货清单页面
+        function goToOrdersList() {
+            window.location.href = 'materials-orders.html';
+        }
+
+        // 设备变更
+        function onDeviceChangeByInput() {
+            const input = document.getElementById('deviceSearchInput');
+            if (input.dataset.skipChange === '1') {
+                input.dataset.skipChange = '0';
+                return;
+            }
+            const matched = matchDeviceByInput(input.value);
+            if (!matched) {
+                showToast('设备不存在，请输入完整设备编号', 'error');
+                input.value = currentDevice;
+                return;
+            }
+            currentDevice = matched;
+            input.value = matched;
+            sessionStorage.setItem('currentDevice', currentDevice);
+            document.getElementById('deviceTag').textContent = currentDevice;
+            document.getElementById('boardTitle').textContent = currentDevice;
+            showToast(`已切换到设备 ${currentDevice}`);
+        }
+
+        // 打开补充物料模态框（保留原方法，供其他调用）
+        function openRefillModal(materialCode = null) {
+            currentRefillCode = materialCode;
+            const modal = document.getElementById('refillModal');
+            const selectGroup = document.getElementById('materialSelectGroup');
+            const currentStockGroup = document.getElementById('currentStockGroup');
+            const select = document.getElementById('materialSelect');
+            const modalTitle = document.getElementById('modalTitle');
+
+            // 重置表单
+            document.getElementById('refillQuantity').value = 10;
+            document.getElementById('refillNote').value = '';
+            document.getElementById('currentStockValue').textContent = '--';
+
+            // 填充物料选择下拉框
+            select.innerHTML = '<option value="">请选择要补充的物料</option>' +
+                materialsData.map(item => 
+                    `<option value="${item.code}">${item.name} (${item.code}) - 剩余 ${item.remaining}${item.unit}</option>`
+                ).join('');
+
+            if (materialCode) {
+                // 从卡片点击：预选中物料，隐藏选择框
+                selectGroup.style.display = 'none';
+                currentStockGroup.style.display = 'block';
+                select.value = materialCode;
+                modalTitle.textContent = '补充物料 - ' + materialsData.find(m => m.code === materialCode)?.name;
+                updateCurrentStock(materialCode);
+            } else {
+                // 从全局按钮点击：显示选择框
+                selectGroup.style.display = 'block';
+                currentStockGroup.style.display = 'none';
+                modalTitle.textContent = '补充物料';
+            }
+
+            // 监听选择变化
+            select.onchange = function() {
+                const code = this.value;
+                if (code) {
+                    currentStockGroup.style.display = 'block';
+                    updateCurrentStock(code);
+                } else {
+                    currentStockGroup.style.display = 'none';
+                }
+            };
+
+            modal.classList.add('active');
+        }
+
+        function updateCurrentStock(code) {
+            const material = materialsData.find(m => m.code === code);
+            if (material) {
+                document.getElementById('currentStockValue').textContent = `${material.remaining} ${material.unit}`;
+                document.getElementById('quantityHint').textContent = `最大容量: ${material.max} ${material.unit}`;
+            }
+        }
+
+        function closeRefillModal() {
+            document.getElementById('refillModal').classList.remove('active');
+            currentRefillCode = null;
+        }
+
+        function adjustQuantity(delta) {
+            const input = document.getElementById('refillQuantity');
+            let value = parseInt(input.value) || 0;
+            value = Math.max(1, value + delta);
+            input.value = value;
+        }
+
+        function confirmRefill() {
+            const select = document.getElementById('materialSelect');
+            const quantity = parseInt(document.getElementById('refillQuantity').value);
+            const note = document.getElementById('refillNote').value.trim();
+
+            const code = currentRefillCode || select.value;
+
+            if (!code) {
+                showToast('请选择要补充的物料', 'error');
+                return;
+            }
+
+            if (!quantity || quantity < 1) {
+                showToast('请输入有效的补充数量', 'error');
+                return;
+            }
+
+            const material = materialsData.find(m => m.code === code);
+            if (!material) return;
+
+            // 执行补充
+            const oldRemaining = material.remaining;
+            material.remaining = Math.min(material.max, material.remaining + quantity);
+            material.status = material.remaining > material.critical ? 'healthy' : 'critical';
+            const actualAdded = material.remaining - oldRemaining;
+
+            renderMaterials();
+            closeRefillModal();
+
+            let message = `已成功补充 ${material.name} ${actualAdded}${material.unit}`;
+            if (note) {
+                message += ` (${note})`;
+            }
+            showToast(message, 'success');
+        }
+
+        function showToast(message, type = 'normal') {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = type === 'success' ? 'toast success show' : 'toast show';
+            clearTimeout(showToast.timer);
+            showToast.timer = setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.device-search-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                hideDeviceDropdown();
+            }
+        });
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("open");
+            document.getElementById("overlay").classList.toggle("show");
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('refillModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRefillModal();
+            }
+        });
+
+        initDeviceSearch();
+        const savedDevice = sessionStorage.getItem('currentDevice');
+        if (savedDevice && ['RCK111', 'RCK112', 'RCK113'].includes(savedDevice)) {
+            currentDevice = savedDevice;
+            document.getElementById('deviceSearchInput').value = savedDevice;
+            document.getElementById('deviceTag').textContent = savedDevice;
+            document.getElementById('boardTitle').textContent = savedDevice;
+        }
+        renderMaterials();
+    </script>
+</body>
+</html>

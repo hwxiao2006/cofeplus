@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>订单管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ECDC4;
+            --primary-light: #e8f8f7;
+            --primary-dark: #3dbdb4;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding-left: 52px;
+        }
+
+        .sidebar-selectors {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .selector-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .selector select {
+            width: 100%;
+            padding: 10px 36px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* 主内容 */
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .header-title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .device-tag {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .header-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+        }
+
+        /* 筛选区域 */
+        .filter-section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .filter-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .filter-select {
+            padding: 10px 36px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            min-width: 140px;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-input {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: #fff;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        .date-separator {
+            color: var(--text-tertiary);
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        .results-count {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .btn-clear {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* 统计栏 */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-amount {
+            color: var(--primary-dark);
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 40px;
+            background: var(--border);
+        }
+
+        /* 分页栏 */
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .page-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 订单表格 */
+        .order-table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table th {
+            padding: 16px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: #fafafa;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .order-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+
+        .order-table tr:hover {
+            background: #fafbfc;
+        }
+
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 订单信息 */
+        .order-id {
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+            display: block;
+        }
+
+        .order-meta {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .meta-time {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .pickup-code {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 商品信息 */
+        .product-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .product-arrow {
+            color: var(--text-tertiary);
+            font-size: 13px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .product-details {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .product-name {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .product-specs {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 状态标签 */
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-done, .status-completed {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .status-pending, .status-processing {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-cancelled, .status-failed {
+            background: #f3f4f6;
+            color: var(--text-tertiary);
+        }
+
+        .status-success {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* 详情列 */
+        .detail-cell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .payment-status {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: lowercase;
+        }
+
+        .payment-status.success {
+            color: var(--success);
+        }
+
+        .payment-status.cancelled {
+            color: var(--text-tertiary);
+        }
+
+        .order-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .detail-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .action-btns {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+
+        .mobile-order-list {
+            display: none;
+        }
+
+        .mobile-order-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-order-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .mobile-order-main {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .mobile-order-id {
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: block;
+        }
+
+        .mobile-order-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        .mobile-order-product {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .mobile-order-specs {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .mobile-order-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-meta-item {
+            background: #fafafa;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .mobile-meta-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 2px;
+        }
+
+        .mobile-meta-value {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .mobile-order-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(17, 24, 39, 0.12);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .action-btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .btn-refund {
+            color: #b42318;
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
+        .btn-refund:hover {
+            color: #ffffff;
+            border-color: #ef4444;
+            background: #ef4444;
+        }
+
+        .btn-coupon {
+            color: #92400e;
+            background: #fff9eb;
+            border-color: #fde68a;
+        }
+
+        .btn-coupon:hover {
+            color: #ffffff;
+            border-color: #f59e0b;
+            background: #f59e0b;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        /* 移动端 */
+        @media (max-width: 1024px) {
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-input, .filter-select, .date-input {
+                width: 100%;
+            }
+
+            .date-range {
+                width: 100%;
+            }
+
+            .filter-actions {
+                margin-left: 0;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .content {
+                padding: 16px;
+                padding-bottom: 104px;
+            }
+
+            .order-table-container {
+                display: none;
+            }
+
+            .mobile-order-list {
+                display: block;
+            }
+
+            .mobile-order-actions .action-btn {
+                flex: 1;
+                min-width: 92px;
+            }
+
+            .mobile-order-actions .detail-btn {
+                margin-left: auto;
+            }
+
+            .mobile-order-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .pagination-bar {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 80;
+                margin-bottom: 0;
+                padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+                background: rgba(255, 255, 255, 0.96);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.08);
+            }
+
+            .pagination-bar .page-info {
+                font-size: 13px;
+            }
+
+            .pagination-bar .page-buttons {
+                flex: 1;
+                justify-content: flex-end;
+            }
+
+            .pagination-bar .page-btn {
+                flex: 1;
+                max-width: 140px;
+                height: 40px;
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 99;
+            }
+
+            .overlay.show {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header, .overlay {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+            
+            <div class="sidebar-selectors">
+                <label class="selector-label">设备</label>
+                <div class="selector">
+                    <select id="deviceSelect" onchange="changeDevice()">
+                        <option value="RCK111">RCK111</option>
+                        <option value="RCK112">RCK112</option>
+                        <option value="RCK113">RCK113</option>
+                    </select>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>总览</span>
+                    </a>
+                    <a href="devices.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span>设备</span>
+                    </a>
+                    <a href="menu.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span>菜单</span>
+                    </a>
+                    <a href="materials.html" class="nav-item">
+                        <span class="nav-icon">📦</span>
+                        <span>物料</span>
+                    </a>
+                    <a href="orders.html" class="nav-item active">
+                        <span class="nav-icon">📝</span>
+                        <span>订单</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item">
+                        <span class="nav-icon">🏢</span>
+                        <span>客户管理</span>
+                    </a>
+                    <a href="locations.html" class="nav-item">
+                        <span class="nav-icon">📍</span>
+                        <span>点位管理</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="main">
+            <header class="header">
+                <div class="header-left">
+                    <div class="header-title-row">
+                        <h1 class="header-title">订单</h1>
+                        <span class="device-tag" id="currentDevice">RCK111</span>
+                    </div>
+                    <span class="header-desc">查看订单与商品明细。</span>
+                </div>
+                <div class="header-right">
+                    <button class="lang-btn">只读</button>
+                    <button class="lang-btn active">
+                        <span>🌐</span>
+                        <span>ZH</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- 筛选区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <input type="text" class="filter-input" id="orderSearch" placeholder="订单号" oninput="filterOrders()">
+                        
+                        <select class="filter-select" id="statusFilter" onchange="filterOrders()">
+                            <option value="realtime">✓ 已完成订单</option>
+                            <option value="pending">处理中</option>
+                            <option value="cancelled">已取消</option>
+                            <option value="all">全部订单</option>
+                        </select>
+
+                        <div class="date-range">
+                            <input type="text" class="date-input" id="startDate" placeholder="年 / 月 /日 --:--" onfocus="(this.type='datetime-local')">
+                            <span class="date-separator">→</span>
+                            <input type="text" class="date-input" id="endDate" placeholder="年 / 月 /日 --:--" onfocus="(this.type='datetime-local')">
+                        </div>
+
+                        <div class="filter-actions">
+                            <span class="results-count"><span id="resultsCount">24</span> results</span>
+                            <button class="btn-clear" onclick="clearFilters()">清除</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计栏 -->
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">订单数量</span>
+                        <span class="stat-value" id="totalOrders">0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-label">订单金额合计</span>
+                        <span class="stat-value stat-amount" id="totalAmount">CNY 0.00</span>
+                    </div>
+                </div>
+
+                <!-- 分页栏 -->
+                <div class="pagination-bar">
+                    <span class="page-info">Page <span id="currentPage">1</span></span>
+                    <div class="page-buttons">
+                        <button class="page-btn" id="prevBtn" onclick="changePage(-1)">返回</button>
+                        <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
+                    </div>
+                </div>
+
+                <!-- 订单列表 -->
+                <div class="order-table-container">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px; min-width: 200px;">订单号</th>
+                                <th>商品</th>
+                                <th style="width: 90px; min-width: 90px;">状态</th>
+                                <th style="width: 120px; min-width: 120px;">支付信息</th>
+                                <th style="width: 180px; min-width: 180px;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- 动态渲染 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-order-list" id="orderMobileList"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 状态中文映射
+        const statusMap = {
+            'done': '已完成',
+            'pending': '处理中',
+            'cancelled': '已取消'
+        };
+
+        // 支付状态中文映射
+        const paymentStatusMap = {
+            'succeed': '支付成功',
+            'cancelled': '已取消',
+            'failed': '支付失败',
+            'pending': '待支付'
+        };
+
+        // 订单数据
+        const ordersData = [
+            {
+                id: '15207729212026021013080402815833',
+                product: '12 oz • Intense espresso • Hot • 2 shots • No PLASTIC lid needed • None • Zero ...',
+                specs: '金奖黑咖-浓香意式',
+                status: 'done',
+                paymentStatus: 'succeed',
+                amount: '9.90',
+                pickupCode: '3ED2C4',
+                items: 1,
+                createTime: '2026年2月10日 13:08'
+            },
+            {
+                id: '15207729212026011510393616227877',
+                product: '355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/无',
+                specs: '',
+                status: 'done',
+                paymentStatus: 'cancelled',
+                amount: '9.90',
+                pickupCode: 'N/A',
+                items: 1,
+                createTime: '2026年1月15日 10:39'
+            },
+            {
+                id: '15207729212026011510355548685042',
+                product: '355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/无',
+                specs: '',
+                status: 'done',
+                paymentStatus: 'cancelled',
+                amount: '9.90',
+                pickupCode: 'N/A',
+                items: 1,
+                createTime: '2026年1月15日 10:35'
+            },
+            {
+                id: '15207729212026011509341654540718',
+                product: '个性化定制配料：355ml//热/无糖/倡导环保 不使用杯盖/随机拉花',
+                specs: '',
+                status: 'done',
+                paymentStatus: 'cancelled',
+                amount: '10.90',
+                pickupCode: 'N/A',
+                items: 1,
+                createTime: '2026年1月15日 09:34'
+            },
+            {
+                id: '15207729212026011509150847828444',
+                product: '个性化定制配料：355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/...',
+                specs: '',
+                status: 'done',
+                paymentStatus: 'cancelled',
+                amount: '9.90',
+                pickupCode: 'N/A',
+                items: 1,
+                createTime: '2026年1月15日 09:15'
+            },
+            {
+                id: '15207729212026010813502759812457',
+                product: '个性化定制配料：355ml/金奖黑咖-浓香意式/热标准/热红酒糖浆/少糖/需要杯盖/...',
+                specs: '',
+                status: 'done',
+                paymentStatus: 'cancelled',
+                amount: '9.90',
+                pickupCode: 'N/A',
+                items: 1,
+                createTime: '2026年1月8日 13:50'
+            }
+        ];
+
+        let currentPage = 1;
+        const pageSize = 5;
+        let filteredData = [...ordersData];
+        let currentDevice = 'RCK111';
+
+        function init() {
+            renderTable();
+            updatePagination();
+        }
+
+        function calculateTotal() {
+            const totalOrders = filteredData.length;
+            // 只统计支付成功的订单金额
+            const totalAmount = filteredData.reduce((sum, order) => {
+                if (order.paymentStatus === 'succeed') {
+                    return sum + parseFloat(order.amount);
+                }
+                return sum;
+            }, 0);
+            
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalAmount').textContent = `CNY ${totalAmount.toFixed(2)}`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('orderTableBody');
+            const mobileList = document.getElementById('orderMobileList');
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredData.slice(start, end);
+
+            // 更新统计
+            calculateTotal();
+
+            tbody.innerHTML = pageData.map(order => {
+                const statusClass = order.status === 'done' ? 'status-done' : 
+                                   order.status === 'pending' ? 'status-pending' : 'status-cancelled';
+                const paymentClass = order.paymentStatus === 'succeed' ? 'success' : 'cancelled';
+                
+                const statusText = statusMap[order.status] || order.status;
+                const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
+                
+                return `
+                <tr>
+                    <td>
+                        <div class="order-id">${order.id}</div>
+                        <div class="order-meta">
+                            <div class="meta-row">
+                                <span>取货码: <span class="pickup-code">${order.pickupCode}</span></span>
+                                <span>·</span>
+                                <span>Items: ${order.items}</span>
+                            </div>
+                            <span class="meta-time">${order.createTime}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="product-info">
+                            <span class="product-arrow">›</span>
+                            <div class="product-details">
+                                <div class="product-name">1. ${order.product}</div>
+                                ${order.specs ? `<div class="product-specs">${order.specs}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="detail-cell">
+                            <div>
+                                <div class="payment-status ${paymentClass}">${paymentText}</div>
+                                <div class="order-amount">${order.amount}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            ${order.paymentStatus === 'succeed' ? `
+                                <button class="action-btn btn-refund" onclick="refundOrder('${order.id}')">💰 退款</button>
+                                <button class="action-btn btn-coupon" onclick="returnCoupon('${order.id}')">🎫 返券</button>
+                            ` : ''}
+                            <button class="detail-btn" onclick="viewDetail('${order.id}')">←</button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+            mobileList.innerHTML = pageData.map(order => {
+                const statusClass = order.status === 'done' ? 'status-done' :
+                                   order.status === 'pending' ? 'status-pending' : 'status-cancelled';
+                const paymentClass = order.paymentStatus === 'succeed' ? 'success' : 'cancelled';
+                const statusText = statusMap[order.status] || order.status;
+                const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
+
+                return `
+                <article class="mobile-order-card">
+                    <div class="mobile-order-top">
+                        <div class="mobile-order-main">
+                            <span class="mobile-order-id">${order.id}</span>
+                            <div class="mobile-order-time">${order.createTime}</div>
+                        </div>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </div>
+
+                    <div class="mobile-order-product">${order.product}</div>
+                    ${order.specs ? `<div class="mobile-order-specs">${order.specs}</div>` : ''}
+
+                    <div class="mobile-order-meta">
+                        <div class="mobile-meta-item">
+                            <div class="mobile-meta-label">支付状态</div>
+                            <div class="mobile-meta-value payment-status ${paymentClass}">${paymentText}</div>
+                        </div>
+                        <div class="mobile-meta-item">
+                            <div class="mobile-meta-label">订单金额</div>
+                            <div class="mobile-meta-value">CNY ${order.amount}</div>
+                        </div>
+                        <div class="mobile-meta-item">
+                            <div class="mobile-meta-label">取货码</div>
+                            <div class="mobile-meta-value"><span class="pickup-code">${order.pickupCode}</span></div>
+                        </div>
+                        <div class="mobile-meta-item">
+                            <div class="mobile-meta-label">商品数</div>
+                            <div class="mobile-meta-value">${order.items}</div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-order-actions">
+                        ${order.paymentStatus === 'succeed' ? `
+                            <button class="action-btn btn-refund" onclick="refundOrder('${order.id}')">💰 退款</button>
+                            <button class="action-btn btn-coupon" onclick="returnCoupon('${order.id}')">🎫 返券</button>
+                        ` : ''}
+                        <button class="detail-btn" onclick="viewDetail('${order.id}')">←</button>
+                    </div>
+                </article>
+                `;
+            }).join('');
+
+            document.getElementById('resultsCount').textContent = filteredData.length;
+        }
+
+        function filterOrders() {
+            const searchKeyword = document.getElementById('orderSearch').value.trim().toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredData = ordersData.filter(order => {
+                // 搜索订单号
+                if (searchKeyword && !order.id.toLowerCase().includes(searchKeyword)) {
+                    return false;
+                }
+                // 状态筛选
+                if (statusFilter === 'realtime' && order.status !== 'done') {
+                    return false;
+                }
+                if (statusFilter === 'pending' && order.status !== 'pending') {
+                    return false;
+                }
+                if (statusFilter === 'cancelled' && order.status !== 'cancelled') {
+                    return false;
+                }
+                return true;
+            });
+
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function clearFilters() {
+            document.getElementById('orderSearch').value = '';
+            document.getElementById('statusFilter').value = 'realtime';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            filteredData = [...ordersData];
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+            showToast('筛选条件已清除');
+        }
+
+        function changePage(delta) {
+            const maxPage = Math.ceil(filteredData.length / pageSize);
+            const newPage = currentPage + delta;
+            
+            if (newPage >= 1 && newPage <= maxPage) {
+                currentPage = newPage;
+                renderTable();
+                updatePagination();
+            }
+        }
+
+        function updatePagination() {
+            const maxPage = Math.ceil(filteredData.length / pageSize);
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage >= maxPage || maxPage === 0;
+        }
+
+        function changeDevice() {
+            currentDevice = document.getElementById('deviceSelect').value;
+            document.getElementById('currentDevice').textContent = currentDevice;
+            showToast(`已切换到设备 ${currentDevice}`);
+        }
+
+        function viewDetail(orderId) {
+            showToast(`查看订单 ${orderId.substring(0, 16)}... 详情`);
+        }
+
+        function refundOrder(orderId) {
+            const order = ordersData.find(o => o.id === orderId);
+            if (!order) return;
+            
+            if (confirm(`确定要对订单 ${orderId.substring(0, 16)}... 进行退款吗？\n退款金额: CNY ${order.amount}`)) {
+                showToast(`订单 ${orderId.substring(0, 16)}... 退款申请已提交`);
+            }
+        }
+
+        function returnCoupon(orderId) {
+            const order = ordersData.find(o => o.id === orderId);
+            if (!order) return;
+            
+            if (confirm(`确定要对订单 ${orderId.substring(0, 16)}... 进行返券吗？`)) {
+                showToast(`订单 ${orderId.substring(0, 16)}... 返券已成功`, 'success');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

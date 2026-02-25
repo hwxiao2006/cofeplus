@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备入场</title>
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #2f8f89;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-page: #f5f7fa;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --section-bg: #f1f3f5;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-card);
+        }
+
+        .header {
+            height: 52px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            height: 32px;
+            background: var(--section-bg);
+            color: #9ca3af;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .rows {
+            background: var(--bg-card);
+        }
+
+        .row {
+            min-height: 44px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            gap: 12px;
+        }
+
+        .label {
+            font-size: 13px;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .label small {
+            color: var(--danger);
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .value {
+            flex: 1;
+            text-align: right;
+            min-width: 0;
+        }
+
+        .value input,
+        .value select {
+            width: min(360px, 100%);
+            border: none;
+            background: transparent;
+            text-align: right;
+            color: var(--text-secondary);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .device-search-input {
+            width: min(360px, 100%);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            text-align: left;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+
+        .device-search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.14);
+        }
+
+        .device-search-wrap {
+            position: relative;
+            display: inline-block;
+            width: min(360px, 100%);
+        }
+
+        .device-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% - 2px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 30;
+        }
+
+        .device-dropdown.show {
+            display: block;
+        }
+
+        .device-option {
+            padding: 9px 10px;
+            text-align: left;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .device-option:hover {
+            background: #ecfbfa;
+            color: var(--primary-dark);
+        }
+
+        .device-option.empty {
+            color: #9ca3af;
+            cursor: default;
+        }
+
+        .value input::placeholder {
+            color: #b7c0ca;
+        }
+
+        .link {
+            color: #7dd3d0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .switch-group {
+            display: inline-flex;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .switch-item {
+            border: none;
+            background: #f3f4f6;
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+
+        .switch-item.active {
+            background: #9fe4df;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .pay-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .pay-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+
+        .upload-grid {
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+        }
+
+        .upload-box {
+            width: 110px;
+            height: 88px;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            gap: 6px;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        .camera {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            padding: 16px 12px 24px;
+            background: var(--bg-card);
+        }
+
+        .btn {
+            flex: 1;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .readonly {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        /* 跨页统一优化（桌面 + 移动） */
+        .page {
+            max-width: 1480px;
+        }
+
+        .header {
+            height: 56px;
+        }
+
+        .title {
+            font-size: 17px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                height: 52px;
+            }
+
+            .title {
+                font-size: 16px;
+            }
+
+            .row {
+                min-height: 42px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="header">
+            <button class="back-btn" onclick="window.location.href='devices.html'">‹</button>
+            <div class="title">设备入场</div>
+        </header>
+
+        <div class="section-title">基本信息</div>
+        <div class="rows">
+            <div class="row">
+                <div class="label">选择设备</div>
+                <div class="value">
+                    <div class="device-search-wrap">
+                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                        <div id="deviceDropdown" class="device-dropdown"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">所属客户</div>
+                <div class="value"><span id="merchantName" class="readonly">自动带出</span></div>
+            </div>
+            <div class="row">
+                <div class="label">点位名称</div>
+                <div class="value">
+                    <select id="locationSelect" onchange="onLocationChange()">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">运维人员<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+        <div class="rows">
+            <div class="row">
+                <div class="label">选择员工</div>
+                <div class="value"><span class="link">请选择 ›</span></div>
+            </div>
+        </div>
+
+        <div class="section-title">支付方式选择<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+        <div class="rows">
+            <div class="row">
+                <div class="label">微信/支付宝扫码支付</div>
+                <div class="value">
+                    <div class="pay-item">
+                        <span style="color:#9ca3af;">˄ ˅</span>
+                        <input type="checkbox" checked>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">数字人民币支付</div>
+                <div class="value">
+                    <div class="pay-item">
+                        <span style="color:#9ca3af;">˄ ˅</span>
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">定位设置</div>
+        <div class="rows">
+            <div class="row">
+                <div class="label">选择GPS定位</div>
+                <div class="value"><span class="link">获取当前位置 ›</span></div>
+            </div>
+            <div class="row">
+                <div class="label">经度</div>
+                <div class="value"><span style="color:#9ca3af;">手动输入</span></div>
+            </div>
+            <div class="row">
+                <div class="label">纬度</div>
+                <div class="value"><span style="color:#9ca3af;">手动输入</span></div>
+            </div>
+            <div class="row">
+                <div class="label">点位地址</div>
+                <div class="value"><input id="locationAddressInput" placeholder="请输入地址"></div>
+            </div>
+        </div>
+
+        <div class="section-title">其他设置</div>
+        <div class="rows">
+            <div class="row">
+                <div class="label">节能模式</div>
+                <div class="value">
+                    <div class="switch-group">
+                        <button class="switch-item active">开启</button>
+                        <button class="switch-item">关闭</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">开启节能模式</div>
+                <div class="value"><input value="18:00"></div>
+            </div>
+            <div class="row">
+                <div class="label">关闭节能模式</div>
+                <div class="value"><input value="8:00"></div>
+            </div>
+            <div class="row">
+                <div class="label">设备开始日期</div>
+                <div class="value"><input value="2026-02-13"></div>
+            </div>
+            <div class="row">
+                <div class="label">设备结束日期</div>
+                <div class="value"><span class="link">请选择 ›</span></div>
+            </div>
+            <div class="row">
+                <div class="label">第五代终端</div>
+                <div class="value">
+                    <div class="switch-group">
+                        <button class="switch-item active">开启</button>
+                        <button class="switch-item">关闭</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="label">订单并行制作</div>
+                <div class="value">
+                    <div class="switch-group">
+                        <button class="switch-item active">开启</button>
+                        <button class="switch-item">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">显示器画面</div>
+        <div class="rows">
+            <div class="upload-grid">
+                <div class="upload-box">
+                    <div class="camera">📷</div>
+                    <div>上传机内画面</div>
+                </div>
+                <div class="upload-box">
+                    <div class="camera">📷</div>
+                    <div>上传机外画面</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">点位照片</div>
+        <div class="rows">
+            <div class="upload-grid">
+                <div class="upload-box">
+                    <div class="camera">📷</div>
+                    <div>拍摄照片</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="window.location.href='devices.html'">取消</button>
+            <button class="btn btn-primary" onclick="submitEntry()">提交入场</button>
+        </div>
+    </div>
+
+    <script>
+        const merchantMap = {
+            'mer001': '星巴克咖啡',
+            'mer002': '瑞幸咖啡',
+            'mer003': '太平洋咖啡',
+            'mer004': 'Costa咖啡'
+        };
+
+        let devicesData = [];
+        let locationsData = [];
+        let selectedDevice = null;
+        let unenteredDeviceOptions = [];
+
+        function initPage() {
+            devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            renderDeviceOptions();
+            renderLocationOptions();
+        }
+
+        function renderDeviceOptions() {
+            unenteredDeviceOptions = devicesData
+                .filter(d => d.entered === false || !d.location)
+                .map(d => ({ value: d.id, label: d.id }));
+            renderDeviceDropdown('');
+        }
+
+        function matchDeviceByInput(raw) {
+            const keyword = raw.trim().toLowerCase();
+            if (!keyword) return null;
+            const exact = unenteredDeviceOptions.find(option => option.value.toLowerCase() === keyword);
+            if (exact) return exact.value;
+            const fuzzy = unenteredDeviceOptions.filter(option => option.value.toLowerCase().includes(keyword));
+            return fuzzy.length === 1 ? fuzzy[0].value : null;
+        }
+
+        function renderLocationOptions() {
+            const select = document.getElementById('locationSelect');
+            let html = '<option value="">请选择</option>';
+            locationsData.forEach(l => {
+                html += `<option value="${l.code}" data-address="${l.address || ''}">${l.name}（${l.code}）</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function onDeviceInput() {
+            selectedDevice = null;
+            document.getElementById('merchantName').textContent = '自动带出';
+        }
+
+        function renderDeviceDropdown(keyword = '') {
+            const dropdown = document.getElementById('deviceDropdown');
+            const k = keyword.trim().toLowerCase();
+            const list = !k ? unenteredDeviceOptions : unenteredDeviceOptions.filter(option => option.value.toLowerCase().includes(k) || option.label.toLowerCase().includes(k));
+            if (!list.length) {
+                dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
+                return;
+            }
+            dropdown.innerHTML = list.map(option => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${option.value}')">${option.label}</div>`).join('');
+        }
+
+        function showDeviceDropdown() {
+            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
+            document.getElementById('deviceDropdown').classList.add('show');
+        }
+
+        function hideDeviceDropdown() {
+            document.getElementById('deviceDropdown').classList.remove('show');
+        }
+
+        function onDeviceInputChange() {
+            onDeviceInput();
+            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
+            showDeviceDropdown();
+        }
+
+        function selectDeviceFromDropdown(deviceId) {
+            const input = document.getElementById('deviceSearchInput');
+            input.value = deviceId;
+            onDeviceChangeByInput();
+            input.dataset.skipChange = '1';
+            hideDeviceDropdown();
+        }
+
+        function handleDeviceInputEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                onDeviceChangeByInput();
+                hideDeviceDropdown();
+            }
+        }
+
+        function onDeviceChangeByInput() {
+            const input = document.getElementById('deviceSearchInput');
+            if (input.dataset.skipChange === '1') {
+                input.dataset.skipChange = '0';
+                return;
+            }
+            const id = matchDeviceByInput(input.value);
+            if (!id) {
+                selectedDevice = null;
+                document.getElementById('merchantName').textContent = '自动带出';
+                return;
+            }
+            input.value = id;
+            selectedDevice = devicesData.find(d => d.id === id) || null;
+            const merchant = selectedDevice ? (merchantMap[selectedDevice.merchant] || selectedDevice.merchant || '未设置') : '自动带出';
+            document.getElementById('merchantName').textContent = merchant;
+        }
+
+        function onLocationChange() {
+            const select = document.getElementById('locationSelect');
+            const option = select.options[select.selectedIndex];
+            const address = option ? (option.dataset.address || '') : '';
+            document.getElementById('locationAddressInput').value = address;
+        }
+
+        function submitEntry() {
+            const deviceInput = document.getElementById('deviceSearchInput').value;
+            const deviceId = matchDeviceByInput(deviceInput);
+            const locationCode = document.getElementById('locationSelect').value;
+            if (!deviceId) {
+                alert('请选择设备');
+                return;
+            }
+            if (!locationCode) {
+                alert('请选择点位');
+                return;
+            }
+
+            const device = devicesData.find(d => d.id === deviceId);
+            if (!device) {
+                alert('设备不存在');
+                return;
+            }
+
+            device.location = locationCode;
+            device.entered = true;
+            if (device.sales !== 'enabled') {
+                device.sales = 'enabled';
+            }
+            if (!device.heartbeat || device.heartbeat === '-') {
+                device.heartbeat = '刚刚';
+            }
+
+            localStorage.setItem('devicesData', JSON.stringify(devicesData));
+            alert(`设备 ${deviceId} 已完成入场`);
+            window.location.href = 'devices.html';
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.device-search-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                hideDeviceDropdown();
+            }
+        });
+
+        initPage();
+    </script>
+</body>
+</html>

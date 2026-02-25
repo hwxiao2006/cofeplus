@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>设备管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4ECDC4;
+            --primary-light: #e8f8f7;
+            --primary-dark: #3dbdb4;
+            --secondary: #7dd3c0;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --info: #0ea5e9;
+            --info-light: #e0f2fe;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0b132b;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 - 新设计 */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            color: #dbeafe;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.35);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: rgba(219, 234, 254, 0.55);
+            margin-left: 54px;
+            margin-top: 2px;
+        }
+
+        .sidebar-search {
+            padding: 20px 20px 12px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .sidebar-search .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: var(--radius);
+            font-size: 13px;
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.42);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-search .search-input:focus {
+            background: rgba(15, 23, 42, 0.56);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .sidebar-search .search-input::placeholder {
+            color: rgba(186, 230, 253, 0.55);
+        }
+
+        .sidebar-search .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: rgba(186, 230, 253, 0.55);
+        }
+
+        .sidebar-filter {
+            padding: 0 20px 16px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 32px 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: var(--radius);
+            font-size: 13px;
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.42);
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: rgba(219, 234, 254, 0.88);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: rgba(46, 196, 182, 0.14);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(130deg, rgba(46, 196, 182, 0.38), rgba(56, 189, 248, 0.38));
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* 主内容 */
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--bg-card);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-icon.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .platform-lang-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .platform-lang-selector::after {
+            content: '\25BE';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .platform-lang-select {
+            height: 34px;
+            min-width: 98px;
+            padding: 0 24px 0 8px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .platform-lang-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.18);
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+        }
+
+        .main-filter-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .main-search-box {
+            flex: 0 1 460px;
+            min-width: 280px;
+            max-width: 460px;
+            margin-top: 19px;
+        }
+
+        .main-filter-bar .search-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 14px 0 40px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .main-filter-bar .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .main-filter-bar .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .main-filter-bar .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .main-filter-item {
+            width: 180px;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue { background: var(--info-light); }
+        .stat-icon.green { background: var(--success-light); }
+        .stat-icon.orange { background: var(--warning-light); }
+        .stat-icon.purple { background: var(--primary-light); }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 表格容器 */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .device-mobile-list {
+            display: none;
+            padding: 12px;
+            background: var(--bg-card);
+        }
+
+        .device-mobile-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .device-mobile-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .device-mobile-id {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .device-mobile-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .device-mobile-meta-item {
+            background: #fafafa;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .device-mobile-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 2px;
+        }
+
+        .device-mobile-value {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .device-mobile-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .device-mobile-actions .btn {
+            flex: 1;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .detail-modal {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .detail-modal-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .detail-modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            background: #f3f4f6;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .detail-modal-body {
+            padding: 14px 16px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row strong {
+            color: var(--text-primary);
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .detail-modal-footer {
+            padding: 12px 16px 16px;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .device-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .device-table thead {
+            background: var(--bg-body);
+        }
+
+        .device-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .device-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .device-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .device-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 设备信息样式 */
+        .device-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .device-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #e0e7ff 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .device-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .device-id {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+        }
+
+        .device-id-small {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .merchant-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .location-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--bg-body);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 状态标签 - 新设计 */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-operational {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-operational::before {
+            background: var(--success);
+        }
+
+        .status-faulted {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-faulted::before {
+            background: var(--danger);
+        }
+
+        .status-enabled {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-enabled::before {
+            background: var(--success);
+        }
+
+        .status-disabled {
+            background: var(--bg-body);
+            color: var(--text-tertiary);
+        }
+
+        .status-disabled::before {
+            background: var(--text-tertiary);
+        }
+
+        .heartbeat-time {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* 操作按钮 */
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+
+        /* 分页 */
+        .pagination-wrapper {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* 移动端 */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                background: var(--bg-card);
+                border-bottom: 1px solid var(--border);
+                gap: 12px;
+            }
+
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: var(--text-secondary);
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .main-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .main-filter-item {
+                width: 100%;
+            }
+
+            .main-search-box {
+                margin-top: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .table-container .table-wrapper {
+                display: none;
+            }
+
+            .device-mobile-list {
+                display: block;
+            }
+
+            .device-mobile-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 99;
+            }
+
+            .overlay.show {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header, .overlay {
+                display: none !important;
+            }
+        }
+        /* 跨页统一优化（桌面 + 移动） */
+        .content {
+            width: 100%;
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+
+        .header {
+            padding: 18px 28px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 14px 14px 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-title {
+                font-size: 30px;
+                line-height: 1;
+            }
+
+            .header-right {
+                flex-direction: row;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .lang-btn,
+            .btn {
+                min-height: 40px;
+                font-size: 13px;
+                border-radius: 10px;
+            }
+            .platform-lang-select {
+                min-width: 90px;
+                height: 32px;
+                font-size: 12px;
+                padding: 0 24px 0 8px;
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .table-card,
+            .device-table-wrap,
+            .filter-section,
+            .stats-bar {
+                border-radius: 14px;
+                box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>总览</span>
+                    </a>
+                    <a href="devices.html" class="nav-item active">
+                        <span class="nav-icon">⚙️</span>
+                        <span>设备</span>
+                    </a>
+                    <a href="menu.html?tab=menu" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span>菜单管理</span>
+                    </a>
+                    <a href="materials.html" class="nav-item">
+                        <span class="nav-icon">📦</span>
+                        <span>物料</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span>订单</span>
+                    </a>
+                    <a href="faults.html" class="nav-item">
+                        <span class="nav-icon">🛠️</span>
+                        <span>故障列表</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item">
+                        <span class="nav-icon">🏢</span>
+                        <span>客户管理</span>
+                    </a>
+                    <a href="locations.html" class="nav-item">
+                        <span class="nav-icon">📍</span>
+                        <span>点位管理</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <span style="font-weight: 700; font-size: 17px;">运营控制台</span>
+            </div>
+
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">设备管理</h1>
+                    <span class="header-desc">管理设备状态与售卖开关</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="window.location.href='device-entry.html'">➕ 设备入场</button>
+                    <button class="btn-icon" onclick="window.location.href='faults.html'">🛠️ 故障列表</button>
+                    <button class="btn-icon">📖 只读</button>
+                    <div class="platform-lang-selector">
+                        <select class="platform-lang-select" aria-label="平台语言">
+                            <option selected>中文</option>
+                            <option>English</option>
+                            <option>日本語</option>
+                            <option>한국어</option>
+                            <option>ไทย</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="main-filter-bar">
+                    <div class="search-box main-search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="deviceSearch" placeholder="搜索设备编号..." oninput="filterDevices()">
+                    </div>
+                    <div class="main-filter-item">
+                        <label class="filter-label">设备状态</label>
+                        <select class="filter-select" id="deviceFilter" onchange="filterDevices()">
+                            <option value="all">全部设备</option>
+                            <option value="operational">运行中</option>
+                            <option value="faulted">故障中</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📱</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalDevices">15</div>
+                            <div class="stat-label">设备总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="onlineDevices">13</div>
+                            <div class="stat-label">运行中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="faultDevices">2</div>
+                            <div class="stat-label">故障中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">🛑</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stoppedDevices">2</div>
+                            <div class="stat-label">已停卖</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设备表格 -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <span class="table-title">设备列表</span>
+                        <div class="table-actions">
+                            <button class="btn btn-success" onclick="window.location.href='device-entry.html'">+ 设备入场</button>
+                            <button class="btn btn-ghost" onclick="showToast('导出功能开发中...')">📥 导出</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="device-table">
+                            <thead>
+                                <tr>
+                                    <th>设备信息</th>
+                                    <th>所属商户</th>
+                                    <th>点位</th>
+                                    <th>状态</th>
+                                    <th>停卖</th>
+                                    <th>最近心跳</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deviceTableBody">
+                                <!-- 动态渲染 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="device-mobile-list" id="deviceMobileList"></div>
+                    <div class="pagination-wrapper">
+                        <div class="pagination-info">
+                            显示 <span id="showingStart">1</span>-<span id="showingEnd">12</span> 条，共 <span id="totalCount">15</span> 条
+                        </div>
+                        <div class="pagination">
+                            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
+                            <button class="pagination-btn pagination-btn-primary" id="nextBtn" onclick="changePage(1)">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="detail-modal">
+            <div class="detail-modal-header">
+                <h3 class="detail-modal-title">设备详情</h3>
+                <button class="detail-modal-close" onclick="closeDetailModal()">×</button>
+            </div>
+            <div class="detail-modal-body" id="detailModalBody"></div>
+            <div class="detail-modal-footer">
+                <button class="btn btn-ghost" onclick="closeDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 映射数据
+        const locationMap = {
+            'k8298': '上海市中心店',
+            'k8667': '北京朝阳门店',
+            'k9001': '广州天河店',
+            'k9002': '深圳南山店'
+        };
+
+        const statusMap = {
+            'operational': '运行中',
+            'faulted': '故障'
+        };
+
+        const salesMap = {
+            'enabled': '正常售卖',
+            'disabled': '已停卖'
+        };
+
+        const merchantMap = {
+            'mer001': '星巴克咖啡',
+            'mer002': '瑞幸咖啡',
+            'mer003': '太平洋咖啡',
+            'mer004': 'Costa咖啡'
+        };
+
+        const categoryMap = {
+            self: '自营',
+            lease: '租赁',
+            third: '第三方'
+        };
+
+        const deploymentMap = {
+            private: '自有部署',
+            public: '公共部署'
+        };
+
+        // 默认设备数据
+        const defaultDevicesData = [
+            { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
+            { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
+            { id: 'RCK384', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
+            { id: 'RCK410', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
+            { id: 'RCK406', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
+            { id: 'RCK405', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月9日 11:13' },
+            { id: 'RCK408', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 09:54' },
+            { id: 'RCK407', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月7日 16:39' },
+            { id: 'RCK409', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月6日 10:42' },
+            { id: 'RCK404', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月5日 19:32' },
+            { id: 'RCB036', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月4日 16:38' },
+            { id: 'RCK403', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月10日 10:44' },
+            { id: 'RCK402', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'disabled', heartbeat: '2026年2月10日 09:30' },
+            { id: 'RCK401', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'disabled', heartbeat: '2026年2月9日 08:15' },
+            { id: 'RCK400', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 14:22' },
+            { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
+            { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
+            { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
+        ];
+
+        // 设备数据
+        let devicesData = [];
+        let currentPage = 1;
+        const pageSize = 12;
+        let filteredData = [];
+
+        function saveDevicesData() {
+            localStorage.setItem('devicesData', JSON.stringify(devicesData));
+        }
+
+        function normalizeDevices(data) {
+            const categoryFallback = ['self', 'lease', 'third'];
+            const deploymentFallback = ['private', 'public'];
+            return data.map((d, index) => ({
+                ...d,
+                category: d.category || categoryFallback[index % categoryFallback.length],
+                deployment: d.deployment || deploymentFallback[index % deploymentFallback.length],
+                entered: d.entered !== false && !!d.location
+            }));
+        }
+
+        function buildLocationMap() {
+            const map = { ...locationMap };
+            const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            locationsData.forEach(l => {
+                if (l.code && l.name) {
+                    map[l.code] = l.name;
+                }
+            });
+            return map;
+        }
+
+        function ensureUnenteredDevices(data) {
+            const seeds = [
+                { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'self', deployment: 'private' },
+                { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'lease', deployment: 'public' },
+                { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'third', deployment: 'public' }
+            ];
+            const ids = new Set(data.map(d => d.id));
+            seeds.forEach(seed => {
+                if (!ids.has(seed.id)) data.push(seed);
+            });
+            return data;
+        }
+
+        function init() {
+            const stored = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            if (stored.length === 0) {
+                devicesData = normalizeDevices(defaultDevicesData);
+                saveDevicesData();
+            } else {
+                devicesData = normalizeDevices(stored);
+                devicesData = ensureUnenteredDevices(devicesData);
+                devicesData = normalizeDevices(devicesData);
+                saveDevicesData();
+            }
+            filteredData = [...devicesData];
+            updateStats();
+            renderTable();
+            updatePagination();
+        }
+
+        function updateStats() {
+            const total = devicesData.length;
+            const online = devicesData.filter(d => d.status === 'operational').length;
+            const faulted = devicesData.filter(d => d.status === 'faulted').length;
+            const stopped = devicesData.filter(d => d.sales === 'disabled').length;
+
+            document.getElementById('totalDevices').textContent = total;
+            document.getElementById('onlineDevices').textContent = online;
+            document.getElementById('faultDevices').textContent = faulted;
+            document.getElementById('stoppedDevices').textContent = stopped;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('deviceTableBody');
+            const mobileList = document.getElementById('deviceMobileList');
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredData.slice(start, end);
+            const runtimeLocationMap = buildLocationMap();
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <div class="empty-text">暂无匹配的设备</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                mobileList.innerHTML = `
+                    <div class="empty-state" style="padding: 40px 20px;">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-text">暂无匹配的设备</div>
+                    </div>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pageData.map(device => {
+                const isSalesEnabled = device.sales === 'enabled';
+                const statusClass = device.status === 'operational' ? 'status-operational' : 'status-faulted';
+                const salesClass = isSalesEnabled ? 'status-enabled' : 'status-disabled';
+                
+                return `
+                <tr>
+                    <td>
+                        <div class="device-info">
+                            <div class="device-avatar">${device.id.substring(0, 2)}</div>
+                            <div class="device-details">
+                                <span class="device-id">${device.id}</span>
+                                <span class="device-id-small">ID: ${device.id}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="merchant-name">${merchantMap[device.merchant] || device.merchant}</span></td>
+                    <td><span class="location-tag">${device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)}</span></td>
+                    <td><span class="status-badge ${statusClass}">${statusMap[device.status] || device.status}</span></td>
+                    <td><span class="status-badge ${salesClass}">${salesMap[device.sales] || device.sales}</span></td>
+                    <td><span class="heartbeat-time">${device.heartbeat}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn ${isSalesEnabled ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleSales('${device.id}')">
+                                ${isSalesEnabled ? '🛑 下架' : '✅ 上架'}
+                            </button>
+                            <button class="btn btn-ghost btn-sm" onclick="viewDetail('${device.id}')">详情</button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+            mobileList.innerHTML = pageData.map(device => {
+                const isSalesEnabled = device.sales === 'enabled';
+                const statusClass = device.status === 'operational' ? 'status-operational' : 'status-faulted';
+                const salesClass = isSalesEnabled ? 'status-enabled' : 'status-disabled';
+                const merchantName = merchantMap[device.merchant] || device.merchant;
+                const locationText = device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location);
+                return `
+                    <article class="device-mobile-card">
+                        <div class="device-mobile-head">
+                            <div class="device-mobile-id">${device.id}</div>
+                            <span class="status-badge ${statusClass}">${statusMap[device.status] || device.status}</span>
+                        </div>
+                        <div class="device-mobile-meta">
+                            <div class="device-mobile-meta-item">
+                                <div class="device-mobile-label">商户</div>
+                                <div class="device-mobile-value">${merchantName}</div>
+                            </div>
+                            <div class="device-mobile-meta-item">
+                                <div class="device-mobile-label">点位</div>
+                                <div class="device-mobile-value">${locationText}</div>
+                            </div>
+                            <div class="device-mobile-meta-item">
+                                <div class="device-mobile-label">停卖状态</div>
+                                <div class="device-mobile-value"><span class="status-badge ${salesClass}">${salesMap[device.sales] || device.sales}</span></div>
+                            </div>
+                            <div class="device-mobile-meta-item">
+                                <div class="device-mobile-label">最近心跳</div>
+                                <div class="device-mobile-value">${device.heartbeat}</div>
+                            </div>
+                        </div>
+                        <div class="device-mobile-actions">
+                            <button class="btn ${isSalesEnabled ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleSales('${device.id}')">
+                                ${isSalesEnabled ? '🛑 下架' : '✅ 上架'}
+                            </button>
+                            <button class="btn btn-ghost btn-sm" onclick="viewDetail('${device.id}')">详情</button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function filterDevices() {
+            const filter = document.getElementById('deviceFilter').value;
+            const searchKeyword = document.getElementById('deviceSearch').value.trim().toLowerCase();
+            
+            if (filter === 'all') {
+                filteredData = [...devicesData];
+            } else if (filter === 'operational') {
+                filteredData = devicesData.filter(d => d.status === 'operational');
+            } else if (filter === 'faulted') {
+                filteredData = devicesData.filter(d => d.status === 'faulted');
+            }
+            
+            if (searchKeyword) {
+                filteredData = filteredData.filter(d => 
+                    d.id.toLowerCase().includes(searchKeyword)
+                );
+            }
+            
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function changePage(delta) {
+            const maxPage = Math.ceil(filteredData.length / pageSize);
+            const newPage = currentPage + delta;
+            
+            if (newPage >= 1 && newPage <= maxPage) {
+                currentPage = newPage;
+                renderTable();
+                updatePagination();
+            }
+        }
+
+        function updatePagination() {
+            const maxPage = Math.ceil(filteredData.length / pageSize);
+            const start = (currentPage - 1) * pageSize + 1;
+            const end = Math.min(currentPage * pageSize, filteredData.length);
+            
+            document.getElementById('showingStart').textContent = filteredData.length > 0 ? start : 0;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalCount').textContent = filteredData.length;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage >= maxPage || maxPage === 0;
+        }
+
+        function toggleSales(deviceId) {
+            const device = devicesData.find(d => d.id === deviceId);
+            if (!device) return;
+
+            const merchantName = merchantMap[device.merchant] || device.merchant;
+            const action = device.sales === 'enabled' ? '下架' : '上架';
+            
+            if (confirm(`确定要${action}设备 ${deviceId} (${merchantName}) 吗？`)) {
+                device.sales = device.sales === 'enabled' ? 'disabled' : 'enabled';
+                saveDevicesData();
+                updateStats();
+                renderTable();
+                showToast(`设备 ${deviceId} 已${action}`);
+            }
+        }
+
+        function viewDetail(deviceId) {
+            const device = devicesData.find(d => d.id === deviceId);
+            if (!device) return;
+            const runtimeLocationMap = buildLocationMap();
+            document.getElementById('detailModalBody').innerHTML = `
+                <div class="detail-row"><span>设备编号</span><strong>${device.id}</strong></div>
+                <div class="detail-row"><span>所属商户</span><strong>${merchantMap[device.merchant] || device.merchant || '-'}</strong></div>
+                <div class="detail-row"><span>点位</span><strong>${device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)}</strong></div>
+                <div class="detail-row"><span>设备类别</span><strong>${categoryMap[device.category] || device.category || '-'}</strong></div>
+                <div class="detail-row"><span>部署类型</span><strong>${deploymentMap[device.deployment] || device.deployment || '-'}</strong></div>
+                <div class="detail-row"><span>设备状态</span><strong>${statusMap[device.status] || device.status}</strong></div>
+                <div class="detail-row"><span>停卖状态</span><strong>${salesMap[device.sales] || device.sales}</strong></div>
+                <div class="detail-row"><span>最近心跳</span><strong>${device.heartbeat}</strong></div>
+            `;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailModal();
+            }
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>

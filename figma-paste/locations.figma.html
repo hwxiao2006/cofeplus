@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>点位管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding-left: 52px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* 主内容 */
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.35);
+        }
+
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue { background: #e0f2fe; }
+        .stat-icon.green { background: #d1fae5; }
+        .stat-icon.orange { background: #fef3c7; }
+        .stat-icon.purple { background: #f3e8ff; }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 点位列表 */
+        .location-list {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .location-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
+        }
+
+        .location-item:hover {
+            background: #fafafa;
+        }
+
+        .location-item:last-child {
+            border-bottom: none;
+        }
+
+        .location-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary-light) 0%, #e0f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .location-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .location-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .location-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .location-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .location-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-operational {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-closed {
+            background: var(--bg-body);
+            color: var(--text-tertiary);
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: 20px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-default {
+            background: var(--bg-body);
+            color: var(--text-secondary);
+        }
+
+        .btn-default:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* 移动端 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📋</span><span>菜单</span></a>
+                    <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
+                    <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="locations.html" class="nav-item active"><span class="nav-icon">📍</span><span>点位管理</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <strong>点位管理</strong>
+            </div>
+
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">点位管理</h1>
+                    <span class="header-desc">管理设备点位信息和运营状态</span>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <span>➕</span>
+                        <span>新增点位</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📍</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalLocations">0</div>
+                            <div class="stat-label">点位总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="activeLocations">0</div>
+                            <div class="stat-label">运营中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⚙️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalDevices">0</div>
+                            <div class="stat-label">设备总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalCustomers">0</div>
+                            <div class="stat-label">所属客户</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索点位名称、地址、编码..." oninput="searchLocations()">
+                </div>
+
+                <!-- 点位列表 -->
+                <div class="location-list" id="locationList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增/编辑点位模态框 -->
+    <div class="modal-overlay" id="locationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">新增点位</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">点位名称 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="locationName" placeholder="输入点位名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">点位编码 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="locationCode" placeholder="如: k8298">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">所属客户 <span class="required">*</span></label>
+                        <select class="form-select" id="customerSelect">
+                            <option value="">选择客户</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">点位状态</label>
+                        <select class="form-select" id="locationStatus">
+                            <option value="operational">运营中</option>
+                            <option value="closed">暂停运营</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">详细地址 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="locationAddress" placeholder="输入详细地址">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">负责人</label>
+                        <input type="text" class="form-input" id="locationManager" placeholder="输入负责人姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话</label>
+                        <input type="text" class="form-input" id="locationPhone" placeholder="输入联系电话">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注</label>
+                    <textarea class="form-textarea" id="locationRemark" placeholder="输入备注信息"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveLocation()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 点位数据
+        let locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+        let editingLocationId = null;
+
+        // 默认点位数据
+        const defaultLocations = [
+            { id: 'L001', code: 'k8298', name: '上海市中心店', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市浦东新区陆家嘴环路1000号', manager: '张店长', phone: '13800138001', status: 'operational', createTime: '2024-01-15', remark: '核心商圈' },
+            { id: 'L002', code: 'k8667', name: '北京朝阳门店', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京市朝阳区建国路88号', manager: '李经理', phone: '13800138002', status: 'operational', createTime: '2024-02-20', remark: '' },
+            { id: 'L003', code: 'k9001', name: '广州天河店', customerId: 'C003', customerName: '太平洋咖啡', address: '广州市天河区天河路208号', manager: '王店长', phone: '13800138003', status: 'operational', createTime: '2024-03-10', remark: '' },
+            { id: 'L004', code: 'k9002', name: '深圳南山店', customerId: 'C004', customerName: 'Costa咖啡', address: '深圳市南山区科技园南路88号', manager: '赵经理', phone: '13800138004', status: 'closed', createTime: '2024-04-05', remark: '暂停营业' },
+        ];
+
+        // 初始化
+        function init() {
+            if (locationsData.length === 0) {
+                locationsData = [...defaultLocations];
+                saveToStorage();
+            }
+            loadCustomers();
+            renderLocations();
+            updateStats();
+        }
+
+        // 加载客户列表到下拉框
+        function loadCustomers() {
+            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+            const select = document.getElementById('customerSelect');
+            
+            let html = '<option value="">选择客户</option>';
+            customersData.forEach(c => {
+                if (c.status === 'active') {
+                    html += `<option value="${c.id}" data-name="${c.name}">${c.name}</option>`;
+                }
+            });
+            select.innerHTML = html;
+        }
+
+        // 保存到 localStorage
+        function saveToStorage() {
+            localStorage.setItem('locationsData', JSON.stringify(locationsData));
+        }
+
+        // 更新统计
+        function updateStats() {
+            const total = locationsData.length;
+            const active = locationsData.filter(l => l.status === 'operational').length;
+            
+            // 从设备数据计算设备数
+            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+            
+            document.getElementById('totalLocations').textContent = total;
+            document.getElementById('activeLocations').textContent = active;
+            document.getElementById('totalDevices').textContent = devicesData.length || 15;
+            document.getElementById('totalCustomers').textContent = new Set(locationsData.map(l => l.customerId)).size || customersData.length || 4;
+        }
+
+        // 渲染点位列表
+        function renderLocations(filterText = '') {
+            const list = document.getElementById('locationList');
+            
+            let filtered = locationsData;
+            if (filterText) {
+                const lower = filterText.toLowerCase();
+                filtered = locationsData.filter(l => 
+                    l.name.toLowerCase().includes(lower) ||
+                    l.code.toLowerCase().includes(lower) ||
+                    l.address.toLowerCase().includes(lower)
+                );
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📍</div>
+                        <div>暂无点位数据</div>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = filtered.map(location => `
+                <div class="location-item">
+                    <div class="location-icon">📍</div>
+                    <div class="location-info">
+                        <div class="location-name">${location.name}</div>
+                        <div class="location-meta">
+                            <span>🏷️ ${location.code}</span>
+                            <span>🏢 ${location.customerName || '未知客户'}</span>
+                            <span>📍 ${location.address}</span>
+                        </div>
+                    </div>
+                    <div class="location-status ${location.status === 'operational' ? 'status-operational' : 'status-closed'}">
+                        ${location.status === 'operational' ? '●' : '○'} ${location.status === 'operational' ? '运营中' : '暂停运营'}
+                    </div>
+                    <div class="location-actions">
+                        <button class="btn-icon" onclick="editLocation('${location.id}')" title="编辑">✏️</button>
+                        <button class="btn-icon" onclick="deleteLocation('${location.id}')" title="删除">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 搜索点位
+        function searchLocations() {
+            const text = document.getElementById('searchInput').value;
+            renderLocations(text);
+        }
+
+        // 打开模态框
+        function openModal() {
+            editingLocationId = null;
+            loadCustomers();
+            document.getElementById('modalTitle').textContent = '新增点位';
+            document.getElementById('locationName').value = '';
+            document.getElementById('locationCode').value = '';
+            document.getElementById('customerSelect').value = '';
+            document.getElementById('locationStatus').value = 'operational';
+            document.getElementById('locationAddress').value = '';
+            document.getElementById('locationManager').value = '';
+            document.getElementById('locationPhone').value = '';
+            document.getElementById('locationRemark').value = '';
+            document.getElementById('locationModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('locationModal').classList.remove('active');
+            editingLocationId = null;
+        }
+
+        // 编辑点位
+        function editLocation(id) {
+            const location = locationsData.find(l => l.id === id);
+            if (!location) return;
+
+            editingLocationId = id;
+            loadCustomers();
+            document.getElementById('modalTitle').textContent = '编辑点位';
+            document.getElementById('locationName').value = location.name;
+            document.getElementById('locationCode').value = location.code;
+            document.getElementById('customerSelect').value = location.customerId;
+            document.getElementById('locationStatus').value = location.status;
+            document.getElementById('locationAddress').value = location.address;
+            document.getElementById('locationManager').value = location.manager || '';
+            document.getElementById('locationPhone').value = location.phone || '';
+            document.getElementById('locationRemark').value = location.remark || '';
+            document.getElementById('locationModal').classList.add('active');
+        }
+
+        // 保存点位
+        function saveLocation() {
+            const name = document.getElementById('locationName').value.trim();
+            const code = document.getElementById('locationCode').value.trim();
+            const customerId = document.getElementById('customerSelect').value;
+            const status = document.getElementById('locationStatus').value;
+            const address = document.getElementById('locationAddress').value.trim();
+            const manager = document.getElementById('locationManager').value.trim();
+            const phone = document.getElementById('locationPhone').value.trim();
+            const remark = document.getElementById('locationRemark').value.trim();
+
+            if (!name || !code || !customerId || !address) {
+                showToast('请填写必填项', 'error');
+                return;
+            }
+
+            // 获取客户名称
+            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+            const customer = customersData.find(c => c.id === customerId);
+
+            if (editingLocationId) {
+                // 编辑
+                const index = locationsData.findIndex(l => l.id === editingLocationId);
+                if (index !== -1) {
+                    locationsData[index] = {
+                        ...locationsData[index],
+                        name, code, customerId, customerName: customer?.name || '',
+                        status, address, manager, phone, remark
+                    };
+                }
+                showToast('点位信息已更新');
+            } else {
+                // 新增
+                const newId = 'L' + String(locationsData.length + 1).padStart(3, '0');
+                locationsData.push({
+                    id: newId,
+                    name, code, customerId, customerName: customer?.name || '',
+                    status, address, manager, phone, remark,
+                    createTime: new Date().toISOString().split('T')[0]
+                });
+                showToast('点位添加成功');
+            }
+
+            saveToStorage();
+            renderLocations();
+            updateStats();
+            closeModal();
+        }
+
+        // 删除点位
+        function deleteLocation(id) {
+            if (!confirm('确定要删除该点位吗？')) return;
+            
+            locationsData = locationsData.filter(l => l.id !== id);
+            saveToStorage();
+            renderLocations();
+            updateStats();
+            showToast('点位已删除');
+        }
+
+        // 切换侧边栏
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('locationModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

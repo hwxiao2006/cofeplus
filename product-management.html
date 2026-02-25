@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理</title>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            background: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 50px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 12px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #333;
+            padding: 8px 12px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .search-section {
+            background: #fff;
+            padding: 12px 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e8e8e8;
+            background: #f8f8f8;
+            border-radius: 20px;
+            font-size: 15px;
+            outline: none;
+            height: 42px;
+        }
+
+        .search-input::placeholder {
+            color: #aaa;
+        }
+
+        .search-btn {
+            padding: 0 20px;
+            background: #90EE90;
+            color: #333;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            height: 42px;
+            min-width: 70px;
+        }
+
+        .search-btn:active {
+            background: #7FDD7F;
+            transform: scale(0.96);
+        }
+
+        .section-header {
+            background: #f9f9f9;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #888;
+            border-bottom: 1px solid #eee;
+        }
+
+        .language-tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            background: none;
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            font-weight: 400;
+            min-height: 48px;
+        }
+
+        .tab-btn:active {
+            background: #f5f5f5;
+        }
+
+        .tab-btn.active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 3px;
+            background: #90EE90;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .product-list {
+            background: #fff;
+            padding-bottom: 20px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
+        }
+
+        .product-item:active {
+            background: #f9f9f9;
+        }
+
+        .product-image {
+            width: 68px;
+            height: 68px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-right: 14px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #ccc;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #f0f0f0;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-name-en {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .product-price {
+            font-size: 17px;
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            min-height: 36px;
+            min-width: 60px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-remove {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-remove:active {
+            background: #e0e0e0;
+        }
+
+        .btn-edit {
+            background: #90EE90;
+            color: #1a5c1a;
+            font-weight: 500;
+        }
+
+        .btn-edit:active {
+            background: #7FDD7F;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
+            animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:active {
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px 16px;
+            overflow-y: auto;
+            max-height: calc(85vh - 130px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s;
+            background: #fafafa;
+            height: 50px;
+        }
+
+        .form-input:focus {
+            border-color: #90EE90;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(144, 238, 144, 0.15);
+        }
+
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .image-upload:active {
+            border-color: #90EE90;
+            background: #f0fff0;
+        }
+
+        .image-upload.has-image {
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        .image-upload img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .upload-placeholder {
+            color: #999;
+        }
+
+        .upload-placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 8px;
+        }
+
+        .modal-footer {
+            padding: 12px 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #f5f5f5;
+            color: #666;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            min-height: 50px;
+        }
+
+        .btn-cancel:active {
+            background: #e8e8e8;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #4CAF50;
+            color: #fff;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            min-height: 50px;
+        }
+
+        .btn-save:active {
+            background: #45a049;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #bbb;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 15px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #333;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 24px;
+            font-size: 14px;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #4CAF50;
+        }
+
+        .toast.error {
+            background: #ff5252;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .remove-image-btn:active {
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* 底部安全区域适配 iPhone X+ */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .modal-footer {
+                padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            }
+        }
+        /* 跨页统一优化（桌面 + 移动） */
+        .header {
+            height: 56px;
+            padding: 10px 16px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                height: 52px;
+                padding: 8px 12px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .search-section {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .search-input,
+            .search-btn {
+                height: 40px;
+                font-size: 14px;
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span class="back-btn" onclick="goBack()">&lt;</span>
+        <h1 class="header-title">商品首页</h1>
+    </div>
+
+    <div class="language-tabs">
+        <button class="tab-btn active" onclick="switchLanguage('zh')" id="tabZh">中文</button>
+        <button class="tab-btn" onclick="switchLanguage('en')" id="tabEn">English</button>
+    </div>
+
+    <div class="search-section">
+        <input type="text" class="search-input" id="searchInput" placeholder="请输入点位号、商品名称查询">
+        <button class="search-btn" onclick="searchProducts()">搜索</button>
+    </div>
+
+    <div class="section-header" id="sectionHeader">
+        在售商品（RCK111）
+    </div>
+    <div class="product-list" id="productList">
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">编辑商品信息</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">商品图片</label>
+                    <div class="image-upload" id="imageUpload" onclick="document.getElementById('imageInput').click()">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <div class="upload-placeholder-icon">📷</div>
+                            <div class="upload-text">点击上传图片</div>
+                            <div class="upload-hint">支持 JPG、PNG 格式</div>
+                        </div>
+                        <img id="previewImage" style="display: none;">
+                        <button type="button" class="remove-image-btn" id="removeImageBtn" style="display: none;" onclick="removeImage(event)">×</button>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">商品名称（中文）</label>
+                    <input type="text" class="form-input" id="productName" placeholder="请输入中文名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">商品名称（英文）</label>
+                    <input type="text" class="form-input" id="productNameEn" placeholder="请输入英文名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">商品价格 (¥)</label>
+                    <input type="number" class="form-input" id="productPrice" step="0.1" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-save" onclick="saveProduct()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let products = [
+            { id: 1, name: '抹茶拿铁', nameEn: 'Matcha Latte', price: 9.9, image: '' },
+            { id: 2, name: '香草拿铁', nameEn: 'Vanilla Latte', price: 9.9, image: '' },
+            { id: 3, name: '榛果拿铁', nameEn: 'Hazelnut Latte', price: 9.9, image: '' },
+            { id: 4, name: '干卡布其诺', nameEn: 'Dry Cappuccino', price: 9.9, image: '' },
+            { id: 5, name: '卡布其诺', nameEn: 'Cappuccino', price: 9.9, image: '' },
+            { id: 6, name: '美式拿铁', nameEn: 'Americano Latte', price: 9.9, image: '' },
+            { id: 7, name: '东南亚白咖啡', nameEn: 'Southeast Asian White Coffee', price: 9.9, image: '' },
+            { id: 8, name: '湿卡布其诺', nameEn: 'Wet Cappuccino', price: 9.9, image: '' },
+            { id: 9, name: '意式拿铁', nameEn: 'Italian Latte', price: 9.9, image: '' },
+            { id: 10, name: '鲜牛奶', nameEn: 'Fresh Milk', price: 9.9, image: '' },
+            { id: 11, name: '法式欧蕾', nameEn: 'French Au Lait', price: 9.9, image: '' }
+        ];
+
+        let currentEditId = null;
+        let uploadedImage = null;
+        let currentLanguage = 'zh';
+
+        window.onload = function() {
+            renderProducts(products);
+        };
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            document.getElementById('tabZh').classList.toggle('active', lang === 'zh');
+            document.getElementById('tabEn').classList.toggle('active', lang === 'en');
+            
+            document.getElementById('sectionHeader').textContent = lang === 'zh' ? '在售商品（RCK111）' : 'Products (RCK111)';
+            
+            renderProducts(products);
+        }
+
+        function renderProducts(productList) {
+            const container = document.getElementById('productList');
+            
+            if (productList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div class="empty-text">暂无商品</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = productList.map(product => {
+                const displayName = currentLanguage === 'zh' ? product.name : (product.nameEn || product.name);
+                return `
+                <div class="product-item" data-id="${product.id}" onclick="goToDetail(${product.id})">
+                    <div class="product-image" onclick="event.stopPropagation()">
+                        ${product.image ? `<img src="${product.image}" alt="${displayName}">` : '📷'}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${displayName}</div>
+                    </div>
+                    <div class="product-price">¥${product.price.toFixed(1)}</div>
+                    <div class="product-actions" onclick="event.stopPropagation()">
+                        <button class="btn btn-remove" onclick="removeProduct(${product.id})">${currentLanguage === 'zh' ? '下架' : 'Remove'}</button>
+                        <button class="btn btn-edit" onclick="openEditModal(${product.id})">${currentLanguage === 'zh' ? '编辑' : 'Edit'}</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function goToDetail(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const displayName = currentLanguage === 'zh' ? product.name : (product.nameEn || product.name);
+            const params = new URLSearchParams({
+                id: product.id,
+                name: displayName,
+                price: product.price
+            });
+            window.location.href = `product-detail.html?${params.toString()}`;
+        }
+
+        function searchProducts() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!keyword) {
+                renderProducts(products);
+                return;
+            }
+
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(keyword) || 
+                (p.nameEn && p.nameEn.toLowerCase().includes(keyword)) ||
+                p.id.toString().includes(keyword)
+            );
+            
+            renderProducts(filtered);
+            const msg = currentLanguage === 'zh' ? `找到 ${filtered.length} 个商品` : `Found ${filtered.length} products`;
+            showToast(msg, 'success');
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+
+        function removeProduct(id) {
+            if (confirm('确定要下架该商品吗？')) {
+                products = products.filter(p => p.id !== id);
+                renderProducts(products);
+                showToast('商品已下架', 'success');
+            }
+        }
+
+        function openEditModal(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            currentEditId = id;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productNameEn').value = product.nameEn || '';
+            document.getElementById('productPrice').value = product.price;
+            
+            uploadedImage = product.image || null;
+            updateImagePreview(uploadedImage);
+            
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditId = null;
+            uploadedImage = null;
+            document.getElementById('productName').value = '';
+            document.getElementById('productNameEn').value = '';
+            document.getElementById('productPrice').value = '';
+            updateImagePreview(null);
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('请选择图片文件', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('图片大小不能超过5MB', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImage = e.target.result;
+                updateImagePreview(uploadedImage);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateImagePreview(imageSrc) {
+            const uploadDiv = document.getElementById('imageUpload');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const preview = document.getElementById('previewImage');
+            const removeBtn = document.getElementById('removeImageBtn');
+
+            if (imageSrc) {
+                uploadDiv.classList.add('has-image');
+                placeholder.style.display = 'none';
+                preview.src = imageSrc;
+                preview.style.display = 'block';
+                removeBtn.style.display = 'flex';
+            } else {
+                uploadDiv.classList.remove('has-image');
+                placeholder.style.display = 'block';
+                preview.style.display = 'none';
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function removeImage(event) {
+            event.stopPropagation();
+            uploadedImage = null;
+            updateImagePreview(null);
+            document.getElementById('imageInput').value = '';
+        }
+
+        function saveProduct() {
+            if (!currentEditId) return;
+
+            const name = document.getElementById('productName').value.trim();
+            const nameEn = document.getElementById('productNameEn').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            
+            if (!name) {
+                showToast('请输入商品中文名称', 'error');
+                return;
+            }
+            
+            if (isNaN(price) || price < 0) {
+                showToast('请输入有效的价格', 'error');
+                return;
+            }
+
+            const productIndex = products.findIndex(p => p.id === currentEditId);
+            if (productIndex !== -1) {
+                products[productIndex].name = name;
+                products[productIndex].nameEn = nameEn;
+                products[productIndex].price = price;
+                if (uploadedImage !== undefined) {
+                    products[productIndex].image = uploadedImage;
+                }
+                
+                renderProducts(products);
+                closeModal();
+                showToast('商品信息已更新', 'success');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function goBack() {
+            if (confirm('确定要返回吗？未保存的更改将丢失。')) {
+                window.history.back();
+            }
+        }
+
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

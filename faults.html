@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>故障列表 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ECDC4;
+            --primary-light: #e8f8f7;
+            --primary-dark: #3dbdb4;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0b132b;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            color: #dbeafe;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: rgba(219, 234, 254, 0.55);
+            padding-left: 52px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: rgba(219, 234, 254, 0.88);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: rgba(46, 196, 182, 0.14);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(130deg, rgba(46, 196, 182, 0.38), rgba(56, 189, 248, 0.38));
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .header-desc {
+            margin-top: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            height: 40px;
+            border-radius: 12px;
+            padding: 0 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .tabs-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 14px 0 40px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .tab {
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 12px;
+            padding: 9px 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .summary {
+            margin-top: 10px;
+            padding: 0 4px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            text-align: right;
+        }
+
+        .list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
+            gap: 16px;
+        }
+
+        .fault-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 14px 16px 12px;
+        }
+
+        .fault-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 24px;
+        }
+
+        .fault-row {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+            align-items: start;
+        }
+
+        .fault-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .fault-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .fault-value {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.45;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .org-status {
+            margin-top: 12px;
+            padding: 12px 0 2px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .org-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .org-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .org-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .org-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+        }
+
+        .org-chip.normal .org-dot {
+            background: #2ec4b6;
+        }
+
+        .org-chip.lost .org-dot {
+            background: #cbd5e1;
+        }
+
+        .org-chip.fault .org-dot {
+            background: #ef4444;
+        }
+
+        .btn {
+            flex: 1;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-ghost {
+            background: #fff;
+            border-color: #bce9e5;
+            color: #49b8b1;
+        }
+
+        .empty {
+            grid-column: 1 / -1;
+            background: #fff;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            color: var(--text-tertiary);
+            text-align: center;
+            padding: 48px 16px;
+        }
+
+        .mobile-header {
+            display: none;
+            background: #fff;
+            height: 56px;
+            padding: 0 16px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 99;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .header-title {
+                font-size: 32px;
+            }
+
+            .list {
+                grid-template-columns: 1fr;
+            }
+
+            .fault-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .header {
+                position: static;
+                padding: 14px 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-title {
+                font-size: 30px;
+            }
+
+            .header-desc {
+                margin-top: 4px;
+                font-size: 14px;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+
+            .btn-icon {
+                width: 100%;
+            }
+
+            .content {
+                padding: 14px;
+                gap: 12px;
+            }
+
+            .tabs {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .search-row {
+                margin-bottom: 8px;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .tab {
+                text-align: center;
+            }
+
+            .fault-row {
+                grid-template-columns: 86px 1fr;
+                gap: 8px;
+                padding: 10px 12px;
+            }
+
+            .fault-label,
+            .fault-value {
+                font-size: 12px;
+            }
+
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header,
+            .overlay {
+                display: none !important;
+            }
+        }
+        /* 跨页统一优化（桌面 + 移动） */
+        .content {
+            width: 100%;
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+
+        .header {
+            padding: 18px 28px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 14px 14px 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-title {
+                font-size: 30px;
+                line-height: 1;
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .fault-card,
+            .fault-list,
+            .filter-section,
+            .stats-bar {
+                border-radius: 14px;
+                box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
+                    <a href="menu.html?tab=menu" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
+                    <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
+                    <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
+                    <a href="faults.html" class="nav-item active"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <strong>设备速览</strong>
+            </div>
+
+            <header class="header">
+                <div>
+                    <h1 class="header-title">设备速览</h1>
+                    <div class="header-desc">设备状态与机构详情</div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon" onclick="window.location.href='devices.html'">返回设备页</button>
+                </div>
+            </header>
+
+            <section class="content">
+                <div class="tabs-card">
+                    <div class="search-row">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="deviceSearch" class="search-input" placeholder="搜索设备编号或点位名称" oninput="handleSearch()">
+                        </div>
+                    </div>
+                    <div class="tabs" id="tabs"></div>
+                    <div class="summary" id="summary"></div>
+                </div>
+                <div class="list" id="list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const tabConfig = [
+            { key: 'normal', label: '正常' },
+            { key: 'shortage', label: '缺料' },
+            { key: 'fault', label: '故障' }
+        ];
+
+        let currentTab = 'fault';
+        let searchKeyword = '';
+
+        const faults = [
+            {
+                id: 'RCK019',
+                siteName: 'COFE+徐汇区行政服务中心*',
+                deviceStatus: '离线',
+                sellStatus: '已停售',
+                fridgeTemp: '2.0度 (2026-01-31 09:54:47)',
+                beanTemp: '0.0度 (2026-01-31 09:54:47)',
+                craftTemp: '18.1度 (2026-01-31 09:54:47)',
+                beanHumidity: '0% (2026-01-31 09:54:47)',
+                updatedAt: '-',
+                upperSoftware: '-',
+                orderSoftware: '-',
+                orderSystem: '-',
+                orderKernel: '-',
+                adVersion: '-',
+                firmwareVersion: '-',
+                status: 'fault',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' },
+                    { name: '制冰机', status: 'lost', label: '失联' },
+                    { name: '前道浆', status: 'normal', label: '正常' },
+                    { name: '压盖器', status: 'normal', label: '正常' },
+                    { name: '出杯口1', status: 'normal', label: '正常' },
+                    { name: '出杯口2', status: 'normal', label: '正常' },
+                    { name: '温湿度', status: 'normal', label: '正常' },
+                    { name: '混水水路', status: 'fault', label: '故障' }
+                ]
+            },
+            {
+                id: 'RCK021',
+                siteName: 'COFE+上海政务服务中心A区',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '3.2度 (2026-01-31 10:21:11)',
+                beanTemp: '18.8度 (2026-01-31 10:21:11)',
+                craftTemp: '19.2度 (2026-01-31 10:21:11)',
+                beanHumidity: '21% (2026-01-31 10:21:11)',
+                updatedAt: '2026-01-31 10:21:11',
+                upperSoftware: 'v2.1.6',
+                orderSoftware: 'v1.6.2',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.0',
+                firmwareVersion: 'FW-3.4.9',
+                status: 'normal',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' }
+                ]
+            },
+            {
+                id: 'RCK030',
+                siteName: 'COFE+浦东企业服务大厅',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '4.8度 (2026-01-31 09:11:09)',
+                beanTemp: '20.1度 (2026-01-31 09:11:09)',
+                craftTemp: '21.2度 (2026-01-31 09:11:09)',
+                beanHumidity: '48% (2026-01-31 09:11:09)',
+                updatedAt: '2026-01-31 09:11:09',
+                upperSoftware: 'v2.1.6',
+                orderSoftware: 'v1.6.2',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.0',
+                firmwareVersion: 'FW-3.4.9',
+                status: 'shortage',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' }
+                ]
+            },
+            {
+                id: 'RCK045',
+                siteName: 'COFE+闵行政务中心2号厅',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '3.9度 (2026-01-31 11:32:20)',
+                beanTemp: '19.4度 (2026-01-31 11:32:20)',
+                craftTemp: '20.0度 (2026-01-31 11:32:20)',
+                beanHumidity: '35% (2026-01-31 11:32:20)',
+                updatedAt: '2026-01-31 11:32:20',
+                upperSoftware: 'v2.1.7',
+                orderSoftware: 'v1.6.3',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.2',
+                firmwareVersion: 'FW-3.5.0',
+                status: 'normal',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' },
+                    { name: '制冰机', status: 'normal', label: '正常' }
+                ]
+            },
+            {
+                id: 'RCK052',
+                siteName: 'COFE+静安企业服务中心B1',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '5.1度 (2026-01-31 11:08:03)',
+                beanTemp: '20.5度 (2026-01-31 11:08:03)',
+                craftTemp: '21.6度 (2026-01-31 11:08:03)',
+                beanHumidity: '52% (2026-01-31 11:08:03)',
+                updatedAt: '2026-01-31 11:08:03',
+                upperSoftware: 'v2.1.7',
+                orderSoftware: 'v1.6.3',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.2',
+                firmwareVersion: 'FW-3.5.0',
+                status: 'shortage',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' },
+                    { name: '前道浆', status: 'fault', label: '故障' }
+                ]
+            },
+            {
+                id: 'RCK061',
+                siteName: 'COFE+虹桥商务中心A塔',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '4.4度 (2026-01-31 12:02:43)',
+                beanTemp: '19.0度 (2026-01-31 12:02:43)',
+                craftTemp: '19.8度 (2026-01-31 12:02:43)',
+                beanHumidity: '31% (2026-01-31 12:02:43)',
+                updatedAt: '2026-01-31 12:02:43',
+                upperSoftware: 'v2.1.7',
+                orderSoftware: 'v1.6.3',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.2',
+                firmwareVersion: 'FW-3.5.0',
+                status: 'normal',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' }
+                ]
+            },
+            {
+                id: 'RCK073',
+                siteName: 'COFE+宝山政务服务大厅',
+                deviceStatus: '离线',
+                sellStatus: '已停售',
+                fridgeTemp: '2.1度 (2026-01-31 08:44:19)',
+                beanTemp: '0.0度 (2026-01-31 08:44:19)',
+                craftTemp: '17.5度 (2026-01-31 08:44:19)',
+                beanHumidity: '0% (2026-01-31 08:44:19)',
+                updatedAt: '-',
+                upperSoftware: '-',
+                orderSoftware: '-',
+                orderSystem: '-',
+                orderKernel: '-',
+                adVersion: '-',
+                firmwareVersion: '-',
+                status: 'fault',
+                orgStatus: [
+                    { name: '咖啡机', status: 'lost', label: '失联' },
+                    { name: '机械臂', status: 'lost', label: '失联' },
+                    { name: '落杯器', status: 'normal', label: '正常' },
+                    { name: '制冰机', status: 'fault', label: '故障' }
+                ]
+            },
+            {
+                id: 'RCK088',
+                siteName: 'COFE+嘉定市民服务中心',
+                deviceStatus: '在线',
+                sellStatus: '售卖中',
+                fridgeTemp: '5.6度 (2026-01-31 09:38:50)',
+                beanTemp: '21.4度 (2026-01-31 09:38:50)',
+                craftTemp: '22.2度 (2026-01-31 09:38:50)',
+                beanHumidity: '58% (2026-01-31 09:38:50)',
+                updatedAt: '2026-01-31 09:38:50',
+                upperSoftware: 'v2.1.6',
+                orderSoftware: 'v1.6.2',
+                orderSystem: 'Android 12',
+                orderKernel: '5.10.120',
+                adVersion: 'v1.2.1',
+                firmwareVersion: 'FW-3.4.9',
+                status: 'shortage',
+                orgStatus: [
+                    { name: '咖啡机', status: 'normal', label: '正常' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' },
+                    { name: '豆仓', status: 'fault', label: '故障' }
+                ]
+            },
+            {
+                id: 'RCK096',
+                siteName: 'COFE+长宁政务大厅',
+                deviceStatus: '离线',
+                sellStatus: '已停售',
+                fridgeTemp: '1.7度 (2026-01-31 07:56:12)',
+                beanTemp: '0.0度 (2026-01-31 07:56:12)',
+                craftTemp: '16.9度 (2026-01-31 07:56:12)',
+                beanHumidity: '0% (2026-01-31 07:56:12)',
+                updatedAt: '-',
+                upperSoftware: '-',
+                orderSoftware: '-',
+                orderSystem: '-',
+                orderKernel: '-',
+                adVersion: '-',
+                firmwareVersion: '-',
+                status: 'fault',
+                orgStatus: [
+                    { name: '咖啡机', status: 'fault', label: '故障' },
+                    { name: '机械臂', status: 'normal', label: '正常' },
+                    { name: '落杯器', status: 'normal', label: '正常' }
+                ]
+            }
+        ];
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function renderTabs() {
+            const tabWrap = document.getElementById('tabs');
+            tabWrap.innerHTML = tabConfig.map(tab => (
+                `<button class="tab ${tab.key === currentTab ? 'active' : ''}" onclick="switchTab('${tab.key}')">${tab.label}</button>`
+            )).join('');
+        }
+
+        function getFilteredFaults() {
+            const keyword = searchKeyword.trim().toLowerCase();
+            return faults.filter(item => {
+                if (item.status !== currentTab) return false;
+                if (!keyword) return true;
+                return item.id.toLowerCase().includes(keyword) || item.siteName.toLowerCase().includes(keyword);
+            });
+        }
+
+        function handleSearch() {
+            searchKeyword = document.getElementById('deviceSearch').value || '';
+            renderSummary();
+            renderList();
+        }
+
+        function renderSummary() {
+            const list = getFilteredFaults();
+            document.getElementById('summary').textContent = `总计 ${list.length} 台设备`;
+        }
+
+        function renderList() {
+            const container = document.getElementById('list');
+            const data = getFilteredFaults();
+            if (!data.length) {
+                container.innerHTML = '<div class="empty">当前状态下暂无故障单</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <article class="fault-card">
+                    <div class="fault-grid">
+                        <div class="fault-row"><div class="fault-label">设备编号</div><div class="fault-value">${item.id}</div></div>
+                        <div class="fault-row"><div class="fault-label">点位名称</div><div class="fault-value">${item.siteName}</div></div>
+                        <div class="fault-row"><div class="fault-label">设备状态</div><div class="fault-value">${item.deviceStatus}</div></div>
+                        <div class="fault-row"><div class="fault-label">停售状态</div><div class="fault-value">${item.sellStatus}</div></div>
+                        <div class="fault-row"><div class="fault-label">冰箱温度</div><div class="fault-value">${item.fridgeTemp}</div></div>
+                        <div class="fault-row"><div class="fault-label">豆仓温度</div><div class="fault-value">${item.beanTemp}</div></div>
+                        <div class="fault-row"><div class="fault-label">制作仓温度</div><div class="fault-value">${item.craftTemp}</div></div>
+                        <div class="fault-row"><div class="fault-label">豆仓湿度</div><div class="fault-value">${item.beanHumidity}</div></div>
+                        <div class="fault-row"><div class="fault-label">更新时间</div><div class="fault-value">${item.updatedAt}</div></div>
+                        <div class="fault-row"><div class="fault-label">上位机软件</div><div class="fault-value">${item.upperSoftware}</div></div>
+                        <div class="fault-row"><div class="fault-label">点单屏软件</div><div class="fault-value">${item.orderSoftware}</div></div>
+                        <div class="fault-row"><div class="fault-label">点单屏系统</div><div class="fault-value">${item.orderSystem}</div></div>
+                        <div class="fault-row"><div class="fault-label">点单屏内核</div><div class="fault-value">${item.orderKernel}</div></div>
+                        <div class="fault-row"><div class="fault-label">广告屏版本</div><div class="fault-value">${item.adVersion}</div></div>
+                        <div class="fault-row"><div class="fault-label">固件版本</div><div class="fault-value">${item.firmwareVersion}</div></div>
+                    </div>
+                    <div class="org-status">
+                        <div class="org-title">机构状态</div>
+                        <div class="org-grid">
+                            ${(item.orgStatus || []).map(part => `
+                                <span class="org-chip ${part.status}">
+                                    <span class="org-dot"></span>
+                                    <span>${part.label} ${part.name}</span>
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            renderTabs();
+            renderSummary();
+            renderList();
+        }
+
+        function viewFault(id) {
+            const target = faults.find(item => item.id === id);
+            if (!target) return;
+            alert(`设备 ${target.id}\n点位: ${target.siteName}\n状态: ${tabConfig.find(t => t.key === target.status).label}`);
+        }
+
+        renderTabs();
+        renderSummary();
+        renderList();
+    </script>
+</body>
+</html>

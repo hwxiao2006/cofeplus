@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>客户管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding-left: 52px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* 主内容 */
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.35);
+        }
+
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue { background: #e0f2fe; }
+        .stat-icon.green { background: #d1fae5; }
+        .stat-icon.orange { background: #fef3c7; }
+        .stat-icon.purple { background: #f3e8ff; }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 客户列表 */
+        .customer-list {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .customer-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s;
+        }
+
+        .customer-item:hover {
+            background: #fafafa;
+        }
+
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+
+        .customer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .customer-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .customer-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .customer-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .customer-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .customer-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background: var(--bg-body);
+            color: var(--text-tertiary);
+        }
+
+        .customer-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            padding: 20px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-default {
+            background: var(--bg-body);
+            color: var(--text-secondary);
+        }
+
+        .btn-default:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* 移动端 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
+                    <a href="menu.html" class="nav-item"><span class="nav-icon">📋</span><span>菜单</span></a>
+                    <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
+                    <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item active"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <strong>客户管理</strong>
+            </div>
+
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">客户管理</h1>
+                    <span class="header-desc">管理商户信息和合作关系</span>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <span>➕</span>
+                        <span>新增客户</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalCustomers">0</div>
+                            <div class="stat-label">客户总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="activeCustomers">0</div>
+                            <div class="stat-label">合作中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">📍</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalLocations">0</div>
+                            <div class="stat-label">点位总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">⚙️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalDevices">0</div>
+                            <div class="stat-label">设备总数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索客户名称、联系人、电话..." oninput="searchCustomers()">
+                </div>
+
+                <!-- 客户列表 -->
+                <div class="customer-list" id="customerList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增/编辑客户模态框 -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">新增客户</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">客户名称 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="customerName" placeholder="输入客户公司名称">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">联系人 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="contactName" placeholder="输入联系人姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="contactPhone" placeholder="输入联系电话">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">客户类型</label>
+                    <select class="form-select" id="customerType">
+                        <option value="direct">直营客户</option>
+                        <option value="agent">代理商</option>
+                        <option value="franchise">加盟商</option>
+                        <option value="partner">合作伙伴</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">客户地址</label>
+                    <input type="text" class="form-input" id="customerAddress" placeholder="输入客户地址">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注</label>
+                    <textarea class="form-textarea" id="customerRemark" placeholder="输入备注信息"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveCustomer()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 客户数据
+        let customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+        let editingCustomerId = null;
+
+        // 默认客户数据
+        const defaultCustomers = [
+            { id: 'C001', name: '星巴克咖啡', type: 'direct', contact: '张经理', phone: '13800138001', address: '上海市浦东新区', status: 'active', createTime: '2024-01-15', remark: '重点客户' },
+            { id: 'C002', name: '瑞幸咖啡', type: 'direct', contact: '李总监', phone: '13800138002', address: '北京市朝阳区', status: 'active', createTime: '2024-02-20', remark: '' },
+            { id: 'C003', name: '太平洋咖啡', type: 'agent', contact: '王经理', phone: '13800138003', address: '广州市天河区', status: 'active', createTime: '2024-03-10', remark: '' },
+            { id: 'C004', name: 'Costa咖啡', type: 'franchise', contact: '赵总', phone: '13800138004', address: '深圳市南山区', status: 'inactive', createTime: '2024-04-05', remark: '暂停合作' },
+        ];
+
+        // 初始化
+        function init() {
+            if (customersData.length === 0) {
+                customersData = [...defaultCustomers];
+                saveToStorage();
+            }
+            renderCustomers();
+            updateStats();
+        }
+
+        // 保存到 localStorage
+        function saveToStorage() {
+            localStorage.setItem('customersData', JSON.stringify(customersData));
+        }
+
+        // 更新统计
+        function updateStats() {
+            const total = customersData.length;
+            const active = customersData.filter(c => c.status === 'active').length;
+            
+            // 从设备数据计算点位和设备数
+            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            const locations = new Set(devicesData.map(d => d.location)).size;
+            
+            document.getElementById('totalCustomers').textContent = total;
+            document.getElementById('activeCustomers').textContent = active;
+            document.getElementById('totalLocations').textContent = locations || 8;
+            document.getElementById('totalDevices').textContent = devicesData.length || 15;
+        }
+
+        // 渲染客户列表
+        function renderCustomers(filterText = '') {
+            const list = document.getElementById('customerList');
+            
+            let filtered = customersData;
+            if (filterText) {
+                const lower = filterText.toLowerCase();
+                filtered = customersData.filter(c => 
+                    c.name.toLowerCase().includes(lower) ||
+                    c.contact.toLowerCase().includes(lower) ||
+                    c.phone.includes(lower)
+                );
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🏢</div>
+                        <div>暂无客户数据</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const typeMap = {
+                'direct': '直营客户',
+                'agent': '代理商',
+                'franchise': '加盟商',
+                'partner': '合作伙伴'
+            };
+
+            list.innerHTML = filtered.map(customer => `
+                <div class="customer-item">
+                    <div class="customer-avatar">${customer.name.charAt(0)}</div>
+                    <div class="customer-info">
+                        <div class="customer-name">${customer.name}</div>
+                        <div class="customer-meta">
+                            <span>👤 ${customer.contact}</span>
+                            <span>📞 ${customer.phone}</span>
+                            <span>🏷️ ${typeMap[customer.type] || customer.type}</span>
+                        </div>
+                    </div>
+                    <div class="customer-status ${customer.status === 'active' ? 'status-active' : 'status-inactive'}">
+                        ${customer.status === 'active' ? '●' : '○'} ${customer.status === 'active' ? '合作中' : '已暂停'}
+                    </div>
+                    <div class="customer-actions">
+                        <button class="btn-icon" onclick="editCustomer('${customer.id}')" title="编辑">✏️</button>
+                        <button class="btn-icon" onclick="deleteCustomer('${customer.id}')" title="删除">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 搜索客户
+        function searchCustomers() {
+            const text = document.getElementById('searchInput').value;
+            renderCustomers(text);
+        }
+
+        // 打开模态框
+        function openModal() {
+            editingCustomerId = null;
+            document.getElementById('modalTitle').textContent = '新增客户';
+            document.getElementById('customerName').value = '';
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('customerType').value = 'direct';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('customerRemark').value = '';
+            document.getElementById('customerModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('customerModal').classList.remove('active');
+            editingCustomerId = null;
+        }
+
+        // 编辑客户
+        function editCustomer(id) {
+            const customer = customersData.find(c => c.id === id);
+            if (!customer) return;
+
+            editingCustomerId = id;
+            document.getElementById('modalTitle').textContent = '编辑客户';
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('contactName').value = customer.contact;
+            document.getElementById('contactPhone').value = customer.phone;
+            document.getElementById('customerType').value = customer.type;
+            document.getElementById('customerAddress').value = customer.address || '';
+            document.getElementById('customerRemark').value = customer.remark || '';
+            document.getElementById('customerModal').classList.add('active');
+        }
+
+        // 保存客户
+        function saveCustomer() {
+            const name = document.getElementById('customerName').value.trim();
+            const contact = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            const type = document.getElementById('customerType').value;
+            const address = document.getElementById('customerAddress').value.trim();
+            const remark = document.getElementById('customerRemark').value.trim();
+
+            if (!name || !contact || !phone) {
+                showToast('请填写必填项', 'error');
+                return;
+            }
+
+            if (editingCustomerId) {
+                // 编辑
+                const index = customersData.findIndex(c => c.id === editingCustomerId);
+                if (index !== -1) {
+                    customersData[index] = {
+                        ...customersData[index],
+                        name, contact, phone, type, address, remark
+                    };
+                }
+                showToast('客户信息已更新');
+            } else {
+                // 新增
+                const newId = 'C' + String(customersData.length + 1).padStart(3, '0');
+                customersData.push({
+                    id: newId,
+                    name, contact, phone, type, address, remark,
+                    status: 'active',
+                    createTime: new Date().toISOString().split('T')[0]
+                });
+                showToast('客户添加成功');
+            }
+
+            saveToStorage();
+            renderCustomers();
+            updateStats();
+            closeModal();
+        }
+
+        // 删除客户
+        function deleteCustomer(id) {
+            if (!confirm('确定要删除该客户吗？')) return;
+            
+            customersData = customersData.filter(c => c.id !== id);
+            saveToStorage();
+            renderCustomers();
+            updateStats();
+            showToast('客户已删除');
+        }
+
+        // 切换侧边栏
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('customerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>添加物料 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f5f5f5;
+            --bg-card: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 50px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 12px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 主布局 */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 50px - 70px);
+            overflow: hidden;
+        }
+
+        /* 左侧分类栏 */
+        .category-sidebar {
+            width: 100px;
+            background: #f8f8f8;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .category-item {
+            padding: 16px 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .category-item:hover {
+            background: #f0f0f0;
+        }
+
+        .category-item.active {
+            background: #fff;
+            color: var(--primary-dark);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 右侧物料列表 */
+        .material-list {
+            flex: 1;
+            overflow-y: auto;
+            background: #fff;
+            padding-bottom: 20px;
+        }
+
+        .category-section {
+            padding: 12px 16px;
+        }
+
+        .category-divider {
+            text-align: center;
+            padding: 16px 0;
+            color: var(--text-tertiary);
+            font-size: 13px;
+            position: relative;
+        }
+
+        .category-divider::before,
+        .category-divider::after {
+            content: '*';
+            margin: 0 8px;
+            color: #ddd;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            background: #fff;
+        }
+
+        .material-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .material-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .material-stock {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* 数量调节器 */
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .qty-btn.minus {
+            border-radius: 4px 0 0 4px;
+            border-right: none;
+        }
+
+        .qty-btn.plus {
+            border-radius: 0 4px 4px 0;
+            border-left: none;
+            color: var(--primary);
+        }
+
+        .qty-btn:hover {
+            background: #f8f8f8;
+        }
+
+        .qty-btn:active {
+            background: #f0f0f0;
+        }
+
+        .qty-btn.plus:hover {
+            background: var(--primary-light);
+        }
+
+        .qty-input {
+            width: 50px;
+            height: 32px;
+            border: 1px solid var(--border);
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* 底部操作栏 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+
+        .selected-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .selected-count {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .complete-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 100px;
+        }
+
+        .complete-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .complete-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        /* 选中物料展开面板 */
+        .selected-panel {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            max-height: 50vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 99;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+        }
+
+        .selected-panel.show {
+            transform: translateY(0);
+        }
+
+        .selected-panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+        }
+
+        .selected-panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .selected-panel-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .selected-item-info {
+            flex: 1;
+        }
+
+        .selected-item-name {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .selected-item-qty {
+            font-size: 12px;
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .selected-item-remove {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .expand-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 4px;
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        /* 确认弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 140px);
+        }
+
+        .selected-summary {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .summary-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item-name {
+            color: var(--text-primary);
+        }
+
+        .summary-item-qty {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: 12px 20px 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-default {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .btn-confirm {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 98;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <h1 class="header-title">添加物料</h1>
+        <div class="device-info" id="headerDeviceInfo" style="position: absolute; right: 16px; font-size: 12px; color: var(--text-tertiary);">
+            <!-- 动态显示设备 -->
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <!-- 左侧分类栏 -->
+        <aside class="category-sidebar" id="categorySidebar">
+            <!-- 动态生成分类 -->
+        </aside>
+
+        <!-- 右侧物料列表 -->
+        <main class="material-list" id="materialList">
+            <!-- 动态生成物料 -->
+        </main>
+    </div>
+
+    <!-- 已选物料面板 -->
+    <div class="overlay" id="overlay" onclick="toggleSelectedPanel()"></div>
+    <div class="selected-panel" id="selectedPanel">
+        <div class="selected-panel-header">
+            <span class="selected-panel-title">已选物料</span>
+            <button class="selected-panel-close" onclick="toggleSelectedPanel()">✕</button>
+        </div>
+        <div id="selectedList">
+            <!-- 动态生成已选物料 -->
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-bar">
+        <div class="selected-info">
+            已选择 <span class="selected-count" id="selectedCount">0</span> 个物料
+            <span class="expand-hint" id="expandHint" onclick="toggleSelectedPanel()" style="display: none;">
+                展开 ▼
+            </span>
+        </div>
+        <button class="complete-btn" id="completeBtn" onclick="completeRefill()">完成</button>
+    </div>
+
+    <!-- 发货确认弹窗 -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">确认发货信息</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="selected-summary" id="selectedSummary">
+                    <!-- 动态显示已选物料 -->
+                </div>
+                <div class="form-group">
+                    <label class="form-label">发货时间 <span class="required">*</span></label>
+                    <input type="datetime-local" class="form-input" id="deliveryTime">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注</label>
+                    <textarea class="form-textarea" id="deliveryNote" placeholder="输入发货备注信息..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeConfirmModal()">取消</button>
+                <button class="btn btn-confirm" onclick="confirmDelivery()">生成发货单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 物料数据，按分类组织
+        const materialsData = {
+            '奶&咖啡&水': [
+                { name: "鲜牛奶", code: "10010001", index: 1, remaining: 5000, unit: "ml", max: 10000 },
+                { name: "咖啡豆", code: "10010002", index: 2, remaining: 2000, unit: "g", max: 5000 },
+                { name: "纯净水", code: "10010003", index: 3, remaining: 15000, unit: "ml", max: 20000 },
+            ],
+            '糖浆': [
+                { name: "甘蔗冰糖糖浆", code: "20010001", index: 11, remaining: 800, unit: "ml", max: 2000 },
+                { name: "香草风味糖浆", code: "20010002", index: 12, remaining: 600, unit: "ml", max: 2000 },
+                { name: "榛果风味糖浆", code: "20010003", index: 13, remaining: 450, unit: "ml", max: 2000 },
+                { name: "热红酒糖浆", code: "20010004", index: 14, remaining: 300, unit: "ml", max: 1000 },
+            ],
+            '前/后道粉': [
+                { name: "前置抹茶粉", code: "74160100", index: 8, remaining: 135, unit: "g", max: 250 },
+                { name: "前置可可粉", code: "74160200", index: 7, remaining: 435, unit: "g", max: 500 },
+                { name: "椰蓉丝-4", code: "76150500", index: 27, remaining: 0, unit: "g", max: 500 },
+                { name: "麦片颗粒-2", code: "76190100", index: 25, remaining: 0, unit: "g", max: 500 },
+                { name: "榛果颗粒-1", code: "76150200", index: 24, remaining: 0, unit: "g", max: 500 },
+                { name: "香草粉-4", code: "74180100", index: 23, remaining: 0, unit: "g", max: 500 },
+                { name: "玉桂粉-1", code: "76170100", index: 20, remaining: 0, unit: "g", max: 500 },
+                { name: "抹茶粉-2", code: "74160101", index: 21, remaining: 0, unit: "g", max: 500 },
+                { name: "可可粉-3", code: "74150400", index: 22, remaining: 0, unit: "g", max: 500 },
+            ],
+            '包材': [
+                { name: "纸杯-16oz", code: "81020100", index: 5, remaining: 0, unit: "个", max: 80 },
+                { name: "纸杯-12oz", code: "81020101", index: 51, remaining: 60, unit: "个", max: 80 },
+                { name: "杯盖1", code: "83020300", index: 54, remaining: 100, unit: "个", max: 100 },
+                { name: "杯盖2", code: "83020301", index: 55, remaining: 80, unit: "个", max: 100 },
+                { name: "杯塞盒", code: "83030100", index: 56, remaining: 200, unit: "个", max: 500 },
+                { name: "吸管", code: "83040100", index: 57, remaining: 300, unit: "根", max: 500 },
+                { name: "杯套", code: "83050100", index: 58, remaining: 150, unit: "个", max: 300 },
+                { name: "纸袋", code: "83060100", index: 59, remaining: 80, unit: "个", max: 200 },
+            ],
+            '辅材': [
+                { name: "清洁布", code: "91010100", index: 91, remaining: 20, unit: "条", max: 50 },
+                { name: "消毒湿巾", code: "91010200", index: 92, remaining: 15, unit: "包", max: 30 },
+                { name: "一次性手套", code: "91010300", index: 93, remaining: 8, unit: "盒", max: 20 },
+                { name: "垃圾袋", code: "91010400", index: 94, remaining: 5, unit: "卷", max: 10 },
+            ],
+            '耗材': [
+                { name: "洗机药水", code: "92010100", index: 81, remaining: 500, unit: "ml", max: 1000 },
+                { name: "洗机药丸", code: "92010200", index: 82, remaining: 30, unit: "颗", max: 50 },
+                { name: "驱虫药水", code: "92010300", index: 83, remaining: 200, unit: "ml", max: 500 },
+                { name: "过滤棉", code: "92010400", index: 84, remaining: 5, unit: "片", max: 10 },
+                { name: "密封圈", code: "92010500", index: 85, remaining: 3, unit: "个", max: 10 },
+            ],
+            '奶粉': [
+                { name: "全脂奶粉", code: "30010001", index: 31, remaining: 2000, unit: "g", max: 5000 },
+                { name: "脱脂奶粉", code: "30010002", index: 32, remaining: 1500, unit: "g", max: 5000 },
+                { name: "燕麦奶", code: "30010003", index: 33, remaining: 800, unit: "ml", max: 2000 },
+                { name: "杏仁奶", code: "30010004", index: 34, remaining: 600, unit: "ml", max: 2000 },
+            ],
+            '料盒': [
+                { name: "糖浆料盒A", code: "40010001", index: 41, remaining: 1, unit: "个", max: 2 },
+                { name: "糖浆料盒B", code: "40010002", index: 42, remaining: 1, unit: "个", max: 2 },
+                { name: "奶粉料盒", code: "40010003", index: 43, remaining: 1, unit: "个", max: 2 },
+                { name: "粉料盒-1", code: "40010004", index: 44, remaining: 0, unit: "个", max: 2 },
+                { name: "粉料盒-2", code: "40010005", index: 45, remaining: 1, unit: "个", max: 2 },
+            ],
+            '食材': [
+                { name: "冰", code: "10000005", index: 6, remaining: 4000, unit: "g", max: 4000 },
+                { name: "柠檬片", code: "50010001", index: 61, remaining: 20, unit: "片", max: 50 },
+                { name: "薄荷叶", code: "50010002", index: 62, remaining: 15, unit: "g", max: 30 },
+                { name: "肉桂棒", code: "50010003", index: 63, remaining: 10, unit: "根", max: 20 },
+            ]
+        };
+
+        let currentCategory = '奶&咖啡&水';
+        let selectedItems = {}; // { code: quantity }
+
+        // 初始化
+        function init() {
+            // 显示当前设备
+            const deviceId = getCurrentDevice();
+            const location = getDeviceLocation(deviceId);
+            document.getElementById('headerDeviceInfo').innerHTML = `${deviceId}<br><small>${location}</small>`;
+            
+            renderCategories();
+            renderMaterials();
+            updateSelectedUI();
+            
+            // 检查是否有预选的物料（从卡片点击进来）
+            const preselect = sessionStorage.getItem('preselectMaterial');
+            if (preselect) {
+                // 找到该物料所属分类并切换
+                Object.keys(materialsData).forEach(category => {
+                    const item = materialsData[category].find(m => m.code === preselect);
+                    if (item) {
+                        switchCategory(category);
+                        // 自动设置数量为1
+                        setQuantity(preselect, 1);
+                    }
+                });
+                // 清除预选标记
+                sessionStorage.removeItem('preselectMaterial');
+            }
+        }
+
+        // 渲染分类
+        function renderCategories() {
+            const sidebar = document.getElementById('categorySidebar');
+            const categories = Object.keys(materialsData);
+            
+            sidebar.innerHTML = categories.map(cat => `
+                <div class="category-item ${cat === currentCategory ? 'active' : ''}" 
+                     onclick="switchCategory('${cat}')">
+                    ${cat}
+                </div>
+            `).join('');
+        }
+
+        // 切换分类
+        function switchCategory(category) {
+            currentCategory = category;
+            renderCategories();
+            renderMaterials();
+        }
+
+        // 渲染物料列表
+        function renderMaterials() {
+            const list = document.getElementById('materialList');
+            let html = '';
+            
+            Object.keys(materialsData).forEach(category => {
+                // 分类分隔符
+                html += `<div class="category-divider">${category}</div>`;
+                
+                // 该分类下的物料
+                materialsData[category].forEach(item => {
+                    const qty = selectedItems[item.code] || 0;
+                    html += `
+                        <div class="material-item">
+                            <div class="material-info">
+                                <div class="material-name">${item.name}</div>
+                                <div class="material-stock">库存: ${item.remaining}${item.unit} · 最大: ${item.max}${item.unit}</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="qty-btn minus" onclick="adjustQuantity('${item.code}', -1)">−</button>
+                                <input type="number" class="qty-input" id="qty-${item.code}" 
+                                       value="${qty}" min="0" 
+                                       onchange="setQuantity('${item.code}', this.value)">
+                                <button class="qty-btn plus" onclick="adjustQuantity('${item.code}', 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            
+            list.innerHTML = html;
+        }
+
+        // 调节数量
+        function adjustQuantity(code, delta) {
+            const currentQty = selectedItems[code] || 0;
+            const newQty = Math.max(0, currentQty + delta);
+            setQuantity(code, newQty);
+        }
+
+        // 设置数量
+        function setQuantity(code, value) {
+            const qty = parseInt(value) || 0;
+            
+            // 找到该物料的最大容量
+            let maxQty = 9999;
+            Object.values(materialsData).forEach(list => {
+                const item = list.find(m => m.code === code);
+                if (item) maxQty = item.max;
+            });
+            
+            const validQty = Math.min(Math.max(0, qty), maxQty);
+            
+            if (validQty > 0) {
+                selectedItems[code] = validQty;
+            } else {
+                delete selectedItems[code];
+            }
+            
+            // 更新输入框显示
+            const input = document.getElementById(`qty-${code}`);
+            if (input) input.value = validQty;
+            
+            updateSelectedUI();
+        }
+
+        // 更新已选UI
+        function updateSelectedUI() {
+            const count = Object.keys(selectedItems).length;
+            document.getElementById('selectedCount').textContent = count;
+            
+            const completeBtn = document.getElementById('completeBtn');
+            const expandHint = document.getElementById('expandHint');
+            
+            if (count > 0) {
+                completeBtn.disabled = false;
+                expandHint.style.display = 'inline-flex';
+            } else {
+                completeBtn.disabled = true;
+                expandHint.style.display = 'none';
+            }
+            
+            renderSelectedList();
+        }
+
+        // 渲染已选列表
+        function renderSelectedList() {
+            const list = document.getElementById('selectedList');
+            const codes = Object.keys(selectedItems);
+            
+            if (codes.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><div>暂未选择物料</div></div>';
+                return;
+            }
+            
+            // 找到所有选中的物料信息
+            let html = '';
+            Object.keys(materialsData).forEach(category => {
+                materialsData[category].forEach(item => {
+                    if (selectedItems[item.code]) {
+                        const qty = selectedItems[item.code];
+                        html += `
+                            <div class="selected-item">
+                                <div class="selected-item-info">
+                                    <div class="selected-item-name">${item.name}</div>
+                                    <div class="selected-item-qty">+${qty} ${item.unit}</div>
+                                </div>
+                                <button class="selected-item-remove" onclick="setQuantity('${item.code}', 0)">✕</button>
+                            </div>
+                        `;
+                    }
+                });
+            });
+            
+            list.innerHTML = html;
+        }
+
+        // 切换已选面板
+        function toggleSelectedPanel() {
+            const panel = document.getElementById('selectedPanel');
+            const overlay = document.getElementById('overlay');
+            const isShow = panel.classList.contains('show');
+            
+            if (isShow) {
+                panel.classList.remove('show');
+                overlay.classList.remove('show');
+            } else {
+                panel.classList.add('show');
+                overlay.classList.add('show');
+            }
+        }
+
+        // 完成补料 - 显示确认弹窗
+        function completeRefill() {
+            const count = Object.keys(selectedItems).length;
+            if (count === 0) return;
+            
+            // 填充已选物料摘要
+            const summaryDiv = document.getElementById('selectedSummary');
+            let html = '<div class="summary-title">已选物料 (' + count + ')</div>';
+            
+            Object.keys(selectedItems).forEach(code => {
+                Object.values(materialsData).forEach(list => {
+                    const item = list.find(m => m.code === code);
+                    if (item) {
+                        html += `
+                            <div class="summary-item">
+                                <span class="summary-item-name">${item.name}</span>
+                                <span class="summary-item-qty">+${selectedItems[code]} ${item.unit}</span>
+                            </div>
+                        `;
+                    }
+                });
+            });
+            
+            summaryDiv.innerHTML = html;
+            
+            // 设置默认发货时间为当前时间
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('deliveryTime').value = now.toISOString().slice(0, 16);
+            document.getElementById('deliveryNote').value = '';
+            
+            // 显示弹窗
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        // 关闭确认弹窗
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        // 获取当前选中的设备
+        function getCurrentDevice() {
+            // 从 sessionStorage 或默认值获取
+            return sessionStorage.getItem('currentDevice') || 'RCK111';
+        }
+
+        // 获取点位信息
+        function getDeviceLocation(deviceId) {
+            const locationMap = {
+                'RCK111': '上海市中心店',
+                'RCK112': '北京朝阳门店',
+                'RCK113': '广州天河店'
+            };
+            return locationMap[deviceId] || '未知点位';
+        }
+
+        // 确认生成发货单
+        function confirmDelivery() {
+            const deliveryTime = document.getElementById('deliveryTime').value;
+            const note = document.getElementById('deliveryNote').value.trim();
+            
+            if (!deliveryTime) {
+                showToast('请选择发货时间', 'error');
+                return;
+            }
+            
+            const deviceId = getCurrentDevice();
+            
+            // 构建发货单数据
+            const orderId = 'DL' + Date.now();
+            const orderData = {
+                id: orderId,
+                createTime: new Date().toISOString(),
+                deliveryTime: deliveryTime,
+                note: note,
+                status: 'pending', // pending 或 completed
+                // 申请人信息
+                requestedBy: '当前用户', // 实际应从登录系统获取
+                requestTime: new Date().toISOString(),
+                // 设备和点位信息
+                deviceId: deviceId,
+                location: getDeviceLocation(deviceId),
+                // 处理信息（完成时填充）
+                completedBy: null,
+                completedTime: null,
+                items: []
+            };
+            
+            // 收集物料信息
+            Object.keys(selectedItems).forEach(code => {
+                Object.values(materialsData).forEach(list => {
+                    const item = list.find(m => m.code === code);
+                    if (item) {
+                        orderData.items.push({
+                            code: item.code,
+                            name: item.name,
+                            quantity: selectedItems[code],
+                            unit: item.unit
+                        });
+                    }
+                });
+            });
+            
+            // 保存到 localStorage
+            let orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            orders.unshift(orderData);
+            localStorage.setItem('materialOrders', JSON.stringify(orders));
+            
+            showToast('发货单生成成功', 'success');
+            
+            // 清空选择
+            selectedItems = {};
+            updateSelectedUI();
+            renderMaterials();
+            
+            // 关闭弹窗和面板
+            closeConfirmModal();
+            document.getElementById('selectedPanel').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+            
+            // 跳转到发货单列表页
+            setTimeout(() => {
+                window.location.href = 'materials-orders.html';
+            }, 800);
+        }
+
+        // 返回
+        function goBack() {
+            window.location.href = 'materials.html';
+        }
+
+        // 显示提示
+        function showToast(message, type = 'normal') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = type === 'success' ? 'toast success show' : 'toast show';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmModal();
+            }
+        });
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>
