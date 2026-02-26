@@ -402,6 +402,296 @@
             background: #ef4444;
         }
 
+        .fault-actions {
+            margin: 12px -16px -12px;
+            border-top: 1px solid var(--border-light);
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            background: #fff;
+        }
+
+        .fault-action-btn {
+            height: 52px;
+            border: none;
+            border-right: 1px solid var(--border-light);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .fault-action-btn:last-child {
+            border-right: none;
+        }
+
+        .fault-action-btn:hover {
+            background: #f8fafc;
+        }
+
+        .fault-action-btn:active {
+            background: #eef2f7;
+        }
+
+        .fault-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1200;
+        }
+
+        .fault-sheet-overlay.active {
+            display: block;
+        }
+
+        .fault-sheet-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .fault-sheet-panel {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            border-radius: 24px 24px 0 0;
+            overflow: hidden;
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.2);
+        }
+
+        .fault-sheet-option {
+            width: 100%;
+            height: 88px;
+            border: none;
+            border-top: 1px solid var(--border-light);
+            background: #fff;
+            color: #111827;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .fault-sheet-option:first-child {
+            border-top: none;
+        }
+
+        .fault-sheet-option:hover {
+            background: #f8fafc;
+        }
+
+        .fault-sheet-overlay.desktop-mode .fault-sheet-backdrop {
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .fault-desktop-dialog {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(460px, calc(100vw - 48px));
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 24px 56px rgba(15, 23, 42, 0.25);
+            overflow: hidden;
+        }
+
+        .fault-desktop-title {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .fault-desktop-option {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-top: 1px solid var(--border-light);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: left;
+            padding: 0 20px;
+            cursor: pointer;
+        }
+
+        .fault-desktop-option:hover {
+            background: #f8fafc;
+        }
+
+        .status-page-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1250;
+            background: #f3f4f6;
+            overflow-y: auto;
+        }
+
+        .status-page-overlay.active {
+            display: block;
+        }
+
+        .status-page-overlay.desktop-mode.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .status-page-shell {
+            width: min(860px, calc(100vw - 56px));
+            max-height: calc(100vh - 64px);
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 24px 56px rgba(15, 23, 42, 0.25);
+            overflow: auto;
+        }
+
+        .status-page-overlay.desktop-mode .status-page-header {
+            position: sticky;
+            top: 0;
+            height: 64px;
+        }
+
+        .status-page-overlay.desktop-mode .status-page-title {
+            font-size: 26px;
+            letter-spacing: 0;
+        }
+
+        .status-page-overlay.desktop-mode .status-record-list {
+            margin-top: 0;
+            border-top: none;
+        }
+
+        .status-page-overlay.desktop-mode .status-record-item {
+            font-size: 16px;
+            padding: 18px 20px;
+        }
+
+        .status-page-overlay.desktop-mode .abnormal-list {
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .status-page-overlay.desktop-mode .abnormal-time {
+            font-size: 16px;
+        }
+
+        .status-page-overlay.desktop-mode .abnormal-code {
+            font-size: 14px;
+        }
+
+        .status-page-overlay.desktop-mode .abnormal-message {
+            font-size: 18px;
+        }
+
+        .status-page-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .status-page-back {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            color: #111827;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .status-page-title {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .status-record-list {
+            margin-top: 16px;
+            background: #fff;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .status-record-item {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            background: #fff;
+            padding: 24px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 20px;
+            color: #111827;
+            cursor: pointer;
+        }
+
+        .status-record-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-record-arrow {
+            color: #9ca3af;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .abnormal-list {
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .abnormal-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .abnormal-time {
+            font-size: 20px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .abnormal-code {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .abnormal-message {
+            font-size: 22px;
+            color: #6b7280;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
         .btn {
             flex: 1;
             height: 36px;
@@ -560,6 +850,41 @@
                 font-size: 12px;
             }
 
+            .fault-action-btn {
+                height: 44px;
+                font-size: 14px;
+            }
+
+            .fault-sheet-option {
+                height: 64px;
+                font-size: 16px;
+            }
+
+            .status-page-header {
+                height: 60px;
+            }
+
+            .status-page-title {
+                font-size: 18px;
+            }
+
+            .status-record-item {
+                padding: 16px;
+                font-size: 15px;
+            }
+
+            .abnormal-time {
+                font-size: 14px;
+            }
+
+            .abnormal-code {
+                font-size: 14px;
+            }
+
+            .abnormal-message {
+                font-size: 16px;
+            }
+
         }
 
         @media (min-width: 769px) {
@@ -622,9 +947,9 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
-                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="overview.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
                     <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
-                    <a href="menu.html?tab=menu" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
+                    <a href="menu-management.html" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
                     <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
                     <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
                     <a href="faults.html" class="nav-item active"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
@@ -669,6 +994,11 @@
         </main>
     </div>
 
+    <div id="remoteActionSheet" class="fault-sheet-overlay"></div>
+    <div id="editStatusSheet" class="fault-sheet-overlay"></div>
+    <div id="statusRecordPage" class="status-page-overlay"></div>
+    <div id="abnormalRecordPage" class="status-page-overlay"></div>
+
     <script>
         const tabConfig = [
             { key: 'normal', label: '正常' },
@@ -678,6 +1008,7 @@
 
         let currentTab = 'fault';
         let searchKeyword = '';
+        let activeFaultDeviceId = '';
 
         const faults = [
             {
@@ -934,6 +1265,242 @@
             document.getElementById('summary').textContent = `总计 ${list.length} 台设备`;
         }
 
+        function isDesktopInteractionMode() {
+            const width = Number(window?.innerWidth || 0);
+            return width >= 1024;
+        }
+
+        function wrapStatusPage(content, isDesktop) {
+            if (!isDesktop) return content;
+            return `<div class="status-page-shell">${content}</div>`;
+        }
+
+        function escapeText(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function openRemoteActions(deviceId) {
+            activeFaultDeviceId = deviceId;
+            const panel = document.getElementById('remoteActionSheet');
+            if (!panel) return;
+            const isDesktop = isDesktopInteractionMode();
+            panel.classList.toggle('desktop-mode', isDesktop);
+            panel.innerHTML = isDesktop
+                ? `
+                    <div class="fault-sheet-backdrop" onclick="closeRemoteActions()"></div>
+                    <div class="fault-desktop-dialog">
+                        <div class="fault-desktop-title">远程操作 · ${escapeText(deviceId)}</div>
+                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
+                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
+                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('更新配方')">更新配方</button>
+                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
+                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
+                    </div>
+                `
+                : `
+                    <div class="fault-sheet-backdrop" onclick="closeRemoteActions()"></div>
+                    <div class="fault-sheet-panel">
+                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
+                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
+                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('更新配方')">更新配方</button>
+                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
+                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
+                    </div>
+                `;
+            panel.classList.add('active');
+        }
+
+        function closeRemoteActions() {
+            const panel = document.getElementById('remoteActionSheet');
+            if (!panel) return;
+            panel.classList.remove('active');
+            panel.classList.remove('desktop-mode');
+        }
+
+        function handleRemoteAction(actionName) {
+            closeRemoteActions();
+            alert(`已向设备 ${activeFaultDeviceId || '-'} 下发指令：${actionName}`);
+        }
+
+        function openEditStatus(deviceId) {
+            activeFaultDeviceId = deviceId;
+            const panel = document.getElementById('editStatusSheet');
+            if (!panel) return;
+            const isDesktop = isDesktopInteractionMode();
+            panel.classList.toggle('desktop-mode', isDesktop);
+            panel.innerHTML = isDesktop
+                ? `
+                    <div class="fault-sheet-backdrop" onclick="closeEditStatus()"></div>
+                    <div class="fault-desktop-dialog">
+                        <div class="fault-desktop-title">编辑状态 · ${escapeText(deviceId)}</div>
+                        <button type="button" class="fault-desktop-option" onclick="applyDeviceStatus('normal')">正常</button>
+                        <button type="button" class="fault-desktop-option" onclick="applyDeviceStatus('fault')">故障</button>
+                        <button type="button" class="fault-desktop-option" onclick="applyDeviceStatus('shortage')">缺料</button>
+                    </div>
+                `
+                : `
+                    <div class="fault-sheet-backdrop" onclick="closeEditStatus()"></div>
+                    <div class="fault-sheet-panel">
+                        <button type="button" class="fault-sheet-option" onclick="applyDeviceStatus('normal')">正常</button>
+                        <button type="button" class="fault-sheet-option" onclick="applyDeviceStatus('fault')">故障</button>
+                        <button type="button" class="fault-sheet-option" onclick="applyDeviceStatus('shortage')">缺料</button>
+                    </div>
+                `;
+            panel.classList.add('active');
+        }
+
+        function closeEditStatus() {
+            const panel = document.getElementById('editStatusSheet');
+            if (!panel) return;
+            panel.classList.remove('active');
+            panel.classList.remove('desktop-mode');
+        }
+
+        function applyDeviceStatus(statusKey) {
+            const target = faults.find(item => item.id === activeFaultDeviceId);
+            if (target) {
+                target.status = statusKey;
+                if (statusKey !== 'fault') {
+                    target.deviceStatus = '在线';
+                }
+            }
+            closeEditStatus();
+            renderTabs();
+            renderSummary();
+            renderList();
+        }
+
+        function getAbnormalRecords(deviceId) {
+            return [
+                { time: '2026-02-18 15:40:28', code: '', message: `李丽杰停售了 ${deviceId}` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` }
+            ];
+        }
+
+        function openStatusRecords(deviceId) {
+            activeFaultDeviceId = deviceId;
+            const page = document.getElementById('statusRecordPage');
+            if (!page) return;
+            const isDesktop = isDesktopInteractionMode();
+            page.classList.toggle('desktop-mode', isDesktop);
+            if (isDesktop) {
+                page.onclick = function(event) {
+                    if (event.target === page) closeStatusRecords();
+                };
+            } else {
+                page.onclick = null;
+            }
+            const content = `
+                <header class="status-page-header">
+                    <button type="button" class="status-page-back" onclick="closeStatusRecords()">‹</button>
+                    <div class="status-page-title">状态</div>
+                </header>
+                <div class="status-record-list">
+                    <button type="button" class="status-record-item" onclick="openAbnormalRecords()">
+                        <span>异常记录</span>
+                        <span class="status-record-arrow">›</span>
+                    </button>
+                    <button type="button" class="status-record-item" onclick="alert('运维记录开发中')">
+                        <span>运维记录</span>
+                        <span class="status-record-arrow">›</span>
+                    </button>
+                    <button type="button" class="status-record-item" onclick="alert('废料记录开发中')">
+                        <span>废料记录</span>
+                        <span class="status-record-arrow">›</span>
+                    </button>
+                </div>
+            `;
+            page.innerHTML = wrapStatusPage(content, isDesktop);
+            page.classList.add('active');
+        }
+
+        function closeStatusRecords() {
+            const page = document.getElementById('statusRecordPage');
+            if (!page) return;
+            page.classList.remove('active');
+            page.classList.remove('desktop-mode');
+            page.onclick = null;
+        }
+
+        function openAbnormalRecords() {
+            const page = document.getElementById('abnormalRecordPage');
+            if (!page) return;
+            const statusPage = document.getElementById('statusRecordPage');
+            if (statusPage) statusPage.classList.remove('active');
+            const deviceId = activeFaultDeviceId || '-';
+            const records = getAbnormalRecords(deviceId);
+            const isDesktop = isDesktopInteractionMode();
+            page.classList.toggle('desktop-mode', isDesktop);
+            if (isDesktop) {
+                page.onclick = function(event) {
+                    if (event.target === page) closeAbnormalRecords();
+                };
+            } else {
+                page.onclick = null;
+            }
+            const content = `
+                <header class="status-page-header">
+                    <button type="button" class="status-page-back" onclick="closeAbnormalRecords()">‹</button>
+                    <div class="status-page-title">${escapeText(deviceId)}-异常记录</div>
+                </header>
+                <div class="abnormal-list">
+                    ${records.map(item => `
+                        <article class="abnormal-card">
+                            <div class="abnormal-time">${escapeText(item.time)}</div>
+                            <div class="abnormal-code">故障码：${escapeText(item.code || '')}</div>
+                            <div class="abnormal-message">${escapeText(item.message)}</div>
+                        </article>
+                    `).join('')}
+                </div>
+            `;
+            page.innerHTML = wrapStatusPage(content, isDesktop);
+            page.classList.add('active');
+        }
+
+        function closeAbnormalRecords() {
+            const page = document.getElementById('abnormalRecordPage');
+            if (!page) return;
+            page.classList.remove('active');
+            page.classList.remove('desktop-mode');
+            page.onclick = null;
+            openStatusRecords(activeFaultDeviceId);
+        }
+
+        function goToDeviceMaterials(deviceId) {
+            try {
+                sessionStorage.setItem('currentDevice', deviceId);
+            } catch (error) {
+                // ignore storage failures and continue navigation
+            }
+            window.location.href = `materials.html?device=${encodeURIComponent(deviceId)}`;
+        }
+
+        function shouldShowFaultActions(item) {
+            const deviceStatusText = String(item?.deviceStatus || '').trim().toLowerCase();
+            return item?.status === 'fault' || deviceStatusText === '故障' || deviceStatusText === 'fault';
+        }
+
+        function renderFaultActions(item) {
+            if (!shouldShowFaultActions(item)) return '';
+            return `
+                <div class="fault-actions">
+                    <button type="button" class="fault-action-btn" onclick="openRemoteActions('${item.id}')">远程操作</button>
+                    <button type="button" class="fault-action-btn" onclick="openEditStatus('${item.id}')">编辑状态</button>
+                    <button type="button" class="fault-action-btn" onclick="goToDeviceMaterials('${item.id}')">物料</button>
+                    <button type="button" class="fault-action-btn" onclick="openStatusRecords('${item.id}')">状态记录</button>
+                </div>
+            `;
+        }
+
         function renderList() {
             const container = document.getElementById('list');
             const data = getFilteredFaults();
@@ -972,6 +1539,7 @@
                             `).join('')}
                         </div>
                     </div>
+                    ${renderFaultActions(item)}
                 </article>
             `).join('');
         }

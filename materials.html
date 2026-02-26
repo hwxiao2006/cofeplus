@@ -1065,9 +1065,9 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
-                    <a href="menu.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="overview.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
                     <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
-                    <a href="menu.html?tab=menu" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
+                    <a href="menu-management.html" class="nav-item"><span class="nav-icon">📋</span><span>菜单管理</span></a>
                     <a href="materials.html" class="nav-item active"><span class="nav-icon">📦</span><span>物料</span></a>
                     <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
                     <a href="faults.html" class="nav-item"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
@@ -1208,8 +1208,26 @@
         let currentDevice = 'RCK111';
         let allDeviceOptions = [];
 
+        function isValidDeviceCode(value) {
+            return /^RCK[0-9A-Z]+$/i.test(String(value || '').trim());
+        }
+
+        function resolveInitialDevice() {
+            const params = new URLSearchParams(window.location.search || '');
+            const fromQuery = (params.get('device') || '').trim().toUpperCase();
+            if (isValidDeviceCode(fromQuery)) return fromQuery;
+
+            const fromSession = (sessionStorage.getItem('currentDevice') || '').trim().toUpperCase();
+            if (isValidDeviceCode(fromSession)) return fromSession;
+
+            return currentDevice;
+        }
+
         function initDeviceSearch() {
             allDeviceOptions = ['RCK111', 'RCK112', 'RCK113'];
+            if (!allDeviceOptions.includes(currentDevice)) {
+                allDeviceOptions.unshift(currentDevice);
+            }
             document.getElementById('deviceSearchInput').value = currentDevice;
         }
 
@@ -1480,14 +1498,12 @@
             }
         });
 
+        currentDevice = resolveInitialDevice();
         initDeviceSearch();
-        const savedDevice = sessionStorage.getItem('currentDevice');
-        if (savedDevice && ['RCK111', 'RCK112', 'RCK113'].includes(savedDevice)) {
-            currentDevice = savedDevice;
-            document.getElementById('deviceSearchInput').value = savedDevice;
-            document.getElementById('deviceTag').textContent = savedDevice;
-            document.getElementById('boardTitle').textContent = savedDevice;
-        }
+        document.getElementById('deviceSearchInput').value = currentDevice;
+        document.getElementById('deviceTag').textContent = currentDevice;
+        document.getElementById('boardTitle').textContent = currentDevice;
+        sessionStorage.setItem('currentDevice', currentDevice);
         renderMaterials();
     </script>
 </body>

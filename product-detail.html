@@ -830,7 +830,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
-                    <a href="menu.html" class="nav-item">
+                    <a href="overview.html" class="nav-item">
                         <span class="nav-icon">📊</span>
                         <span>总览</span>
                     </a>
@@ -838,7 +838,7 @@
                         <span class="nav-icon">⚙️</span>
                         <span>设备</span>
                     </a>
-                    <a href="menu.html?tab=menu" class="nav-item active">
+                    <a href="menu-management.html" class="nav-item active">
                         <span class="nav-icon">📋</span>
                         <span>菜单管理</span>
                     </a>
@@ -902,7 +902,8 @@
                             <!-- 动态显示图片 -->
                         </div>
                         <input type="text" class="form-input" id="productImage" placeholder="请输入图片URL">
-                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">支持 JPG、PNG 格式图片链接</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">支持 JPG、PNG 格式图片链接，或上传本地图片</div>
+                        <input type="file" class="form-input" id="productImageFile" accept="image/*" style="margin-top: 8px; padding: 9px 12px;">
                     </div>
                     
                     <!-- 多语言名称和描述 -->
@@ -916,8 +917,25 @@
                             <input type="text" class="form-input" id="categoryName" readonly>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">商品价格 (CNY) <span class="required">*</span></label>
+                            <label class="form-label">商品价格 <span class="required">*</span></label>
                             <input type="number" class="form-input" id="productPrice" step="0.1" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">原价（可选）</label>
+                            <input type="number" class="form-input" id="productOriginalPrice" step="0.1" min="0" placeholder="例如 12.9">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">币种</label>
+                            <select class="form-select" id="productCurrency">
+                                <option value="CNY">CNY</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="HKD">HKD</option>
+                                <option value="JPY">JPY</option>
+                            </select>
                         </div>
                     </div>
 
@@ -1072,6 +1090,22 @@
             { specKey: 'lid', title: '杯盖', listId: 'lidOptions', optionTitle: 'LID' },
             { specKey: 'latteArt', title: '拉花', listId: 'latteArtOptions', optionTitle: 'LATTE-ART' }
         ];
+        const SUPPORTED_CURRENCIES = {
+            CNY: { decimals: 2 },
+            USD: { decimals: 2 },
+            EUR: { decimals: 2 },
+            HKD: { decimals: 2 },
+            JPY: { decimals: 0 }
+        };
+
+        function normalizeCurrency(code) {
+            const upper = String(code || 'CNY').toUpperCase();
+            return SUPPORTED_CURRENCIES[upper] ? upper : 'CNY';
+        }
+
+        function updatePricePreview() {
+            // 预留：价格相关联动入口
+        }
 
         function getDeviceLangs() {
             return deviceConfig[currentDevice]?.langs || ['zh', 'en'];
@@ -1186,11 +1220,29 @@
         function initPage() {
             // 解析 URL 参数
             const params = new URLSearchParams(window.location.search);
+            const payloadKey = params.get('payloadKey');
             const productJson = params.get('product');
             const categoryJson = params.get('category');
             currentDevice = params.get('device') || 'RCK111';
 
-            if (productJson) {
+            if (payloadKey) {
+                try {
+                    const rawPayload = sessionStorage.getItem(`productDetailPayload:${payloadKey}`);
+                    if (rawPayload) {
+                        const payload = JSON.parse(rawPayload);
+                        if (payload && payload.product) {
+                            productData = payload.product;
+                        }
+                        if (payload && payload.category) {
+                            categoryNames = payload.category;
+                        }
+                    }
+                } catch (e) {
+                    console.error('读取会话商品数据失败', e);
+                }
+            }
+
+            if (!productData && productJson) {
                 try {
                     productData = JSON.parse(decodeURIComponent(productJson));
                 } catch (e) {
@@ -1198,7 +1250,7 @@
                 }
             }
 
-            if (categoryJson) {
+            if ((!categoryNames || Object.keys(categoryNames).length === 0) && categoryJson) {
                 try {
                     categoryNames = JSON.parse(decodeURIComponent(categoryJson));
                 } catch (e) {
@@ -1214,7 +1266,11 @@
 
             // 图片输入监听
             document.getElementById('productImage').addEventListener('input', updateImagePreview);
+            document.getElementById('productImageFile').addEventListener('change', handleProductImageFileChange);
             document.getElementById('onSaleSwitch').addEventListener('change', updateOnSaleLabel);
+            document.getElementById('productPrice').addEventListener('input', updatePricePreview);
+            document.getElementById('productOriginalPrice').addEventListener('input', updatePricePreview);
+            document.getElementById('productCurrency').addEventListener('change', updatePricePreview);
 
             // 选项点击事件
             document.querySelectorAll('.option-list').forEach(list => {
@@ -1270,6 +1326,9 @@
             
             // 价格
             document.getElementById('productPrice').value = productData.price || '';
+            document.getElementById('productOriginalPrice').value = productData.originalPrice || '';
+            document.getElementById('productCurrency').value = normalizeCurrency(productData.currency);
+            updatePricePreview();
             
             // 推荐开关
             document.getElementById('featuredSwitch').checked = productData.featured !== false;
@@ -1306,6 +1365,44 @@
                     </div>
                 `;
             }
+        }
+
+        function handleProductImageFileChange(event) {
+            const input = event && event.target;
+            const file = input && input.files && input.files[0];
+            if (!file) return;
+
+            if (!file.type || !file.type.startsWith('image/')) {
+                showToast('请选择图片文件', 'error');
+                input.value = '';
+                return;
+            }
+
+            const maxSize = 6 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showToast('图片过大，请选择 6MB 以内图片', 'error');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(loadEvent) {
+                const result = loadEvent && loadEvent.target ? loadEvent.target.result : '';
+                if (!result || typeof result !== 'string') {
+                    showToast('图片读取失败', 'error');
+                    input.value = '';
+                    return;
+                }
+                document.getElementById('productImage').value = result;
+                updateImagePreview();
+                showToast('本地图片已加载');
+                input.value = '';
+            };
+            reader.onerror = function() {
+                showToast('图片读取失败', 'error');
+                input.value = '';
+            };
+            reader.readAsDataURL(file);
         }
 
         function getSelectedOptions() {
@@ -1456,6 +1553,23 @@
                 return;
             }
 
+            const originalPriceRaw = document.getElementById('productOriginalPrice').value.trim();
+            let originalPrice = null;
+            if (originalPriceRaw) {
+                const parsedOriginalPrice = parseFloat(originalPriceRaw);
+                if (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice <= 0) {
+                    showToast('请输入有效的原价', 'error');
+                    return;
+                }
+                if (parsedOriginalPrice <= price) {
+                    showToast('原价需大于商品价格', 'error');
+                    return;
+                }
+                originalPrice = parsedOriginalPrice;
+            }
+
+            const currency = normalizeCurrency(document.getElementById('productCurrency').value);
+
             // 收集多语言数据
             const names = {};
             const descs = {};
@@ -1482,6 +1596,8 @@
                 descs: descs,
                 image: image || null,
                 price: price,
+                originalPrice: originalPrice,
+                currency: currency,
                 featured: document.getElementById('featuredSwitch').checked,
                 onSale: document.getElementById('onSaleSwitch').checked,
                 specs: productData.specs || {},
@@ -1512,7 +1628,7 @@
         }
 
         function goBack() {
-            window.location.href = 'menu.html?tab=menu';
+            window.location.href = 'menu-management.html?tab=menu&innerTab=manage';
         }
 
         function goTo(url) {
