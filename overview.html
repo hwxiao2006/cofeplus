@@ -1828,7 +1828,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
-                    <a href="#" class="nav-item active" data-tab="overview" onclick="return switchTab(event, 'overview')">
+                    <a href="overview.html" class="nav-item active">
                         <span class="nav-icon">📊</span>
                         <span>总览</span>
                     </a>
@@ -1836,7 +1836,7 @@
                         <span class="nav-icon">⚙️</span>
                         <span>设备</span>
                     </a>
-                    <a href="#" class="nav-item" data-tab="menu" onclick="return switchTab(event, 'menu')">
+                    <a href="menu-management.html" class="nav-item">
                         <span class="nav-icon">📋</span>
                         <span>菜单管理</span>
                     </a>
@@ -2250,12 +2250,7 @@
 
         // ==================== 初始化 ====================
         function init() {
-            const urlTab = new URLSearchParams(window.location.search).get('tab');
-            if (urlTab === 'menu' || urlTab === 'overview') {
-                currentTab = urlTab;
-            }
-
-            applySavedProductEdits();
+                        applySavedProductEdits();
             initDeviceSearch();
             initOverviewDeviceFilter();
             updateDeviceLangs();
