@@ -410,6 +410,38 @@
             width: 180px;
         }
 
+        .main-filter-bar .filter-label {
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .main-filter-item .filter-select {
+            height: 44px;
+            padding: 0 36px 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: #fff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .main-filter-item .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .main-filter-item .filter-select option {
+            background: #fff;
+            color: var(--text-primary);
+        }
+
         /* 统计卡片 */
         .stats-grid {
             display: grid;
@@ -573,7 +605,7 @@
 
         .detail-modal {
             width: 100%;
-            max-width: 480px;
+            max-width: 1100px;
             background: #fff;
             border-radius: 14px;
             overflow: hidden;
@@ -610,6 +642,34 @@
             overflow-y: auto;
         }
 
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .detail-card {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px 14px;
+        }
+
+        .detail-card-entry-all {
+            grid-column: 1 / -1;
+        }
+
+        .detail-card-entry-images {
+            grid-column: 1 / -1;
+        }
+
+        .detail-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -630,10 +690,358 @@
             word-break: break-word;
         }
 
+        .detail-entry-all {
+            margin-top: 10px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            background: #fafafa;
+            overflow: hidden;
+        }
+
+        .detail-entry-all summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            user-select: none;
+        }
+
+        .detail-entry-all summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .detail-entry-all summary::after {
+            content: '▼';
+            float: right;
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+
+        .detail-entry-all[open] summary::after {
+            content: '▲';
+        }
+
+        .detail-entry-all .detail-row {
+            padding: 10px 12px;
+            background: #fff;
+        }
+
+        .entry-image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 10px;
+        }
+
+        .entry-image-thumb {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            background: #fff;
+            padding: 8px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .entry-image-thumb img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f3f4f6;
+        }
+
+        .entry-image-thumb span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .entry-image-tip {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .entry-image-empty {
+            padding: 10px 0;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .image-preview-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 10, 20, 0.86);
+            z-index: 1200;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .image-preview-overlay.active {
+            display: flex;
+        }
+
+        .image-preview-modal {
+            width: min(980px, 100%);
+            background: #0b1220;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 46px rgba(0, 0, 0, 0.38);
+        }
+
+        .image-preview-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .image-preview-stage {
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #050812;
+            padding: 48px 62px 30px;
+        }
+
+        .image-preview-image {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .image-preview-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .image-preview-nav.prev {
+            left: 12px;
+        }
+
+        .image-preview-nav.next {
+            right: 12px;
+        }
+
+        .image-preview-nav:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .image-preview-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            color: #c7d2fe;
+            font-size: 13px;
+            padding: 12px 14px 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
         .detail-modal-footer {
             padding: 12px 16px 16px;
             display: flex;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .detail-footer-actions {
+            width: 100%;
+            display: flex;
             justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .entry-edit-modal {
+            width: min(760px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .entry-edit-body {
+            padding: 14px 16px;
+            max-height: 68vh;
+            overflow-y: auto;
+        }
+
+        .entry-edit-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+        }
+
+        .entry-edit-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .entry-edit-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .entry-edit-field span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .entry-edit-field input,
+        .entry-edit-field select,
+        .entry-edit-field textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+        }
+
+        .entry-edit-field input:focus,
+        .entry-edit-field select:focus,
+        .entry-edit-field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        .entry-edit-field textarea {
+            min-height: 74px;
+            resize: vertical;
+        }
+
+        .entry-edit-checks {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .entry-edit-checks label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .entry-edit-upload {
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .entry-edit-upload-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .entry-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .entry-upload-btn input {
+            display: none;
+        }
+
+        .entry-edit-upload-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .entry-edit-upload-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+            gap: 8px;
+        }
+
+        .entry-edit-upload-empty {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding: 8px 0;
+        }
+
+        .entry-edit-upload-thumb {
+            position: relative;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .entry-edit-upload-thumb img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+        }
+
+        .entry-edit-upload-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(17, 24, 39, 0.8);
+            color: #fff;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .entry-edit-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 16px 16px;
             border-top: 1px solid var(--border-light);
         }
 
@@ -677,20 +1085,7 @@
         .device-info {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .device-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, #e0e7ff 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
+            gap: 0;
         }
 
         .device-details {
@@ -704,11 +1099,6 @@
             color: var(--text-primary);
             font-family: 'SF Mono', monospace;
             font-size: 13px;
-        }
-
-        .device-id-small {
-            font-size: 11px;
-            color: var(--text-tertiary);
         }
 
         .merchant-name {
@@ -998,6 +1388,100 @@
                 padding: 16px;
             }
 
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .detail-modal {
+                max-width: none;
+                width: 100%;
+                border-radius: 14px 14px 0 0;
+            }
+
+            .detail-modal-body {
+                max-height: 75vh;
+                padding: 12px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .detail-card {
+                padding: 10px 12px;
+            }
+
+            .detail-card-entry-all {
+                grid-column: auto;
+            }
+
+            .detail-card-entry-images {
+                grid-column: auto;
+            }
+
+            .entry-image-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .entry-image-thumb {
+                padding: 6px;
+            }
+
+            .image-preview-overlay {
+                padding: 0;
+                align-items: stretch;
+            }
+
+            .image-preview-modal {
+                width: 100%;
+                border-radius: 0;
+            }
+
+            .image-preview-stage {
+                min-height: calc(100vh - 112px);
+                padding: 52px 10px 24px;
+            }
+
+            .image-preview-nav {
+                width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+
+            .entry-edit-modal {
+                width: 100%;
+                border-radius: 14px 14px 0 0;
+            }
+
+            .entry-edit-body {
+                padding: 12px;
+                max-height: 76vh;
+            }
+
+            .entry-edit-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .entry-edit-field.full {
+                grid-column: auto;
+            }
+
+            .entry-edit-footer {
+                padding: 12px;
+            }
+
+            .entry-edit-footer .btn {
+                flex: 1;
+            }
+
+            .entry-edit-upload-list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
             .main-filter-bar {
                 flex-direction: column;
                 align-items: stretch;
@@ -1056,6 +1540,20 @@
         @media (min-width: 769px) {
             .mobile-header, .overlay {
                 display: none !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .modal-overlay {
+                padding: 24px;
+            }
+
+            .detail-modal {
+                width: min(1100px, calc(100vw - 64px));
+            }
+
+            .detail-modal-body {
+                padding: 18px;
             }
         }
         /* 跨页统一优化（桌面 + 移动） */
@@ -1142,7 +1640,7 @@
                     </a>
                     <a href="menu-management.html" class="nav-item">
                         <span class="nav-icon">📋</span>
-                        <span>菜单管理</span>
+                        <span>商品管理</span>
                     </a>
                     <a href="materials.html" class="nav-item">
                         <span class="nav-icon">📦</span>
@@ -1184,7 +1682,6 @@
                     <span class="header-desc">管理设备状态与售卖开关</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-icon" onclick="window.location.href='device-entry.html'">➕ 设备入场</button>
                     <button class="btn-icon" onclick="window.location.href='faults.html'">🛠️ 故障列表</button>
                     <button class="btn-icon">📖 只读</button>
                     <div class="platform-lang-selector">
@@ -1297,7 +1794,165 @@
             </div>
             <div class="detail-modal-body" id="detailModalBody"></div>
             <div class="detail-modal-footer">
-                <button class="btn btn-ghost" onclick="closeDetailModal()">关闭</button>
+                <div class="detail-footer-actions">
+                    <button id="entryEditBtn" class="btn btn-primary" onclick="openEntryEditModal()">编辑入场信息</button>
+                    <button class="btn btn-ghost" onclick="closeDetailModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="entryEditModal">
+        <div class="entry-edit-modal">
+            <div class="detail-modal-header">
+                <h3 class="detail-modal-title">编辑入场信息</h3>
+                <button class="detail-modal-close" onclick="closeEntryEditModal()">×</button>
+            </div>
+            <div class="entry-edit-body">
+                <div class="entry-edit-grid">
+                    <label class="entry-edit-field">
+                        <span>运维人员</span>
+                        <input id="editOperatorName" placeholder="请输入运维人员">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>运维电话</span>
+                        <input id="editOperatorPhone" placeholder="请输入联系电话">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>点位名称</span>
+                        <input id="editLocationName" placeholder="请输入点位名称">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>点位地址</span>
+                        <input id="editLocationAddress" placeholder="请输入点位地址">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>入场时间</span>
+                        <input id="editEntryAt" type="datetime-local">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>GPS定位</span>
+                        <select id="editGpsAction">
+                            <option value="获取当前位置">获取当前位置</option>
+                            <option value="手动定位修正">手动定位修正</option>
+                            <option value="导入点位坐标">导入点位坐标</option>
+                        </select>
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>经度</span>
+                        <input id="editLongitude" placeholder="请输入经度">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>纬度</span>
+                        <input id="editLatitude" placeholder="请输入纬度">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>节能模式</span>
+                        <select id="editEnergyMode">
+                            <option value="开启">开启</option>
+                            <option value="关闭">关闭</option>
+                        </select>
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>网络信号</span>
+                        <select id="editNetworkSignal">
+                            <option value="优">优</option>
+                            <option value="良">良</option>
+                            <option value="中">中</option>
+                            <option value="弱">弱</option>
+                        </select>
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>开启节能模式</span>
+                        <input id="editEnergyStartTime" type="time">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>关闭节能模式</span>
+                        <input id="editEnergyEndTime" type="time">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>设备开始日期</span>
+                        <input id="editDeviceStartDate" type="date">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>设备结束日期</span>
+                        <input id="editDeviceEndDate" type="date">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>第五代终端</span>
+                        <select id="editTerminalGeneration5">
+                            <option value="开启">开启</option>
+                            <option value="关闭">关闭</option>
+                        </select>
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>订单并行制作</span>
+                        <select id="editParallelProduction">
+                            <option value="开启">开启</option>
+                            <option value="关闭">关闭</option>
+                        </select>
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>维护时段</span>
+                        <input id="editMaintenanceWindow" placeholder="例如 07:00-09:00">
+                    </label>
+                    <label class="entry-edit-field">
+                        <span>备注</span>
+                        <input id="editNotes" placeholder="可填写补充说明">
+                    </label>
+                    <div class="entry-edit-field full">
+                        <span>支付方式</span>
+                        <div class="entry-edit-checks">
+                            <label><input id="editPayQr" type="checkbox">微信/支付宝扫码支付</label>
+                            <label><input id="editPayDigitalRmb" type="checkbox">数字人民币支付</label>
+                        </div>
+                    </div>
+                    <div class="entry-edit-field full">
+                        <span>显示器画面（本地上传）</span>
+                        <div class="entry-edit-upload">
+                            <div class="entry-edit-upload-head">
+                                <label class="entry-upload-btn">
+                                    选择图片
+                                    <input id="editDisplayImagesInput" type="file" accept="image/*" multiple onchange="handleEntryImageUpload('display', event)">
+                                </label>
+                                <span id="editDisplayImagesCount" class="entry-edit-upload-count">0张</span>
+                            </div>
+                            <div id="editDisplayImagesPreview" class="entry-edit-upload-list"></div>
+                        </div>
+                    </div>
+                    <div class="entry-edit-field full">
+                        <span>点位照片（本地上传）</span>
+                        <div class="entry-edit-upload">
+                            <div class="entry-edit-upload-head">
+                                <label class="entry-upload-btn">
+                                    选择图片
+                                    <input id="editLocationImagesInput" type="file" accept="image/*" multiple onchange="handleEntryImageUpload('location', event)">
+                                </label>
+                                <span id="editLocationImagesCount" class="entry-edit-upload-count">0张</span>
+                            </div>
+                            <div id="editLocationImagesPreview" class="entry-edit-upload-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="entry-edit-footer">
+                <button class="btn btn-ghost" onclick="closeEntryEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveEntryInfoEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="image-preview-overlay" id="imagePreviewModal">
+        <div class="image-preview-modal">
+            <button class="image-preview-close" onclick="closeImagePreview()" aria-label="关闭图片预览">×</button>
+            <div class="image-preview-stage">
+                <button class="image-preview-nav prev" id="imagePreviewPrev" onclick="switchImagePreview(-1)" aria-label="上一张">‹</button>
+                <img id="imagePreviewImage" class="image-preview-image" src="" alt="入场图片预览">
+                <button class="image-preview-nav next" id="imagePreviewNext" onclick="switchImagePreview(1)" aria-label="下一张">›</button>
+            </div>
+            <div class="image-preview-meta">
+                <span id="imagePreviewCaption">-</span>
+                <strong id="imagePreviewCounter">0/0</strong>
             </div>
         </div>
     </div>
@@ -1368,6 +2023,10 @@
         let currentPage = 1;
         const pageSize = 12;
         let filteredData = [];
+        let detailPreviewImages = [];
+        let currentPreviewIndex = 0;
+        let currentDetailDeviceId = '';
+        let entryEditImageDraft = { display: [], location: [] };
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -1408,17 +2067,154 @@
             return data;
         }
 
+        function buildMockImageDataUrl(label, seed) {
+            const safeSeed = Number.isFinite(seed) ? seed : 0;
+            const hueA = (safeSeed * 43) % 360;
+            const hueB = (hueA + 28) % 360;
+            const title = String(label || '入场示例图').slice(0, 22);
+            const svg = `
+                <svg xmlns='http://www.w3.org/2000/svg' width='960' height='720' viewBox='0 0 960 720'>
+                    <defs>
+                        <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+                            <stop offset='0%' stop-color='hsl(${hueA}, 92%, 94%)'/>
+                            <stop offset='100%' stop-color='hsl(${hueB}, 88%, 82%)'/>
+                        </linearGradient>
+                    </defs>
+                    <rect width='960' height='720' fill='url(#g)'/>
+                    <rect x='58' y='58' width='844' height='604' rx='26' fill='rgba(255,255,255,0.76)' stroke='hsl(${hueB}, 68%, 54%)' stroke-width='4'/>
+                    <circle cx='180' cy='170' r='42' fill='hsl(${hueB}, 68%, 54%)' opacity='0.4'/>
+                    <circle cx='780' cy='520' r='50' fill='hsl(${hueA}, 70%, 52%)' opacity='0.25'/>
+                    <text x='88' y='352' fill='#1e293b' font-family='Arial, PingFang SC, sans-serif' font-size='56' font-weight='700'>${title}</text>
+                    <text x='88' y='412' fill='#334155' font-family='Arial, PingFang SC, sans-serif' font-size='30'>Mock #${safeSeed}</text>
+                </svg>
+            `;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
+        function buildMockEntryInfo(device, runtimeLocationMap, seedIndex) {
+            const operators = ['张伟', '李娜', '王强', '赵敏', '陈凯'];
+            const operatorPhones = ['13800000001', '13800000002', '13800000003', '13800000004', '13800000005'];
+            const maintenanceWindows = ['07:00-09:00', '11:00-13:00', '16:00-18:00', '20:00-22:00'];
+            const notesList = ['进店后联系店长交接钥匙', '设备周边留 20cm 维护空间', '高峰时段优先检查网络质量', '营业前需完成预热自检'];
+            const gpsActions = ['获取当前位置', '手动定位修正'];
+            const networkSignals = ['优', '良', '中'];
+            const energyModes = ['开启', '关闭'];
+            const terminalModes = ['开启', '关闭'];
+            const parallelModes = ['开启', '关闭'];
+            const entryDay = String(20 + (seedIndex % 7)).padStart(2, '0');
+            const minute = String((seedIndex * 7) % 60).padStart(2, '0');
+            const modeIndex = seedIndex % 2;
+            const payQr = modeIndex === 0;
+            const payDigitalRmb = true;
+            const locationName = runtimeLocationMap[device.location] || device.location || '-';
+            const locationAddress = locationName === '-' ? '-' : `${locationName}（示例地址）`;
+            const paymentMethods = [payQr ? '微信/支付宝扫码支付' : '', payDigitalRmb ? '数字人民币支付' : '']
+                .filter(Boolean)
+                .join('、') || '未选择';
+            const displayImageUrls = [1, 2, 3].map(i => buildMockImageDataUrl(`显示器画面 ${i}`, seedIndex * 10 + i));
+            const locationImageUrls = [1, 2].map(i => buildMockImageDataUrl(`点位照片 ${i}`, seedIndex * 10 + 20 + i));
+            return {
+                entryAt: `2026-02-${entryDay} 10:${minute}:00`,
+                locationName,
+                locationAddress,
+                operatorName: operators[seedIndex % operators.length],
+                operatorPhone: operatorPhones[seedIndex % operatorPhones.length],
+                gpsAction: gpsActions[seedIndex % gpsActions.length],
+                longitude: `121.4${seedIndex}00`,
+                latitude: `31.2${seedIndex}00`,
+                networkSignal: networkSignals[seedIndex % networkSignals.length],
+                energyMode: energyModes[modeIndex],
+                energyStartTime: modeIndex === 0 ? '18:00' : '20:00',
+                energyEndTime: modeIndex === 0 ? '08:00' : '07:00',
+                deviceStartDate: `2026-02-${String(10 + seedIndex).padStart(2, '0')}`,
+                deviceEndDate: seedIndex % 3 === 0 ? `2028-12-${String(10 + seedIndex).padStart(2, '0')}` : '-',
+                terminalGeneration5: terminalModes[modeIndex],
+                parallelProduction: parallelModes[(modeIndex + 1) % 2],
+                maintenanceWindow: maintenanceWindows[seedIndex % maintenanceWindows.length],
+                payQr,
+                payDigitalRmb,
+                paymentMethods,
+                displayImageUrls,
+                locationImageUrls,
+                displayImages: `${displayImageUrls.length}张示例图`,
+                locationImages: `${locationImageUrls.length}张示例图`,
+                notes: notesList[seedIndex % notesList.length],
+                mocked: true
+            };
+        }
+
+        function seedMockEntryInfoForPreview(data, runtimeLocationMap) {
+            let seededCount = 0;
+            data.forEach(d => {
+                if (d.entered === false || !d.location || d.entryInfo) return;
+                d.entryInfo = buildMockEntryInfo(d, runtimeLocationMap, seededCount);
+                seededCount += 1;
+            });
+            return seededCount > 0;
+        }
+
+        function extractMockImageCount(raw, fallback = 1) {
+            if (typeof raw === 'number' && raw > 0) return raw;
+            if (typeof raw === 'string') {
+                const matched = raw.match(/(\d+)/);
+                if (matched) {
+                    const count = Number(matched[1]);
+                    if (count > 0) return count;
+                }
+            }
+            return fallback;
+        }
+
+        function ensurePreviewImageUrls(entryInfo, seedBase = 0) {
+            if (!entryInfo || typeof entryInfo !== 'object') return false;
+            const displayImages = normalizePreviewImageList(entryInfo.displayImageUrls, '显示器画面');
+            const locationImages = normalizePreviewImageList(entryInfo.locationImageUrls, '点位照片');
+            let changed = false;
+            if (!displayImages.length) {
+                const displayCount = Math.min(5, Math.max(1, extractMockImageCount(entryInfo.displayImages, 2)));
+                entryInfo.displayImageUrls = Array.from({ length: displayCount }, (_, i) => buildMockImageDataUrl(`显示器画面 ${i + 1}`, seedBase * 13 + i + 1));
+                entryInfo.displayImages = `${displayCount}张示例图`;
+                changed = true;
+            }
+            if (!locationImages.length) {
+                const locationCount = Math.min(4, Math.max(1, extractMockImageCount(entryInfo.locationImages, 1)));
+                entryInfo.locationImageUrls = Array.from({ length: locationCount }, (_, i) => buildMockImageDataUrl(`点位照片 ${i + 1}`, seedBase * 13 + 101 + i));
+                entryInfo.locationImages = `${locationCount}张示例图`;
+                changed = true;
+            }
+            if (changed) {
+                entryInfo.mockedImages = true;
+            }
+            return changed;
+        }
+
+        function hydrateEntryInfoForPreview(data, runtimeLocationMap) {
+            let changed = false;
+            data.forEach((d, index) => {
+                if (d.entered === false || !d.location || !d.entryInfo) return;
+                if (!d.entryInfo.locationName || d.entryInfo.locationName === '-') {
+                    d.entryInfo.locationName = runtimeLocationMap[d.location] || d.location || '-';
+                    changed = true;
+                }
+                const imageChanged = ensurePreviewImageUrls(d.entryInfo, index + 1);
+                if (imageChanged) changed = true;
+            });
+            return changed;
+        }
+
         function init() {
             const stored = JSON.parse(localStorage.getItem('devicesData') || '[]');
             if (stored.length === 0) {
                 devicesData = normalizeDevices(defaultDevicesData);
-                saveDevicesData();
             } else {
                 devicesData = normalizeDevices(stored);
                 devicesData = ensureUnenteredDevices(devicesData);
                 devicesData = normalizeDevices(devicesData);
-                saveDevicesData();
             }
+            const runtimeLocationMap = buildLocationMap();
+            seedMockEntryInfoForPreview(devicesData, runtimeLocationMap);
+            hydrateEntryInfoForPreview(devicesData, runtimeLocationMap);
+            saveDevicesData();
             filteredData = [...devicesData];
             updateStats();
             renderTable();
@@ -1474,10 +2270,8 @@
                 <tr>
                     <td>
                         <div class="device-info">
-                            <div class="device-avatar">${device.id.substring(0, 2)}</div>
                             <div class="device-details">
                                 <span class="device-id">${device.id}</span>
-                                <span class="device-id-small">ID: ${device.id}</span>
                             </div>
                         </div>
                     </td>
@@ -1602,25 +2396,458 @@
             }
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderDetailRow(label, value) {
+            const normalized = value === undefined || value === null || value === '' ? '-' : value;
+            return `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(normalized)}</strong></div>`;
+        }
+
+        function renderDetailCard(title, rowsHtml, className = '') {
+            const cardClass = className ? `detail-card ${className}` : 'detail-card';
+            return `
+                <section class="${cardClass}">
+                    <h4 class="detail-card-title">${escapeHtml(title)}</h4>
+                    ${rowsHtml}
+                </section>
+            `;
+        }
+
+        function resolveEntryLocationName(device, runtimeLocationMap) {
+            const info = device.entryInfo || {};
+            if (info.locationName && info.locationName !== '-') {
+                return info.locationName;
+            }
+            return device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location);
+        }
+
+        function resolvePaymentMethods(entryInfo = {}) {
+            if (entryInfo.paymentMethods) return entryInfo.paymentMethods;
+            const list = [];
+            if (entryInfo.payQr) list.push('微信/支付宝扫码支付');
+            if (entryInfo.payDigitalRmb) list.push('数字人民币支付');
+            return list.length ? list.join('、') : '未选择';
+        }
+
+        function renderEntryCoreRows(device, runtimeLocationMap) {
+            if (!device.entryInfo) {
+                return renderDetailRow('入场记录', '暂无入场记录');
+            }
+            const info = device.entryInfo;
+            return [
+                renderDetailRow('入场时间', info.entryAt || '-'),
+                renderDetailRow('点位名称', resolveEntryLocationName(device, runtimeLocationMap)),
+                renderDetailRow('点位地址', info.locationAddress || '-'),
+                renderDetailRow('支付方式', resolvePaymentMethods(info)),
+                renderDetailRow('节能模式', info.energyMode || '-')
+            ].join('');
+        }
+
+        function renderEntryAllRows(device, runtimeLocationMap) {
+            if (!device.entryInfo) return '';
+            const info = device.entryInfo;
+            const rows = [
+                ['入场时间', info.entryAt || '-'],
+                ['运维人员', info.operatorName || '未选择'],
+                ['运维电话', info.operatorPhone || '-'],
+                ['点位名称', resolveEntryLocationName(device, runtimeLocationMap)],
+                ['点位地址', info.locationAddress || '-'],
+                ['GPS定位', info.gpsAction || '未获取'],
+                ['经度', info.longitude || '手动输入'],
+                ['纬度', info.latitude || '手动输入'],
+                ['网络信号', info.networkSignal || '-'],
+                ['节能模式', info.energyMode || '-'],
+                ['开启节能模式', info.energyStartTime || '-'],
+                ['关闭节能模式', info.energyEndTime || '-'],
+                ['设备开始日期', info.deviceStartDate || '-'],
+                ['设备结束日期', info.deviceEndDate || '-'],
+                ['第五代终端', info.terminalGeneration5 || '-'],
+                ['订单并行制作', info.parallelProduction || '-'],
+                ['维护时段', info.maintenanceWindow || '-'],
+                ['支付方式', resolvePaymentMethods(info)],
+                ['备注', info.notes || '-']
+            ];
+            return rows.map(([label, value]) => renderDetailRow(label, value)).join('');
+        }
+
+        function normalizePreviewImageList(rawValue, fallbackLabel) {
+            if (Array.isArray(rawValue)) {
+                return rawValue.filter(Boolean).map((src, index) => ({
+                    src: String(src),
+                    label: `${fallbackLabel} ${index + 1}`
+                }));
+            }
+            if (typeof rawValue === 'string' && rawValue.trim()) {
+                return [{
+                    src: rawValue.trim(),
+                    label: `${fallbackLabel} 1`
+                }];
+            }
+            return [];
+        }
+
+        function collectEntryPreviewImages(device) {
+            if (!device.entryInfo) return [];
+            const info = device.entryInfo;
+            const displayImages = normalizePreviewImageList(info.displayImageUrls, '显示器画面').map(item => ({
+                ...item,
+                group: '显示器画面'
+            }));
+            const locationImages = normalizePreviewImageList(info.locationImageUrls, '点位照片').map(item => ({
+                ...item,
+                group: '点位照片'
+            }));
+            return [...displayImages, ...locationImages];
+        }
+
+        function renderEntryImageGallery(device) {
+            const images = collectEntryPreviewImages(device);
+            if (!images.length) {
+                return '<div class="entry-image-empty">暂无可预览图片</div>';
+            }
+            const thumbs = images.map((item, index) => `
+                <button type="button" class="entry-image-thumb" data-index="${index}">
+                    <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.label)}" loading="lazy">
+                    <span>${escapeHtml(item.label)}</span>
+                </button>
+            `).join('');
+            return `
+                <div class="entry-image-grid">${thumbs}</div>
+                <div class="entry-image-tip">点击图片可预览，支持左右切换</div>
+            `;
+        }
+
+        function bindEntryImageThumbEvents() {
+            document.querySelectorAll('.entry-image-thumb').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = Number(this.dataset.index);
+                    openImagePreview(Number.isNaN(index) ? 0 : index);
+                });
+            });
+        }
+
+        function updateImagePreview() {
+            if (!detailPreviewImages.length) return;
+            const total = detailPreviewImages.length;
+            const image = detailPreviewImages[currentPreviewIndex];
+            document.getElementById('imagePreviewImage').src = image.src;
+            document.getElementById('imagePreviewImage').alt = image.label || '入场图片预览';
+            document.getElementById('imagePreviewCaption').textContent = image.label || '-';
+            document.getElementById('imagePreviewCounter').textContent = `${currentPreviewIndex + 1}/${total}`;
+            const disableSwitch = total <= 1;
+            document.getElementById('imagePreviewPrev').disabled = disableSwitch;
+            document.getElementById('imagePreviewNext').disabled = disableSwitch;
+        }
+
+        function openImagePreview(index = 0) {
+            if (!detailPreviewImages.length) return;
+            const maxIndex = detailPreviewImages.length - 1;
+            currentPreviewIndex = Math.min(Math.max(index, 0), maxIndex);
+            updateImagePreview();
+            document.getElementById('imagePreviewModal').classList.add('active');
+        }
+
+        function switchImagePreview(delta) {
+            if (!detailPreviewImages.length) return;
+            const total = detailPreviewImages.length;
+            currentPreviewIndex = (currentPreviewIndex + delta + total) % total;
+            updateImagePreview();
+        }
+
+        function closeImagePreview() {
+            document.getElementById('imagePreviewModal').classList.remove('active');
+            document.getElementById('imagePreviewImage').src = '';
+        }
+
+        function normalizeEditableValue(value, fallback = '') {
+            const raw = value === undefined || value === null ? '' : String(value).trim();
+            if (!raw || raw === '-' || raw === '未选择' || raw === '未获取') return fallback;
+            return raw;
+        }
+
+        function normalizeTimeInputValue(value) {
+            const raw = normalizeEditableValue(value, '');
+            return /^\d{2}:\d{2}$/.test(raw) ? raw : '';
+        }
+
+        function normalizeDateInputValue(value) {
+            const raw = normalizeEditableValue(value, '');
+            if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+            return '';
+        }
+
+        function toDateTimeLocalValue(value) {
+            const raw = normalizeEditableValue(value, '');
+            if (!raw) return '';
+            const normalized = raw.replace(' ', 'T');
+            const matched = normalized.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/);
+            return matched ? matched[1] : '';
+        }
+
+        function toDateTimeStorageValue(value) {
+            const raw = normalizeEditableValue(value, '');
+            if (!raw) return '-';
+            return raw.replace('T', ' ') + ':00';
+        }
+
+        function formatCurrentDateTime() {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        }
+
+        function ensureEntryInfoForEditing(device, runtimeLocationMap) {
+            if (!device.entryInfo) {
+                const seed = Number((device.id || '').replace(/\D/g, '').slice(-3)) || 1;
+                device.entryInfo = buildMockEntryInfo(device, runtimeLocationMap, seed % 10);
+            }
+            if (!device.entryInfo.locationName || device.entryInfo.locationName === '-') {
+                device.entryInfo.locationName = runtimeLocationMap[device.location] || device.location || '-';
+            }
+            const seedFromId = Number((device.id || '').replace(/\D/g, '').slice(-3)) || 1;
+            ensurePreviewImageUrls(device.entryInfo, seedFromId);
+        }
+
+        function buildEntryEditImageDraft(info = {}) {
+            return {
+                display: normalizePreviewImageList(info.displayImageUrls, '显示器画面').map(item => item.src),
+                location: normalizePreviewImageList(info.locationImageUrls, '点位照片').map(item => item.src)
+            };
+        }
+
+        function renderEntryEditImageDraftList(type) {
+            const list = entryEditImageDraft[type] || [];
+            const previewId = type === 'display' ? 'editDisplayImagesPreview' : 'editLocationImagesPreview';
+            const countId = type === 'display' ? 'editDisplayImagesCount' : 'editLocationImagesCount';
+            const labelPrefix = type === 'display' ? '显示器画面' : '点位照片';
+            document.getElementById(countId).textContent = `${list.length}张`;
+            if (!list.length) {
+                document.getElementById(previewId).innerHTML = '<div class="entry-edit-upload-empty">暂无图片，可上传本地图片</div>';
+                return;
+            }
+            document.getElementById(previewId).innerHTML = list.map((src, index) => `
+                <div class="entry-edit-upload-thumb" onclick="openEntryEditDraftPreview('${type}', ${index})">
+                    <img src="${escapeHtml(src)}" alt="${labelPrefix} ${index + 1}">
+                    <button type="button" class="entry-edit-upload-remove" onclick="removeEntryDraftImage('${type}', ${index}, event)">×</button>
+                </div>
+            `).join('');
+        }
+
+        function renderEntryEditImageDraft() {
+            renderEntryEditImageDraftList('display');
+            renderEntryEditImageDraftList('location');
+        }
+
+        function openEntryEditDraftPreview(type, index) {
+            const list = entryEditImageDraft[type] || [];
+            if (!list.length) return;
+            const labelPrefix = type === 'display' ? '显示器画面' : '点位照片';
+            detailPreviewImages = list.map((src, i) => ({
+                src,
+                label: `${labelPrefix} ${i + 1}`
+            }));
+            openImagePreview(index);
+        }
+
+        function removeEntryDraftImage(type, index, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (!Array.isArray(entryEditImageDraft[type])) return;
+            entryEditImageDraft[type].splice(index, 1);
+            renderEntryEditImageDraft();
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(reader.error || new Error('读取图片失败'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleEntryImageUpload(type, event) {
+            const target = event?.target;
+            const files = Array.from(target?.files || []);
+            if (!files.length) return;
+            const maxCount = 12;
+            const current = entryEditImageDraft[type] || [];
+            const remains = Math.max(0, maxCount - current.length);
+            if (!remains) {
+                showToast('单组最多上传12张图片', 'error');
+                target.value = '';
+                return;
+            }
+            const validFiles = files.filter(file => file.type.startsWith('image/')).slice(0, remains);
+            try {
+                const urls = await Promise.all(validFiles.map(readFileAsDataUrl));
+                entryEditImageDraft[type] = current.concat(urls);
+                renderEntryEditImageDraft();
+                if (files.length > validFiles.length) {
+                    showToast('部分图片超出数量限制，已忽略', 'error');
+                }
+            } catch (error) {
+                showToast('图片读取失败，请重试', 'error');
+            } finally {
+                target.value = '';
+            }
+        }
+
+        function openEntryEditModal() {
+            if (!currentDetailDeviceId) return;
+            const device = devicesData.find(d => d.id === currentDetailDeviceId);
+            if (!device) return;
+            const runtimeLocationMap = buildLocationMap();
+            ensureEntryInfoForEditing(device, runtimeLocationMap);
+            const info = device.entryInfo || {};
+            entryEditImageDraft = buildEntryEditImageDraft(info);
+            document.getElementById('editOperatorName').value = normalizeEditableValue(info.operatorName);
+            document.getElementById('editOperatorPhone').value = normalizeEditableValue(info.operatorPhone);
+            document.getElementById('editLocationName').value = normalizeEditableValue(info.locationName, runtimeLocationMap[device.location] || device.location || '');
+            document.getElementById('editLocationAddress').value = normalizeEditableValue(info.locationAddress);
+            document.getElementById('editEntryAt').value = toDateTimeLocalValue(info.entryAt);
+            document.getElementById('editGpsAction').value = normalizeEditableValue(info.gpsAction, '获取当前位置');
+            document.getElementById('editLongitude').value = normalizeEditableValue(info.longitude);
+            document.getElementById('editLatitude').value = normalizeEditableValue(info.latitude);
+            document.getElementById('editEnergyMode').value = normalizeEditableValue(info.energyMode, '开启');
+            document.getElementById('editNetworkSignal').value = normalizeEditableValue(info.networkSignal, '优');
+            document.getElementById('editEnergyStartTime').value = normalizeTimeInputValue(info.energyStartTime);
+            document.getElementById('editEnergyEndTime').value = normalizeTimeInputValue(info.energyEndTime);
+            document.getElementById('editDeviceStartDate').value = normalizeDateInputValue(info.deviceStartDate);
+            document.getElementById('editDeviceEndDate').value = normalizeDateInputValue(info.deviceEndDate);
+            document.getElementById('editTerminalGeneration5').value = normalizeEditableValue(info.terminalGeneration5, '开启');
+            document.getElementById('editParallelProduction').value = normalizeEditableValue(info.parallelProduction, '开启');
+            document.getElementById('editMaintenanceWindow').value = normalizeEditableValue(info.maintenanceWindow);
+            document.getElementById('editNotes').value = normalizeEditableValue(info.notes);
+            document.getElementById('editPayQr').checked = !!info.payQr;
+            document.getElementById('editPayDigitalRmb').checked = !!info.payDigitalRmb;
+            renderEntryEditImageDraft();
+            document.getElementById('entryEditModal').classList.add('active');
+        }
+
+        function closeEntryEditModal() {
+            document.getElementById('entryEditModal').classList.remove('active');
+            entryEditImageDraft = { display: [], location: [] };
+        }
+
+        function saveEntryInfoEdit() {
+            if (!currentDetailDeviceId) return;
+            const device = devicesData.find(d => d.id === currentDetailDeviceId);
+            if (!device) return;
+
+            const runtimeLocationMap = buildLocationMap();
+            ensureEntryInfoForEditing(device, runtimeLocationMap);
+            const payQr = document.getElementById('editPayQr').checked;
+            const payDigitalRmb = document.getElementById('editPayDigitalRmb').checked;
+            const paymentMethods = [
+                payQr ? '微信/支付宝扫码支付' : '',
+                payDigitalRmb ? '数字人民币支付' : ''
+            ].filter(Boolean).join('、') || '未选择';
+            const baseEntryInfo = device.entryInfo || {};
+            const displayImageUrls = [...(entryEditImageDraft.display || [])];
+            const locationImageUrls = [...(entryEditImageDraft.location || [])];
+            const entryAt = toDateTimeStorageValue(document.getElementById('editEntryAt').value);
+
+            device.entryInfo = {
+                ...baseEntryInfo,
+                entryAt,
+                operatorName: normalizeEditableValue(document.getElementById('editOperatorName').value, '未选择'),
+                operatorPhone: normalizeEditableValue(document.getElementById('editOperatorPhone').value, '-'),
+                locationName: normalizeEditableValue(document.getElementById('editLocationName').value, runtimeLocationMap[device.location] || device.location || '-'),
+                locationAddress: normalizeEditableValue(document.getElementById('editLocationAddress').value, '-'),
+                gpsAction: normalizeEditableValue(document.getElementById('editGpsAction').value, '获取当前位置'),
+                longitude: normalizeEditableValue(document.getElementById('editLongitude').value, '手动输入'),
+                latitude: normalizeEditableValue(document.getElementById('editLatitude').value, '手动输入'),
+                energyMode: normalizeEditableValue(document.getElementById('editEnergyMode').value, '开启'),
+                networkSignal: normalizeEditableValue(document.getElementById('editNetworkSignal').value, '-'),
+                energyStartTime: normalizeEditableValue(document.getElementById('editEnergyStartTime').value, '-'),
+                energyEndTime: normalizeEditableValue(document.getElementById('editEnergyEndTime').value, '-'),
+                deviceStartDate: normalizeEditableValue(document.getElementById('editDeviceStartDate').value, '-'),
+                deviceEndDate: normalizeEditableValue(document.getElementById('editDeviceEndDate').value, '-'),
+                terminalGeneration5: normalizeEditableValue(document.getElementById('editTerminalGeneration5').value, '开启'),
+                parallelProduction: normalizeEditableValue(document.getElementById('editParallelProduction').value, '开启'),
+                maintenanceWindow: normalizeEditableValue(document.getElementById('editMaintenanceWindow').value, '-'),
+                notes: normalizeEditableValue(document.getElementById('editNotes').value, '-'),
+                payQr,
+                payDigitalRmb,
+                paymentMethods,
+                displayImageUrls,
+                locationImageUrls,
+                displayImages: displayImageUrls.length ? `${displayImageUrls.length}张图片` : '-',
+                locationImages: locationImageUrls.length ? `${locationImageUrls.length}张图片` : '-'
+            };
+
+            if (!device.entryInfo.entryAt || device.entryInfo.entryAt === '-') {
+                device.entryInfo.entryAt = formatCurrentDateTime();
+            }
+
+            const seedFromId = Number((device.id || '').replace(/\D/g, '').slice(-3)) || 1;
+            ensurePreviewImageUrls(device.entryInfo, seedFromId);
+            saveDevicesData();
+            closeEntryEditModal();
+            viewDetail(device.id);
+            showToast('入场信息已更新');
+        }
+
         function viewDetail(deviceId) {
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
+            currentDetailDeviceId = deviceId;
+            if (device.entryInfo) {
+                const seedFromId = Number((device.id || '').replace(/\D/g, '').slice(-3)) || 1;
+                const patched = ensurePreviewImageUrls(device.entryInfo, seedFromId);
+                if (patched) {
+                    saveDevicesData();
+                }
+            }
             const runtimeLocationMap = buildLocationMap();
+            const entryCoreRows = renderEntryCoreRows(device, runtimeLocationMap);
+            const entryAllRows = renderEntryAllRows(device, runtimeLocationMap);
+            const entryImageGallery = renderEntryImageGallery(device);
+            const basicRows = [
+                renderDetailRow('设备编号', device.id),
+                renderDetailRow('所属商户', merchantMap[device.merchant] || device.merchant || '-'),
+                renderDetailRow('点位', device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)),
+                renderDetailRow('设备类别', categoryMap[device.category] || device.category || '-'),
+                renderDetailRow('部署类型', deploymentMap[device.deployment] || device.deployment || '-'),
+                renderDetailRow('设备状态', statusMap[device.status] || device.status),
+                renderDetailRow('停卖状态', salesMap[device.sales] || device.sales),
+                renderDetailRow('最近心跳', device.heartbeat)
+            ].join('');
+            const entryAllSectionRows = entryAllRows
+                ? `
+                <details class="detail-entry-all">
+                    <summary>查看全部入场信息</summary>
+                    ${entryAllRows}
+                </details>
+                `
+                : renderDetailRow('入场记录', '暂无入场记录');
             document.getElementById('detailModalBody').innerHTML = `
-                <div class="detail-row"><span>设备编号</span><strong>${device.id}</strong></div>
-                <div class="detail-row"><span>所属商户</span><strong>${merchantMap[device.merchant] || device.merchant || '-'}</strong></div>
-                <div class="detail-row"><span>点位</span><strong>${device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)}</strong></div>
-                <div class="detail-row"><span>设备类别</span><strong>${categoryMap[device.category] || device.category || '-'}</strong></div>
-                <div class="detail-row"><span>部署类型</span><strong>${deploymentMap[device.deployment] || device.deployment || '-'}</strong></div>
-                <div class="detail-row"><span>设备状态</span><strong>${statusMap[device.status] || device.status}</strong></div>
-                <div class="detail-row"><span>停卖状态</span><strong>${salesMap[device.sales] || device.sales}</strong></div>
-                <div class="detail-row"><span>最近心跳</span><strong>${device.heartbeat}</strong></div>
+                <div class="detail-grid">
+                    ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
+                    ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
+                    ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
+                    ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
+                </div>
             `;
+            detailPreviewImages = collectEntryPreviewImages(device);
+            bindEntryImageThumbEvents();
             document.getElementById('detailModal').classList.add('active');
         }
 
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('active');
+            closeEntryEditModal();
+            currentDetailDeviceId = '';
         }
 
         function toggleSidebar() {
@@ -1642,6 +2869,31 @@
             if (e.target === this) {
                 closeDetailModal();
             }
+        });
+
+        document.getElementById('entryEditModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEntryEditModal();
+            }
+        });
+
+        document.getElementById('imagePreviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImagePreview();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            const entryEditModal = document.getElementById('entryEditModal');
+            if (entryEditModal.classList.contains('active') && e.key === 'Escape') {
+                closeEntryEditModal();
+                return;
+            }
+            const modal = document.getElementById('imagePreviewModal');
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') closeImagePreview();
+            if (e.key === 'ArrowLeft') switchImagePreview(-1);
+            if (e.key === 'ArrowRight') switchImagePreview(1);
         });
 
         window.onload = init;

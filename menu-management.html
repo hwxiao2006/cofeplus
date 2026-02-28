@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>菜单管理 - 运营控制台</title>
+    <title>商品管理 - 运营控制台</title>
     <meta name="format-detection" content="telephone=no">
     <style>
         :root {
@@ -1167,6 +1167,203 @@
             padding: 20px 24px;
         }
 
+        .batch-fixed-panel {
+            display: none;
+            margin: 0 24px 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            gap: 10px;
+        }
+
+        .batch-fixed-panel.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .batch-fixed-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            align-items: end;
+        }
+
+        .batch-fixed-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .batch-fixed-field label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .batch-fixed-field input,
+        .batch-fixed-field select {
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 10px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+            color: var(--text-primary);
+        }
+
+        .batch-fixed-field input:focus,
+        .batch-fixed-field select:focus {
+            border-color: var(--primary);
+        }
+
+        .batch-fixed-list-wrap {
+            margin: 0 24px 22px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: auto;
+        }
+
+        .batch-fixed-list-head {
+            display: grid;
+            grid-template-columns: 84px minmax(220px, 1fr) 130px 130px 100px;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            align-items: center;
+            min-width: 700px;
+        }
+
+        .batch-fixed-list-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .batch-fixed-row {
+            display: grid;
+            grid-template-columns: 84px minmax(220px, 1fr) 130px 130px 100px;
+            gap: 8px;
+            padding: 11px 14px;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: var(--text-primary);
+            min-width: 700px;
+        }
+
+        .batch-fixed-row:last-child {
+            border-bottom: none;
+        }
+
+        .batch-fixed-row.success {
+            background: #f0fdf4;
+        }
+
+        .batch-fixed-row.failed {
+            background: #fef2f2;
+        }
+
+        .batch-fixed-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .batch-fixed-check input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .batch-fixed-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .batch-fixed-name-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .batch-fixed-status {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .batch-fixed-status.on {
+            color: #15803d;
+        }
+
+        .batch-fixed-status.off {
+            color: var(--text-muted);
+        }
+
+        .batch-fixed-empty {
+            padding: 24px 14px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .batch-fixed-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .batch-fixed-summary {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .batch-fixed-failures {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .batch-fixed-failure-item {
+            font-size: 12px;
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 999px;
+            padding: 3px 10px;
+        }
+
+        .batch-select-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            user-select: none;
+        }
+
+        .batch-check {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .batch-check input {
+            width: 16px;
+            height: 16px;
+        }
+
         .product-card {
             background: #fff;
             border: 1px solid var(--border);
@@ -1198,6 +1395,16 @@
 
         .product-card:hover::before {
             transform: scaleX(1);
+        }
+
+        .product-card.batch-success {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
+        }
+
+        .product-card.batch-failed {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25);
         }
 
         .product-image-wrapper {
@@ -1311,6 +1518,27 @@
             font-weight: 600;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(255, 165, 2, 0.3);
+        }
+
+        .batch-result-tag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .batch-result-tag.success {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .batch-result-tag.failed {
+            color: #991b1b;
+            background: #fee2e2;
         }
 
         .product-desc {
@@ -1777,6 +2005,7 @@
             background: #fff;
             padding: 14px;
             overflow: auto;
+            position: relative;
         }
 
         .order-preview-products-title {
@@ -1942,6 +2171,277 @@
             border: 1px dashed var(--border);
             border-radius: 12px;
             background: #fafcfd;
+        }
+
+        .order-preview-detail-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 12;
+            background: #fff;
+            border-radius: 12px;
+            display: none;
+            overflow: auto;
+        }
+
+        .order-preview-detail-overlay.active {
+            display: block;
+        }
+
+        .order-preview-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .order-preview-detail-back {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .order-preview-detail-title {
+            flex: 1;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+            padding-right: 34px;
+        }
+
+        .order-preview-detail-body {
+            padding: 14px;
+        }
+
+        .order-preview-detail-image-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0 14px;
+        }
+
+        .order-preview-detail-image {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e6edf2;
+            background: #fff;
+        }
+
+        .order-preview-detail-image-placeholder {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dbe4ea;
+            background: #f2f7fa;
+            color: var(--text-muted);
+            font-size: 48px;
+        }
+
+        .order-preview-detail-summary {
+            border: 1px solid #99e5de;
+            border-radius: 14px;
+            padding: 12px;
+            background: #fdfefe;
+        }
+
+        .order-preview-detail-summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d8efec;
+        }
+
+        .order-preview-detail-price {
+            font-size: 42px;
+            line-height: 1;
+            font-weight: 700;
+            color: #d64747;
+            margin-bottom: 8px;
+        }
+
+        .order-preview-detail-desc {
+            color: #4b5563;
+            font-size: 22px;
+            line-height: 1.35;
+        }
+
+        .order-preview-detail-cup {
+            color: #374151;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: right;
+        }
+
+        .order-preview-detail-qty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .order-preview-detail-qty-label {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .order-preview-detail-qty-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid #7dd7cf;
+            background: #e8fbf8;
+            color: #0f766e;
+            font-size: 22px;
+            line-height: 1;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .order-preview-detail-qty-value {
+            width: 44px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .order-preview-detail-intro {
+            margin-top: 12px;
+            color: #4b5563;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .order-preview-detail-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e8edf1;
+        }
+
+        .order-preview-detail-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .order-preview-detail-option-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .order-preview-detail-option-btn {
+            min-width: 88px;
+            height: 38px;
+            border: 1px solid #cfd8e3;
+            background: #fff;
+            border-radius: 8px;
+            padding: 0 14px;
+            color: #374151;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .order-preview-detail-option-btn.active {
+            border-color: #22c7bb;
+            color: #0f766e;
+            box-shadow: inset 0 0 0 1px #22c7bb;
+            background: #ecfbf9;
+        }
+
+        .order-preview-detail-option-extra {
+            color: #6b7280;
+        }
+
+        .order-preview-detail-bean-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .order-preview-detail-bean-btn {
+            min-height: 44px;
+            border: 1px solid #cfd8e3;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #374151;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .order-preview-detail-bean-btn.active {
+            border-color: #22c7bb;
+            color: #0f766e;
+            box-shadow: inset 0 0 0 1px #22c7bb;
+            background: #ecfbf9;
+        }
+
+        .order-preview-detail-bean-desc-grid {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .order-preview-detail-bean-desc {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .order-preview-detail-custom-row {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e8edf1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-preview-detail-custom-btn {
+            min-width: 112px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid #cfd8e3;
+            background: #fff;
+            color: #374151;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .order-preview-detail-custom-btn.active {
+            border-color: #22c7bb;
+            color: #0f766e;
+            box-shadow: inset 0 0 0 1px #22c7bb;
+            background: #ecfbf9;
+        }
+
+        .order-preview-detail-custom-hint {
+            color: #6b7280;
+            font-size: 14px;
         }
 
         .icon-picker {
@@ -2188,7 +2688,7 @@
             .menu-inner-tabs {
                 width: 100%;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr;
             }
 
             .menu-inner-tab-btn {
@@ -2294,6 +2794,32 @@
 
             .order-preview-product-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .order-preview-detail-title {
+                font-size: 18px;
+                letter-spacing: 0;
+            }
+
+            .order-preview-detail-price {
+                font-size: 30px;
+            }
+
+            .order-preview-detail-desc {
+                font-size: 14px;
+            }
+
+            .order-preview-detail-cup {
+                font-size: 14px;
+            }
+
+            .order-preview-detail-bean-grid,
+            .order-preview-detail-bean-desc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-preview-detail-intro {
+                font-size: 13px;
             }
 
             .overlay {
@@ -2428,7 +2954,7 @@
                     </a>
                     <a href="menu-management.html" class="nav-item active">
                         <span class="nav-icon">📋</span>
-                        <span>菜单管理</span>
+                        <span>商品管理</span>
                     </a>
                     <a href="materials.html" class="nav-item">
                         <span class="nav-icon">📦</span>
@@ -2467,7 +2993,7 @@
             <header class="header">
                 <div class="header-left">
                     <div class="header-title-wrapper">
-                        <h1 class="header-title">菜单管理</h1>
+                        <h1 class="header-title">商品管理</h1>
                         <div class="header-meta">
                             <span class="device-tag" id="deviceTag">RCK111</span>
                             <span class="header-desc">按设备语言配置的菜单快照</span>
@@ -2555,6 +3081,7 @@
                         <div class="menu-inner-tabs">
                             <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('settings')">基本设置</button>
                             <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                            <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
                         </div>
                     </div>
 
@@ -2646,6 +3173,51 @@
                             <!-- 动态渲染 -->
                         </div>
                     </div>
+
+                    <div id="menuBatchPanel" class="menu-inner-panel">
+                        <section id="batchFixedPricePanel" class="batch-fixed-panel active" style="display:flex;">
+                            <div class="batch-fixed-controls">
+                                <div class="batch-fixed-field">
+                                    <label for="batchFixedCategorySelect">分类筛选</label>
+                                    <select id="batchFixedCategorySelect" onchange="setBatchFixedPriceActiveCategory(this.value)"></select>
+                                </div>
+                                <div class="batch-fixed-field">
+                                    <label for="batchFixedKeyword">商品名称搜索</label>
+                                    <input type="text" id="batchFixedKeyword" placeholder="输入商品名关键词" oninput="setBatchFixedPriceKeyword(this.value)">
+                                </div>
+                                <div class="batch-fixed-field">
+                                    <label for="batchFixedCurrentPrice">现价（选填）</label>
+                                    <input type="number" id="batchFixedCurrentPrice" min="0" step="0.1" placeholder="留空则不修改现价">
+                                </div>
+                                <div class="batch-fixed-field">
+                                    <label for="batchFixedOriginalPrice">原价（可不填）</label>
+                                    <input type="number" id="batchFixedOriginalPrice" min="0" step="0.1" placeholder="留空则不修改原价">
+                                </div>
+                            </div>
+                            <div class="batch-fixed-actions">
+                                <button type="button" class="btn btn-primary" id="batchFixedSubmitBtn" onclick="submitBatchFixedPriceUpdate()">提交改价</button>
+                                <button type="button" class="btn btn-default" id="batchSaleOnBtn" onclick="submitBatchSaleStatusUpdate(true)">批量上架</button>
+                                <button type="button" class="btn btn-default" id="batchSaleOffBtn" onclick="submitBatchSaleStatusUpdate(false)">批量下架</button>
+                                <button type="button" class="btn btn-default" id="batchFixedRetryBtn" onclick="retryBatchFixedPriceFailures()">重试失败项</button>
+                                <label class="batch-select-toggle">
+                                    <input type="checkbox" id="batchFixedSelectAll" onchange="handleBatchFixedSelectAllToggle(this.checked)">
+                                    <span>全选当前列表</span>
+                                </label>
+                            </div>
+                            <div class="batch-fixed-summary" id="batchFixedSummary">已选 0 个商品</div>
+                            <div class="batch-fixed-failures" id="batchFixedFailures"></div>
+                        </section>
+                        <div class="batch-fixed-list-wrap">
+                            <div class="batch-fixed-list-head">
+                                <span>选择</span>
+                                <span>商品名称</span>
+                                <span>现价</span>
+                                <span>原价</span>
+                                <span>在售状态</span>
+                            </div>
+                            <div id="batchFixedListContainer" class="batch-fixed-list-body"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -2673,6 +3245,7 @@
                     <section class="order-preview-products">
                         <div class="order-preview-products-title" id="orderPreviewProductsTitle">商品列表</div>
                         <div id="orderPreviewProducts"></div>
+                        <div id="orderPreviewDetailOverlay" class="order-preview-detail-overlay" onclick="if(event.target === this) closeOrderPreviewProductDetail()"></div>
                     </section>
                 </div>
             </div>
@@ -2868,6 +3441,20 @@
         let currentMenuInnerTab = 'settings';
         let previewActiveCategory = '';
         let orderPreviewLang = '';
+        let orderPreviewDetailState = {
+            open: false,
+            categoryKey: '',
+            productId: null,
+            quantity: 1,
+            selected: {},
+            customSelected: false
+        };
+        let isBatchFixedPriceMode = false;
+        let batchFixedPriceActiveCategory = '__ALL__';
+        let batchFixedPriceKeyword = '';
+        let batchFixedPriceSelectedIds = new Set();
+        let batchFixedPriceSuccessIds = new Set();
+        let batchFixedPriceFailedMap = {};
         const PLATFORM_LANG_STORAGE_KEY = 'platformLang';
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
         const DEFAULT_TAX_RATE = 0.13;
@@ -2940,6 +3527,70 @@
                 { name: '橘皮拿铁', sales: 389 }
             ]
         };
+        const ORDER_PREVIEW_OPTION_TITLE_MAP = {
+            beans: 'BEAN',
+            temperature: 'TEMPERATURE',
+            strength: 'PROFILE',
+            syrup: 'SYRUP',
+            sweetness: 'SWEETNESS',
+            cupsize: 'CUPSIZE',
+            lid: 'LID',
+            latteArt: 'LATTE-ART'
+        };
+        const ORDER_PREVIEW_OPTION_LIBRARY = {
+            beans: [
+                {
+                    key: '精品咖啡-翡翠瑰夏',
+                    labels: { zh: '精品咖啡-翡翠瑰夏', en: 'Geisha Specialty' },
+                    extraPrice: 1,
+                    desc: {
+                        zh: '精选顶级瑰夏咖啡豆，热带花果香、余味悠长。',
+                        en: 'Top-grade geisha bean with floral and fruity aroma.'
+                    }
+                },
+                {
+                    key: '金奖黑咖-浓香意式',
+                    labels: { zh: '金奖黑咖-浓香意式', en: 'Award Espresso' },
+                    desc: {
+                        zh: '延时烘焙工艺，坚果与焦糖香气更明显。',
+                        en: 'Extended roast with richer nutty and caramel notes.'
+                    }
+                }
+            ],
+            sweetness: [
+                { key: '无糖', labels: { zh: '无糖', en: 'No Sugar' } },
+                { key: '少糖', labels: { zh: '少糖', en: 'Less Sugar' } },
+                { key: '标准糖', labels: { zh: '标准糖', en: 'Regular Sugar' } },
+                { key: '多糖', labels: { zh: '多糖', en: 'Extra Sugar' } }
+            ],
+            temperature: [
+                { key: '热', labels: { zh: '热', en: 'Hot' } },
+                { key: '冰', labels: { zh: '冰', en: 'Iced' } },
+                { key: '常温', labels: { zh: '常温', en: 'Room Temp' } }
+            ],
+            strength: [
+                { key: '标准', labels: { zh: '标准浓度', en: 'Standard' } },
+                { key: '加1份浓缩', labels: { zh: '加1份浓缩', en: 'Add 1 Shot' }, extraPrice: 2 },
+                { key: '加2份浓缩', labels: { zh: '加2份浓缩', en: 'Add 2 Shots' }, extraPrice: 4 }
+            ],
+            cupsize: [
+                { key: '355ml', labels: { zh: '355ml', en: '355ml' } },
+                { key: '473ml', labels: { zh: '473ml', en: '473ml' } },
+                { key: '592ml', labels: { zh: '592ml', en: '592ml' } }
+            ]
+        };
+        const ORDER_PREVIEW_COPY = {
+            chooseBeans: { zh: '选咖啡豆', en: 'Choose Beans' },
+            chooseSweetness: { zh: '选择糖量', en: 'Choose Sweetness' },
+            chooseTemperature: { zh: '选择温度', en: 'Choose Temperature' },
+            chooseStrength: { zh: '选择浓度', en: 'Choose Strength' },
+            customAction: { zh: '选择定制', en: 'Custom' },
+            customHint: { zh: '更多个性化定制专属于您的口味', en: 'More customization for your taste' },
+            cupCount: { zh: '杯数', en: 'Qty' },
+            largeCup: { zh: '大杯型', en: 'Large' },
+            mediumCup: { zh: '中杯型', en: 'Medium' },
+            xlCup: { zh: '超大杯型', en: 'XL' }
+        };
 
         // ==================== 初始化 ====================
         function init() {
@@ -2970,7 +3621,7 @@
                 if (tab === 'overview' || tab === 'menu') {
                     currentTab = tab;
                 }
-                if (innerTab === 'manage' || innerTab === 'settings') {
+                if (innerTab === 'manage' || innerTab === 'settings' || innerTab === 'batch') {
                     currentMenuInnerTab = innerTab;
                 }
             } catch (e) {
@@ -3123,6 +3774,501 @@
             for (const category of Object.values(productsData)) {
                 category.items = category.items.map(item => edits[item.id] ? { ...item, ...edits[item.id] } : item);
             }
+        }
+
+        function roundFixedPriceValue(value) {
+            return Math.round(Number(value) * 100) / 100;
+        }
+
+        function getBatchFixedPriceCategoryKeys() {
+            return Object.keys(productsData || {});
+        }
+
+        function ensureBatchFixedPriceActiveCategory() {
+            const keys = getBatchFixedPriceCategoryKeys();
+            if (!keys.length) {
+                batchFixedPriceActiveCategory = '__ALL__';
+                return;
+            }
+            if (batchFixedPriceActiveCategory !== '__ALL__' && !keys.includes(batchFixedPriceActiveCategory)) {
+                batchFixedPriceActiveCategory = '__ALL__';
+            }
+        }
+
+        function getBatchFixedPriceEntries(categoryKey = batchFixedPriceActiveCategory) {
+            const keys = getBatchFixedPriceCategoryKeys();
+            if (!keys.length) return [];
+
+            const scopedKeys = categoryKey === '__ALL__'
+                ? keys
+                : (keys.includes(categoryKey) ? [categoryKey] : []);
+
+            const entries = [];
+            scopedKeys.forEach(key => {
+                const category = productsData[key];
+                if (!category || !Array.isArray(category.items)) return;
+                category.items.forEach(product => {
+                    entries.push({
+                        categoryKey: key,
+                        categoryName: getCategoryNameByLang(key, currentLang),
+                        product
+                    });
+                });
+            });
+            return entries;
+        }
+
+        function normalizeBatchFixedPriceKeyword(raw = '') {
+            return String(raw || '').trim().toLowerCase();
+        }
+
+        function getBatchFixedPriceFilteredEntries(categoryKey = batchFixedPriceActiveCategory, keyword = batchFixedPriceKeyword) {
+            const entries = getBatchFixedPriceEntries(categoryKey);
+            const normalizedKeyword = normalizeBatchFixedPriceKeyword(keyword);
+            if (!normalizedKeyword) return entries;
+            return entries.filter(entry => {
+                const names = entry.product?.names || {};
+                const candidates = Object.values(names).map(value => String(value || '').toLowerCase());
+                return candidates.some(name => name.includes(normalizedKeyword));
+            });
+        }
+
+        function getBatchCategoryItems(categoryKey = batchFixedPriceActiveCategory) {
+            return getBatchFixedPriceEntries(categoryKey).map(entry => entry.product);
+        }
+
+        function getBatchSelectedIdsInCategory(categoryKey = batchFixedPriceActiveCategory) {
+            const itemIdSet = new Set(getBatchFixedPriceEntries(categoryKey).map(entry => entry.product.id));
+            return Array.from(batchFixedPriceSelectedIds).filter(id => itemIdSet.has(id));
+        }
+
+        function clearBatchFixedPriceRuntimeState() {
+            batchFixedPriceKeyword = '';
+            batchFixedPriceSelectedIds = new Set();
+            batchFixedPriceSuccessIds = new Set();
+            batchFixedPriceFailedMap = {};
+        }
+
+        function setBatchFixedPriceSelectedIds(ids = []) {
+            batchFixedPriceSelectedIds = new Set((ids || []).map(id => Number(id)).filter(Number.isFinite));
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+        }
+
+        function setBatchFixedPriceActiveCategory(categoryKey) {
+            batchFixedPriceActiveCategory = categoryKey || '__ALL__';
+            ensureBatchFixedPriceActiveCategory();
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+        }
+
+        function setBatchFixedPriceKeyword(keyword = '') {
+            batchFixedPriceKeyword = String(keyword || '');
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+        }
+
+        function getBatchFixedPriceStateSnapshot() {
+            return {
+                isBatchFixedPriceMode,
+                activeCategory: batchFixedPriceActiveCategory,
+                selectedIds: Array.from(batchFixedPriceSelectedIds),
+                successIds: Array.from(batchFixedPriceSuccessIds),
+                failedMap: { ...batchFixedPriceFailedMap }
+            };
+        }
+
+        function renderBatchFixedPricePanel() {
+            const panel = document.getElementById('batchFixedPricePanel');
+            if (!panel) return;
+
+            isBatchFixedPriceMode = currentMenuInnerTab === 'batch';
+            if (!isBatchFixedPriceMode) {
+                panel.classList.remove('active');
+                panel.style.display = 'none';
+                return;
+            }
+
+            ensureBatchFixedPriceActiveCategory();
+            panel.classList.add('active');
+            panel.style.display = 'flex';
+
+            const categorySelect = document.getElementById('batchFixedCategorySelect');
+            const keywordInput = document.getElementById('batchFixedKeyword');
+            const summary = document.getElementById('batchFixedSummary');
+            const failuresEl = document.getElementById('batchFixedFailures');
+            const selectAllInput = document.getElementById('batchFixedSelectAll');
+            const retryBtn = document.getElementById('batchFixedRetryBtn');
+
+            const categories = getBatchFixedPriceCategoryKeys();
+            if (categorySelect) {
+                const allOption = `<option value="__ALL__">全部分类</option>`;
+                const categoryOptions = categories
+                    .map(categoryKey => `<option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryNameByLang(categoryKey, currentLang))}</option>`)
+                    .join('');
+                categorySelect.innerHTML = `${allOption}${categoryOptions}`;
+                categorySelect.value = batchFixedPriceActiveCategory;
+            }
+            if (keywordInput) {
+                keywordInput.value = batchFixedPriceKeyword;
+            }
+
+            const visibleEntries = getBatchFixedPriceFilteredEntries(batchFixedPriceActiveCategory);
+            const visibleIdSet = new Set(visibleEntries.map(entry => entry.product.id));
+            const selectedVisibleIds = Array.from(batchFixedPriceSelectedIds).filter(id => visibleIdSet.has(id));
+            const selectedTotal = batchFixedPriceSelectedIds.size;
+            const failedIds = Object.keys(batchFixedPriceFailedMap).map(id => Number(id)).filter(Number.isFinite);
+            const failedRows = failedIds.map(id => {
+                const matched = getBatchFixedPriceEntries('__ALL__').find(entry => entry.product.id === id);
+                if (!matched) return '';
+                const name = matched.product.names?.[currentLang] || matched.product.names?.zh || matched.product.names?.en || `#${id}`;
+                const categoryLabel = matched.categoryName ? `[${matched.categoryName}] ` : '';
+                return `<span class="batch-fixed-failure-item">${escapePreviewText(categoryLabel + name)}：${escapePreviewText(batchFixedPriceFailedMap[id])}</span>`;
+            }).filter(Boolean);
+
+            if (summary) {
+                summary.textContent = `当前列表已选 ${selectedVisibleIds.length}/${visibleEntries.length}，总选中 ${selectedTotal}，失败 ${failedIds.length}`;
+            }
+            if (failuresEl) {
+                failuresEl.innerHTML = failedRows.join('');
+            }
+            if (selectAllInput) {
+                selectAllInput.checked = visibleEntries.length > 0 && selectedVisibleIds.length === visibleEntries.length;
+            }
+            if (retryBtn) {
+                retryBtn.disabled = failedIds.length === 0;
+            }
+        }
+
+        function toggleBatchFixedPriceMode() {
+            if (currentMenuInnerTab === 'batch') {
+                switchMenuInnerTab('manage');
+            } else {
+                switchMenuInnerTab('batch');
+            }
+        }
+
+        function toggleBatchFixedPriceSelection(productId) {
+            if (currentMenuInnerTab !== 'batch') return;
+            const numericId = Number(productId);
+            if (!Number.isFinite(numericId)) return;
+
+            if (batchFixedPriceSelectedIds.has(numericId)) {
+                batchFixedPriceSelectedIds.delete(numericId);
+            } else {
+                batchFixedPriceSelectedIds.add(numericId);
+            }
+
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+        }
+
+        function handleBatchFixedSelectAllToggle(checked) {
+            if (currentMenuInnerTab !== 'batch') return;
+            const visibleEntries = getBatchFixedPriceFilteredEntries(batchFixedPriceActiveCategory);
+            visibleEntries.forEach(entry => {
+                if (checked) batchFixedPriceSelectedIds.add(entry.product.id);
+                else batchFixedPriceSelectedIds.delete(entry.product.id);
+            });
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+        }
+
+        function renderBatchFixedPriceList() {
+            const container = document.getElementById('batchFixedListContainer');
+            if (!container) return;
+            if (currentMenuInnerTab !== 'batch') {
+                container.innerHTML = '';
+                return;
+            }
+
+            const entries = getBatchFixedPriceFilteredEntries(batchFixedPriceActiveCategory);
+            if (!entries.length) {
+                container.innerHTML = '<div class="batch-fixed-empty">当前筛选下暂无商品</div>';
+                return;
+            }
+
+            container.innerHTML = entries.map(entry => {
+                const product = entry.product;
+                const productName = product.names?.[currentLang] || product.names?.zh || product.names?.en || '-';
+                const currency = normalizeProductCurrency({ currency: menuBasicSettings.currency });
+                const currentPriceText = formatMoneyByCurrency(product.price, currency);
+                const hasOriginal = Number.isFinite(Number(product.originalPrice)) && Number(product.originalPrice) > 0;
+                const originalPriceText = hasOriginal ? formatMoneyByCurrency(product.originalPrice, currency) : '--';
+                const isSuccess = batchFixedPriceSuccessIds.has(product.id);
+                const failedReason = batchFixedPriceFailedMap[product.id] || '';
+                return `
+                    <div class="batch-fixed-row ${isSuccess ? 'success' : ''} ${failedReason ? 'failed' : ''}">
+                        <label class="batch-fixed-check">
+                            <input type="checkbox" ${batchFixedPriceSelectedIds.has(product.id) ? 'checked' : ''} onclick="toggleBatchFixedPriceSelection(${product.id})">
+                            <span>#${product.id}</span>
+                        </label>
+                        <div class="batch-fixed-name">
+                            <span class="batch-fixed-name-text">${escapePreviewText(productName)}</span>
+                            <span class="batch-fixed-failure-item" style="margin-left:0;padding:2px 8px;">${escapePreviewText(entry.categoryName)}</span>
+                            ${isSuccess ? '<span class="batch-result-tag success">修改成功</span>' : ''}
+                            ${failedReason ? `<span class="batch-result-tag failed">${escapePreviewText(failedReason)}</span>` : ''}
+                        </div>
+                        <span>${escapePreviewText(currentPriceText)}</span>
+                        <span>${escapePreviewText(originalPriceText)}</span>
+                        <span class="batch-fixed-status ${isProductOnSale(product) ? 'on' : 'off'}">${isProductOnSale(product) ? '在售' : '下架'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function validateBatchFixedPriceInput(currentRaw, originalRaw) {
+            const hasCurrent = !(currentRaw === '' || currentRaw === null || typeof currentRaw === 'undefined');
+            const hasOriginal = !(originalRaw === '' || originalRaw === null || typeof originalRaw === 'undefined');
+
+            if (!hasCurrent && !hasOriginal) {
+                return { ok: false, message: '请至少填写现价或原价' };
+            }
+
+            let currentPrice = null;
+            if (hasCurrent) {
+                currentPrice = roundFixedPriceValue(currentRaw);
+                if (!Number.isFinite(currentPrice) || currentPrice <= 0) {
+                    return { ok: false, message: '请输入有效现价' };
+                }
+            }
+
+            let originalPrice = null;
+            if (hasOriginal) {
+                originalPrice = roundFixedPriceValue(originalRaw);
+                if (!Number.isFinite(originalPrice) || originalPrice <= 0) {
+                    return { ok: false, message: '请输入有效原价' };
+                }
+            }
+
+            if (currentPrice !== null && originalPrice !== null && originalPrice <= currentPrice) {
+                return { ok: false, message: '原价需大于现价' };
+            }
+
+            return { ok: true, currentPrice, originalPrice };
+        }
+
+        function computeFixedPricePatch(product, input) {
+            const nextPrice = input.currentPrice === null || typeof input.currentPrice === 'undefined'
+                ? Number(product.price)
+                : roundFixedPriceValue(input.currentPrice);
+            const patch = { price: nextPrice };
+
+            if (input.originalPrice === null || typeof input.originalPrice === 'undefined') {
+                if (Object.prototype.hasOwnProperty.call(product, 'originalPrice')) {
+                    patch.originalPrice = product.originalPrice;
+                }
+            } else {
+                patch.originalPrice = roundFixedPriceValue(input.originalPrice);
+            }
+
+            if (patch.originalPrice !== null && typeof patch.originalPrice !== 'undefined' && patch.originalPrice <= patch.price) {
+                return { ok: false, message: '原价需大于现价' };
+            }
+
+            return { ok: true, patch };
+        }
+
+        function updateSingleProductFixedPrice(categoryKey, productId, input) {
+            const category = productsData[categoryKey];
+            if (!category || !Array.isArray(category.items)) {
+                throw new Error('分类不存在');
+            }
+
+            const target = category.items.find(item => item.id === Number(productId));
+            if (!target) {
+                throw new Error('商品不存在');
+            }
+
+            const patchResult = computeFixedPricePatch(target, input);
+            if (!patchResult.ok) {
+                throw new Error(patchResult.message || '价格校验失败');
+            }
+            const patch = patchResult.patch;
+            target.price = patch.price;
+            if (input.originalPrice !== null && typeof patch.originalPrice !== 'undefined') {
+                target.originalPrice = patch.originalPrice;
+            }
+            return target;
+        }
+
+        function persistSingleProductEdit(product) {
+            let edits = {};
+            try {
+                edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
+            } catch (e) {
+                edits = {};
+            }
+            edits[product.id] = { ...(edits[product.id] || {}), ...product };
+            localStorage.setItem('menuProductEdits', JSON.stringify(edits));
+        }
+
+        function markBatchFixedPriceSuccess(productId) {
+            const numericId = Number(productId);
+            batchFixedPriceSuccessIds.add(numericId);
+            batchFixedPriceSelectedIds.delete(numericId);
+            delete batchFixedPriceFailedMap[numericId];
+        }
+
+        function markBatchFixedPriceFailure(productId, reason) {
+            const numericId = Number(productId);
+            batchFixedPriceSelectedIds.add(numericId);
+            batchFixedPriceFailedMap[numericId] = reason || '修改失败';
+        }
+
+        function applyBatchFixedPriceBySelection(categoryKey, input) {
+            const scope = categoryKey || '__ALL__';
+            const scopedEntries = getBatchFixedPriceEntries(scope);
+            const targetEntries = scopedEntries.filter(entry => batchFixedPriceSelectedIds.has(entry.product.id));
+            let successCount = 0;
+            let failedCount = 0;
+
+            targetEntries.forEach(entry => {
+                const productId = entry.product.id;
+                const category = productsData[entry.categoryKey];
+                const item = category?.items?.find(candidate => candidate.id === productId);
+                if (!item) {
+                    markBatchFixedPriceFailure(productId, '商品不存在');
+                    failedCount += 1;
+                    return;
+                }
+
+                const previousPrice = item.price;
+                const previousOriginalPrice = item.originalPrice;
+                try {
+                    const updated = updateSingleProductFixedPrice(entry.categoryKey, productId, input);
+                    try {
+                        persistSingleProductEdit(updated);
+                    } catch (persistError) {
+                        item.price = previousPrice;
+                        item.originalPrice = previousOriginalPrice;
+                        throw persistError;
+                    }
+                    markBatchFixedPriceSuccess(productId);
+                    successCount += 1;
+                } catch (error) {
+                    markBatchFixedPriceFailure(productId, error?.message || '修改失败');
+                    failedCount += 1;
+                }
+            });
+
+            updateStats();
+            renderMenu();
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+            return { successCount, failedCount };
+        }
+
+        function applyBatchSaleStatusBySelection(categoryKey, onSale) {
+            const scope = categoryKey || '__ALL__';
+            const scopedEntries = getBatchFixedPriceEntries(scope);
+            const targetEntries = scopedEntries.filter(entry => batchFixedPriceSelectedIds.has(entry.product.id));
+            let successCount = 0;
+            let failedCount = 0;
+
+            targetEntries.forEach(entry => {
+                const productId = entry.product.id;
+                const category = productsData[entry.categoryKey];
+                const item = category?.items?.find(candidate => candidate.id === productId);
+                if (!item) {
+                    markBatchFixedPriceFailure(productId, '商品不存在');
+                    failedCount += 1;
+                    return;
+                }
+
+                const previousOnSale = item.onSale;
+                try {
+                    item.onSale = !!onSale;
+                    try {
+                        persistSingleProductEdit(item);
+                    } catch (persistError) {
+                        item.onSale = previousOnSale;
+                        throw persistError;
+                    }
+                    markBatchFixedPriceSuccess(productId);
+                    successCount += 1;
+                } catch (error) {
+                    markBatchFixedPriceFailure(productId, error?.message || '上下架失败');
+                    failedCount += 1;
+                }
+            });
+
+            updateStats();
+            renderMenu();
+            renderBatchFixedPricePanel();
+            renderBatchFixedPriceList();
+            return { successCount, failedCount };
+        }
+
+        function getBatchFixedPriceInputFromForm() {
+            const currentInput = document.getElementById('batchFixedCurrentPrice');
+            const originalInput = document.getElementById('batchFixedOriginalPrice');
+            const currentRaw = currentInput ? currentInput.value : '';
+            const originalRaw = originalInput ? originalInput.value : '';
+            return validateBatchFixedPriceInput(currentRaw, originalRaw);
+        }
+
+        function submitBatchFixedPriceUpdate() {
+            const valid = getBatchFixedPriceInputFromForm();
+            if (!valid.ok) {
+                showToast(valid.message, 'error');
+                return;
+            }
+
+            if (!batchFixedPriceSelectedIds.size) {
+                showToast('请先选择商品', 'error');
+                return;
+            }
+
+            const result = applyBatchFixedPriceBySelection('__ALL__', valid);
+            showToast(`批量改价完成：成功 ${result.successCount}，失败 ${result.failedCount}`);
+        }
+
+        function submitBatchSaleStatusUpdate(onSale) {
+            if (!batchFixedPriceSelectedIds.size) {
+                showToast('请先选择商品', 'error');
+                return;
+            }
+
+            const result = applyBatchSaleStatusBySelection('__ALL__', !!onSale);
+            showToast(`批量${onSale ? '上架' : '下架'}完成：成功 ${result.successCount}，失败 ${result.failedCount}`);
+        }
+
+        function retryBatchFixedPriceFailures(categoryKey = '', inputOverride = null) {
+            const scope = categoryKey || '__ALL__';
+            const failedIds = Object.keys(batchFixedPriceFailedMap)
+                .map(id => Number(id))
+                .filter(Number.isFinite)
+                .filter(id => getBatchFixedPriceEntries(scope).some(entry => entry.product.id === id));
+
+            if (!failedIds.length) {
+                return { successCount: 0, failedCount: 0 };
+            }
+
+            batchFixedPriceSelectedIds = new Set(failedIds);
+            let valid = inputOverride;
+            if (!valid || typeof valid.currentPrice === 'undefined') {
+                valid = getBatchFixedPriceInputFromForm();
+                if (!valid.ok) {
+                    showToast(valid.message, 'error');
+                    return { successCount: 0, failedCount: failedIds.length };
+                }
+            } else {
+                const verify = validateBatchFixedPriceInput(
+                    String(valid.currentPrice),
+                    valid.originalPrice === null ? '' : String(valid.originalPrice)
+                );
+                if (!verify.ok) {
+                    return { successCount: 0, failedCount: failedIds.length };
+                }
+                valid = verify;
+            }
+
+            const result = applyBatchFixedPriceBySelection(scope, valid);
+            if (!inputOverride) {
+                showToast(`重试完成：成功 ${result.successCount}，失败 ${result.failedCount}`);
+            }
+            return result;
         }
 
         function initDeviceSearch() {
@@ -3400,6 +4546,345 @@
                 .replace(/'/g, '&#39;');
         }
 
+        function getOrderPreviewCopy(key, lang) {
+            const pack = ORDER_PREVIEW_COPY[key] || {};
+            return pack[lang] || pack.zh || '';
+        }
+
+        function formatOrderPreviewDisplayMoney(amount, currency) {
+            const normalized = normalizeProductCurrency({ currency });
+            const safeAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+            if (normalized === 'CNY') return `¥ ${safeAmount.toFixed(2)}`;
+            if (normalized === 'USD') return `$ ${safeAmount.toFixed(2)}`;
+            if (normalized === 'EUR') return `€ ${safeAmount.toFixed(2)}`;
+            if (normalized === 'HKD') return `HK$ ${safeAmount.toFixed(2)}`;
+            if (normalized === 'JPY') return `¥ ${safeAmount.toFixed(0)}`;
+            return formatMoneyByCurrency(safeAmount, normalized);
+        }
+
+        function findOrderPreviewProduct(productId, categoryKey = '') {
+            const targetId = Number(productId);
+            if (!Number.isFinite(targetId)) return null;
+
+            if (categoryKey && productsData[categoryKey]) {
+                const hit = (productsData[categoryKey].items || []).find(item => item.id === targetId);
+                if (hit) return { categoryKey, product: hit };
+            }
+
+            for (const [catKey, catData] of Object.entries(productsData)) {
+                const hit = (catData.items || []).find(item => item.id === targetId);
+                if (hit) return { categoryKey: catKey, product: hit };
+            }
+            return null;
+        }
+
+        function getPreviewOptionLibraryItem(specKey, key) {
+            const list = ORDER_PREVIEW_OPTION_LIBRARY[specKey] || [];
+            return list.find(item => item.key === key) || null;
+        }
+
+        function getOrderPreviewOptionLabel(product, specKey, key, lang) {
+            const tagI18n = product?.tagI18n?.[specKey]?.[key];
+            if (tagI18n) {
+                return tagI18n[lang] || tagI18n.zh || tagI18n.en || key;
+            }
+            const libraryItem = getPreviewOptionLibraryItem(specKey, key);
+            if (libraryItem && libraryItem.labels) {
+                return libraryItem.labels[lang] || libraryItem.labels.zh || libraryItem.labels.en || key;
+            }
+            return key;
+        }
+
+        function getOrderPreviewOptionDesc(product, specKey, key, lang) {
+            const libraryItem = getPreviewOptionLibraryItem(specKey, key);
+            if (!libraryItem || !libraryItem.desc) return '';
+            return libraryItem.desc[lang] || libraryItem.desc.zh || libraryItem.desc.en || '';
+        }
+
+        function resolveOrderPreviewOptionKey(product, specKey, rawValue, lang) {
+            if (!rawValue) return '';
+            const normalized = String(rawValue).trim();
+            if (!normalized) return '';
+
+            const tagMap = product?.tagI18n?.[specKey] || {};
+            if (Object.prototype.hasOwnProperty.call(tagMap, normalized)) return normalized;
+
+            const libraryList = ORDER_PREVIEW_OPTION_LIBRARY[specKey] || [];
+            if (libraryList.some(item => item.key === normalized)) return normalized;
+
+            const tagMatch = Object.entries(tagMap).find(([, labels]) => {
+                if (!labels) return false;
+                return Object.values(labels).includes(normalized);
+            });
+            if (tagMatch) return tagMatch[0];
+
+            const libraryMatch = libraryList.find(item => {
+                if (!item.labels) return false;
+                return Object.values(item.labels).includes(normalized);
+            });
+            if (libraryMatch) return libraryMatch.key;
+
+            return normalized;
+        }
+
+        function getOrderPreviewOptionItems(product, specKey, lang) {
+            const libraryList = ORDER_PREVIEW_OPTION_LIBRARY[specKey] || [];
+            const keys = new Set(Object.keys(product?.tagI18n?.[specKey] || {}));
+
+            const optionTitle = ORDER_PREVIEW_OPTION_TITLE_MAP[specKey];
+            const candidates = [
+                product?.defaultOptions?.[specKey],
+                product?.specs?.[lang]?.[specKey],
+                product?.specs?.zh?.[specKey],
+                optionTitle ? product?.options?.[optionTitle] : ''
+            ];
+            candidates.forEach(value => {
+                const key = resolveOrderPreviewOptionKey(product, specKey, value, lang);
+                if (key) keys.add(key);
+            });
+
+            if (!keys.size && libraryList.length) {
+                libraryList.forEach(item => keys.add(item.key));
+            }
+
+            const orderedKeys = [];
+            libraryList.forEach(item => {
+                if (keys.has(item.key)) {
+                    orderedKeys.push(item.key);
+                    keys.delete(item.key);
+                }
+            });
+            orderedKeys.push(...Array.from(keys));
+
+            return orderedKeys.map(key => {
+                const libraryItem = getPreviewOptionLibraryItem(specKey, key);
+                return {
+                    key,
+                    label: getOrderPreviewOptionLabel(product, specKey, key, lang),
+                    desc: getOrderPreviewOptionDesc(product, specKey, key, lang),
+                    extraPrice: libraryItem?.extraPrice || 0
+                };
+            });
+        }
+
+        function getOrderPreviewPreferredOptionKey(product, specKey, lang) {
+            const optionTitle = ORDER_PREVIEW_OPTION_TITLE_MAP[specKey];
+            const candidates = [
+                product?.defaultOptions?.[specKey],
+                product?.specs?.[lang]?.[specKey],
+                product?.specs?.zh?.[specKey],
+                optionTitle ? product?.options?.[optionTitle] : ''
+            ];
+
+            for (const raw of candidates) {
+                const resolved = resolveOrderPreviewOptionKey(product, specKey, raw, lang);
+                if (resolved) return resolved;
+            }
+
+            const list = getOrderPreviewOptionItems(product, specKey, lang);
+            return list[0] ? list[0].key : '';
+        }
+
+        function getOrderPreviewDefaultSelectionMap(product, lang) {
+            const keys = ['beans', 'sweetness', 'temperature', 'strength', 'cupsize'];
+            const selected = {};
+            keys.forEach(specKey => {
+                const preferred = getOrderPreviewPreferredOptionKey(product, specKey, lang);
+                if (preferred) selected[specKey] = preferred;
+            });
+            return selected;
+        }
+
+        function getOrderPreviewCupsizeText(product, lang) {
+            const cupsizeKey = orderPreviewDetailState.selected.cupsize || getOrderPreviewPreferredOptionKey(product, 'cupsize', lang);
+            const cupLabel = cupsizeKey ? getOrderPreviewOptionLabel(product, 'cupsize', cupsizeKey, lang) : '';
+            const base = String(cupLabel || cupsizeKey || '').toLowerCase();
+            let cupType = getOrderPreviewCopy('largeCup', lang);
+            if (base.includes('355')) cupType = getOrderPreviewCopy('mediumCup', lang);
+            if (base.includes('592')) cupType = getOrderPreviewCopy('xlCup', lang);
+            return cupLabel ? `${cupType} (${cupLabel})` : cupType;
+        }
+
+        function ensureOrderPreviewDetailSelection(product, lang) {
+            if (!orderPreviewDetailState.selected || typeof orderPreviewDetailState.selected !== 'object') {
+                orderPreviewDetailState.selected = {};
+            }
+            const defaults = getOrderPreviewDefaultSelectionMap(product, lang);
+            Object.entries(defaults).forEach(([specKey, value]) => {
+                if (!orderPreviewDetailState.selected[specKey]) {
+                    orderPreviewDetailState.selected[specKey] = value;
+                }
+            });
+        }
+
+        function renderOrderPreviewBeanSection(product, lang) {
+            const specKey = 'beans';
+            const options = getOrderPreviewOptionItems(product, specKey, lang);
+            if (!options.length) return '';
+            const selected = orderPreviewDetailState.selected[specKey] || '';
+            const priceInfo = getProductPriceInfo(product);
+
+            return `
+                <section class="order-preview-detail-section">
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy('chooseBeans', lang))}</div>
+                    <div class="order-preview-detail-bean-grid">
+                        ${options.map(item => `
+                            <button type="button" class="order-preview-detail-bean-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('beans','${encodeURIComponent(item.key)}')">
+                                ${escapePreviewText(item.label)}${item.extraPrice ? `<span class="order-preview-detail-option-extra"> + ${escapePreviewText(formatOrderPreviewDisplayMoney(item.extraPrice, priceInfo.currency))}</span>` : ''}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="order-preview-detail-bean-desc-grid">
+                        ${options.map(item => `
+                            <div class="order-preview-detail-bean-desc">${escapePreviewText(item.desc || (product.descs?.[lang] || product.descs?.zh || ''))}</div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderOrderPreviewOptionSection(product, specKey, titleKey, lang) {
+            const options = getOrderPreviewOptionItems(product, specKey, lang);
+            if (!options.length) return '';
+            const selected = orderPreviewDetailState.selected[specKey] || '';
+            const priceInfo = getProductPriceInfo(product);
+            return `
+                <section class="order-preview-detail-section">
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy(titleKey, lang))}</div>
+                    <div class="order-preview-detail-option-row">
+                        ${options.map(item => `
+                            <button type="button" class="order-preview-detail-option-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('${specKey}','${encodeURIComponent(item.key)}')">
+                                ${escapePreviewText(item.label)}${item.extraPrice ? `<span class="order-preview-detail-option-extra"> + ${escapePreviewText(formatOrderPreviewDisplayMoney(item.extraPrice, priceInfo.currency))}</span>` : ''}
+                            </button>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderOrderPreviewDetail() {
+            const overlay = document.getElementById('orderPreviewDetailOverlay');
+            if (!overlay) return;
+
+            if (!orderPreviewDetailState.open || !orderPreviewDetailState.productId) {
+                overlay.classList.remove('active');
+                overlay.innerHTML = '';
+                return;
+            }
+
+            const found = findOrderPreviewProduct(orderPreviewDetailState.productId, orderPreviewDetailState.categoryKey);
+            if (!found) {
+                closeOrderPreviewProductDetail();
+                return;
+            }
+
+            const previewLang = getOrderPreviewLang();
+            const product = found.product;
+            ensureOrderPreviewDetailSelection(product, previewLang);
+
+            const productName = product.names?.[previewLang] || product.names?.zh || product.names?.en || '-';
+            const summaryDesc = getProductDescription(product, previewLang);
+            const detailDesc = product.descs?.[previewLang] || product.descs?.zh || product.descs?.en || summaryDesc || '';
+            const priceInfo = getProductPriceInfo(product);
+            const displayPrice = formatOrderPreviewDisplayMoney(priceInfo.preTax, priceInfo.currency);
+            const cupText = getOrderPreviewCupsizeText(product, previewLang);
+            const quantity = Number(orderPreviewDetailState.quantity) > 0 ? Number(orderPreviewDetailState.quantity) : 1;
+
+            overlay.innerHTML = `
+                <div class="order-preview-detail-header">
+                    <button type="button" class="order-preview-detail-back" onclick="closeOrderPreviewProductDetail()">‹</button>
+                    <div class="order-preview-detail-title">${escapePreviewText(productName)}</div>
+                </div>
+                <div class="order-preview-detail-body">
+                    <div class="order-preview-detail-image-wrap">
+                        ${product.image
+                            ? `<img class="order-preview-detail-image" src="${escapePreviewText(product.image)}" alt="${escapePreviewText(productName)}">`
+                            : '<div class="order-preview-detail-image-placeholder">☕</div>'
+                        }
+                    </div>
+
+                    <section class="order-preview-detail-summary">
+                        <div class="order-preview-detail-summary-top">
+                            <div>
+                                <div class="order-preview-detail-price">${escapePreviewText(displayPrice)}</div>
+                                <div class="order-preview-detail-desc">${escapePreviewText(summaryDesc || detailDesc)}</div>
+                            </div>
+                            <div>
+                                <div class="order-preview-detail-cup">${escapePreviewText(cupText)}</div>
+                                <div class="order-preview-detail-qty">
+                                    <span class="order-preview-detail-qty-label">${escapePreviewText(getOrderPreviewCopy('cupCount', previewLang))}</span>
+                                    <button type="button" class="order-preview-detail-qty-btn" onclick="changeOrderPreviewDetailQuantity(-1)">−</button>
+                                    <span class="order-preview-detail-qty-value">${quantity}</span>
+                                    <button type="button" class="order-preview-detail-qty-btn" onclick="changeOrderPreviewDetailQuantity(1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-preview-detail-intro">${escapePreviewText(detailDesc)}</div>
+                    </section>
+
+                    ${renderOrderPreviewBeanSection(product, previewLang)}
+                    ${renderOrderPreviewOptionSection(product, 'sweetness', 'chooseSweetness', previewLang)}
+                    ${renderOrderPreviewOptionSection(product, 'temperature', 'chooseTemperature', previewLang)}
+                    ${renderOrderPreviewOptionSection(product, 'strength', 'chooseStrength', previewLang)}
+
+                    <div class="order-preview-detail-custom-row">
+                        <button type="button" class="order-preview-detail-custom-btn ${orderPreviewDetailState.customSelected ? 'active' : ''}" onclick="toggleOrderPreviewCustomMode()">${escapePreviewText(getOrderPreviewCopy('customAction', previewLang))}</button>
+                        <div class="order-preview-detail-custom-hint">${escapePreviewText(getOrderPreviewCopy('customHint', previewLang))}</div>
+                    </div>
+                </div>
+            `;
+            overlay.classList.add('active');
+        }
+
+        function openOrderPreviewProductDetail(productId, encodedCategoryKey = '') {
+            const categoryKey = encodedCategoryKey ? decodeURIComponent(encodedCategoryKey) : '';
+            const found = findOrderPreviewProduct(productId, categoryKey);
+            if (!found) {
+                showToast('未找到商品', 'error');
+                return;
+            }
+
+            orderPreviewDetailState.open = true;
+            orderPreviewDetailState.categoryKey = found.categoryKey;
+            orderPreviewDetailState.productId = found.product.id;
+            orderPreviewDetailState.quantity = 1;
+            orderPreviewDetailState.customSelected = false;
+            orderPreviewDetailState.selected = getOrderPreviewDefaultSelectionMap(found.product, getOrderPreviewLang());
+            renderOrderPreviewDetail();
+        }
+
+        function closeOrderPreviewProductDetail() {
+            orderPreviewDetailState.open = false;
+            orderPreviewDetailState.productId = null;
+            const overlay = document.getElementById('orderPreviewDetailOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.innerHTML = '';
+            }
+        }
+
+        function selectOrderPreviewDetailOption(specKey, encodedKey) {
+            const key = decodeURIComponent(encodedKey || '');
+            if (!key) return;
+            if (!orderPreviewDetailState.selected || typeof orderPreviewDetailState.selected !== 'object') {
+                orderPreviewDetailState.selected = {};
+            }
+            orderPreviewDetailState.selected[specKey] = key;
+            renderOrderPreviewDetail();
+        }
+
+        function changeOrderPreviewDetailQuantity(delta) {
+            const current = Number(orderPreviewDetailState.quantity) > 0 ? Number(orderPreviewDetailState.quantity) : 1;
+            const next = Math.max(1, Math.min(99, current + Number(delta || 0)));
+            orderPreviewDetailState.quantity = next;
+            renderOrderPreviewDetail();
+        }
+
+        function toggleOrderPreviewCustomMode() {
+            orderPreviewDetailState.customSelected = !orderPreviewDetailState.customSelected;
+            renderOrderPreviewDetail();
+        }
+
         function getOrderPreviewLang() {
             const langs = getDeviceLangs();
             if (!Array.isArray(langs) || !langs.length) {
@@ -3501,7 +4986,7 @@
             container.innerHTML = `
                 <div class="order-preview-product-grid">
                     ${active.items.map(product => `
-                        <article class="order-preview-product-card">
+                        <article class="order-preview-product-card" onclick="openOrderPreviewProductDetail(${product.id}, '${encodeURIComponent(active.key)}')">
                             <div class="order-preview-product-media">
                                 ${product.image
                                     ? `<img src="${escapePreviewText(product.image)}" alt="${escapePreviewText(product.names?.[previewLang] || product.names?.zh || product.names?.en || '商品')}">`
@@ -3516,7 +5001,7 @@
                                 <div class="order-preview-product-desc">${escapePreviewText(getProductDescription(product, previewLang))}</div>
                                 <div class="order-preview-product-footer">
                                     ${renderProductPriceHtml(product, { compact: true })}
-                                    <span class="order-preview-pick-btn">选择</span>
+                                    <button type="button" class="order-preview-pick-btn" onclick="event.stopPropagation(); openOrderPreviewProductDetail(${product.id}, '${encodeURIComponent(active.key)}')">选择</button>
                                 </div>
                             </div>
                         </article>
@@ -3532,6 +5017,7 @@
             renderOrderPreviewMeta();
             renderOrderPreviewCategories(list);
             renderOrderPreviewProducts(list);
+            renderOrderPreviewDetail();
         }
 
         function refreshOrderPreviewIfOpen() {
@@ -3543,6 +5029,7 @@
 
         function openOrderPreviewModal() {
             orderPreviewLang = '';
+            closeOrderPreviewProductDetail();
             const list = getOrderPreviewCategoryEntries();
             if (!list.length) {
                 showToast('暂无可预览内容', 'error');
@@ -3553,11 +5040,13 @@
         }
 
         function closeOrderPreviewModal() {
+            closeOrderPreviewProductDetail();
             document.getElementById('orderPreviewModal').classList.remove('active');
         }
 
         function selectOrderPreviewCategory(categoryKey) {
             previewActiveCategory = categoryKey;
+            closeOrderPreviewProductDetail();
             renderOrderPreview();
         }
 
@@ -3846,6 +5335,7 @@
         // ==================== 渲染菜单 ====================
         function renderMenu() {
             const container = document.getElementById('categoriesContainer');
+            if (!container) return;
             
             let html = '';
             let delay = 0;
@@ -3914,6 +5404,10 @@
             }
             
             container.innerHTML = html;
+            if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            }
             refreshOrderPreviewIfOpen();
         }
 
@@ -4384,9 +5878,19 @@
             if (!product) return;
 
             const categoryPayload = productsData[category].names || {};
+            const catalogPayload = Object.entries(productsData).flatMap(([catName, catData]) => {
+                const categoryNamesPayload = catData?.names || {};
+                return (catData?.items || []).map(item => ({
+                    id: item.id,
+                    categoryKey: catName,
+                    category: categoryNamesPayload,
+                    product: item
+                }));
+            });
             const payload = {
                 product,
-                category: categoryPayload
+                category: categoryPayload,
+                catalog: catalogPayload
             };
             const payloadKey = `${id}-${Date.now()}`;
 
@@ -4395,8 +5899,19 @@
                 window.location.href = `product-detail.html?id=${id}&payloadKey=${encodeURIComponent(payloadKey)}&device=${encodeURIComponent(currentDevice)}`;
                 return;
             } catch (e) {
-                showToast('图片数据过大，无法打开详情页，请压缩图片后重试', 'error');
-                return;
+                // sessionStorage 配额不足时，改用 window.name 传输，避免超长 URL 与容量限制问题
+                try {
+                    window.name = JSON.stringify({
+                        __type: 'productDetailPayload',
+                        payloadKey,
+                        payload
+                    });
+                    window.location.href = `product-detail.html?id=${id}&payloadKey=${encodeURIComponent(payloadKey)}&payloadStore=windowName&device=${encodeURIComponent(currentDevice)}`;
+                    return;
+                } catch (fallbackError) {
+                    showToast('图片数据过大，无法打开详情页，请压缩图片后重试', 'error');
+                    return;
+                }
             }
         }
 
@@ -4426,24 +5941,41 @@
         }
 
         function switchMenuInnerTab(tab) {
-            currentMenuInnerTab = tab === 'manage' ? 'manage' : 'settings';
+            const nextTab = tab === 'manage' || tab === 'batch' ? tab : 'settings';
+            const previousTab = currentMenuInnerTab;
+            currentMenuInnerTab = nextTab;
+            isBatchFixedPriceMode = currentMenuInnerTab === 'batch';
             const settingsBtn = document.getElementById('menuInnerTabSettingsBtn');
             const manageBtn = document.getElementById('menuInnerTabManageBtn');
+            const batchBtn = document.getElementById('menuInnerTabBatchBtn');
             const settingsPanel = document.getElementById('menuSettingsPanel');
             const managePanel = document.getElementById('menuManagePanel');
+            const batchPanel = document.getElementById('menuBatchPanel');
             const isSettings = currentMenuInnerTab === 'settings';
+            const isManage = currentMenuInnerTab === 'manage';
+            const isBatch = currentMenuInnerTab === 'batch';
 
             if (settingsBtn) settingsBtn.classList.toggle('active', isSettings);
-            if (manageBtn) manageBtn.classList.toggle('active', !isSettings);
+            if (manageBtn) manageBtn.classList.toggle('active', isManage);
+            if (batchBtn) batchBtn.classList.toggle('active', isBatch);
             if (settingsPanel) settingsPanel.classList.toggle('active', isSettings);
-            if (managePanel) managePanel.classList.toggle('active', !isSettings);
+            if (managePanel) managePanel.classList.toggle('active', isManage);
+            if (batchPanel) batchPanel.classList.toggle('active', isBatch);
+
+            if (previousTab === 'batch' && !isBatch) {
+                clearBatchFixedPriceRuntimeState();
+            }
 
             updateHeaderActionVisibility();
             if (isSettings) {
                 renderMenuBasicSettingsForm();
-            } else {
+            } else if (isManage) {
                 updateStats();
                 renderMenu();
+            } else {
+                updateStats();
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
             }
 
             if (currentTab === 'menu' && window.history && typeof window.history.replaceState === 'function') {
@@ -4479,7 +6011,7 @@
             overviewView.classList.toggle('active', tab === 'overview');
             menuView.classList.toggle('active', tab === 'menu');
 
-            title.textContent = tab === 'overview' ? '经营总览' : '菜单管理';
+            title.textContent = tab === 'overview' ? '经营总览' : '商品管理';
             desc.textContent = tab === 'overview' ? '销售指标与产品结构分析（按设备维度）' : '按设备语言配置的菜单快照';
             if (deviceTag) {
                 deviceTag.style.display = tab === 'menu' ? 'inline-flex' : 'none';

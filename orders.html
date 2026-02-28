@@ -424,6 +424,64 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
+        .order-search-panel {
+            flex: 1 1 420px;
+            min-width: 320px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.88);
+            padding: 10px 12px;
+        }
+
+        .order-search-select-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-search-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .order-search-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .order-search-fields {
+            display: none;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .order-search-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .order-search-option input[type="radio"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .order-search-panel .filter-input {
+            width: 100%;
+            min-width: 0;
+        }
+
         .filter-select {
             padding: 10px 36px 10px 14px;
             border: 1px solid var(--border);
@@ -753,6 +811,12 @@
             min-width: 0;
         }
 
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         .product-arrow {
             color: var(--text-tertiary);
             font-size: 13px;
@@ -766,10 +830,17 @@
             overflow: hidden;
         }
 
+        .product-name-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
         .product-name {
             font-size: 13px;
             color: var(--text-primary);
             line-height: 1.5;
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -938,22 +1009,45 @@
             margin-top: 2px;
         }
 
-        .mobile-order-product {
+        .mobile-order-product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-order-product-item {
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.82);
+            padding: 8px 10px;
+        }
+
+        .mobile-order-product-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .mobile-order-product-index {
+            color: #64748b;
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .mobile-order-product-name {
             font-size: 15px;
             color: var(--text-primary);
             line-height: 1.45;
-            margin-bottom: 8px;
+            flex: 1;
             word-break: break-word;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .mobile-order-specs {
             font-size: 13px;
             color: #334155;
-            margin-bottom: 12px;
+            margin-top: 4px;
             font-weight: 500;
         }
 
@@ -1045,6 +1139,312 @@
             background: #f59e0b;
         }
 
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 10, 26, 0.56);
+            z-index: 220;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .refund-modal {
+            width: min(860px, 100%);
+            max-height: min(860px, calc(100vh - 48px));
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 52px rgba(15, 23, 42, 0.26);
+        }
+
+        .refund-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .refund-modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .refund-modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .refund-modal-body {
+            padding: 14px 16px 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .refund-order-summary {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            background: #f8fafc;
+            padding: 10px 12px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .refund-summary-cell {
+            min-width: 0;
+        }
+
+        .refund-summary-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 2px;
+        }
+
+        .refund-summary-value {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .refund-mode-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .refund-mode-btn {
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+
+        .refund-mode-btn.active {
+            border-color: rgba(46, 196, 182, 0.5);
+            background: rgba(46, 196, 182, 0.16);
+            color: #0f766e;
+        }
+
+        .refund-section {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            background: #fff;
+            padding: 10px;
+            display: none;
+        }
+
+        .refund-section.active {
+            display: block;
+        }
+
+        .refund-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .refund-field span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .refund-field-hint {
+            display: block;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+        }
+
+        .refund-field input,
+        .refund-field textarea {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-primary);
+            padding: 9px 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .refund-field input:focus,
+        .refund-field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.15);
+        }
+
+        .refund-field textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .refund-items-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .refund-line-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 270px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .refund-line-row {
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 8px 10px;
+            background: #fff;
+        }
+
+        .refund-line-row.selected {
+            border-color: rgba(46, 196, 182, 0.5);
+            background: rgba(46, 196, 182, 0.08);
+        }
+
+        .refund-line-main {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .refund-line-main input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .refund-line-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .refund-line-name {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 3px;
+            word-break: break-word;
+        }
+
+        .refund-line-specs {
+            font-size: 12px;
+            color: var(--text-secondary);
+            word-break: break-word;
+        }
+
+        .refund-line-meta {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .refund-line-max {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .refund-line-amount-input {
+            width: 130px;
+            height: 30px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0 8px;
+            font-size: 12px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+        }
+
+        .refund-line-amount-input:focus {
+            border-color: var(--primary);
+        }
+
+        .refund-line-amount-input:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+
+        .refund-estimation {
+            border: 1px solid rgba(46, 196, 182, 0.24);
+            background: rgba(46, 196, 182, 0.1);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #0f766e;
+        }
+
+        .refund-estimation strong {
+            font-size: 16px;
+            margin-left: 6px;
+            color: #0f766e;
+        }
+
+        .refund-modal-footer {
+            border-top: 1px solid var(--border-light);
+            padding: 12px 16px 14px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            background: #fff;
+        }
+
+        .refund-footer-btn {
+            height: 38px;
+            padding: 0 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .refund-footer-btn.primary {
+            border-color: transparent;
+            color: #fff;
+            background: linear-gradient(130deg, #2ec4b6, #38bdf8);
+        }
+
         /* Toast */
         .toast {
             position: fixed;
@@ -1072,6 +1472,119 @@
             background: var(--success);
         }
 
+        .toast.error {
+            background: var(--danger);
+        }
+
+        @media (min-width: 1025px) {
+            .filter-section {
+                padding: 14px 16px;
+                border-radius: 16px;
+            }
+
+            .filter-row {
+                display: grid;
+                grid-template-columns: minmax(0, 1.8fr) minmax(190px, 0.95fr) minmax(170px, 0.8fr);
+                grid-template-areas:
+                    "search device status"
+                    "date date actions";
+                gap: 12px;
+                align-items: center;
+            }
+
+            .order-search-panel {
+                grid-area: search;
+                min-width: 0;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 10px;
+                border-radius: 12px;
+                background: #fff;
+            }
+
+            #deviceFilterWrap {
+                grid-area: device;
+            }
+
+            #statusFilter {
+                grid-area: status;
+                width: 100%;
+            }
+
+            .order-search-select-row {
+                margin-bottom: 0;
+                padding-right: 10px;
+                border-right: 1px solid var(--border-light);
+                flex-shrink: 0;
+            }
+
+            .order-search-label {
+                display: none;
+            }
+
+            .order-search-select {
+                width: 170px;
+                min-width: 170px;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 10px 30px 10px 6px;
+                background-position: right 6px center;
+            }
+
+            .order-search-select:focus {
+                border: none;
+                box-shadow: none;
+            }
+
+            .order-search-panel .filter-input {
+                border: none;
+                box-shadow: none;
+                padding: 0 2px;
+                height: 40px;
+                background: transparent;
+            }
+
+            .order-search-panel .filter-input:focus {
+                border: none;
+                box-shadow: none;
+            }
+
+            .multi-device-filter,
+            #statusFilter {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .multi-device-trigger,
+            #statusFilter,
+            .date-input,
+            .btn-clear {
+                height: 42px;
+            }
+
+            .date-range {
+                grid-area: date;
+                width: 100%;
+                min-width: 0;
+            }
+
+            .date-input {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .filter-actions {
+                grid-area: actions;
+                margin-left: 0;
+                justify-content: flex-end;
+                justify-self: end;
+                white-space: nowrap;
+            }
+        }
+
         /* 移动端 */
         @media (max-width: 1024px) {
             .filter-row {
@@ -1081,6 +1594,19 @@
 
             .filter-input, .filter-select, .date-input, .multi-device-filter {
                 width: 100%;
+            }
+
+            .order-search-panel {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .order-search-select-row {
+                display: none;
+            }
+
+            .order-search-fields {
+                display: grid;
             }
 
             .multi-device-dropdown {
@@ -1209,6 +1735,18 @@
                 height: 40px;
             }
 
+            .order-search-panel {
+                padding: 10px;
+            }
+
+            .order-search-fields {
+                gap: 8px 10px;
+            }
+
+            .order-search-option {
+                font-size: 13px;
+            }
+
             .filter-actions {
                 padding-top: 4px;
             }
@@ -1298,6 +1836,61 @@
                 font-weight: 600;
             }
 
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .refund-modal {
+                width: 100%;
+                max-height: 88vh;
+                border-radius: 16px 16px 0 0;
+            }
+
+            .refund-modal-body {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .refund-order-summary {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                padding: 9px 10px;
+            }
+
+            .refund-mode-tabs {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+            }
+
+            .refund-mode-btn {
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .refund-line-list {
+                max-height: 220px;
+            }
+
+            .refund-line-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .refund-line-amount-input {
+                width: 100%;
+                height: 34px;
+            }
+
+            .refund-modal-footer {
+                padding: 10px 12px 12px;
+            }
+
+            .refund-footer-btn {
+                flex: 1;
+                height: 40px;
+            }
+
             .pagination-bar {
                 position: fixed;
                 left: 10px;
@@ -1385,7 +1978,7 @@
                     </a>
                     <a href="menu-management.html" class="nav-item">
                         <span class="nav-icon">📋</span>
-                        <span>菜单管理</span>
+                        <span>商品管理</span>
                     </a>
                     <a href="materials.html" class="nav-item">
                         <span class="nav-icon">📦</span>
@@ -1442,7 +2035,46 @@
                 <!-- 筛选区域 -->
                 <div class="filter-section">
                     <div class="filter-row">
-                        <input type="text" class="filter-input" id="orderSearch" placeholder="订单号" oninput="filterOrders()">
+                        <div class="order-search-panel">
+                            <div class="order-search-select-row">
+                                <label class="order-search-label" for="orderSearchFieldDesktop">搜索维度</label>
+                                <select class="filter-select order-search-select" id="orderSearchFieldDesktop" onchange="handleOrderSearchFieldSelectChange(this.value)">
+                                    <option value="orderId" selected>订单号</option>
+                                    <option value="nickname">昵称</option>
+                                    <option value="phone">手机号</option>
+                                    <option value="productName">商品名称</option>
+                                    <option value="transactionId">交易单号</option>
+                                    <option value="deviceId">设备编号</option>
+                                </select>
+                            </div>
+                            <div class="order-search-fields">
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="orderId" checked onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>订单号</span>
+                                </label>
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="nickname" onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>昵称</span>
+                                </label>
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="phone" onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>手机号</span>
+                                </label>
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="productName" onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>商品名称</span>
+                                </label>
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="transactionId" onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>交易单号</span>
+                                </label>
+                                <label class="order-search-option">
+                                    <input type="radio" name="orderSearchField" value="deviceId" onchange="handleOrderSearchFieldRadioChange(this.value)">
+                                    <span>设备编号</span>
+                                </label>
+                            </div>
+                            <input type="text" class="filter-input" id="orderSearch" placeholder="请输入查询关键字" oninput="filterOrders()">
+                        </div>
 
                         <div class="multi-device-filter" id="deviceFilterWrap">
                             <button type="button" class="multi-device-trigger" id="deviceFilterTrigger" onclick="toggleDeviceFilterDropdown()">
@@ -1524,6 +2156,54 @@
         </main>
     </div>
 
+    <div class="modal-overlay" id="refundModal">
+        <div class="refund-modal">
+            <div class="refund-modal-header">
+                <h3 class="refund-modal-title">订单退款</h3>
+                <button type="button" class="refund-modal-close" onclick="closeRefundModal()" aria-label="关闭退款弹层">×</button>
+            </div>
+            <div class="refund-modal-body">
+                <div class="refund-order-summary">
+                    <div class="refund-summary-cell">
+                        <span class="refund-summary-label">订单号</span>
+                        <span class="refund-summary-value" id="refundOrderId">-</span>
+                    </div>
+                    <div class="refund-summary-cell">
+                        <span class="refund-summary-label">支付金额</span>
+                        <span class="refund-summary-value" id="refundOrderAmount">CNY 0.00</span>
+                    </div>
+                    <div class="refund-summary-cell">
+                        <span class="refund-summary-label">操作说明</span>
+                        <span class="refund-summary-value">手动填写整单或商品退款金额</span>
+                    </div>
+                </div>
+
+                <label class="refund-field">
+                    <span>整单退款金额（CNY）</span>
+                    <input id="refundOrderManualAmount" type="number" step="0.01" min="0.01" placeholder="手动输入整单退款金额" oninput="handleRefundOrderAmountInput(this)">
+                    <span class="refund-field-hint" id="refundOrderManualLimit">可退款上限：CNY 0.00</span>
+                </label>
+
+                <div class="refund-items-head">
+                    <span>部分商品退款（勾选即该商品全额退款，同商品多份按多行展示）</span>
+                    <span id="refundSelectedCount">已选 0 行</span>
+                </div>
+                <div class="refund-line-list" id="refundLineItems"></div>
+
+                <label class="refund-field">
+                    <span>退款原因（选填）</span>
+                    <textarea id="refundReason" placeholder="请输入退款原因，最多100字" maxlength="100"></textarea>
+                </label>
+
+                <div class="refund-estimation">预计退款金额 <strong id="refundComputedAmount">CNY 0.00</strong></div>
+            </div>
+            <div class="refund-modal-footer">
+                <button type="button" class="refund-footer-btn" onclick="closeRefundModal()">取消</button>
+                <button type="button" class="refund-footer-btn primary" onclick="submitRefund()">提交退款</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1553,42 +2233,67 @@
             {
                 id: '15207729212026021013080402815833',
                 deviceId: 'RCK111',
+                nickname: '咖啡星球',
+                phone: '13810223311',
+                transactionId: 'TXN2026021013080402815833',
                 product: '12 oz • Intense espresso • Hot • 2 shots • No PLASTIC lid needed • None • Zero ...',
                 specs: '金奖黑咖-浓香意式',
+                orderItems: [
+                    { name: '金奖黑咖-浓香意式', specs: '12oz · 热标准 · 双份浓缩', quantity: 1 },
+                    { name: '香草拿铁', specs: '355ml · 温热 · 少糖', quantity: 1 }
+                ],
                 status: 'done',
                 paymentStatus: 'succeed',
-                amount: '9.90',
+                amount: '21.80',
                 pickupCode: '3ED2C4',
-                items: 1,
+                items: 2,
                 createTime: '2026年2月10日 13:08'
             },
             {
                 id: '15207729212026011510393616227877',
                 deviceId: 'RCK112',
+                nickname: '晨间拿铁',
+                phone: '13966554422',
+                transactionId: 'TXN2026011510393616227877',
                 product: '355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/无',
                 specs: '',
+                orderItems: [
+                    { name: '金奖黑咖-浓香意式', specs: '355ml · 热标准 · 无糖', quantity: 2 },
+                    { name: '燕麦摩卡', specs: '355ml · 温热 · 常规糖', quantity: 1 }
+                ],
                 status: 'done',
                 paymentStatus: 'cancelled',
-                amount: '9.90',
+                amount: '29.70',
                 pickupCode: 'N/A',
-                items: 1,
+                items: 3,
                 createTime: '2026年1月15日 10:39'
             },
             {
                 id: '15207729212026011510355548685042',
                 deviceId: 'RCK113',
+                nickname: '豆香控',
+                phone: '13777889900',
+                transactionId: 'TXN2026011510355548685042',
                 product: '355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/无',
                 specs: '',
+                orderItems: [
+                    { name: '美式咖啡', specs: '355ml · 冰标准 · 微糖', quantity: 1 },
+                    { name: '焦糖玛奇朵', specs: '355ml · 热标准 · 常规糖', quantity: 1 },
+                    { name: '可可拿铁', specs: '355ml · 热标准 · 半糖', quantity: 1 }
+                ],
                 status: 'done',
                 paymentStatus: 'cancelled',
-                amount: '9.90',
+                amount: '34.70',
                 pickupCode: 'N/A',
-                items: 1,
+                items: 3,
                 createTime: '2026年1月15日 10:35'
             },
             {
                 id: '15207729212026011509341654540718',
                 deviceId: 'RCK111',
+                nickname: '午后微糖',
+                phone: '13622334455',
+                transactionId: 'TXN2026011509341654540718',
                 product: '个性化定制配料：355ml//热/无糖/倡导环保 不使用杯盖/随机拉花',
                 specs: '',
                 status: 'done',
@@ -1601,6 +2306,9 @@
             {
                 id: '15207729212026011509150847828444',
                 deviceId: 'RCK112',
+                nickname: '不加冰',
+                phone: '13566778899',
+                transactionId: 'TXN2026011509150847828444',
                 product: '个性化定制配料：355ml/金奖黑咖-浓香意式/热标准/无糖/倡导环保 不使用杯盖/...',
                 specs: '',
                 status: 'done',
@@ -1613,6 +2321,9 @@
             {
                 id: '15207729212026010813502759812457',
                 deviceId: 'RCK113',
+                nickname: '夜猫子',
+                phone: '13199887766',
+                transactionId: 'TXN2026010813502759812457',
                 product: '个性化定制配料：355ml/金奖黑咖-浓香意式/热标准/热红酒糖浆/少糖/需要杯盖/...',
                 specs: '',
                 status: 'done',
@@ -1629,6 +2340,11 @@
         let filteredData = [...ordersData];
         let allDeviceOptions = [];
         let selectedDevices = new Set();
+        let refundState = {
+            orderId: '',
+            lineItems: [],
+            selectedLineIds: new Set()
+        };
 
         function init() {
             initDeviceFilter();
@@ -1738,6 +2454,116 @@
             document.getElementById('totalAmount').textContent = `CNY ${totalAmount.toFixed(2)}`;
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizeOrderItems(order) {
+            if (!order || typeof order !== 'object') return [];
+            if (!Array.isArray(order.orderItems) || order.orderItems.length === 0) {
+                return [{
+                    name: String(order.product || '-'),
+                    specs: String(order.specs || ''),
+                    quantity: 1
+                }];
+            }
+
+            return order.orderItems.map((item, index) => {
+                if (typeof item === 'string') {
+                    return { name: item, specs: '', quantity: 1 };
+                }
+                if (!item || typeof item !== 'object') return null;
+                const quantityRaw = Number(item.quantity ?? item.qty ?? 1);
+                const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? Math.floor(quantityRaw) : 1;
+                const name = String(item.name || item.product || `商品${index + 1}`);
+                const specs = String(item.specs || '');
+                return { name, specs, quantity };
+            }).filter(Boolean);
+        }
+
+        function resolveOrderItemCount(order, normalizedItems = []) {
+            if (Array.isArray(normalizedItems) && normalizedItems.length) {
+                return expandOrderItemsByQuantity(normalizedItems).length;
+            }
+            const fallback = Number(order?.items);
+            if (Number.isFinite(fallback) && fallback > 0) return Math.floor(fallback);
+            return order?.product ? 1 : 0;
+        }
+
+        function expandOrderItemsByQuantity(orderItems = []) {
+            if (!Array.isArray(orderItems) || orderItems.length === 0) {
+                return [];
+            }
+            const expanded = [];
+            orderItems.forEach(item => {
+                const quantityRaw = Number(item?.quantity);
+                const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? Math.floor(quantityRaw) : 1;
+                const normalizedItem = {
+                    name: String(item?.name || '-'),
+                    specs: String(item?.specs || '')
+                };
+                for (let i = 0; i < quantity; i += 1) {
+                    expanded.push({ ...normalizedItem });
+                }
+            });
+            return expanded;
+        }
+
+        function renderDesktopOrderProducts(orderItems) {
+            const expandedItems = expandOrderItemsByQuantity(orderItems);
+            if (!expandedItems.length) {
+                return `
+                    <div class="product-info">
+                        <span class="product-arrow">1.</span>
+                        <div class="product-details">
+                            <div class="product-name-row">
+                                <div class="product-name">-</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return expandedItems.map((item, index) => `
+                <div class="product-info">
+                    <span class="product-arrow">${index + 1}.</span>
+                    <div class="product-details">
+                        <div class="product-name-row">
+                            <div class="product-name">${escapeHtml(item.name)}</div>
+                        </div>
+                        ${item.specs ? `<div class="product-specs">${escapeHtml(item.specs)}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMobileOrderProducts(orderItems) {
+            const expandedItems = expandOrderItemsByQuantity(orderItems);
+            if (!expandedItems.length) {
+                return `
+                    <div class="mobile-order-product-item">
+                        <div class="mobile-order-product-head">
+                            <span class="mobile-order-product-index">1.</span>
+                            <div class="mobile-order-product-name">-</div>
+                        </div>
+                    </div>
+                `;
+            }
+            return expandedItems.map((item, index) => `
+                <div class="mobile-order-product-item">
+                    <div class="mobile-order-product-head">
+                        <span class="mobile-order-product-index">${index + 1}.</span>
+                        <div class="mobile-order-product-name">${escapeHtml(item.name)}</div>
+                    </div>
+                    ${item.specs ? `<div class="mobile-order-specs">${escapeHtml(item.specs)}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
         function renderTable() {
             const tbody = document.getElementById('orderTableBody');
             const mobileList = document.getElementById('orderMobileList');
@@ -1756,6 +2582,8 @@
                 
                 const statusText = statusMap[order.status] || order.status;
                 const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
+                const orderItems = normalizeOrderItems(order);
+                const itemCount = resolveOrderItemCount(order, orderItems);
                 
                 return `
                 <tr>
@@ -1765,7 +2593,7 @@
                             <div class="meta-row">
                                 <span>取货码: <span class="pickup-code">${order.pickupCode}</span></span>
                                 <span>·</span>
-                                <span>商品数: ${order.items}</span>
+                                <span>商品数: ${itemCount}</span>
                             </div>
                             <span class="meta-time">${order.createTime}</span>
                         </div>
@@ -1778,12 +2606,8 @@
                         </div>
                     </td>
                     <td>
-                        <div class="product-info">
-                            <span class="product-arrow">›</span>
-                            <div class="product-details">
-                                <div class="product-name">1. ${order.product}</div>
-                                ${order.specs ? `<div class="product-specs">${order.specs}</div>` : ''}
-                            </div>
+                        <div class="product-list">
+                            ${renderDesktopOrderProducts(orderItems)}
                         </div>
                     </td>
                     <td>
@@ -1817,6 +2641,8 @@
                 const paymentClass = order.paymentStatus === 'succeed' ? 'success' : 'cancelled';
                 const statusText = statusMap[order.status] || order.status;
                 const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
+                const orderItems = normalizeOrderItems(order);
+                const itemCount = resolveOrderItemCount(order, orderItems);
 
                 return `
                 <article class="mobile-order-card">
@@ -1831,8 +2657,7 @@
                         </div>
                     </div>
 
-                    <div class="mobile-order-product">${order.product}</div>
-                    ${order.specs ? `<div class="mobile-order-specs">${order.specs}</div>` : ''}
+                    <div class="mobile-order-product-list">${renderMobileOrderProducts(orderItems)}</div>
 
                     <div class="mobile-order-meta">
                         <div class="mobile-meta-item">
@@ -1849,7 +2674,7 @@
                         </div>
                         <div class="mobile-meta-item">
                             <div class="mobile-meta-label">商品数</div>
-                            <div class="mobile-meta-value">${order.items}</div>
+                            <div class="mobile-meta-value">${itemCount}</div>
                         </div>
                         <div class="mobile-meta-item">
                             <div class="mobile-meta-label">设备</div>
@@ -1878,16 +2703,288 @@
             document.getElementById('resultsCount').textContent = filteredData.length;
         }
 
+        function roundMoney(value) {
+            const amount = Number(value);
+            if (!Number.isFinite(amount)) return 0;
+            return Math.round(amount * 100) / 100;
+        }
+
+        function formatCnyAmount(value) {
+            return `CNY ${roundMoney(value).toFixed(2)}`;
+        }
+
+        function distributeAmountByUnits(totalAmount, count) {
+            if (count <= 0) return [];
+            const totalCents = Math.max(0, Math.round(roundMoney(totalAmount) * 100));
+            const base = Math.floor(totalCents / count);
+            const remainder = totalCents % count;
+            return Array.from({ length: count }, (_, index) => {
+                const cents = base + (index < remainder ? 1 : 0);
+                return cents / 100;
+            });
+        }
+
+        function buildRefundLineItems(order) {
+            const normalizedItems = normalizeOrderItems(order);
+            const totalUnits = normalizedItems.reduce((sum, item) => {
+                const quantityRaw = Number(item?.quantity);
+                const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? Math.floor(quantityRaw) : 1;
+                return sum + quantity;
+            }, 0);
+            const distributedAmounts = distributeAmountByUnits(order?.amount || 0, totalUnits);
+            let cursor = 0;
+            const lines = [];
+
+            normalizedItems.forEach((item, itemIndex) => {
+                const quantityRaw = Number(item?.quantity);
+                const quantity = Number.isFinite(quantityRaw) && quantityRaw > 0 ? Math.floor(quantityRaw) : 1;
+                for (let unit = 1; unit <= quantity; unit += 1) {
+                    const maxAmount = distributedAmounts[cursor] ?? 0;
+                    lines.push({
+                        id: `${itemIndex + 1}-${unit}`,
+                        orderIndex: itemIndex + 1,
+                        unit,
+                        name: String(item?.name || '-'),
+                        specs: String(item?.specs || ''),
+                        maxAmount
+                    });
+                    cursor += 1;
+                }
+            });
+
+            return lines;
+        }
+
+        function openRefundModal(orderId) {
+            const order = ordersData.find(item => item.id === orderId);
+            if (!order) {
+                showToast('未找到订单信息，无法退款', 'error');
+                return;
+            }
+            if (order.paymentStatus !== 'succeed') {
+                showToast('仅支付成功订单支持退款', 'error');
+                return;
+            }
+
+            const orderAmount = roundMoney(order.amount);
+            refundState.orderId = orderId;
+            refundState.lineItems = buildRefundLineItems(order);
+            refundState.selectedLineIds = new Set();
+
+            document.getElementById('refundOrderId').textContent = order.id;
+            document.getElementById('refundOrderAmount').textContent = formatCnyAmount(orderAmount);
+
+            const orderInput = document.getElementById('refundOrderManualAmount');
+            orderInput.max = orderAmount.toFixed(2);
+            orderInput.value = '';
+            document.getElementById('refundOrderManualLimit').textContent = `可退款上限：${formatCnyAmount(orderAmount)}`;
+            document.getElementById('refundReason').value = '';
+
+            renderRefundLineItems();
+            updateRefundEstimation();
+            document.getElementById('refundModal').classList.add('active');
+        }
+
+        function closeRefundModal() {
+            document.getElementById('refundModal').classList.remove('active');
+            refundState.orderId = '';
+            refundState.lineItems = [];
+            refundState.selectedLineIds = new Set();
+        }
+
+        function handleRefundOrderAmountInput(inputEl) {
+            const raw = String(inputEl?.value || '').trim();
+            const amount = Number(raw);
+            const hasOrderAmount = raw !== '' && Number.isFinite(amount) && amount > 0;
+
+            if (hasOrderAmount) {
+                const hasSelectedLine = refundState.selectedLineIds.size > 0;
+                refundState.selectedLineIds = new Set();
+                if (hasSelectedLine) renderRefundLineItems();
+            }
+
+            updateRefundFilledCount();
+            updateRefundEstimation();
+        }
+
+        function toggleRefundLineSelection(lineId, checked) {
+            if (checked) {
+                refundState.selectedLineIds.add(lineId);
+                const orderAmountInput = document.getElementById('refundOrderManualAmount');
+                if (orderAmountInput && String(orderAmountInput.value).trim()) {
+                    document.getElementById('refundOrderManualAmount').value = '';
+                }
+            } else {
+                refundState.selectedLineIds.delete(lineId);
+            }
+            renderRefundLineItems();
+            updateRefundFilledCount();
+            updateRefundEstimation();
+        }
+
+        function renderRefundLineItems() {
+            const container = document.getElementById('refundLineItems');
+            const selectedText = document.getElementById('refundSelectedCount');
+            if (!container || !selectedText) return;
+
+            const selectedCount = refundState.selectedLineIds.size;
+            selectedText.textContent = `已选 ${selectedCount} 行`;
+
+            if (!refundState.lineItems.length) {
+                container.innerHTML = '<div class="refund-line-row">当前订单暂无可退款商品</div>';
+                return;
+            }
+
+            container.innerHTML = refundState.lineItems.map(line => {
+                const isSelected = refundState.selectedLineIds.has(line.id);
+                return `
+                    <div class="refund-line-row ${isSelected ? 'selected' : ''}">
+                        <div class="refund-line-main">
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleRefundLineSelection('${line.id}', this.checked)">
+                            <div class="refund-line-body">
+                                <div class="refund-line-name">${escapeHtml(`${line.orderIndex}-${line.unit}`)}. ${escapeHtml(line.name)}</div>
+                                ${line.specs ? `<div class="refund-line-specs">${escapeHtml(line.specs)}</div>` : ''}
+                                <div class="refund-line-meta">
+                                    <span class="refund-line-max">可退上限：${formatCnyAmount(line.maxAmount)}（勾选后全额退款）</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateRefundFilledCount() {
+            const selectedText = document.getElementById('refundSelectedCount');
+            if (!selectedText) return;
+            selectedText.textContent = `已选 ${refundState.selectedLineIds.size} 行`;
+        }
+
+        function calculateManualRefundAmount() {
+            const order = ordersData.find(item => item.id === refundState.orderId);
+            if (!order) {
+                return { ok: false, error: '订单信息不存在' };
+            }
+            const orderAmount = roundMoney(order.amount);
+
+            const orderAmountInput = document.getElementById('refundOrderManualAmount');
+            const orderRaw = String(orderAmountInput?.value || '').trim();
+            const hasOrderInput = orderRaw !== '';
+            const orderRefundAmount = hasOrderInput ? Number(orderRaw) : 0;
+            if (hasOrderInput) {
+                if (!Number.isFinite(orderRefundAmount) || orderRefundAmount <= 0) {
+                    return { ok: false, error: '整单退款金额需大于0' };
+                }
+                if (orderRefundAmount > orderAmount) {
+                    return { ok: false, error: '整单退款金额不能超过订单实付金额' };
+                }
+            }
+
+            const selectedLines = refundState.lineItems.filter(line => refundState.selectedLineIds.has(line.id));
+            if (hasOrderInput && selectedLines.length > 0) {
+                return { ok: false, error: '整单退款金额与商品退款金额请二选一' };
+            }
+
+            if (hasOrderInput) {
+                return { ok: true, amount: roundMoney(orderRefundAmount), refundType: '整单金额退款' };
+            }
+
+            if (selectedLines.length > 0) {
+                const lineRefundAmount = roundMoney(selectedLines.reduce((sum, line) => sum + line.maxAmount, 0));
+                if (lineRefundAmount > orderAmount) {
+                    return { ok: false, error: '商品退款总金额不能超过订单实付金额' };
+                }
+                return { ok: true, amount: lineRefundAmount, refundType: '商品全额退款', selectedCount: selectedLines.length };
+            }
+
+            return { ok: false, error: '请填写整单退款金额或选择至少一行商品退款' };
+        }
+
+        function updateRefundEstimation() {
+            const amountEl = document.getElementById('refundComputedAmount');
+            if (!amountEl) return;
+            const result = calculateManualRefundAmount();
+            amountEl.textContent = result.ok ? formatCnyAmount(result.amount) : 'CNY 0.00';
+        }
+
+        function submitRefund() {
+            if (!refundState.orderId) {
+                showToast('请先选择需要退款的订单', 'error');
+                return;
+            }
+            const result = calculateManualRefundAmount();
+            if (!result.ok) {
+                showToast(result.error, 'error');
+                return;
+            }
+
+            const order = ordersData.find(item => item.id === refundState.orderId);
+            if (!order) {
+                showToast('订单信息不存在', 'error');
+                return;
+            }
+
+            const modeText = result.refundType || '退款';
+            const orderIdShort = refundState.orderId.substring(0, 16);
+            closeRefundModal();
+            showToast(`订单 ${orderIdShort}... ${modeText}，退款金额 ${formatCnyAmount(result.amount)}，退款申请已提交`);
+        }
+
+        function resolveOrderSearchValue(order, searchField) {
+            switch (searchField) {
+                case 'nickname':
+                    return String(order.nickname || '').toLowerCase();
+                case 'phone':
+                    return String(order.phone || '').toLowerCase();
+                case 'productName': {
+                    const products = normalizeOrderItems(order).map(item => item.name).join(' ');
+                    return `${String(order.product || '')} ${products}`.toLowerCase();
+                }
+                case 'transactionId':
+                    return String(order.transactionId || '').toLowerCase();
+                case 'deviceId':
+                    return String(order.deviceId || '').toLowerCase();
+                case 'orderId':
+                default:
+                    return String(order.id || '').toLowerCase();
+            }
+        }
+
+        function getSelectedOrderSearchField() {
+            const desktopSelect = document.getElementById('orderSearchFieldDesktop');
+            const mobileChecked = document.querySelector('input[name="orderSearchField"]:checked')?.value;
+            const desktopValue = desktopSelect?.value;
+
+            if (window.matchMedia('(max-width: 1024px)').matches) {
+                return mobileChecked || desktopValue || 'orderId';
+            }
+
+            return desktopValue || mobileChecked || 'orderId';
+        }
+
+        function handleOrderSearchFieldSelectChange(value) {
+            const targetRadio = document.querySelector(`input[name="orderSearchField"][value="${value}"]`);
+            if (targetRadio) targetRadio.checked = true;
+            filterOrders();
+        }
+
+        function handleOrderSearchFieldRadioChange(value) {
+            const desktopSelect = document.getElementById('orderSearchFieldDesktop');
+            if (desktopSelect) desktopSelect.value = value;
+            filterOrders();
+        }
+
         function filterOrders() {
             const searchKeyword = document.getElementById('orderSearch').value.trim().toLowerCase();
+            const searchField = getSelectedOrderSearchField();
             const statusFilter = document.getElementById('statusFilter').value;
 
             filteredData = ordersData.filter(order => {
                 if (selectedDevices.size > 0 && !selectedDevices.has(order.deviceId)) {
                     return false;
                 }
-                // 搜索订单号
-                if (searchKeyword && !order.id.toLowerCase().includes(searchKeyword)) {
+                // 按选中维度搜索
+                if (searchKeyword && !resolveOrderSearchValue(order, searchField).includes(searchKeyword)) {
                     return false;
                 }
                 // 状态筛选
@@ -1910,6 +3007,10 @@
 
         function clearFilters() {
             document.getElementById('orderSearch').value = '';
+            const desktopSearchField = document.getElementById('orderSearchFieldDesktop');
+            if (desktopSearchField) desktopSearchField.value = 'orderId';
+            const defaultSearchField = document.querySelector('input[name="orderSearchField"][value="orderId"]');
+            if (defaultSearchField) defaultSearchField.checked = true;
             document.getElementById('statusFilter').value = 'realtime';
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
@@ -1944,12 +3045,7 @@
         }
 
         function refundOrder(orderId) {
-            const order = ordersData.find(o => o.id === orderId);
-            if (!order) return;
-            
-            if (confirm(`确定要对订单 ${orderId.substring(0, 16)}... 进行退款吗？\n退款金额: CNY ${order.amount}`)) {
-                showToast(`订单 ${orderId.substring(0, 16)}... 退款申请已提交`);
-            }
+            openRefundModal(orderId);
         }
 
         function returnCoupon(orderId) {
@@ -1980,6 +3076,20 @@
             const wrap = document.getElementById('deviceFilterWrap');
             if (wrap && !wrap.contains(e.target)) {
                 closeDeviceFilterDropdown();
+            }
+        });
+
+        document.getElementById('refundModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRefundModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            const refundModal = document.getElementById('refundModal');
+            if (!refundModal.classList.contains('active')) return;
+            if (e.key === 'Escape') {
+                closeRefundModal();
             }
         });
 

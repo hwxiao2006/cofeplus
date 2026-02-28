@@ -30,28 +30,30 @@
         }
 
         .page {
-            max-width: 1200px;
+            max-width: 1360px;
             margin: 0 auto;
             min-height: 100vh;
-            background: var(--bg-card);
+            padding: 18px 20px 24px;
         }
 
         .header {
-            height: 52px;
-            border-bottom: 1px solid var(--border);
+            height: 58px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: sticky;
-            top: 0;
+            top: 10px;
             background: var(--bg-card);
             z-index: 10;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
         }
 
         .back-btn {
             position: absolute;
             left: 12px;
-            top: 8px;
+            top: 10px;
             width: 36px;
             height: 36px;
             border: none;
@@ -63,18 +65,45 @@
         }
 
         .title {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
         }
 
+        .content-shell {
+            margin-top: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .form-column {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03);
+        }
+
         .section-title {
-            height: 32px;
+            min-height: 40px;
             background: var(--section-bg);
-            color: #9ca3af;
+            color: #8f99a6;
             font-size: 12px;
             display: flex;
             align-items: center;
-            padding: 0 12px;
+            padding: 8px 14px;
+            font-weight: 600;
         }
 
         .rows {
@@ -82,19 +111,25 @@
         }
 
         .row {
-            min-height: 44px;
+            min-height: 52px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 10px 14px;
             gap: 12px;
         }
 
+        .row:last-child {
+            border-bottom: none;
+        }
+
         .label {
+            min-width: 132px;
             font-size: 13px;
             color: var(--text-primary);
             white-space: nowrap;
+            font-weight: 500;
         }
 
         .label small {
@@ -105,27 +140,38 @@
 
         .value {
             flex: 1;
-            text-align: right;
             min-width: 0;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
         }
 
         .value input,
         .value select {
-            width: min(360px, 100%);
-            border: none;
-            background: transparent;
+            width: min(380px, 100%);
+            border: 1px solid transparent;
+            background: #f8fafc;
             text-align: right;
             color: var(--text-secondary);
             font-size: 13px;
             outline: none;
+            border-radius: 8px;
+            padding: 7px 10px;
+        }
+
+        .value input:focus,
+        .value select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.14);
+            background: #fff;
         }
 
         .device-search-input {
-            width: min(360px, 100%);
+            width: min(380px, 100%);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 8px 10px;
-            margin-bottom: 6px;
+            margin-bottom: 0;
             text-align: left;
             color: var(--text-primary);
             font-size: 13px;
@@ -141,13 +187,13 @@
         .device-search-wrap {
             position: relative;
             display: inline-block;
-            width: min(360px, 100%);
+            width: min(380px, 100%);
         }
 
         .device-dropdown {
             display: none;
             position: absolute;
-            top: calc(100% - 2px);
+            top: calc(100% - 1px);
             left: 0;
             right: 0;
             background: #fff;
@@ -229,15 +275,16 @@
 
         .upload-grid {
             display: flex;
-            gap: 10px;
-            padding: 12px;
+            gap: 12px;
+            padding: 14px;
+            flex-wrap: wrap;
         }
 
         .upload-box {
-            width: 110px;
-            height: 88px;
+            width: 128px;
+            height: 94px;
             border: 1px dashed #d1d5db;
-            border-radius: 8px;
+            border-radius: 10px;
             color: #9ca3af;
             display: flex;
             flex-direction: column;
@@ -247,6 +294,7 @@
             gap: 6px;
             cursor: pointer;
             background: #fafafa;
+            flex-shrink: 0;
         }
 
         .camera {
@@ -257,14 +305,14 @@
         .actions {
             display: flex;
             gap: 10px;
-            padding: 16px 12px 24px;
+            padding: 16px 14px;
             background: var(--bg-card);
         }
 
         .btn {
             flex: 1;
-            height: 40px;
-            border-radius: 8px;
+            height: 42px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             cursor: pointer;
             font-size: 14px;
@@ -281,21 +329,29 @@
             color: #9ca3af;
             font-size: 13px;
         }
-        /* 跨页统一优化（桌面 + 移动） */
-        .page {
-            max-width: 1480px;
-        }
 
-        .header {
-            height: 56px;
-        }
+        @media (max-width: 1023px) {
+            .page {
+                padding: 12px 12px 18px;
+            }
 
-        .title {
-            font-size: 17px;
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
+            .page {
+                padding: 0;
+            }
+
             .header {
+                top: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                border-top: none;
+                box-shadow: none;
                 height: 52px;
             }
 
@@ -303,9 +359,75 @@
                 font-size: 16px;
             }
 
+            .content-shell {
+                margin-top: 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-column {
+                gap: 10px;
+            }
+
+            .form-section {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .section-title {
+                min-height: 36px;
+                padding: 6px 12px;
+            }
+
             .row {
-                min-height: 42px;
-                padding: 8px 10px;
+                min-height: auto;
+                padding: 10px 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .label {
+                min-width: 0;
+            }
+
+            .value {
+                text-align: left;
+                justify-content: flex-start;
+            }
+
+            .value input,
+            .value select {
+                width: 100%;
+                text-align: left;
+            }
+
+            .device-search-wrap,
+            .device-search-input {
+                width: 100%;
+            }
+
+            .upload-grid {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding: 12px;
+            }
+
+            .upload-box {
+                width: 118px;
+                min-width: 118px;
+                height: 90px;
+            }
+
+            .actions {
+                padding: 12px;
+            }
+
+            .btn {
+                height: 44px;
             }
         }
     </style>
@@ -317,155 +439,179 @@
             <div class="title">设备入场</div>
         </header>
 
-        <div class="section-title">基本信息</div>
-        <div class="rows">
-            <div class="row">
-                <div class="label">选择设备</div>
-                <div class="value">
-                    <div class="device-search-wrap">
-                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
-                        <div id="deviceDropdown" class="device-dropdown"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="label">所属客户</div>
-                <div class="value"><span id="merchantName" class="readonly">自动带出</span></div>
-            </div>
-            <div class="row">
-                <div class="label">点位名称</div>
-                <div class="value">
-                    <select id="locationSelect" onchange="onLocationChange()">
-                        <option value="">请选择</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+        <div class="content-shell">
+            <div class="form-grid">
+                <div class="form-column left-column">
+                    <section class="form-section">
+                        <div class="section-title">基本信息</div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">选择设备</div>
+                                <div class="value">
+                                    <div class="device-search-wrap">
+                                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                                        <div id="deviceDropdown" class="device-dropdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">所属客户</div>
+                                <div class="value"><span id="merchantName" class="readonly">自动带出</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">点位名称</div>
+                                <div class="value">
+                                    <select id="locationSelect" onchange="onLocationChange()">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-        <div class="section-title">运维人员<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
-        <div class="rows">
-            <div class="row">
-                <div class="label">选择员工</div>
-                <div class="value"><span class="link">请选择 ›</span></div>
-            </div>
-        </div>
+                    <section class="form-section">
+                        <div class="section-title">运维人员<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">选择员工</div>
+                                <div class="value"><span id="operatorNameDisplay" class="link">请选择 ›</span></div>
+                            </div>
+                        </div>
+                    </section>
 
-        <div class="section-title">支付方式选择<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
-        <div class="rows">
-            <div class="row">
-                <div class="label">微信/支付宝扫码支付</div>
-                <div class="value">
-                    <div class="pay-item">
-                        <span style="color:#9ca3af;">˄ ˅</span>
-                        <input type="checkbox" checked>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="label">数字人民币支付</div>
-                <div class="value">
-                    <div class="pay-item">
-                        <span style="color:#9ca3af;">˄ ˅</span>
-                        <input type="checkbox">
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <section class="form-section">
+                        <div class="section-title">定位设置</div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">选择GPS定位</div>
+                                <div class="value"><span id="gpsActionDisplay" class="link">获取当前位置 ›</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">经度</div>
+                                <div class="value"><span id="longitudeDisplay" style="color:#9ca3af;">手动输入</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">纬度</div>
+                                <div class="value"><span id="latitudeDisplay" style="color:#9ca3af;">手动输入</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">点位地址</div>
+                                <div class="value"><input id="locationAddressInput" placeholder="请输入地址"></div>
+                            </div>
+                        </div>
+                    </section>
 
-        <div class="section-title">定位设置</div>
-        <div class="rows">
-            <div class="row">
-                <div class="label">选择GPS定位</div>
-                <div class="value"><span class="link">获取当前位置 ›</span></div>
-            </div>
-            <div class="row">
-                <div class="label">经度</div>
-                <div class="value"><span style="color:#9ca3af;">手动输入</span></div>
-            </div>
-            <div class="row">
-                <div class="label">纬度</div>
-                <div class="value"><span style="color:#9ca3af;">手动输入</span></div>
-            </div>
-            <div class="row">
-                <div class="label">点位地址</div>
-                <div class="value"><input id="locationAddressInput" placeholder="请输入地址"></div>
-            </div>
-        </div>
+                    <section class="form-section">
+                        <div class="section-title">其他设置</div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">节能模式</div>
+                                <div class="value">
+                                    <div class="switch-group" id="energyModeGroup">
+                                        <button type="button" class="switch-item active" data-value="开启">开启</button>
+                                        <button type="button" class="switch-item" data-value="关闭">关闭</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">开启节能模式</div>
+                                <div class="value"><input type="time" id="energyStartInput" value="18:00"></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">关闭节能模式</div>
+                                <div class="value"><input type="time" id="energyEndInput" value="08:00"></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">设备开始日期</div>
+                                <div class="value"><input type="date" id="deviceStartDateInput" value="2026-02-13"></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">设备结束日期</div>
+                                <div class="value"><input type="date" id="deviceEndDateInput"></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">第五代终端</div>
+                                <div class="value">
+                                    <div class="switch-group" id="terminalGenerationGroup">
+                                        <button type="button" class="switch-item active" data-value="开启">开启</button>
+                                        <button type="button" class="switch-item" data-value="关闭">关闭</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">订单并行制作</div>
+                                <div class="value">
+                                    <div class="switch-group" id="parallelProductionGroup">
+                                        <button type="button" class="switch-item active" data-value="开启">开启</button>
+                                        <button type="button" class="switch-item" data-value="关闭">关闭</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
 
-        <div class="section-title">其他设置</div>
-        <div class="rows">
-            <div class="row">
-                <div class="label">节能模式</div>
-                <div class="value">
-                    <div class="switch-group">
-                        <button class="switch-item active">开启</button>
-                        <button class="switch-item">关闭</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="label">开启节能模式</div>
-                <div class="value"><input value="18:00"></div>
-            </div>
-            <div class="row">
-                <div class="label">关闭节能模式</div>
-                <div class="value"><input value="8:00"></div>
-            </div>
-            <div class="row">
-                <div class="label">设备开始日期</div>
-                <div class="value"><input value="2026-02-13"></div>
-            </div>
-            <div class="row">
-                <div class="label">设备结束日期</div>
-                <div class="value"><span class="link">请选择 ›</span></div>
-            </div>
-            <div class="row">
-                <div class="label">第五代终端</div>
-                <div class="value">
-                    <div class="switch-group">
-                        <button class="switch-item active">开启</button>
-                        <button class="switch-item">关闭</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="label">订单并行制作</div>
-                <div class="value">
-                    <div class="switch-group">
-                        <button class="switch-item active">开启</button>
-                        <button class="switch-item">关闭</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div class="form-column right-column">
+                    <section class="form-section">
+                        <div class="section-title">支付方式选择<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">微信/支付宝扫码支付</div>
+                                <div class="value">
+                                    <div class="pay-item">
+                                        <span style="color:#9ca3af;">˄ ˅</span>
+                                        <input id="payQrCheckbox" type="checkbox" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">数字人民币支付</div>
+                                <div class="value">
+                                    <div class="pay-item">
+                                        <span style="color:#9ca3af;">˄ ˅</span>
+                                        <input id="payDigitalRmbCheckbox" type="checkbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-        <div class="section-title">显示器画面</div>
-        <div class="rows">
-            <div class="upload-grid">
-                <div class="upload-box">
-                    <div class="camera">📷</div>
-                    <div>上传机内画面</div>
-                </div>
-                <div class="upload-box">
-                    <div class="camera">📷</div>
-                    <div>上传机外画面</div>
+                    <section class="form-section">
+                        <div class="section-title">显示器画面</div>
+                        <div class="rows">
+                            <div class="upload-grid">
+                                <div class="upload-box">
+                                    <div class="camera">📷</div>
+                                    <div>上传机内画面</div>
+                                </div>
+                                <div class="upload-box">
+                                    <div class="camera">📷</div>
+                                    <div>上传机外画面</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <div class="section-title">点位照片</div>
+                        <div class="rows">
+                            <div class="upload-grid">
+                                <div class="upload-box">
+                                    <div class="camera">📷</div>
+                                    <div>拍摄照片</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-section actions-section">
+                        <div class="actions">
+                            <button class="btn" onclick="window.location.href='devices.html'">取消</button>
+                            <button class="btn btn-primary" onclick="submitEntry()">提交入场</button>
+                        </div>
+                    </section>
                 </div>
             </div>
-        </div>
-
-        <div class="section-title">点位照片</div>
-        <div class="rows">
-            <div class="upload-grid">
-                <div class="upload-box">
-                    <div class="camera">📷</div>
-                    <div>拍摄照片</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button class="btn" onclick="window.location.href='devices.html'">取消</button>
-            <button class="btn btn-primary" onclick="submitEntry()">提交入场</button>
         </div>
     </div>
 
@@ -487,6 +633,7 @@
             locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
             renderDeviceOptions();
             renderLocationOptions();
+            initSwitchGroups();
         }
 
         function renderDeviceOptions() {
@@ -586,6 +733,90 @@
             document.getElementById('locationAddressInput').value = address;
         }
 
+        function initSwitchGroups() {
+            document.querySelectorAll('.switch-group').forEach(group => {
+                group.addEventListener('click', function(event) {
+                    const target = event.target.closest('.switch-item');
+                    if (!target || !group.contains(target)) return;
+                    event.preventDefault();
+                    group.querySelectorAll('.switch-item').forEach(item => item.classList.remove('active'));
+                    target.classList.add('active');
+                });
+            });
+        }
+
+        function getTextValue(id, fallback = '-') {
+            const el = document.getElementById(id);
+            if (!el) return fallback;
+            const text = el.textContent.replace('›', '').trim();
+            return text || fallback;
+        }
+
+        function getInputValue(id, fallback = '-') {
+            const el = document.getElementById(id);
+            if (!el) return fallback;
+            const value = (el.value || '').trim();
+            return value || fallback;
+        }
+
+        function getSwitchGroupValue(id, fallback = '-') {
+            const group = document.getElementById(id);
+            if (!group) return fallback;
+            const active = group.querySelector('.switch-item.active');
+            if (!active) return fallback;
+            return (active.dataset.value || active.textContent || '').trim() || fallback;
+        }
+
+        function formatEntryTime() {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        }
+
+        function getSelectedLocationName() {
+            const select = document.getElementById('locationSelect');
+            if (!select || !select.value) return '-';
+            const option = select.options[select.selectedIndex];
+            if (!option) return '-';
+            const raw = option.textContent.replace(/（.*?）/, '').trim();
+            return raw || '-';
+        }
+
+        function getPaymentMethods() {
+            const list = [];
+            if (document.getElementById('payQrCheckbox')?.checked) {
+                list.push('微信/支付宝扫码支付');
+            }
+            if (document.getElementById('payDigitalRmbCheckbox')?.checked) {
+                list.push('数字人民币支付');
+            }
+            return list.length ? list.join('、') : '未选择';
+        }
+
+        function buildEntryInfoPayload() {
+            return {
+                entryAt: formatEntryTime(),
+                locationName: getSelectedLocationName(),
+                locationAddress: getInputValue('locationAddressInput'),
+                operatorName: getTextValue('operatorNameDisplay', '未选择'),
+                gpsAction: getTextValue('gpsActionDisplay', '未获取'),
+                longitude: getTextValue('longitudeDisplay', '手动输入'),
+                latitude: getTextValue('latitudeDisplay', '手动输入'),
+                energyMode: getSwitchGroupValue('energyModeGroup', '开启'),
+                energyStartTime: getInputValue('energyStartInput'),
+                energyEndTime: getInputValue('energyEndInput'),
+                deviceStartDate: getInputValue('deviceStartDateInput'),
+                deviceEndDate: getInputValue('deviceEndDateInput'),
+                terminalGeneration5: getSwitchGroupValue('terminalGenerationGroup', '开启'),
+                parallelProduction: getSwitchGroupValue('parallelProductionGroup', '开启'),
+                payQr: !!document.getElementById('payQrCheckbox')?.checked,
+                payDigitalRmb: !!document.getElementById('payDigitalRmbCheckbox')?.checked,
+                paymentMethods: getPaymentMethods(),
+                displayImages: '待上传',
+                locationImages: '待上传'
+            };
+        }
+
         function submitEntry() {
             const deviceInput = document.getElementById('deviceSearchInput').value;
             const deviceId = matchDeviceByInput(deviceInput);
@@ -607,6 +838,7 @@
 
             device.location = locationCode;
             device.entered = true;
+            device.entryInfo = buildEntryInfoPayload();
             if (device.sales !== 'enabled') {
                 device.sales = 'enabled';
             }

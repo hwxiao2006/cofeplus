@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>菜单管理 - 运营控制台</title>
+    <title>商品管理 - 运营控制台</title>
     <meta name="format-detection" content="telephone=no">
     <style>
         :root {
@@ -1838,7 +1838,7 @@
                     </a>
                     <a href="menu-management.html" class="nav-item">
                         <span class="nav-icon">📋</span>
-                        <span>菜单管理</span>
+                        <span>商品管理</span>
                     </a>
                     <a href="materials.html" class="nav-item">
                         <span class="nav-icon">📦</span>
@@ -1877,7 +1877,7 @@
             <header class="header">
                 <div class="header-left">
                     <div class="header-title-wrapper">
-                        <h1 class="header-title">菜单管理</h1>
+                        <h1 class="header-title">商品管理</h1>
                         <div class="header-meta">
                             <span class="device-tag" id="deviceTag">RCK111</span>
                             <span class="header-desc">按设备语言配置的菜单快照</span>
@@ -3187,7 +3187,7 @@
             overviewView.classList.toggle('active', tab === 'overview');
             menuView.classList.toggle('active', tab === 'menu');
 
-            title.textContent = tab === 'overview' ? '经营总览' : '菜单管理';
+            title.textContent = tab === 'overview' ? '经营总览' : '商品管理';
             desc.textContent = tab === 'overview' ? '销售指标与产品结构分析（按设备维度）' : '按设备语言配置的菜单快照';
             if (deviceTag) {
                 deviceTag.style.display = tab === 'menu' ? 'inline-flex' : 'none';
