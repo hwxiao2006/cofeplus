@@ -1307,6 +1307,7 @@
                         <span class="nav-icon">📍</span>
                         <span>点位管理</span>
                     </a>
+                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
                 </div>
             </nav>
         </aside>
@@ -1545,6 +1546,30 @@
         </div>
     </div>
 
+    <div class="recipe-impact-overlay" id="tagSyncModal">
+        <div class="recipe-impact-modal">
+            <div class="recipe-impact-header">
+                <div>
+                    <div class="recipe-impact-title">同步标签文案</div>
+                    <div class="recipe-impact-subtitle" id="tagSyncSubtitle">勾选后批量更新关联商品</div>
+                </div>
+                <button class="modal-close" type="button" onclick="closeTagSyncModal()">×</button>
+            </div>
+            <div class="recipe-impact-toolbar">
+                <div class="left">
+                    <button type="button" class="recipe-control-btn" onclick="selectAllTagSyncProducts()">全选更新</button>
+                    <button type="button" class="recipe-control-btn" onclick="clearTagSyncProducts()">清空选择</button>
+                </div>
+                <div class="right" id="tagSyncSummary">已选择 0 个</div>
+            </div>
+            <div class="recipe-impact-body" id="tagSyncBody"></div>
+            <div class="recipe-impact-footer">
+                <button class="btn btn-default" type="button" onclick="closeTagSyncModal()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="confirmTagSyncApply()">确认更新</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1564,6 +1589,7 @@
         let activeRecipeSpecKey = 'beans';
         let recipeEditorState = null;
         let recipeImpactState = null;
+        let tagSyncState = null;
         let drawerActiveSpecKey = 'beans';
         let drawerSelectedTagKey = '';
         const tagConfigs = [
@@ -1934,6 +1960,192 @@
                 })
                 .filter(Boolean)
                 .sort((a, b) => a.id - b.id);
+        }
+
+        function cloneTagLabels(specKey, tagKey, targetProduct = productData) {
+            const labels = {};
+            const i18n = targetProduct?.tagI18n?.[specKey]?.[tagKey] || {};
+            const langs = getDeviceLangs();
+            langs.forEach(lang => {
+                const raw = i18n[lang];
+                if (raw === undefined || raw === null) return;
+                const text = String(raw).trim();
+                if (text) labels[lang] = text;
+            });
+            ['zh', 'en'].forEach(lang => {
+                if (labels[lang]) return;
+                const raw = i18n[lang];
+                if (raw === undefined || raw === null) return;
+                const text = String(raw).trim();
+                if (text) labels[lang] = text;
+            });
+            return labels;
+        }
+
+        function hasTagLabelChanged(previousLabels, nextLabels) {
+            const previous = previousLabels || {};
+            const next = nextLabels || {};
+            const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+            for (const key of keys) {
+                const before = String(previous[key] || '').trim();
+                const after = String(next[key] || '').trim();
+                if (before !== after) return true;
+            }
+            return false;
+        }
+
+        function getTagCompareLabel(labels, fallbackTagKey = '') {
+            return String(
+                labels?.[currentLang]
+                || labels?.zh
+                || labels?.en
+                || fallbackTagKey
+                || ''
+            );
+        }
+
+        function getTagSyncEntries(specKey, tagKey, previousLabels) {
+            const compareLabel = getTagCompareLabel(previousLabels, tagKey);
+            const entries = getCatalogEntries();
+            return entries
+                .map(entry => {
+                    const product = getEntryProduct(entry);
+                    const id = getEntryId(entry);
+                    if (!product || id === null) return null;
+                    if (productData && Number(productData.id) === id) return null;
+
+                    const label = resolveProductTagLabel(product, specKey, tagKey);
+                    if (label !== compareLabel) return null;
+
+                    return {
+                        id,
+                        product,
+                        name: resolveProductDisplayName(product),
+                        categoryName: resolveEntryCategoryName(entry),
+                        currentLabel: label
+                    };
+                })
+                .filter(Boolean)
+                .sort((a, b) => a.id - b.id);
+        }
+
+        function setTagLabelsForProduct(targetProduct, specKey, tagKey, nextLabels) {
+            if (!targetProduct || typeof targetProduct !== 'object') return;
+            if (!targetProduct.tagI18n || typeof targetProduct.tagI18n !== 'object') {
+                targetProduct.tagI18n = {};
+            }
+            if (!targetProduct.tagI18n[specKey] || typeof targetProduct.tagI18n[specKey] !== 'object') {
+                targetProduct.tagI18n[specKey] = {};
+            }
+            if (!targetProduct.tagI18n[specKey][tagKey] || typeof targetProduct.tagI18n[specKey][tagKey] !== 'object') {
+                targetProduct.tagI18n[specKey][tagKey] = {};
+            }
+
+            const i18n = targetProduct.tagI18n[specKey][tagKey];
+            const langs = getDeviceLangs();
+            langs.forEach(lang => {
+                const value = String(nextLabels?.[lang] || '').trim();
+                if (value) i18n[lang] = value;
+                else delete i18n[lang];
+            });
+
+            const fallbackLabel = getTagCompareLabel(nextLabels, tagKey);
+            if (fallbackLabel && !i18n.zh) {
+                i18n.zh = fallbackLabel;
+            }
+        }
+
+        function openTagSyncModal() {
+            if (!tagSyncState) return;
+            renderTagSyncModal();
+            const modal = document.getElementById('tagSyncModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeTagSyncModal() {
+            const modal = document.getElementById('tagSyncModal');
+            if (modal) modal.classList.remove('active');
+            tagSyncState = null;
+        }
+
+        function selectAllTagSyncProducts() {
+            if (!tagSyncState) return;
+            tagSyncState.selectedIds = new Set(tagSyncState.affectedEntries.map(item => item.id));
+            renderTagSyncModal();
+        }
+
+        function clearTagSyncProducts() {
+            if (!tagSyncState) return;
+            tagSyncState.selectedIds = new Set();
+            renderTagSyncModal();
+        }
+
+        function toggleTagSyncProduct(productId, checked) {
+            if (!tagSyncState) return;
+            const id = Number(productId);
+            if (!Number.isFinite(id)) return;
+            if (checked) tagSyncState.selectedIds.add(id);
+            else tagSyncState.selectedIds.delete(id);
+            renderTagSyncModal();
+        }
+
+        function renderTagSyncModal() {
+            if (!tagSyncState) return;
+            const subtitle = document.getElementById('tagSyncSubtitle');
+            const body = document.getElementById('tagSyncBody');
+            const summary = document.getElementById('tagSyncSummary');
+            if (!subtitle || !body || !summary) return;
+
+            const beforeLabel = getTagCompareLabel(tagSyncState.previousLabels, tagSyncState.tagKey);
+            const afterLabel = getTagCompareLabel(tagSyncState.nextLabels, tagSyncState.tagKey);
+            subtitle.textContent = `${tagSyncState.specTitle}："${beforeLabel}" 已改为 "${afterLabel}"，勾选后将同步到以下商品`;
+
+            const total = tagSyncState.affectedEntries.length;
+            const selected = tagSyncState.selectedIds.size;
+            summary.textContent = `已选择 ${selected} / ${total} 个商品`;
+
+            if (!total) {
+                body.innerHTML = '<div class="recipe-impact-empty">没有可同步商品，当前商品标签已更新</div>';
+                return;
+            }
+
+            body.innerHTML = tagSyncState.affectedEntries.map(item => {
+                const checked = tagSyncState.selectedIds.has(item.id);
+                return `
+                    <label class="recipe-impact-item">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTagSyncProduct('${item.id}', this.checked)">
+                        <div class="recipe-impact-item-body">
+                            <div class="recipe-impact-item-name">
+                                ${escAttr(item.name)}
+                                <span class="recipe-impact-item-tag">${escAttr(item.currentLabel)}</span>
+                            </div>
+                            <div class="recipe-impact-item-meta">ID: ${item.id} · 分类: ${escAttr(item.categoryName)}</div>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function confirmTagSyncApply() {
+            if (!tagSyncState) return;
+            const selectedEntries = tagSyncState.affectedEntries.filter(item => tagSyncState.selectedIds.has(item.id));
+            const changedProducts = [];
+
+            if (productData) {
+                setTagLabelsForProduct(productData, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                changedProducts.push(productData);
+            }
+
+            selectedEntries.forEach(item => {
+                if (!item.product) return;
+                setTagLabelsForProduct(item.product, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                changedProducts.push(item.product);
+            });
+
+            persistRecipeChanges(changedProducts);
+            const syncedCount = selectedEntries.length;
+            closeTagSyncModal();
+            showToast(syncedCount > 0 ? `标签配置已更新，已同步 ${syncedCount} 个商品` : '标签配置已更新');
         }
 
         function buildUniqueRecipeLinkId(specKey, tagKey, productId) {
@@ -2346,6 +2558,13 @@
                 });
             }
 
+            const tagSyncModal = document.getElementById('tagSyncModal');
+            if (tagSyncModal) {
+                tagSyncModal.addEventListener('click', function(e) {
+                    if (e.target === tagSyncModal) closeTagSyncModal();
+                });
+            }
+
             document.addEventListener('keydown', function(e) {
                 if (e.key !== 'Escape') return;
                 const drawer = document.getElementById('tagConfigDrawer');
@@ -2356,6 +2575,11 @@
                 const impact = document.getElementById('recipeImpactModal');
                 if (impact && impact.classList.contains('active')) {
                     closeRecipeImpactModal();
+                    return;
+                }
+                const tagSync = document.getElementById('tagSyncModal');
+                if (tagSync && tagSync.classList.contains('active')) {
+                    closeTagSyncModal();
                     return;
                 }
                 const modal = document.getElementById('recipeEditorModal');
@@ -2599,9 +2823,44 @@
         }
 
         function saveTagConfigDrawer() {
+            const cfg = getTagConfigBySpec(drawerActiveSpecKey);
+            const tagKey = drawerSelectedTagKey;
+            const previousLabels = (cfg && tagKey) ? cloneTagLabels(cfg.specKey, tagKey, productData) : {};
             persistDrawerCurrentTag();
+            if (!cfg || !tagKey) {
+                closeTagConfigDrawer();
+                showToast('标签配置已更新');
+                return;
+            }
+
+            const nextLabels = cloneTagLabels(cfg.specKey, tagKey, productData);
+            persistRecipeChanges(productData ? [productData] : []);
+
+            if (!hasTagLabelChanged(previousLabels, nextLabels)) {
+                closeTagConfigDrawer();
+                showToast('标签配置已更新');
+                return;
+            }
+
+            const affectedEntries = getTagSyncEntries(cfg.specKey, tagKey, previousLabels);
+            if (!affectedEntries.length) {
+                closeTagConfigDrawer();
+                showToast('标签配置已更新');
+                return;
+            }
+
+            tagSyncState = {
+                specKey: cfg.specKey,
+                tagKey,
+                specTitle: cfg.title,
+                previousLabels,
+                nextLabels,
+                affectedEntries,
+                selectedIds: new Set()
+            };
+
             closeTagConfigDrawer();
-            showToast('标签配置已更新');
+            openTagSyncModal();
         }
 
         function saveProduct() {

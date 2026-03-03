@@ -110,3 +110,13 @@ test('保存商品应持久化 recipe 关联字段', () => {
   assert.ok(/optionRecipes:\s*productData\.optionRecipes\s*\|\|\s*\{\}/.test(html));
   assert.ok(/optionRecipeLinks:\s*productData\.optionRecipeLinks\s*\|\|\s*\{\}/.test(html));
 });
+
+test('标签文案保存后应支持按勾选同步到同标签商品', () => {
+  assert.ok(html.includes('id="tagSyncModal"'));
+  assert.ok(html.includes('id="tagSyncBody"'));
+  assert.ok(/function\s+getTagSyncEntries\s*\(/.test(html));
+  assert.ok(/function\s+openTagSyncModal\s*\(/.test(html));
+  assert.ok(/function\s+confirmTagSyncApply\s*\(/.test(html));
+  assert.ok(/tagSyncState\s*=\s*\{[\s\S]*affectedEntries/.test(html));
+  assert.ok(/toggleTagSyncProduct\('.*?',\s*this\.checked\)/.test(html));
+});
