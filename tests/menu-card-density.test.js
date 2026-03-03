@@ -23,3 +23,11 @@ test('桌面端商品卡片区域至少一行展示5个商品', () => {
     assert.ok(pattern.test(html), `${file} 未配置桌面端5列商品网格`);
   });
 });
+
+test('商品管理：应提供桌面端表格化商品行', () => {
+  targets.forEach((file) => {
+    const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+    assert.ok(html.includes('class="product-table-head"'), `${file} 缺少商品表头`);
+    assert.ok(html.includes('class="product-card product-row"'), `${file} 缺少商品行标记`);
+  });
+});
