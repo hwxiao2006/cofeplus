@@ -211,6 +211,17 @@ test('状态记录：点击异常记录后应显示图四详情', () => {
   assert.ok(detailPage.innerHTML.includes('设备疑似没网或断电'));
 });
 
+test('状态记录入口：设备级异常记录应只显示当前设备数据', () => {
+  const ctx = loadFaultContext();
+  ctx.openStatusRecords('RCK073');
+  ctx.openAbnormalRecords();
+
+  const detailHtml = ctx.document.getElementById('abnormalRecordPage').innerHTML;
+  assert.ok(detailHtml.includes('RCK073-异常记录'));
+  assert.ok(detailHtml.includes('制冰机电流异常'));
+  assert.ok(!detailHtml.includes('豆仓余量低于阈值'));
+});
+
 test('物料：点击后应跳转对应设备的物料页', () => {
   const ctx = loadFaultContext();
   assert.strictEqual(typeof ctx.goToDeviceMaterials, 'function');
