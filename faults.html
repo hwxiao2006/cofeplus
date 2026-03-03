@@ -354,6 +354,30 @@
             color: var(--text-tertiary);
         }
 
+        .abnormal-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+
+        .abnormal-filter-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .abnormal-filter-btn.active {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+
         .fault-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1044,6 +1068,7 @@
 
         let currentTab = 'fault';
         let searchKeyword = '';
+        let abnormalStatusFilter = 'all';
         let activeFaultDeviceId = '';
 
         const faults = [
@@ -1344,7 +1369,15 @@
         }
 
         function getFilteredAbnormalRecords() {
+            const keyword = searchKeyword.trim().toLowerCase();
             return abnormalRecords
+                .filter(item => {
+                    const statusMatched = abnormalStatusFilter === 'all' || item.status === abnormalStatusFilter;
+                    if (!statusMatched) return false;
+                    if (!keyword) return true;
+                    const values = [item.deviceId, item.siteName, item.message];
+                    return values.some(value => String(value || '').toLowerCase().includes(keyword));
+                })
                 .slice()
                 .sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
         }
@@ -1362,11 +1395,32 @@
         }
 
         function renderAbnormalRecordList(records) {
+            const filterControls = `
+                <div class="abnormal-filter-row">
+                    <button
+                        type="button"
+                        class="abnormal-filter-btn ${abnormalStatusFilter === 'all' ? 'active' : ''}"
+                        onclick="switchAbnormalStatusFilter('all')"
+                    >全部</button>
+                    <button
+                        type="button"
+                        class="abnormal-filter-btn ${abnormalStatusFilter === 'open' ? 'active' : ''}"
+                        onclick="switchAbnormalStatusFilter('open')"
+                    >未恢复</button>
+                    <button
+                        type="button"
+                        class="abnormal-filter-btn ${abnormalStatusFilter === 'recovered' ? 'active' : ''}"
+                        onclick="switchAbnormalStatusFilter('recovered')"
+                    >已恢复</button>
+                </div>
+            `;
+
             if (!records.length) {
-                return '<div class="empty">当前筛选下暂无异常记录</div>';
+                return `${filterControls}<div class="empty">当前筛选下暂无异常记录</div>`;
             }
 
             return `
+                ${filterControls}
                 <div class="abnormal-record-list">
                     ${records.map(item => `
                         <article class="abnormal-record-item">
@@ -1384,6 +1438,12 @@
                     `).join('')}
                 </div>
             `;
+        }
+
+        function switchAbnormalStatusFilter(nextStatus) {
+            abnormalStatusFilter = nextStatus;
+            renderSummary();
+            renderList();
         }
 
         function getSummaryText() {

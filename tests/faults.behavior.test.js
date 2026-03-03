@@ -15,6 +15,7 @@ function loadFaultContext(options = {}) {
     .replace('const tabConfig = [', 'globalThis.tabConfig = [')
     .replace("let currentTab = 'fault';", "globalThis.currentTab = 'fault';")
     .replace("let searchKeyword = '';", "globalThis.searchKeyword = '';")
+    .replace("let abnormalStatusFilter = 'all';", "globalThis.abnormalStatusFilter = 'all';")
     .replace('const faults = [', 'globalThis.faults = [');
 
   const elements = {};
@@ -120,6 +121,22 @@ test('异常记录Tab：应渲染全量异常列表而非设备卡片', () => {
   assert.ok(listHtml.includes('abnormal-record-list'));
   assert.ok(listHtml.includes('abnormal-record-item'));
   assert.ok(!listHtml.includes('fault-card'));
+});
+
+test('异常记录Tab：应支持未恢复与关键词筛选', () => {
+  const ctx = loadFaultContext();
+  ctx.currentTab = 'abnormal';
+  ctx.searchKeyword = 'RCK019';
+  ctx.abnormalStatusFilter = 'open';
+
+  const records = ctx.getFilteredAbnormalRecords();
+  assert.ok(records.length > 0);
+  assert.ok(records.every(item => item.status === 'open'));
+  assert.ok(records.every(item => (
+    item.deviceId.includes('RCK019')
+    || item.siteName.includes('RCK019')
+    || item.message.includes('RCK019')
+  )));
 });
 
 test('故障列表：非故障设备不显示故障操作按钮', () => {
