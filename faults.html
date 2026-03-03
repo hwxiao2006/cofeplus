@@ -319,6 +319,41 @@
             padding: 14px 16px 12px;
         }
 
+        .abnormal-record-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .abnormal-record-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            padding: 14px 16px 12px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .abnormal-record-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .abnormal-record-desc {
+            margin-top: 4px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .abnormal-record-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
         .fault-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1232,6 +1267,53 @@
             }
         ];
 
+        const abnormalRecords = [
+            {
+                recordId: 'ABN-20260303-0001',
+                deviceId: 'RCK019',
+                siteName: 'COFE+徐汇区行政服务中心*',
+                type: 'lost',
+                code: '',
+                message: 'RCK019设备疑似没网或断电',
+                status: 'open',
+                startedAt: '2026-03-03 09:40:28',
+                recoveredAt: ''
+            },
+            {
+                recordId: 'ABN-20260303-0002',
+                deviceId: 'RCK073',
+                siteName: 'COFE+宝山政务服务大厅',
+                type: 'fault',
+                code: 'E-ICE-001',
+                message: '制冰机电流异常',
+                status: 'open',
+                startedAt: '2026-03-03 08:12:43',
+                recoveredAt: ''
+            },
+            {
+                recordId: 'ABN-20260302-0008',
+                deviceId: 'RCK096',
+                siteName: 'COFE+长宁政务大厅',
+                type: 'shortage',
+                code: '',
+                message: '豆仓余量低于阈值',
+                status: 'recovered',
+                startedAt: '2026-03-02 14:20:15',
+                recoveredAt: '2026-03-02 15:03:17'
+            },
+            {
+                recordId: 'ABN-20260301-0009',
+                deviceId: 'RCK088',
+                siteName: 'COFE+嘉定市民服务中心',
+                type: 'manual',
+                code: '',
+                message: '李丽杰停售了 RCK088',
+                status: 'recovered',
+                startedAt: '2026-03-01 10:11:02',
+                recoveredAt: '2026-03-01 12:55:48'
+            }
+        ];
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -1262,7 +1344,46 @@
         }
 
         function getFilteredAbnormalRecords() {
-            return [];
+            return abnormalRecords
+                .slice()
+                .sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
+        }
+
+        function getAbnormalTypeLabel(type) {
+            if (type === 'fault') return '故障';
+            if (type === 'lost') return '失联';
+            if (type === 'shortage') return '缺料';
+            if (type === 'manual') return '人工操作';
+            return '异常';
+        }
+
+        function getAbnormalStatusLabel(status) {
+            return status === 'open' ? '未恢复' : '已恢复';
+        }
+
+        function renderAbnormalRecordList(records) {
+            if (!records.length) {
+                return '<div class="empty">当前筛选下暂无异常记录</div>';
+            }
+
+            return `
+                <div class="abnormal-record-list">
+                    ${records.map(item => `
+                        <article class="abnormal-record-item">
+                            <div class="abnormal-record-main">
+                                <div class="abnormal-record-title">${escapeText(item.deviceId)} · ${escapeText(item.siteName)}</div>
+                                <div class="abnormal-record-desc">${escapeText(item.message || '-')}</div>
+                            </div>
+                            <div class="abnormal-record-meta">
+                                <span>${escapeText(getAbnormalTypeLabel(item.type))}</span>
+                                <span>${escapeText(item.code || '-')}</span>
+                                <span>${escapeText(getAbnormalStatusLabel(item.status))}</span>
+                                <span>${escapeText(item.startedAt || '-')}</span>
+                            </div>
+                        </article>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function getSummaryText() {
@@ -1517,6 +1638,11 @@
 
         function renderList() {
             const container = document.getElementById('list');
+            if (currentTab === 'abnormal') {
+                const records = getFilteredAbnormalRecords();
+                container.innerHTML = renderAbnormalRecordList(records);
+                return;
+            }
             const data = getFilteredFaults();
             if (!data.length) {
                 container.innerHTML = '<div class="empty">当前状态下暂无故障单</div>';

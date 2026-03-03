@@ -111,6 +111,17 @@ test('故障列表：应提供异常记录Tab并切换统计口径', () => {
   assert.ok(summaryText.includes('条异常'));
 });
 
+test('异常记录Tab：应渲染全量异常列表而非设备卡片', () => {
+  const ctx = loadFaultContext();
+  ctx.currentTab = 'abnormal';
+  ctx.renderList();
+
+  const listHtml = ctx.document.getElementById('list').innerHTML;
+  assert.ok(listHtml.includes('abnormal-record-list'));
+  assert.ok(listHtml.includes('abnormal-record-item'));
+  assert.ok(!listHtml.includes('fault-card'));
+});
+
 test('故障列表：非故障设备不显示故障操作按钮', () => {
   const ctx = loadFaultContext();
   ctx.currentTab = 'normal';
