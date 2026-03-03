@@ -98,6 +98,19 @@ test('故障列表：故障设备应显示四个操作按钮', () => {
   assert.ok(listHtml.includes('状态记录'));
 });
 
+test('故障列表：应提供异常记录Tab并切换统计口径', () => {
+  const ctx = loadFaultContext();
+  ctx.renderTabs();
+
+  const tabsHtml = ctx.document.getElementById('tabs').innerHTML;
+  assert.ok(tabsHtml.includes('异常记录'));
+
+  ctx.currentTab = 'abnormal';
+  ctx.renderSummary();
+  const summaryText = ctx.document.getElementById('summary').textContent;
+  assert.ok(summaryText.includes('条异常'));
+});
+
 test('故障列表：非故障设备不显示故障操作按钮', () => {
   const ctx = loadFaultContext();
   ctx.currentTab = 'normal';

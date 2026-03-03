@@ -1003,7 +1003,8 @@
         const tabConfig = [
             { key: 'normal', label: '正常' },
             { key: 'shortage', label: '缺料' },
-            { key: 'fault', label: '故障' }
+            { key: 'fault', label: '故障' },
+            { key: 'abnormal', label: '异常记录' }
         ];
 
         let currentTab = 'fault';
@@ -1260,9 +1261,22 @@
             renderList();
         }
 
-        function renderSummary() {
+        function getFilteredAbnormalRecords() {
+            return [];
+        }
+
+        function getSummaryText() {
+            if (currentTab === 'abnormal') {
+                const records = getFilteredAbnormalRecords();
+                const openCount = records.filter(item => item.status === 'open').length;
+                return `总计 ${records.length} 条异常（未恢复 ${openCount} 条）`;
+            }
             const list = getFilteredFaults();
-            document.getElementById('summary').textContent = `总计 ${list.length} 台设备`;
+            return `总计 ${list.length} 台设备`;
+        }
+
+        function renderSummary() {
+            document.getElementById('summary').textContent = getSummaryText();
         }
 
         function isDesktopInteractionMode() {
