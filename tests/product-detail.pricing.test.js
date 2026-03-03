@@ -16,12 +16,17 @@ function test(name, fn) {
   }
 }
 
-test('商品编辑表单应包含币种输入项', () => {
-  assert.ok(html.includes('id="productCurrency"'));
+test('商品编辑表单不应包含单商品币种输入项', () => {
+  assert.ok(!html.includes('id="productCurrency"'));
 });
 
 test('商品编辑表单应包含原价输入项', () => {
   assert.ok(html.includes('id="productOriginalPrice"'));
+});
+
+test('原价输入区域应采用紧凑宽度样式', () => {
+  assert.ok(html.includes('class="form-group form-group-original-price"'));
+  assert.ok(/\.form-group-original-price\s*\{[\s\S]*max-width:\s*420px;/.test(html));
 });
 
 test('商品编辑表单应支持本地图片上传', () => {
@@ -35,8 +40,9 @@ test('商品编辑表单不应包含税费与税率输入项', () => {
   assert.ok(!html.includes('id="productTaxRate"'));
 });
 
-test('saveProduct 应持久化 currency 字段', () => {
-  assert.ok(/currency:\s*currency/.test(html));
+test('saveProduct 不应读取或覆盖单商品币种字段', () => {
+  assert.ok(!/getElementById\('productCurrency'\)/.test(html));
+  assert.ok(!/currency:\s*currency/.test(html));
 });
 
 test('saveProduct 应持久化 originalPrice 字段', () => {

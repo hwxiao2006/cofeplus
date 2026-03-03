@@ -311,6 +311,10 @@
             margin-bottom: 20px;
         }
 
+        .form-group-original-price {
+            max-width: 420px;
+        }
+
         .form-label {
             display: block;
             font-size: 13px;
@@ -1150,6 +1154,10 @@
                 gap: 0;
             }
 
+            .form-group-original-price {
+                max-width: none;
+            }
+
             .lang-section {
                 padding: 16px;
             }
@@ -1361,21 +1369,9 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">原价（可选）</label>
-                                <input type="number" class="form-input" id="productOriginalPrice" step="0.1" min="0" placeholder="例如 12.9">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">币种</label>
-                                <select class="form-select" id="productCurrency">
-                                    <option value="CNY">CNY</option>
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="HKD">HKD</option>
-                                    <option value="JPY">JPY</option>
-                                </select>
-                            </div>
+                        <div class="form-group form-group-original-price">
+                            <label class="form-label">原价（可选）</label>
+                            <input type="number" class="form-input" id="productOriginalPrice" step="0.1" min="0" placeholder="例如 12.9">
                         </div>
 
                         <div class="form-row">
@@ -1580,13 +1576,6 @@
             { specKey: 'lid', title: '杯盖', listId: 'lidOptions', optionTitle: 'LID' },
             { specKey: 'latteArt', title: '拉花', listId: 'latteArtOptions', optionTitle: 'LATTE-ART' }
         ];
-        const SUPPORTED_CURRENCIES = {
-            CNY: { decimals: 2 },
-            USD: { decimals: 2 },
-            EUR: { decimals: 2 },
-            HKD: { decimals: 2 },
-            JPY: { decimals: 0 }
-        };
         const RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
@@ -1598,11 +1587,6 @@
             { key: 'decorToppings', title: '装饰颗粒名称', multi: true, defaultNames: [] }
         ];
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
-
-        function normalizeCurrency(code) {
-            const upper = String(code || 'CNY').toUpperCase();
-            return SUPPORTED_CURRENCIES[upper] ? upper : 'CNY';
-        }
 
         function updatePricePreview() {
             // 预留：价格相关联动入口
@@ -2317,7 +2301,6 @@
             document.getElementById('onSaleSwitch').addEventListener('change', updateOnSaleLabel);
             document.getElementById('productPrice').addEventListener('input', updatePricePreview);
             document.getElementById('productOriginalPrice').addEventListener('input', updatePricePreview);
-            document.getElementById('productCurrency').addEventListener('change', updatePricePreview);
 
             // 选项点击事件
             document.querySelectorAll('.option-list').forEach(list => {
@@ -2415,7 +2398,6 @@
             // 价格
             document.getElementById('productPrice').value = productData.price || '';
             document.getElementById('productOriginalPrice').value = productData.originalPrice || '';
-            document.getElementById('productCurrency').value = normalizeCurrency(productData.currency);
             updatePricePreview();
             
             // 推荐开关
@@ -2656,8 +2638,6 @@
                 originalPrice = parsedOriginalPrice;
             }
 
-            const currency = normalizeCurrency(document.getElementById('productCurrency').value);
-
             // 收集多语言数据
             const names = {};
             const descs = {};
@@ -2685,7 +2665,6 @@
                 image: image || null,
                 price: price,
                 originalPrice: originalPrice,
-                currency: currency,
                 featured: document.getElementById('featuredSwitch').checked,
                 onSale: document.getElementById('onSaleSwitch').checked,
                 specs: productData.specs || {},

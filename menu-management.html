@@ -2601,6 +2601,55 @@
             background: var(--danger);
         }
 
+
+        @media (min-width: 1025px) {
+            .product-grid {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 12px;
+                padding: 16px 20px;
+            }
+
+            .product-image-wrapper {
+                height: 132px;
+            }
+
+            .product-content {
+                padding: 12px;
+            }
+
+            .product-name {
+                font-size: 14px;
+            }
+
+            .product-desc {
+                font-size: 12px;
+                margin-bottom: 10px;
+                min-height: 30px;
+            }
+
+            .product-footer {
+                gap: 8px;
+                padding-top: 10px;
+            }
+
+            .product-price-single {
+                font-size: 16px;
+            }
+
+            .product-status {
+                font-size: 11px;
+            }
+
+            .product-action-btn {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .add-product-card {
+                min-height: 238px;
+            }
+        }
+
         @media (max-width: 1024px) {
             .stats-bar {
                 grid-template-columns: repeat(2, 1fr);
