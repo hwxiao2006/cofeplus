@@ -335,6 +335,45 @@
             overflow: hidden;
         }
 
+        .customer-list-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .customer-header-cell {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+        }
+
+        .customer-header-avatar {
+            width: 48px;
+            text-align: center;
+        }
+
+        .customer-header-code {
+            width: 100px;
+        }
+
+        .customer-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .customer-header-status {
+            width: 90px;
+            text-align: center;
+        }
+
+        .customer-header-actions {
+            width: 80px;
+            text-align: right;
+        }
+
         .list-header {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
@@ -384,6 +423,27 @@
             min-width: 0;
         }
 
+        .customer-code {
+            width: 100px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .customer-code-label {
+            display: none;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .customer-code-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
         .customer-name {
             font-size: 15px;
             font-weight: 600;
@@ -413,6 +473,9 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            width: 90px;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .status-active {
@@ -428,6 +491,9 @@
         .customer-actions {
             display: flex;
             gap: 8px;
+            width: 80px;
+            justify-content: flex-end;
+            flex-shrink: 0;
         }
 
         .btn-icon {
@@ -663,6 +729,42 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
+
+            .customer-list-header {
+                display: none;
+            }
+
+            .customer-item {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .customer-code {
+                width: auto;
+                flex-direction: row;
+                align-items: center;
+                margin-left: 64px;
+                margin-top: -8px;
+            }
+
+            .customer-code-label {
+                display: inline;
+            }
+
+            .customer-info {
+                width: calc(100% - 64px);
+                flex: 0 0 calc(100% - 64px);
+            }
+
+            .customer-status {
+                width: auto;
+                margin-left: 64px;
+            }
+
+            .customer-actions {
+                width: auto;
+                margin-left: auto;
+            }
         }
         /* 跨页统一优化（桌面 + 移动） */
         .content {
@@ -738,6 +840,7 @@
                     <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
                     <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
                     <a href="faults.html" class="nav-item"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
@@ -920,25 +1023,38 @@
                 return;
             }
 
-            list.innerHTML = filtered.map(customer => `
-                <div class="customer-item">
-                    <div class="customer-avatar">${customer.name.charAt(0)}</div>
-                    <div class="customer-info">
-                        <div class="customer-name">${customer.name}</div>
-                        <div class="customer-meta">
-                            <span>👤 ${customer.contact}</span>
-                            <span>📞 ${customer.phone}</span>
+            list.innerHTML = `
+                <div class="customer-list-header">
+                    <div class="customer-header-cell customer-header-avatar">头像</div>
+                    <div class="customer-header-cell customer-header-code">客户编号</div>
+                    <div class="customer-header-cell customer-header-info">客户信息</div>
+                    <div class="customer-header-cell customer-header-status">状态</div>
+                    <div class="customer-header-cell customer-header-actions">操作</div>
+                </div>
+                ${filtered.map(customer => `
+                    <div class="customer-item">
+                        <div class="customer-avatar">${customer.name.charAt(0)}</div>
+                        <div class="customer-code">
+                            <span class="customer-code-label">客户编号</span>
+                            <span class="customer-code-value">${customer.id}</span>
+                        </div>
+                        <div class="customer-info">
+                            <div class="customer-name">${customer.name}</div>
+                            <div class="customer-meta">
+                                <span>👤 ${customer.contact}</span>
+                                <span>📞 ${customer.phone}</span>
+                            </div>
+                        </div>
+                        <div class="customer-status ${customer.status === 'active' ? 'status-active' : 'status-inactive'}">
+                            ${customer.status === 'active' ? '●' : '○'} ${customer.status === 'active' ? '合作中' : '已暂停'}
+                        </div>
+                        <div class="customer-actions">
+                            <button class="btn-icon" onclick="editCustomer('${customer.id}')" title="编辑">✏️</button>
+                            <button class="btn-icon" onclick="deleteCustomer('${customer.id}')" title="删除">🗑️</button>
                         </div>
                     </div>
-                    <div class="customer-status ${customer.status === 'active' ? 'status-active' : 'status-inactive'}">
-                        ${customer.status === 'active' ? '●' : '○'} ${customer.status === 'active' ? '合作中' : '已暂停'}
-                    </div>
-                    <div class="customer-actions">
-                        <button class="btn-icon" onclick="editCustomer('${customer.id}')" title="编辑">✏️</button>
-                        <button class="btn-icon" onclick="deleteCustomer('${customer.id}')" title="删除">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('')}
+            `;
         }
 
         // 搜索客户

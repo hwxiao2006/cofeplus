@@ -319,65 +319,6 @@
             padding: 14px 16px 12px;
         }
 
-        .abnormal-record-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .abnormal-record-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            box-shadow: var(--shadow);
-            padding: 14px 16px 12px;
-            display: grid;
-            gap: 10px;
-        }
-
-        .abnormal-record-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .abnormal-record-desc {
-            margin-top: 4px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .abnormal-record-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-
-        .abnormal-filter-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 2px;
-        }
-
-        .abnormal-filter-btn {
-            border: 1px solid var(--border);
-            background: #fff;
-            color: var(--text-secondary);
-            padding: 7px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .abnormal-filter-btn.active {
-            border-color: var(--primary);
-            color: var(--primary-dark);
-            background: var(--primary-light);
-        }
-
         .fault-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1012,6 +953,7 @@
                     <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
                     <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
                     <a href="faults.html" class="nav-item active"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
@@ -1062,13 +1004,11 @@
         const tabConfig = [
             { key: 'normal', label: '正常' },
             { key: 'shortage', label: '缺料' },
-            { key: 'fault', label: '故障' },
-            { key: 'abnormal', label: '异常记录' }
+            { key: 'fault', label: '故障' }
         ];
 
         let currentTab = 'fault';
         let searchKeyword = '';
-        let abnormalStatusFilter = 'all';
         let activeFaultDeviceId = '';
 
         const faults = [
@@ -1292,53 +1232,6 @@
             }
         ];
 
-        const abnormalRecords = [
-            {
-                recordId: 'ABN-20260303-0001',
-                deviceId: 'RCK019',
-                siteName: 'COFE+徐汇区行政服务中心*',
-                type: 'lost',
-                code: '',
-                message: 'RCK019设备疑似没网或断电',
-                status: 'open',
-                startedAt: '2026-03-03 09:40:28',
-                recoveredAt: ''
-            },
-            {
-                recordId: 'ABN-20260303-0002',
-                deviceId: 'RCK073',
-                siteName: 'COFE+宝山政务服务大厅',
-                type: 'fault',
-                code: 'E-ICE-001',
-                message: '制冰机电流异常',
-                status: 'open',
-                startedAt: '2026-03-03 08:12:43',
-                recoveredAt: ''
-            },
-            {
-                recordId: 'ABN-20260302-0008',
-                deviceId: 'RCK096',
-                siteName: 'COFE+长宁政务大厅',
-                type: 'shortage',
-                code: '',
-                message: '豆仓余量低于阈值',
-                status: 'recovered',
-                startedAt: '2026-03-02 14:20:15',
-                recoveredAt: '2026-03-02 15:03:17'
-            },
-            {
-                recordId: 'ABN-20260301-0009',
-                deviceId: 'RCK088',
-                siteName: 'COFE+嘉定市民服务中心',
-                type: 'manual',
-                code: '',
-                message: '李丽杰停售了 RCK088',
-                status: 'recovered',
-                startedAt: '2026-03-01 10:11:02',
-                recoveredAt: '2026-03-01 12:55:48'
-            }
-        ];
-
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -1368,96 +1261,9 @@
             renderList();
         }
 
-        function getFilteredAbnormalRecords() {
-            const keyword = searchKeyword.trim().toLowerCase();
-            return abnormalRecords
-                .filter(item => {
-                    const statusMatched = abnormalStatusFilter === 'all' || item.status === abnormalStatusFilter;
-                    if (!statusMatched) return false;
-                    if (!keyword) return true;
-                    const values = [item.deviceId, item.siteName, item.message];
-                    return values.some(value => String(value || '').toLowerCase().includes(keyword));
-                })
-                .slice()
-                .sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
-        }
-
-        function getAbnormalTypeLabel(type) {
-            if (type === 'fault') return '故障';
-            if (type === 'lost') return '失联';
-            if (type === 'shortage') return '缺料';
-            if (type === 'manual') return '人工操作';
-            return '异常';
-        }
-
-        function getAbnormalStatusLabel(status) {
-            return status === 'open' ? '未恢复' : '已恢复';
-        }
-
-        function renderAbnormalRecordList(records) {
-            const filterControls = `
-                <div class="abnormal-filter-row">
-                    <button
-                        type="button"
-                        class="abnormal-filter-btn ${abnormalStatusFilter === 'all' ? 'active' : ''}"
-                        onclick="switchAbnormalStatusFilter('all')"
-                    >全部</button>
-                    <button
-                        type="button"
-                        class="abnormal-filter-btn ${abnormalStatusFilter === 'open' ? 'active' : ''}"
-                        onclick="switchAbnormalStatusFilter('open')"
-                    >未恢复</button>
-                    <button
-                        type="button"
-                        class="abnormal-filter-btn ${abnormalStatusFilter === 'recovered' ? 'active' : ''}"
-                        onclick="switchAbnormalStatusFilter('recovered')"
-                    >已恢复</button>
-                </div>
-            `;
-
-            if (!records.length) {
-                return `${filterControls}<div class="empty">当前筛选下暂无异常记录</div>`;
-            }
-
-            return `
-                ${filterControls}
-                <div class="abnormal-record-list">
-                    ${records.map(item => `
-                        <article class="abnormal-record-item">
-                            <div class="abnormal-record-main">
-                                <div class="abnormal-record-title">${escapeText(item.deviceId)} · ${escapeText(item.siteName)}</div>
-                                <div class="abnormal-record-desc">${escapeText(item.message || '-')}</div>
-                            </div>
-                            <div class="abnormal-record-meta">
-                                <span>${escapeText(getAbnormalTypeLabel(item.type))}</span>
-                                <span>${escapeText(item.code || '-')}</span>
-                                <span>${escapeText(getAbnormalStatusLabel(item.status))}</span>
-                                <span>${escapeText(item.startedAt || '-')}</span>
-                            </div>
-                        </article>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function switchAbnormalStatusFilter(nextStatus) {
-            abnormalStatusFilter = nextStatus;
-            renderSummary();
-            renderList();
-        }
-
-        function getSummaryText() {
-            if (currentTab === 'abnormal') {
-                const records = getFilteredAbnormalRecords();
-                const openCount = records.filter(item => item.status === 'open').length;
-                return `总计 ${records.length} 条异常（未恢复 ${openCount} 条）`;
-            }
-            const list = getFilteredFaults();
-            return `总计 ${list.length} 台设备`;
-        }
-
         function renderSummary() {
-            document.getElementById('summary').textContent = getSummaryText();
+            const list = getFilteredFaults();
+            document.getElementById('summary').textContent = `总计 ${list.length} 台设备`;
         }
 
         function isDesktopInteractionMode() {
@@ -1571,15 +1377,14 @@
         }
 
         function getAbnormalRecords(deviceId) {
-            return abnormalRecords
-                .filter(item => item.deviceId === deviceId)
-                .slice()
-                .sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)))
-                .map(item => ({
-                    time: item.startedAt || '-',
-                    code: item.code || '',
-                    message: item.message || '-'
-                }));
+            return [
+                { time: '2026-02-18 15:40:28', code: '', message: `李丽杰停售了 ${deviceId}` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` },
+                { time: '2026-01-31 09:55:08', code: '', message: `${deviceId}设备疑似没网或断电` }
+            ];
         }
 
         function openStatusRecords(deviceId) {
@@ -1699,11 +1504,6 @@
 
         function renderList() {
             const container = document.getElementById('list');
-            if (currentTab === 'abnormal') {
-                const records = getFilteredAbnormalRecords();
-                container.innerHTML = renderAbnormalRecordList(records);
-                return;
-            }
             const data = getFilteredFaults();
             if (!data.length) {
                 container.innerHTML = '<div class="empty">当前状态下暂无故障单</div>';

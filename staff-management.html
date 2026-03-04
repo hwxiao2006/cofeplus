@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>人员管理 - 运营控制台</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --primary: #4ecdc4;
+            --primary-dark: #3dbdb4;
+            --primary-light: #e8f8f7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0b132b;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 18px -4px rgba(15, 23, 42, 0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-body);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            color: #dbeafe;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .brand-version {
+            font-size: 12px;
+            color: rgba(219, 234, 254, 0.55);
+            padding-left: 52px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 12px;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(186, 230, 253, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 14px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 11px 14px;
+            margin-bottom: 2px;
+            color: rgba(219, 234, 254, 0.88);
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: rgba(46, 196, 182, 0.14);
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(130deg, rgba(46, 196, 182, 0.38), rgba(56, 189, 248, 0.38));
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .header-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-merchant-select {
+            min-width: 220px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0 12px;
+            background: #fff;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.28);
+        }
+
+        .btn-default {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .content {
+            padding: 24px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .list-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .list-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .list-note {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .manager-list {
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .manager-item {
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #e8edf1;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfefe 100%);
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+            transition: all 0.2s;
+        }
+
+        .manager-item:hover {
+            border-color: #c6ebe8;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .manager-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #dbe4ea;
+            margin-bottom: 12px;
+        }
+
+        .manager-identity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .manager-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #e8f8f7;
+            color: #0f766e;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex: none;
+        }
+
+        .manager-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .manager-name {
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .manager-edit-btn {
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid #bfe9e6;
+            background: #f0fbfa;
+            color: #0f766e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .manager-edit-btn:hover {
+            border-color: #8dd5d1;
+            background: #def4f2;
+        }
+
+        .manager-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .manager-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .manager-panel {
+            background: #fff;
+            border: 1px solid #eef2f6;
+            border-radius: 10px;
+            padding: 10px 12px;
+            min-height: 0;
+        }
+
+        .manager-panel-title {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .label-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 24px;
+            padding: 0 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--primary-light);
+            color: #0f766e;
+        }
+
+        .chip-muted {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .manager-value {
+            color: var(--text-primary);
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        .empty-state {
+            padding: 56px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 34px;
+            margin-bottom: 10px;
+            opacity: 0.75;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 90;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            padding: 18px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            width: min(980px, 100%);
+            max-height: calc(100vh - 36px);
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 12px;
+            background: #f9fafb;
+        }
+
+        .section-block {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+
+        .section-block + .section-block {
+            margin-top: 12px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4b5563;
+            margin-bottom: 12px;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+        }
+
+        .form-col-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 0 12px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .auth-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .auth-btn {
+            height: 38px;
+            border: none;
+            border-radius: 8px;
+            padding: 0 14px;
+            background: #dff6f4;
+            color: #0f766e;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .option-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-dark);
+            flex: none;
+        }
+
+        .device-picker-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .device-picker-btn {
+            height: 34px;
+            border: 1px solid #bfe9e6;
+            border-radius: 8px;
+            background: #f0fbfa;
+            color: #0f766e;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .device-selection-stats {
+            font-size: 12px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .selected-device-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 26px;
+        }
+
+        .selected-chip {
+            height: 24px;
+            border-radius: 999px;
+            border: 1px solid #bfe9e6;
+            background: #ecfbf9;
+            color: #0f766e;
+            font-size: 12px;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+
+        .selected-more,
+        .summary-empty {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 24px;
+        }
+
+        .device-selector-overlay {
+            background: rgba(15, 23, 42, 0.42);
+            z-index: 320;
+        }
+
+        .device-selector-modal {
+            width: min(720px, 100%);
+        }
+
+        .device-selector-body {
+            padding: 14px 18px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .device-picker-toolbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .device-search-input {
+            min-width: 0;
+            height: 36px;
+            font-size: 13px;
+        }
+
+        .device-selected-toggle {
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #4b5563;
+            white-space: nowrap;
+        }
+
+        .device-selected-toggle input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-dark);
+            margin: 0;
+        }
+
+        .device-list {
+            max-height: 360px;
+            overflow-y: auto;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 8px;
+            background: #fff;
+            display: grid;
+            gap: 6px;
+        }
+
+        .device-option-item {
+            min-height: 42px;
+            padding: 8px 10px;
+        }
+
+        .device-option-meta {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            gap: 2px;
+        }
+
+        .device-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .device-location {
+            font-size: 12px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .device-empty {
+            padding: 18px 12px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #fff;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+            z-index: 500;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 1024px) {
+            .manager-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .header {
+                padding: 16px;
+                top: 0;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .header-right {
+                width: 100%;
+            }
+
+            .header-merchant-select {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .btn {
+                padding: 10px 14px;
+            }
+
+            .manager-list {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .manager-item {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .manager-head {
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+            }
+
+            .manager-avatar {
+                width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                font-size: 16px;
+            }
+
+            .manager-name {
+                font-size: 15px;
+            }
+
+            .manager-meta {
+                font-size: 11px;
+            }
+
+            .manager-edit-btn {
+                height: 30px;
+                border-radius: 8px;
+                padding: 0 10px;
+                font-size: 12px;
+            }
+
+            .manager-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .manager-panel {
+                padding: 8px 10px;
+                border-radius: 8px;
+            }
+
+            .manager-panel:last-child {
+                grid-column: 1 / -1;
+            }
+
+            .manager-panel-title {
+                margin-bottom: 4px;
+            }
+
+            .label-row {
+                gap: 4px;
+            }
+
+            .chip {
+                height: 21px;
+                padding: 0 7px;
+                font-size: 11px;
+            }
+
+            .manager-value {
+                font-size: 12px;
+            }
+
+            .device-picker-entry {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .device-picker-toolbar {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .device-selected-toggle {
+                justify-content: flex-start;
+            }
+
+            .device-list {
+                max-height: 280px;
+                padding: 6px;
+            }
+
+            .device-option-item {
+                min-height: 40px;
+                padding: 7px 9px;
+            }
+
+            .device-code {
+                font-size: 13px;
+            }
+
+            .device-location {
+                font-size: 11px;
+            }
+
+            .device-selector-modal {
+                width: 100%;
+                max-height: calc(100vh - 10px);
+                border-radius: 12px;
+            }
+
+            .device-selector-body {
+                padding: 12px 14px 10px;
+            }
+
+            .modal {
+                max-height: calc(100vh - 20px);
+            }
+
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
+                    <div class="brand-title">运营控制台</div>
+                </div>
+                <div class="brand-version">Prototype v0</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营管理</div>
+                    <a href="overview.html" class="nav-item"><span class="nav-icon">📊</span><span>总览</span></a>
+                    <a href="devices.html" class="nav-item"><span class="nav-icon">⚙️</span><span>设备</span></a>
+                    <a href="menu-management.html" class="nav-item"><span class="nav-icon">📋</span><span>商品管理</span></a>
+                    <a href="materials.html" class="nav-item"><span class="nav-icon">📦</span><span>物料</span></a>
+                    <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
+                    <a href="faults.html" class="nav-item"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                    <a href="staff-management.html" class="nav-item active"><span class="nav-icon">👥</span><span>人员管理</span></a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">基础信息管理</div>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="mobile-header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <strong>人员管理</strong>
+            </div>
+
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">人员管理</h1>
+                    <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
+                </div>
+                <div class="header-right">
+                    <select id="merchantSelect" class="header-merchant-select" onchange="handleMerchantChange(this.value)"></select>
+                    <button type="button" class="btn btn-primary" onclick="openStaffModal()">
+                        <span>➕</span>
+                        <span>添加人员</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="staffTotal">0</div>
+                        <div class="stat-label">当前商户管理人员</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="staffAdmin">0</div>
+                        <div class="stat-label">管理员权限人数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="staffOps">0</div>
+                        <div class="stat-label">运维修权限人数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="staffDeviceCount">0</div>
+                        <div class="stat-label">覆盖设备数</div>
+                    </div>
+                </div>
+
+                <section class="list-card">
+                    <div class="list-head">
+                        <span id="listTitle">管理人员列表</span>
+                        <span class="list-note" id="listHint">按商户过滤展示</span>
+                    </div>
+                    <div class="manager-list" id="managerList"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="staffModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="staffModalTitle">添加员工</h3>
+                <button type="button" class="modal-close" onclick="closeStaffModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <section class="section-block">
+                    <div class="section-title">基本信息<span class="required">*</span></div>
+                    <div class="form-grid">
+                        <div class="form-item">
+                            <label class="form-label" for="staffUsername">用户名</label>
+                            <input type="text" class="form-input" id="staffUsername" placeholder="请输入名称">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label" for="staffPhone">手机号</label>
+                            <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
+                        </div>
+                        <div class="form-item form-col-full">
+                            <label class="form-label" for="opsAuthHint">运维小程序授权</label>
+                            <div class="auth-row">
+                                <input type="text" class="form-input" id="opsAuthHint" value="扫码后自动写入下方 openId" readonly>
+                                <button type="button" class="auth-btn" onclick="mockAuthorize('ops')">扫码授权</button>
+                            </div>
+                        </div>
+                        <div class="form-item form-col-full">
+                            <label class="form-label" for="opsOpenid">openId</label>
+                            <input type="text" class="form-input" id="opsOpenid" placeholder="请输入您的openId">
+                        </div>
+                        <div class="form-item form-col-full">
+                            <label class="form-label" for="wechatAuthHint">微信公众号推送授权</label>
+                            <div class="auth-row">
+                                <input type="text" class="form-input" id="wechatAuthHint" value="扫码后自动写入下方 openId" readonly>
+                                <button type="button" class="auth-btn" onclick="mockAuthorize('wechat')">扫码授权</button>
+                            </div>
+                        </div>
+                        <div class="form-item form-col-full">
+                            <label class="form-label" for="wechatOpenid">openId</label>
+                            <input type="text" class="form-input" id="wechatOpenid" placeholder="请输入您的openId">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="section-title">选择权限<span class="required">*</span>(至少选择一个)</div>
+                    <div class="option-grid">
+                        <label class="option-item"><span>运维权限</span><input type="checkbox" name="permission" value="ops"></label>
+                        <label class="option-item"><span>维修权限</span><input type="checkbox" name="permission" value="repair"></label>
+                        <label class="option-item"><span>财务权限</span><input type="checkbox" name="permission" value="finance"></label>
+                        <label class="option-item"><span>管理员权限</span><input type="checkbox" name="permission" value="admin"></label>
+                        <label class="option-item"><span>运维&退款权限</span><input type="checkbox" name="permission" value="ops_refund"></label>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="section-title">公众号推送</div>
+                    <div class="option-grid">
+                        <label class="option-item"><span>无需推送</span><input type="checkbox" name="push" value="none" checked onchange="handlePushOptionChange(this)"></label>
+                        <label class="option-item"><span>运维消息推送</span><input type="checkbox" name="push" value="ops" onchange="handlePushOptionChange(this)"></label>
+                        <label class="option-item"><span>维修消息推送</span><input type="checkbox" name="push" value="repair" onchange="handlePushOptionChange(this)"></label>
+                        <label class="option-item"><span>管理员消息推送</span><input type="checkbox" name="push" value="admin" onchange="handlePushOptionChange(this)"></label>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="section-title">负责设备号<span class="required">*</span>(至少选择一个)</div>
+                    <div class="device-picker-entry">
+                        <span class="device-selection-stats" id="deviceSelectionStats">已选 0 / 共 0</span>
+                        <button type="button" class="device-picker-btn" id="openDeviceSelectorBtn" onclick="openDeviceSelector()">选择设备</button>
+                    </div>
+                    <div class="selected-device-summary" id="selectedDeviceSummary"></div>
+                </section>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="closeStaffModal()">取消</button>
+                <button type="button" class="btn btn-primary" id="staffSubmitBtn" onclick="saveStaff()">确认新增</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay device-selector-overlay" id="deviceSelectorModal">
+        <div class="modal device-selector-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">选择负责设备</h3>
+                <button type="button" class="modal-close" onclick="closeDeviceSelector()">×</button>
+            </div>
+            <div class="device-selector-body">
+                <div class="device-picker-toolbar">
+                    <input type="text" class="form-input device-search-input" id="deviceSearchInput" placeholder="搜索设备号或点位" oninput="handleDeviceSearch(this.value)">
+                    <label class="device-selected-toggle">
+                        <input type="checkbox" id="deviceSelectedOnly" onchange="toggleDeviceSelectedOnly(this.checked)">
+                        <span>仅看已选</span>
+                    </label>
+                </div>
+                <div class="device-list" id="devicePicker"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeDeviceSelector()">完成选择</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let staffManagersData = JSON.parse(localStorage.getItem('staffManagersData') || '[]');
+        let merchantOptions = [];
+        let selectedMerchantId = '';
+        let editingStaffId = null;
+        let currentDeviceOptions = [];
+        let deviceSelectionSet = new Set();
+        let deviceSearchKeyword = '';
+        let showOnlySelectedDevices = false;
+
+        const defaultMerchants = [
+            { id: 'C001', name: '星巴克咖啡' },
+            { id: 'C002', name: '瑞幸咖啡' },
+            { id: 'C003', name: '太平洋咖啡' },
+            { id: 'C004', name: 'Costa咖啡' }
+        ];
+
+        const defaultDeviceMap = {
+            C001: ['RCK386', 'RCK385', 'RCK384', 'RCK409'],
+            C002: ['RCK410', 'RCK406', 'RCK404'],
+            C003: ['RCK405', 'RCK408', 'RCB036'],
+            C004: ['RCK407', 'RCK403']
+        };
+
+        const defaultDeviceLocationMap = {
+            RCK386: { locationCode: 'k8298', locationName: '上海市中心店' },
+            RCK385: { locationCode: 'k8298', locationName: '上海市中心店' },
+            RCK384: { locationCode: 'k8298', locationName: '上海市中心店' },
+            RCK409: { locationCode: 'k8298', locationName: '上海市中心店' },
+            RCK410: { locationCode: 'k8667', locationName: '北京朝阳门店' },
+            RCK406: { locationCode: 'k8667', locationName: '北京朝阳门店' },
+            RCK404: { locationCode: 'k8667', locationName: '北京朝阳门店' },
+            RCK405: { locationCode: 'k9001', locationName: '广州天河店' },
+            RCK408: { locationCode: 'k9001', locationName: '广州天河店' },
+            RCB036: { locationCode: 'k9001', locationName: '广州天河店' },
+            RCK407: { locationCode: 'k9002', locationName: '深圳南山店' },
+            RCK403: { locationCode: 'k9002', locationName: '深圳南山店' }
+        };
+
+        const defaultLocationOptions = [
+            { code: 'k8298', name: '上海市中心店' },
+            { code: 'k8667', name: '北京朝阳门店' },
+            { code: 'k9001', name: '广州天河店' },
+            { code: 'k9002', name: '深圳南山店' }
+        ];
+
+        const defaultManagers = [
+            {
+                id: 'S001',
+                merchantId: 'C001',
+                merchantName: '星巴克咖啡',
+                username: '王运维',
+                phone: '13800138021',
+                opsOpenid: 'ops_wang_001',
+                wechatOpenid: 'wx_wang_001',
+                permissions: ['ops', 'admin'],
+                pushChannels: ['ops', 'admin'],
+                devices: ['RCK386', 'RCK385'],
+                createdAt: '2026-02-15'
+            },
+            {
+                id: 'S002',
+                merchantId: 'C001',
+                merchantName: '星巴克咖啡',
+                username: '李财务',
+                phone: '13800138022',
+                opsOpenid: '',
+                wechatOpenid: 'wx_li_001',
+                permissions: ['finance'],
+                pushChannels: ['none'],
+                devices: ['RCK384'],
+                createdAt: '2026-02-17'
+            },
+            {
+                id: 'S003',
+                merchantId: 'C002',
+                merchantName: '瑞幸咖啡',
+                username: '张维修',
+                phone: '13800138023',
+                opsOpenid: 'ops_zhang_002',
+                wechatOpenid: '',
+                permissions: ['repair'],
+                pushChannels: ['repair'],
+                devices: ['RCK410', 'RCK406'],
+                createdAt: '2026-02-18'
+            }
+        ];
+
+        const permissionLabelMap = {
+            ops: '运维权限',
+            repair: '维修权限',
+            finance: '财务权限',
+            admin: '管理员权限',
+            ops_refund: '运维&退款权限'
+        };
+
+        const pushLabelMap = {
+            none: '无需推送',
+            ops: '运维消息推送',
+            repair: '维修消息推送',
+            admin: '管理员消息推送'
+        };
+
+        function init() {
+            bootstrapStaffManagers();
+            merchantOptions = getMerchantOptions();
+            renderMerchantSelect();
+            selectedMerchantId = resolveInitialMerchantId();
+            if (!selectedMerchantId && merchantOptions.length) {
+                selectedMerchantId = merchantOptions[0].id;
+            }
+            if (selectedMerchantId) {
+                localStorage.setItem('currentMerchantId', selectedMerchantId);
+            }
+            const select = document.getElementById('merchantSelect');
+            select.value = selectedMerchantId;
+            renderManagers();
+            updateStats();
+        }
+
+        function bootstrapStaffManagers() {
+            if (!Array.isArray(staffManagersData) || staffManagersData.length === 0) {
+                staffManagersData = [...defaultManagers];
+                localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
+            }
+        }
+
+        function getMerchantOptions() {
+            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+            let source = customersData.filter((item) => item.status !== 'inactive').map((item) => ({ id: item.id, name: item.name }));
+            if (!source.length) {
+                source = defaultMerchants;
+            }
+            return source;
+        }
+
+        function resolveInitialMerchantId() {
+            const params = new URLSearchParams(window.location.search || '');
+            const merchantFromUrl = params.get('merchant');
+            const savedMerchantId = localStorage.getItem('currentMerchantId') || '';
+            const merchantIds = merchantOptions.map((item) => item.id);
+
+            if (merchantFromUrl && merchantIds.includes(merchantFromUrl)) {
+                return merchantFromUrl;
+            }
+            if (savedMerchantId && merchantIds.includes(savedMerchantId)) {
+                return savedMerchantId;
+            }
+            return merchantIds[0] || '';
+        }
+
+        function renderMerchantSelect() {
+            const select = document.getElementById('merchantSelect');
+            select.innerHTML = merchantOptions
+                .map((merchant) => `<option value="${merchant.id}">商户：${merchant.name}</option>`)
+                .join('');
+        }
+
+        function handleMerchantChange(nextMerchantId) {
+            selectedMerchantId = nextMerchantId;
+            localStorage.setItem('currentMerchantId', selectedMerchantId);
+            renderManagers();
+            updateStats();
+        }
+
+        function getManagersByMerchant(merchantId) {
+            return staffManagersData.filter((item) => item.merchantId === merchantId);
+        }
+
+        function renderManagers() {
+            const list = document.getElementById('managerList');
+            const listTitle = document.getElementById('listTitle');
+            const currentMerchant = merchantOptions.find((item) => item.id === selectedMerchantId);
+            const merchantName = currentMerchant ? currentMerchant.name : '未选择商户';
+            listTitle.textContent = `${merchantName} · 管理人员列表`;
+
+            const filteredManagers = getManagersByMerchant(selectedMerchantId);
+            if (!filteredManagers.length) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <div>当前商户暂无管理人员，点击右上角“添加人员”创建</div>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = filteredManagers
+                .map((manager) => {
+                    const permissionText = formatLabels(manager.permissions, permissionLabelMap);
+                    const pushText = formatLabels(manager.pushChannels, pushLabelMap);
+                    return `
+                        <article class="manager-item">
+                            <div class="manager-head">
+                                <div class="manager-identity">
+                                    <span class="manager-avatar">${(manager.username || '?').slice(0, 1)}</span>
+                                    <div class="manager-summary">
+                                        <div class="manager-name">${manager.username}</div>
+                                        <div class="manager-meta">${manager.phone}</div>
+                                        <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
+                            </div>
+                            <div class="manager-grid">
+                                <div class="manager-panel">
+                                    <div class="manager-panel-title">权限</div>
+                                    <div class="label-row">
+                                        ${permissionText.map((text) => `<span class="chip">${text}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="manager-panel">
+                                    <div class="manager-panel-title">公众号推送</div>
+                                    <div class="label-row">
+                                        ${pushText.map((text) => `<span class="chip chip-muted">${text}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="manager-panel">
+                                    <div class="manager-panel-title">负责设备号</div>
+                                    <div class="manager-value">${(manager.devices || []).join('、') || '-'}</div>
+                                    <div class="manager-meta" style="margin-top: 6px;">运维 openId: ${manager.opsOpenid || '-'}</div>
+                                    <div class="manager-meta">公众号 openId: ${manager.wechatOpenid || '-'}</div>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                })
+                .join('');
+        }
+
+        function updateStats() {
+            const filteredManagers = getManagersByMerchant(selectedMerchantId);
+            const adminCount = filteredManagers.filter((item) => (item.permissions || []).includes('admin')).length;
+            const opsCount = filteredManagers.filter((item) => (item.permissions || []).some((perm) => perm === 'ops' || perm === 'repair' || perm === 'ops_refund')).length;
+            const deviceSet = new Set();
+            filteredManagers.forEach((item) => (item.devices || []).forEach((deviceId) => deviceSet.add(deviceId)));
+
+            document.getElementById('staffTotal').textContent = filteredManagers.length;
+            document.getElementById('staffAdmin').textContent = adminCount;
+            document.getElementById('staffOps').textContent = opsCount;
+            document.getElementById('staffDeviceCount').textContent = deviceSet.size;
+            document.getElementById('listHint').textContent = `共 ${filteredManagers.length} 位管理人员`;
+        }
+
+        function openStaffModal() {
+            if (!selectedMerchantId) {
+                showToast('请先选择商户');
+                return;
+            }
+            closeDeviceSelector();
+            editingStaffId = null;
+            updateStaffModalState();
+            resetStaffForm();
+            renderDevicePicker(selectedMerchantId, []);
+            document.getElementById('staffModal').classList.add('active');
+        }
+
+        function closeStaffModal() {
+            closeDeviceSelector();
+            document.getElementById('staffModal').classList.remove('active');
+        }
+
+        function editStaff(staffId) {
+            const targetStaff = staffManagersData.find((item) => item.id === staffId);
+            if (!targetStaff) {
+                showToast('未找到可编辑人员');
+                return;
+            }
+            selectedMerchantId = targetStaff.merchantId || selectedMerchantId;
+            const merchantSelect = document.getElementById('merchantSelect');
+            if (merchantSelect) {
+                merchantSelect.value = selectedMerchantId;
+            }
+            editingStaffId = staffId;
+            updateStaffModalState();
+            fillStaffForm(targetStaff);
+            renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
+            closeDeviceSelector();
+            document.getElementById('staffModal').classList.add('active');
+        }
+
+        function updateStaffModalState() {
+            const title = document.getElementById('staffModalTitle');
+            const submitBtn = document.getElementById('staffSubmitBtn');
+            const isEditing = !!editingStaffId;
+            if (title) {
+                title.textContent = isEditing ? '编辑员工' : '添加员工';
+            }
+            if (submitBtn) {
+                submitBtn.textContent = isEditing ? '保存修改' : '确认新增';
+            }
+        }
+
+        function resetStaffForm() {
+            document.getElementById('staffUsername').value = '';
+            document.getElementById('staffPhone').value = '';
+            document.getElementById('opsOpenid').value = '';
+            document.getElementById('wechatOpenid').value = '';
+
+            document.querySelectorAll('input[name="permission"]').forEach((input) => {
+                input.checked = false;
+            });
+
+            document.querySelectorAll('input[name="push"]').forEach((input) => {
+                input.checked = input.value === 'none';
+            });
+        }
+
+        function fillStaffForm(targetStaff) {
+            document.getElementById('staffUsername').value = targetStaff.username || '';
+            document.getElementById('staffPhone').value = targetStaff.phone || '';
+            document.getElementById('opsOpenid').value = targetStaff.opsOpenid || '';
+            document.getElementById('wechatOpenid').value = targetStaff.wechatOpenid || '';
+
+            const permissionSet = new Set(targetStaff.permissions || []);
+            document.querySelectorAll('input[name="permission"]').forEach((input) => {
+                input.checked = permissionSet.has(input.value);
+            });
+
+            const pushSet = new Set(targetStaff.pushChannels || []);
+            document.querySelectorAll('input[name="push"]').forEach((input) => {
+                input.checked = pushSet.has(input.value);
+            });
+            if (!pushSet.size) {
+                document.querySelectorAll('input[name="push"]').forEach((input) => {
+                    input.checked = input.value === 'none';
+                });
+            }
+        }
+
+        function buildMerchantAliases(merchantId) {
+            const aliases = [merchantId, String(merchantId).toLowerCase()];
+            const digitsMatch = String(merchantId).match(/\d+/);
+            if (digitsMatch) {
+                aliases.push(`mer${digitsMatch[0]}`);
+                aliases.push(`c${digitsMatch[0]}`);
+            }
+            return aliases.map((item) => String(item).toLowerCase());
+        }
+
+        function buildLocationLookup() {
+            const locationMap = {};
+            const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            const source = Array.isArray(locationsData) && locationsData.length ? locationsData : defaultLocationOptions;
+            source.forEach((location) => {
+                const code = String(location.code || location.id || '').trim();
+                if (!code) return;
+                const key = code.toLowerCase();
+                locationMap[key] = {
+                    code,
+                    name: location.name || location.address || code
+                };
+            });
+            return locationMap;
+        }
+
+        function normalizeLocationMeta(rawCode, rawName, locationLookup) {
+            const codeText = String(rawCode || '').trim();
+            const lookupMeta = codeText ? locationLookup[codeText.toLowerCase()] : null;
+            const locationCode = lookupMeta?.code || codeText;
+            const locationName = lookupMeta?.name || String(rawName || '').trim();
+            return {
+                locationCode,
+                locationName
+            };
+        }
+
+        function buildLocationLabel(locationName, locationCode) {
+            const labelParts = [];
+            if (locationName) {
+                labelParts.push(locationName);
+            }
+            if (locationCode) {
+                labelParts.push(locationCode);
+            }
+            return labelParts.join(' · ') || '未配置点位';
+        }
+
+        function getDeviceOptionsByMerchant(merchantId) {
+            const locationLookup = buildLocationLookup();
+            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            if (Array.isArray(devicesData) && devicesData.length) {
+                const merchantAliases = buildMerchantAliases(merchantId);
+                const matched = devicesData
+                    .filter((device) => {
+                        const merchantKey = device.merchant || device.merchantId || device.customerId || '';
+                        return merchantAliases.includes(String(merchantKey).toLowerCase());
+                    })
+                    .map((device) => {
+                        const deviceId = device.id || '';
+                        if (!deviceId) return null;
+                        const rawLocationCode = device.locationCode || device.location || '';
+                        const rawLocationName = device.locationName || '';
+                        const locationMeta = normalizeLocationMeta(rawLocationCode, rawLocationName, locationLookup);
+                        return {
+                            id: deviceId,
+                            locationCode: locationMeta.locationCode,
+                            locationName: locationMeta.locationName,
+                            locationLabel: buildLocationLabel(locationMeta.locationName, locationMeta.locationCode)
+                        };
+                    })
+                    .filter(Boolean);
+
+                if (matched.length) {
+                    return Array.from(new Map(matched.map((item) => [item.id, item])).values());
+                }
+            }
+
+            return (defaultDeviceMap[merchantId] || []).map((deviceId) => {
+                const locationMeta = defaultDeviceLocationMap[deviceId] || {};
+                return {
+                    id: deviceId,
+                    locationCode: locationMeta.locationCode || '',
+                    locationName: locationMeta.locationName || '',
+                    locationLabel: buildLocationLabel(locationMeta.locationName || '', locationMeta.locationCode || '')
+                };
+            });
+        }
+
+        function renderDevicePicker(merchantId, selectedDevices = []) {
+            currentDeviceOptions = getDeviceOptionsByMerchant(merchantId);
+            deviceSelectionSet = new Set(selectedDevices);
+            deviceSearchKeyword = '';
+            showOnlySelectedDevices = false;
+
+            const searchInput = document.getElementById('deviceSearchInput');
+            const onlySelectedInput = document.getElementById('deviceSelectedOnly');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            if (onlySelectedInput) {
+                onlySelectedInput.checked = false;
+            }
+            renderDevicePickerList();
+        }
+
+        function openDeviceSelector() {
+            document.getElementById('deviceSelectorModal').classList.add('active');
+            renderDevicePickerList();
+        }
+
+        function closeDeviceSelector() {
+            document.getElementById('deviceSelectorModal').classList.remove('active');
+            renderDeviceSelectionSummary();
+        }
+
+        function renderDevicePickerList() {
+            const picker = document.getElementById('devicePicker');
+            if (!picker) return;
+
+            if (!currentDeviceOptions.length) {
+                picker.innerHTML = '<div class="device-empty">当前商户暂无设备，请先在设备管理中录入</div>';
+                renderDeviceSelectionSummary();
+                return;
+            }
+
+            const filteredDevices = currentDeviceOptions.filter((device) => {
+                const searchableText = `${device.id} ${device.locationLabel}`.toLowerCase();
+                const matchedKeyword = !deviceSearchKeyword || searchableText.includes(deviceSearchKeyword);
+                const matchedSelected = !showOnlySelectedDevices || deviceSelectionSet.has(device.id);
+                return matchedKeyword && matchedSelected;
+            });
+
+            if (!filteredDevices.length) {
+                picker.innerHTML = '<div class="device-empty">没有匹配的设备，请调整筛选条件</div>';
+                renderDeviceSelectionSummary();
+                return;
+            }
+
+            picker.innerHTML = filteredDevices.map((device) => `
+                <label class="option-item device-option-item">
+                    <span class="device-option-meta">
+                        <span class="device-code">${device.id}</span>
+                        <span class="device-location">${device.locationLabel}</span>
+                    </span>
+                    <input type="checkbox" name="device" value="${device.id}" ${deviceSelectionSet.has(device.id) ? 'checked' : ''} onchange="handleDeviceSelectionChange('${device.id}', this.checked)">
+                </label>
+            `).join('');
+            renderDeviceSelectionSummary();
+        }
+
+        function handleDeviceSearch(keyword) {
+            deviceSearchKeyword = String(keyword || '').trim().toLowerCase();
+            renderDevicePickerList();
+        }
+
+        function toggleDeviceSelectedOnly(checked) {
+            showOnlySelectedDevices = checked;
+            renderDevicePickerList();
+        }
+
+        function handleDeviceSelectionChange(deviceId, checked) {
+            if (checked) {
+                deviceSelectionSet.add(deviceId);
+            } else {
+                deviceSelectionSet.delete(deviceId);
+            }
+            if (showOnlySelectedDevices && !checked) {
+                renderDevicePickerList();
+                return;
+            }
+            renderDeviceSelectionSummary();
+        }
+
+        function removeSelectedDevice(deviceId) {
+            deviceSelectionSet.delete(deviceId);
+            renderDevicePickerList();
+        }
+
+        function renderDeviceSelectionSummary() {
+            const summary = document.getElementById('selectedDeviceSummary');
+            const stats = document.getElementById('deviceSelectionStats');
+            if (stats) {
+                stats.textContent = `已选 ${deviceSelectionSet.size} / 共 ${currentDeviceOptions.length}`;
+            }
+            if (!summary) return;
+
+            const selectedDevices = currentDeviceOptions.filter((device) => deviceSelectionSet.has(device.id));
+            if (!selectedDevices.length) {
+                summary.innerHTML = '<span class="summary-empty">暂未选择设备</span>';
+                return;
+            }
+
+            const maxVisible = 10;
+            const chips = selectedDevices.slice(0, maxVisible).map((device) => {
+                return `<button type="button" class="selected-chip" onclick="removeSelectedDevice('${device.id}')">${device.id}</button>`;
+            }).join('');
+            const moreText = selectedDevices.length > maxVisible ? `<span class="selected-more">+${selectedDevices.length - maxVisible}台</span>` : '';
+            summary.innerHTML = chips + moreText;
+        }
+
+        function handlePushOptionChange(changedInput) {
+            const pushInputs = Array.from(document.querySelectorAll('input[name="push"]'));
+            if (changedInput.value === 'none' && changedInput.checked) {
+                pushInputs.forEach((input) => {
+                    if (input !== changedInput) {
+                        input.checked = false;
+                    }
+                });
+                return;
+            }
+
+            if (changedInput.value !== 'none' && changedInput.checked) {
+                const noneInput = pushInputs.find((input) => input.value === 'none');
+                if (noneInput) {
+                    noneInput.checked = false;
+                }
+            }
+
+            const checkedCount = pushInputs.filter((input) => input.checked).length;
+            if (!checkedCount) {
+                const noneInput = pushInputs.find((input) => input.value === 'none');
+                if (noneInput) {
+                    noneInput.checked = true;
+                }
+            }
+        }
+
+        function mockAuthorize(type) {
+            const fieldId = type === 'ops' ? 'opsOpenid' : 'wechatOpenid';
+            const value = `${type}_` + Math.random().toString(36).slice(2, 12);
+            document.getElementById(fieldId).value = value;
+            showToast('已模拟扫码授权');
+        }
+
+        function saveStaff() {
+            const username = document.getElementById('staffUsername').value.trim();
+            const phone = document.getElementById('staffPhone').value.trim();
+            const opsOpenid = document.getElementById('opsOpenid').value.trim();
+            const wechatOpenid = document.getElementById('wechatOpenid').value.trim();
+            const selectedPermissions = Array.from(document.querySelectorAll('input[name="permission"]:checked')).map((input) => input.value);
+            const selectedDevices = Array.from(deviceSelectionSet);
+            let selectedPushChannels = Array.from(document.querySelectorAll('input[name="push"]:checked')).map((input) => input.value);
+
+            if (!username || !phone) {
+                showToast('请填写用户名和手机号');
+                return;
+            }
+
+            if (!/^1\d{10}$/.test(phone)) {
+                showToast('请输入正确的手机号');
+                return;
+            }
+
+            if (!selectedPermissions.length) {
+                showToast('请至少选择一个权限');
+                return;
+            }
+
+            if (!selectedDevices.length) {
+                showToast('请至少选择一个负责设备号');
+                return;
+            }
+
+            if (!selectedPushChannels.length) {
+                selectedPushChannels = ['none'];
+            }
+
+            if (selectedPushChannels.includes('none') && selectedPushChannels.length > 1) {
+                selectedPushChannels = ['none'];
+            }
+
+            const merchantName = merchantOptions.find((item) => item.id === selectedMerchantId)?.name || '';
+            const staffPayload = {
+                merchantId: selectedMerchantId,
+                merchantName,
+                username,
+                phone,
+                opsOpenid,
+                wechatOpenid,
+                permissions: selectedPermissions,
+                pushChannels: selectedPushChannels,
+                devices: selectedDevices
+            };
+
+            if (editingStaffId) {
+                const staffIndex = staffManagersData.findIndex((item) => item.id === editingStaffId);
+                if (staffIndex === -1) {
+                    showToast('未找到可编辑人员');
+                    return;
+                }
+                staffManagersData[staffIndex] = {
+                    ...staffManagersData[staffIndex],
+                    ...staffPayload,
+                    devices: selectedDevices
+                };
+            } else {
+                const newStaff = {
+                    id: createStaffId(),
+                    ...staffPayload,
+                    createdAt: new Date().toISOString().slice(0, 10)
+                };
+                staffManagersData.unshift(newStaff);
+            }
+            localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
+            closeStaffModal();
+            renderManagers();
+            updateStats();
+            showToast(editingStaffId ? '人员信息已更新' : '人员新增成功');
+            editingStaffId = null;
+            updateStaffModalState();
+        }
+
+        function createStaffId() {
+            const currentMax = staffManagersData
+                .map((item) => Number(String(item.id || '').replace('S', '')))
+                .filter((num) => Number.isFinite(num))
+                .reduce((max, num) => Math.max(max, num), 0);
+            return `S${String(currentMax + 1).padStart(3, '0')}`;
+        }
+
+        function formatLabels(values, mapper) {
+            const list = Array.isArray(values) ? values : [];
+            if (!list.length) {
+                return ['-'];
+            }
+            return list.map((value) => mapper[value] || value);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('active');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(showToast.timer);
+            showToast.timer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        document.getElementById('staffModal').addEventListener('click', (event) => {
+            if (event.target.id === 'staffModal') {
+                closeStaffModal();
+            }
+        });
+
+        document.getElementById('deviceSelectorModal').addEventListener('click', (event) => {
+            if (event.target.id === 'deviceSelectorModal') {
+                closeDeviceSelector();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

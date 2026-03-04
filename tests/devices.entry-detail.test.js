@@ -38,6 +38,13 @@ test('设备详情渲染应读取 device.entryInfo', () => {
   assert.ok(/renderEntryAllRows\s*\(/.test(devicesHtml));
 });
 
+test('设备详情应支持展示补料运维记录', () => {
+  assert.ok(/function\s+getMaintenanceRecordsByDevice\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+renderMaintenanceRecordsRows\s*\(/.test(devicesHtml));
+  assert.ok(/detail-card-maintenance/.test(devicesHtml));
+  assert.ok(/类型\(清洁\/补料\)/.test(devicesHtml));
+});
+
 test('缺少入场信息时应自动回填 mock 数据用于预览样式', () => {
   assert.ok(/function\s+buildMockEntryInfo\s*\(/.test(devicesHtml));
   assert.ok(/function\s+seedMockEntryInfoForPreview\s*\(/.test(devicesHtml));
@@ -111,4 +118,13 @@ test('详情页应提供编辑入场信息入口并支持保存', () => {
   assert.ok(/new FileReader\(\)/.test(devicesHtml));
   assert.ok(/currentDetailDeviceId/.test(devicesHtml));
   assert.ok(/entryInfo\s*=\s*\{[\s\S]*operatorName[\s\S]*displayImageUrls[\s\S]*locationImageUrls/.test(devicesHtml));
+});
+
+test('节能模式关闭时编辑弹窗与详情应隐藏节能时间字段', () => {
+  assert.ok(/function\s+isEnergyModeEnabled\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+toggleEntryEnergyTimeFields\s*\(/.test(devicesHtml));
+  assert.ok(/id="entryEnergyTimeFields"/.test(devicesHtml));
+  assert.ok(/addEventListener\('change',\s*toggleEntryEnergyTimeFields\)/.test(devicesHtml));
+  assert.ok(/toggleEntryEnergyTimeFields\(\)/.test(devicesHtml));
+  assert.ok(/if\s*\(\s*isEnergyModeEnabled\(info\.energyMode\)\s*\)\s*\{[\s\S]*开启节能模式[\s\S]*关闭节能模式/.test(devicesHtml));
 });

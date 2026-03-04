@@ -28,6 +28,24 @@ test('物料页：设备来源不在默认列表时应加入下拉选项', () =>
   assert.ok(/allDeviceOptions\.unshift\(currentDevice\)/.test(html));
 });
 
+test('物料页：设备标题应同步展示点位信息', () => {
+  assert.ok(/const\s+deviceLocationMap\s*=\s*\{[\s\S]*RCK113:\s*'静安区 南京西路商圈'/.test(html));
+  assert.ok(/function\s+syncDeviceContext\s*\(deviceId\)\s*\{[\s\S]*boardDeviceLocation/.test(html));
+  assert.ok(/id="boardDeviceLocation"/.test(html));
+});
+
+test('物料页：确认补充后应写入设备运维记录', () => {
+  assert.ok(/function\s+createRefillMaintenanceRecord\s*\(/.test(html));
+  assert.ok(/localStorage\.setItem\('deviceMaintenanceRecords'/.test(html));
+  assert.ok(/type:\s*'补料'/.test(html));
+  assert.ok(/createRefillMaintenanceRecord\(material,\s*oldRemaining,\s*nextCurrent\)/.test(html));
+});
+
+test('物料页：补充弹窗中当前量仅允许整数', () => {
+  assert.ok(/id="adjustCurrent"[^>]*step="1"/.test(html));
+  assert.ok(/if\s*\(!Number\.isInteger\(nextCurrent\)\)/.test(html));
+});
+
 test('物料页：发货清单入口应跳转到运维清单页面', () => {
   assert.ok(/function goToOrdersList\(\)\s*\{[\s\S]*window\.location\.href = '\/materials-orders\.html\?from=materials';/.test(html));
 });

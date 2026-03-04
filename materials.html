@@ -166,6 +166,10 @@
             font-size: 13px;
             color: var(--text-primary);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
 
         .device-option:hover {
@@ -173,9 +177,25 @@
             color: var(--primary-dark);
         }
 
+        .device-option-code {
+            font-weight: 600;
+            color: inherit;
+        }
+
+        .device-option-location {
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            max-width: 65%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .device-option.empty {
             color: var(--text-tertiary);
             cursor: default;
+            display: block;
         }
 
         .selector select {
@@ -313,6 +333,10 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
+            max-width: 340px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-desc {
@@ -485,10 +509,25 @@
         }
 
         .board-title {
-            font-size: 36px;
-            line-height: 1;
-            font-weight: 700;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+            line-height: 1.1;
             margin-bottom: 4px;
+        }
+
+        .board-device-code {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .board-device-location {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding-bottom: 4px;
         }
 
         .board-subtitle {
@@ -544,6 +583,9 @@
 
         .card-actions {
             display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
             gap: 6px;
         }
 
@@ -569,11 +611,8 @@
             background: var(--primary-light);
         }
 
-        /* 卡片内补充按钮 */
+        .ship-btn,
         .refill-btn {
-            border: 1px solid var(--primary);
-            background: var(--primary-light);
-            color: var(--primary-dark);
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
@@ -583,11 +622,29 @@
             align-items: center;
             gap: 4px;
             transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .ship-btn {
+            border: 1px solid var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .ship-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .refill-btn {
+            border: 1px solid #d4dde8;
+            background: #fff;
+            color: #334155;
         }
 
         .refill-btn:hover {
-            background: var(--primary);
-            color: #fff;
+            border-color: #94a3b8;
+            background: #f8fafc;
         }
 
         .stock-line {
@@ -803,36 +860,46 @@
             margin-top: 6px;
         }
 
-        .quantity-input-wrapper {
-            display: flex;
+        .value-edit-row {
+            display: grid;
+            grid-template-columns: 88px minmax(0, 1fr) auto;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
+        .value-edit-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .value-edit-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .value-edit-input {
+            width: 100%;
+            padding: 10px 12px;
             border: 1px solid var(--border);
-            background: #fff;
             border-radius: 10px;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: right;
+            font-weight: 600;
+            outline: none;
             transition: all 0.2s;
         }
 
-        .quantity-btn:hover {
+        .value-edit-input:focus {
             border-color: var(--primary);
-            background: var(--primary-light);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .quantity-input {
-            flex: 1;
-            text-align: center;
-            font-weight: 600;
+        .value-edit-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            min-width: 34px;
         }
 
         .current-stock {
@@ -964,6 +1031,19 @@
                 justify-content: flex-end;
             }
 
+            .device-tag {
+                max-width: 100%;
+            }
+
+            .board-device-code {
+                font-size: 30px;
+            }
+
+            .board-device-location {
+                font-size: 14px;
+                padding-bottom: 2px;
+            }
+
             .board {
                 border-radius: 18px;
                 padding: 14px;
@@ -1071,6 +1151,7 @@
                     <a href="materials.html" class="nav-item active"><span class="nav-icon">📦</span><span>物料</span></a>
                     <a href="orders.html" class="nav-item"><span class="nav-icon">📝</span><span>订单</span></a>
                     <a href="faults.html" class="nav-item"><span class="nav-icon">🛠️</span><span>故障列表</span></a>
+                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
@@ -1090,7 +1171,6 @@
                 <div class="header-left">
                     <div class="header-title-row">
                         <h1 class="header-title">物料</h1>
-                        <span class="device-tag" id="deviceTag">RCK111</span>
                     </div>
                     <div class="header-desc">设备物料余量。 · 语言=中文</div>
                 </div>
@@ -1132,8 +1212,11 @@
                 <section class="board">
                     <div class="board-head">
                         <div>
-                            <div class="board-title" id="boardTitle">RCK111</div>
-                            <div class="board-subtitle">已选料仓</div>
+                            <div class="board-title" id="boardTitle">
+                                <span class="board-device-code" id="boardDeviceCode">RCK111</span>
+                                <span class="board-device-location" id="boardDeviceLocation">徐汇区 漕河泾创新园</span>
+                            </div>
+                            <div class="board-subtitle" id="boardSubtitle">已选料仓</div>
                         </div>
                         <div class="board-count"><span id="materialCount">0</span> 个物料</div>
                     </div>
@@ -1143,45 +1226,48 @@
         </main>
     </div>
 
-    <!-- 补充物料模态框 -->
+    <!-- 补充设置模态框 -->
     <div class="modal-overlay" id="refillModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">补充物料</h3>
+                <h3 class="modal-title" id="modalTitle">补充设置</h3>
                 <button class="modal-close" onclick="closeRefillModal()">×</button>
             </div>
             <div class="modal-body">
-                <div class="form-group" id="materialSelectGroup">
-                    <label class="form-label">选择物料 <span class="required">*</span></label>
-                    <select class="form-select" id="materialSelect">
-                        <option value="">请选择要补充的物料</option>
-                    </select>
+                <div class="form-group">
+                    <div class="current-stock">
+                        <span class="current-stock-label">物料编码</span>
+                        <span class="current-stock-value" id="currentMaterialCode">--</span>
+                    </div>
                 </div>
-                <div class="form-group" id="currentStockGroup" style="display: none;">
+                <div class="form-group">
                     <div class="current-stock">
                         <span class="current-stock-label">当前库存</span>
                         <span class="current-stock-value" id="currentStockValue">--</span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">补充数量 <span class="required">*</span></label>
-                    <div class="quantity-input-wrapper">
-                        <button class="quantity-btn" onclick="adjustQuantity(-10)">−10</button>
-                        <button class="quantity-btn" onclick="adjustQuantity(-1)">−</button>
-                        <input type="number" class="form-input quantity-input" id="refillQuantity" value="10" min="1">
-                        <button class="quantity-btn" onclick="adjustQuantity(1)">+</button>
-                        <button class="quantity-btn" onclick="adjustQuantity(10)">+10</button>
+                    <div class="value-edit-row">
+                        <label class="value-edit-label" for="adjustCurrent">当前量</label>
+                        <input type="number" class="value-edit-input" id="adjustCurrent" min="0" step="1" inputmode="numeric">
+                        <span class="value-edit-unit" id="unitCurrent">--</span>
                     </div>
-                    <div class="form-hint" id="quantityHint">输入补充数量</div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">备注（可选）</label>
-                    <input type="text" class="form-input" id="refillNote" placeholder="输入补充备注">
+                    <div class="value-edit-row">
+                        <label class="value-edit-label" for="adjustWarning">预警值</label>
+                        <input type="number" class="value-edit-input" id="adjustWarning" min="0" step="0.1">
+                        <span class="value-edit-unit" id="unitWarning">--</span>
+                    </div>
+                    <div class="value-edit-row">
+                        <label class="value-edit-label" for="adjustCritical">告警值</label>
+                        <input type="number" class="value-edit-input" id="adjustCritical" min="0" step="0.1">
+                        <span class="value-edit-unit" id="unitCritical">--</span>
+                    </div>
+                    <div class="form-hint">建议保持：当前量 >= 预警值 >= 告警值</div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" onclick="closeRefillModal()">取消</button>
-                <button class="btn btn-confirm" onclick="confirmRefill()">确认补充</button>
+                <button class="btn btn-confirm" onclick="confirmRefill()">确认保存</button>
             </div>
         </div>
     </div>
@@ -1207,6 +1293,23 @@
         let currentRefillCode = null;
         let currentDevice = 'RCK111';
         let allDeviceOptions = [];
+        const deviceLocationMap = {
+            RCK111: '徐汇区 漕河泾创新园',
+            RCK112: '浦东新区 张江创智天地',
+            RCK113: '静安区 南京西路商圈'
+        };
+
+        function getDeviceLocation(deviceId) {
+            const normalized = String(deviceId || '').trim().toUpperCase();
+            return deviceLocationMap[normalized] || '未配置点位';
+        }
+
+        function syncDeviceContext(deviceId) {
+            const location = getDeviceLocation(deviceId);
+            document.getElementById('boardDeviceCode').textContent = deviceId;
+            document.getElementById('boardDeviceLocation').textContent = location;
+            document.getElementById('boardSubtitle').textContent = `已选料仓 · ${location}`;
+        }
 
         function isValidDeviceCode(value) {
             return /^RCK[0-9A-Z]+$/i.test(String(value || '').trim());
@@ -1256,7 +1359,12 @@
                 dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
                 return;
             }
-            dropdown.innerHTML = list.map(item => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${item}')">${item}</div>`).join('');
+            dropdown.innerHTML = list.map(item => `
+                <div class="device-option" onmousedown="selectDeviceFromDropdown('${item}')">
+                    <span class="device-option-code">${item}</span>
+                    <span class="device-option-location">${getDeviceLocation(item)}</span>
+                </div>
+            `).join('');
         }
 
         function showDeviceDropdown() {
@@ -1298,8 +1406,12 @@
                                 <div class="material-meta">${item.index} · ${item.category} · ${item.code}</div>
                             </div>
                             <div class="card-actions">
-                                <button class="refill-btn" onclick="goToRefillPage('${item.code}')">
-                                    <span>➕</span>
+                                <button class="ship-btn" onclick="goToRefillPage('${item.code}')">
+                                    <span>📦</span>
+                                    <span>发货</span>
+                                </button>
+                                <button class="refill-btn" onclick="openRefillModal('${item.code}')">
+                                    <span>✏️</span>
                                     <span>补充</span>
                                 </button>
                                 <button class="detail-mini-btn" onclick="viewMaterial('${item.code}')">→</button>
@@ -1362,65 +1474,29 @@
             currentDevice = matched;
             input.value = matched;
             sessionStorage.setItem('currentDevice', currentDevice);
-            document.getElementById('deviceTag').textContent = currentDevice;
-            document.getElementById('boardTitle').textContent = currentDevice;
+            syncDeviceContext(currentDevice);
             showToast(`已切换到设备 ${currentDevice}`);
         }
 
-        // 打开补充物料模态框（保留原方法，供其他调用）
+        // 打开补充设置弹窗（支持修改当前量、预警值、告警值）
         function openRefillModal(materialCode = null) {
-            currentRefillCode = materialCode;
-            const modal = document.getElementById('refillModal');
-            const selectGroup = document.getElementById('materialSelectGroup');
-            const currentStockGroup = document.getElementById('currentStockGroup');
-            const select = document.getElementById('materialSelect');
-            const modalTitle = document.getElementById('modalTitle');
-
-            // 重置表单
-            document.getElementById('refillQuantity').value = 10;
-            document.getElementById('refillNote').value = '';
-            document.getElementById('currentStockValue').textContent = '--';
-
-            // 填充物料选择下拉框
-            select.innerHTML = '<option value="">请选择要补充的物料</option>' +
-                materialsData.map(item => 
-                    `<option value="${item.code}">${item.name} (${item.code}) - 剩余 ${item.remaining}${item.unit}</option>`
-                ).join('');
-
-            if (materialCode) {
-                // 从卡片点击：预选中物料，隐藏选择框
-                selectGroup.style.display = 'none';
-                currentStockGroup.style.display = 'block';
-                select.value = materialCode;
-                modalTitle.textContent = '补充物料 - ' + materialsData.find(m => m.code === materialCode)?.name;
-                updateCurrentStock(materialCode);
-            } else {
-                // 从全局按钮点击：显示选择框
-                selectGroup.style.display = 'block';
-                currentStockGroup.style.display = 'none';
-                modalTitle.textContent = '补充物料';
+            const material = materialsData.find(m => m.code === materialCode);
+            if (!material) {
+                showToast('未找到对应物料', 'error');
+                return;
             }
 
-            // 监听选择变化
-            select.onchange = function() {
-                const code = this.value;
-                if (code) {
-                    currentStockGroup.style.display = 'block';
-                    updateCurrentStock(code);
-                } else {
-                    currentStockGroup.style.display = 'none';
-                }
-            };
-
-            modal.classList.add('active');
-        }
-
-        function updateCurrentStock(code) {
-            const material = materialsData.find(m => m.code === code);
-            if (material) {
-                document.getElementById('currentStockValue').textContent = `${material.remaining} ${material.unit}`;
-                document.getElementById('quantityHint').textContent = `最大容量: ${material.max} ${material.unit}`;
-            }
+            currentRefillCode = material.code;
+            document.getElementById('modalTitle').textContent = `补充设置 - ${material.name}`;
+            document.getElementById('currentMaterialCode').textContent = material.code;
+            document.getElementById('currentStockValue').textContent = `${material.remaining} ${material.unit}`;
+            document.getElementById('adjustCurrent').value = material.remaining;
+            document.getElementById('adjustWarning').value = material.warning;
+            document.getElementById('adjustCritical').value = material.critical;
+            document.getElementById('unitCurrent').textContent = material.unit;
+            document.getElementById('unitWarning').textContent = material.unit;
+            document.getElementById('unitCritical').textContent = material.unit;
+            document.getElementById('refillModal').classList.add('active');
         }
 
         function closeRefillModal() {
@@ -1428,47 +1504,119 @@
             currentRefillCode = null;
         }
 
-        function adjustQuantity(delta) {
-            const input = document.getElementById('refillQuantity');
-            let value = parseInt(input.value) || 0;
-            value = Math.max(1, value + delta);
-            input.value = value;
+        function formatDateTimeWithSeconds(dateValue = new Date()) {
+            const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
+            if (Number.isNaN(date.getTime())) {
+                return '-';
+            }
+            const pad = n => String(n).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+        }
+
+        function buildRefillRecordContent(material, oldRemaining, nextRemaining) {
+            const formatAmount = (value) => Number.isInteger(value) ? String(value) : value.toFixed(1);
+            const delta = nextRemaining - oldRemaining;
+            if (delta > 0) {
+                return `${material.name}加${formatAmount(delta)}${material.unit}`;
+            }
+            if (delta < 0) {
+                return `${material.name}调整为${formatAmount(nextRemaining)}${material.unit}（减少${formatAmount(Math.abs(delta))}${material.unit}）`;
+            }
+            return `${material.name}阈值调整，当前量${formatAmount(nextRemaining)}${material.unit}`;
+        }
+
+        function resolveOperatorByDevice(deviceId) {
+            let devices = [];
+            try {
+                devices = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            } catch (error) {
+                devices = [];
+            }
+
+            const match = Array.isArray(devices)
+                ? devices.find(item => String(item?.id || '').toUpperCase() === String(deviceId || '').toUpperCase())
+                : null;
+            const entryInfo = match?.entryInfo || {};
+
+            return {
+                operatorName: entryInfo.operatorName && entryInfo.operatorName !== '未选择' ? entryInfo.operatorName : '当前用户',
+                operatorPhone: entryInfo.operatorPhone && entryInfo.operatorPhone !== '-' ? entryInfo.operatorPhone : '-'
+            };
+        }
+
+        function appendMaintenanceRecord(record) {
+            let records = [];
+            try {
+                records = JSON.parse(localStorage.getItem('deviceMaintenanceRecords') || '[]');
+            } catch (error) {
+                records = [];
+            }
+            if (!Array.isArray(records)) {
+                records = [];
+            }
+            records.unshift(record);
+            localStorage.setItem('deviceMaintenanceRecords', JSON.stringify(records.slice(0, 500)));
+        }
+
+        function createRefillMaintenanceRecord(material, oldRemaining, nextRemaining) {
+            const operator = resolveOperatorByDevice(currentDevice);
+            appendMaintenanceRecord({
+                id: `MR${Date.now()}`,
+                time: formatDateTimeWithSeconds(),
+                type: '补料',
+                content: buildRefillRecordContent(material, oldRemaining, nextRemaining),
+                deviceId: currentDevice,
+                deviceLocation: getDeviceLocation(currentDevice),
+                operatorName: operator.operatorName,
+                operatorPhone: operator.operatorPhone,
+                materialCode: material.code
+            });
         }
 
         function confirmRefill() {
-            const select = document.getElementById('materialSelect');
-            const quantity = parseInt(document.getElementById('refillQuantity').value);
-            const note = document.getElementById('refillNote').value.trim();
-
-            const code = currentRefillCode || select.value;
-
-            if (!code) {
-                showToast('请选择要补充的物料', 'error');
+            if (!currentRefillCode) {
+                showToast('请从物料卡片进入补充设置', 'error');
                 return;
             }
 
-            if (!quantity || quantity < 1) {
-                showToast('请输入有效的补充数量', 'error');
+            const material = materialsData.find(m => m.code === currentRefillCode);
+            if (!material) {
+                showToast('物料不存在，无法保存', 'error');
                 return;
             }
 
-            const material = materialsData.find(m => m.code === code);
-            if (!material) return;
+            const nextCurrent = Number(document.getElementById('adjustCurrent').value);
+            const nextWarning = Number(document.getElementById('adjustWarning').value);
+            const nextCritical = Number(document.getElementById('adjustCritical').value);
 
-            // 执行补充
+            if (![nextCurrent, nextWarning, nextCritical].every(Number.isFinite)) {
+                showToast('请输入有效数字', 'error');
+                return;
+            }
+            if (!Number.isInteger(nextCurrent)) {
+                showToast('当前量仅支持整数', 'error');
+                return;
+            }
+            if (nextCurrent < 0 || nextWarning < 0 || nextCritical < 0) {
+                showToast('数值不能小于 0', 'error');
+                return;
+            }
+            if (nextWarning < nextCritical) {
+                showToast('预警值应大于或等于告警值', 'error');
+                return;
+            }
+
             const oldRemaining = material.remaining;
-            material.remaining = Math.min(material.max, material.remaining + quantity);
+            material.remaining = nextCurrent;
+            material.warning = nextWarning;
+            material.critical = nextCritical;
+            material.max = Math.max(material.max, nextCurrent, nextWarning, nextCritical, 1);
             material.status = material.remaining > material.critical ? 'healthy' : 'critical';
-            const actualAdded = material.remaining - oldRemaining;
+            createRefillMaintenanceRecord(material, oldRemaining, nextCurrent);
 
             renderMaterials();
             closeRefillModal();
-
-            let message = `已成功补充 ${material.name} ${actualAdded}${material.unit}`;
-            if (note) {
-                message += ` (${note})`;
-            }
-            showToast(message, 'success');
+            showToast(`已更新 ${material.name}：当前量 ${nextCurrent}${material.unit}，预警 ${nextWarning}${material.unit}，告警 ${nextCritical}${material.unit}`, 'success');
         }
 
         function showToast(message, type = 'normal') {
@@ -1501,8 +1649,7 @@
         currentDevice = resolveInitialDevice();
         initDeviceSearch();
         document.getElementById('deviceSearchInput').value = currentDevice;
-        document.getElementById('deviceTag').textContent = currentDevice;
-        document.getElementById('boardTitle').textContent = currentDevice;
+        syncDeviceContext(currentDevice);
         sessionStorage.setItem('currentDevice', currentDevice);
         renderMaterials();
     </script>

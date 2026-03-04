@@ -461,22 +461,22 @@
             .header,
             .filter-tabs,
             .order-list {
-                max-width: 1680px;
+                max-width: 1560px;
                 margin-left: auto;
                 margin-right: auto;
                 width: 100%;
             }
 
             .header {
-                height: 84px;
-                padding: 0 28px;
+                height: 76px;
+                padding: 0 24px;
                 justify-content: flex-start;
-                gap: 12px;
+                gap: 10px;
                 border: 1px solid var(--border);
-                border-radius: 18px;
-                margin-top: 20px;
+                border-radius: 16px;
+                margin-top: 16px;
                 background: rgba(255, 255, 255, 0.94);
-                box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+                box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
             }
 
             .back-btn {
@@ -491,38 +491,38 @@
             }
 
             .header-title {
-                font-size: 42px;
-                font-weight: 800;
+                font-size: 30px;
+                font-weight: 700;
                 color: var(--text-primary);
-                letter-spacing: 0.6px;
+                letter-spacing: 0.3px;
             }
 
             .add-btn {
                 position: static;
                 margin-left: auto;
-                border-radius: 12px;
-                padding: 10px 20px;
-                font-size: 18px;
-                letter-spacing: 0.3px;
-                box-shadow: 0 10px 24px rgba(78, 205, 196, 0.28);
+                border-radius: 10px;
+                padding: 8px 18px;
+                font-size: 15px;
+                letter-spacing: 0.2px;
+                box-shadow: 0 8px 20px rgba(78, 205, 196, 0.24);
             }
 
             .filter-tabs {
-                margin-top: 16px;
+                margin-top: 12px;
                 background: rgba(255, 255, 255, 0.92);
                 border: 1px solid var(--border);
                 border-radius: 16px;
                 box-shadow: var(--shadow);
-                padding: 10px;
-                gap: 10px;
+                padding: 8px;
+                gap: 8px;
             }
 
             .filter-tab {
                 border-bottom: none;
                 border-radius: 12px;
-                padding: 12px 22px;
-                font-size: 20px;
-                font-weight: 700;
+                padding: 10px 18px;
+                font-size: 16px;
+                font-weight: 600;
                 justify-content: center;
             }
 
@@ -533,12 +533,12 @@
             }
 
             .tab-badge {
-                font-size: 12px;
+                font-size: 11px;
                 padding: 2px 8px;
             }
 
             .order-list {
-                padding: 18px 0 40px;
+                padding: 14px 0 32px;
                 border: 1px solid var(--border);
                 border-radius: 16px;
                 overflow: hidden;
@@ -551,10 +551,10 @@
                 grid-template-columns: 1.1fr 1fr 1fr .8fr 2fr .7fr 1.2fr .9fr;
                 align-items: center;
                 gap: 12px;
-                padding: 12px 18px;
+                padding: 10px 16px;
                 border-bottom: 1px solid #e8edf5;
                 background: linear-gradient(180deg, #f8fbff 0%, #f3f8ff 100%);
-                font-size: 12px;
+                font-size: 11px;
                 color: #64748b;
                 font-weight: 700;
                 letter-spacing: 0.4px;
@@ -582,8 +582,8 @@
                 grid-template-columns: 1.1fr 1fr 1fr .8fr 2fr .7fr 1.2fr .9fr;
                 gap: 12px;
                 align-items: center;
-                padding: 12px 18px;
-                min-height: 84px;
+                padding: 10px 16px;
+                min-height: 72px;
             }
 
             .desktop-col {
@@ -598,13 +598,13 @@
             }
 
             .desktop-order-create {
-                font-size: 12px;
+                font-size: 11px;
                 color: #94a3b8;
                 margin-top: 4px;
             }
 
             .desktop-time {
-                font-size: 13px;
+                font-size: 12px;
                 font-weight: 600;
                 color: #0f172a;
             }
@@ -612,7 +612,7 @@
             .desktop-device,
             .desktop-requester,
             .desktop-note {
-                font-size: 13px;
+                font-size: 12px;
                 color: #334155;
                 line-height: 1.45;
                 overflow: hidden;
@@ -634,7 +634,7 @@
                 border-radius: 999px;
                 background: #f1f5f9;
                 border: 1px solid #e2e8f0;
-                font-size: 12px;
+                font-size: 11px;
                 color: #334155;
                 max-width: 100%;
             }
@@ -643,7 +643,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                max-width: 120px;
+                max-width: 100px;
             }
 
             .desktop-item-chip .qty {
@@ -656,7 +656,7 @@
                 align-items: center;
                 padding: 3px 8px;
                 border-radius: 999px;
-                font-size: 12px;
+                font-size: 11px;
                 background: #fff7ed;
                 border: 1px solid #fed7aa;
                 color: #c2410c;
@@ -669,8 +669,8 @@
 
             .order-status {
                 border-radius: 999px;
-                font-size: 13px;
-                padding: 6px 12px;
+                font-size: 12px;
+                padding: 5px 10px;
             }
 
             .desktop-actions {
@@ -747,6 +747,174 @@
         let currentFilter = 'all';
         let currentOrders = [];
 
+        function normalizeOrder(order, index = 0) {
+            if (!order || typeof order !== 'object') {
+                return null;
+            }
+
+            const normalizedItems = Array.isArray(order.items)
+                ? order.items
+                    .filter(item => item && typeof item === 'object' && item.name)
+                    .map(item => {
+                        const quantity = Number(item.quantity);
+                        return {
+                            code: item.code || '',
+                            name: item.name,
+                            quantity: Number.isFinite(quantity) && quantity > 0 ? quantity : 1,
+                            unit: item.unit || '个'
+                        };
+                    })
+                : [];
+
+            return {
+                id: order.id || `DL${Date.now()}${String(index).padStart(2, '0')}`,
+                createTime: order.createTime || new Date().toISOString(),
+                deliveryTime: order.deliveryTime || order.createTime || new Date().toISOString(),
+                note: order.note || '',
+                status: order.status === 'completed' ? 'completed' : 'pending',
+                requestedBy: order.requestedBy || '当前用户',
+                requestTime: order.requestTime || order.createTime || new Date().toISOString(),
+                deviceId: order.deviceId || '',
+                location: order.location || '',
+                completedBy: order.completedBy || '',
+                completedTime: order.completedTime || '',
+                items: normalizedItems
+            };
+        }
+
+        function createSampleOrders() {
+            const now = new Date();
+            const toIso = (dayOffset, hour, minute = 0) => {
+                const date = new Date(now);
+                date.setDate(date.getDate() + dayOffset);
+                date.setHours(hour, minute, 0, 0);
+                return date.toISOString();
+            };
+
+            const dateBase = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+            const templates = [
+                {
+                    createTime: toIso(-1, 18, 20),
+                    deliveryTime: toIso(0, 10, 30),
+                    note: '周二午高峰前补齐热销品',
+                    status: 'pending',
+                    requestedBy: '李晨',
+                    requestTime: toIso(-1, 18, 10),
+                    deviceId: 'VM-A12',
+                    location: '徐汇区 漕河泾创新园',
+                    completedBy: null,
+                    completedTime: null,
+                    items: [
+                        { code: 'cup-mid', name: '中杯纸杯', quantity: 160, unit: '个' },
+                        { code: 'lid-mid', name: '中杯杯盖', quantity: 180, unit: '个' },
+                        { code: 'straw', name: '纸吸管', quantity: 220, unit: '根' },
+                        { code: 'sugar', name: '方糖包', quantity: 80, unit: '包' }
+                    ]
+                },
+                {
+                    createTime: toIso(-1, 15, 45),
+                    deliveryTime: toIso(1, 9, 0),
+                    note: '补充低糖线物料，配送前请电话确认',
+                    status: 'pending',
+                    requestedBy: '王珂',
+                    requestTime: toIso(-1, 15, 20),
+                    deviceId: 'VM-B07',
+                    location: '浦东新区 张江创智天地',
+                    completedBy: null,
+                    completedTime: null,
+                    items: [
+                        { code: 'bean', name: '深烘咖啡豆', quantity: 12, unit: 'kg' },
+                        { code: 'milk', name: '燕麦奶', quantity: 18, unit: '盒' },
+                        { code: 'cup-hot', name: '热饮杯(大)', quantity: 120, unit: '个' }
+                    ]
+                },
+                {
+                    createTime: toIso(-3, 10, 5),
+                    deliveryTime: toIso(-2, 14, 30),
+                    note: '夜班已验收，库存恢复正常',
+                    status: 'completed',
+                    requestedBy: '赵宁',
+                    requestTime: toIso(-3, 9, 40),
+                    deviceId: 'VM-C18',
+                    location: '静安区 南京西路商圈',
+                    completedBy: '运维-陈浩',
+                    completedTime: toIso(-2, 16, 10),
+                    items: [
+                        { code: 'syrup-vn', name: '香草糖浆', quantity: 24, unit: '瓶' },
+                        { code: 'powder-cocoa', name: '可可粉', quantity: 10, unit: '袋' },
+                        { code: 'stirrer', name: '木质搅拌棒', quantity: 300, unit: '支' }
+                    ]
+                },
+                {
+                    createTime: toIso(-4, 11, 15),
+                    deliveryTime: toIso(-3, 9, 30),
+                    note: '设备点位扩容，新增周边耗材',
+                    status: 'completed',
+                    requestedBy: '孙悦',
+                    requestTime: toIso(-4, 10, 55),
+                    deviceId: 'VM-D03',
+                    location: '虹口区 北外滩商务区',
+                    completedBy: '运维-冯磊',
+                    completedTime: toIso(-3, 11, 50),
+                    items: [
+                        { code: 'napkin', name: '抽取餐巾纸', quantity: 36, unit: '包' },
+                        { code: 'cup-cold', name: '冷饮杯', quantity: 100, unit: '个' },
+                        { code: 'lid-cold', name: '冷饮杯盖', quantity: 100, unit: '个' },
+                        { code: 'ice-bag', name: '制冰袋', quantity: 20, unit: '袋' }
+                    ]
+                },
+                {
+                    createTime: toIso(-6, 16, 30),
+                    deliveryTime: toIso(-5, 13, 0),
+                    note: '已完成清点并同步台账',
+                    status: 'completed',
+                    requestedBy: '周蓉',
+                    requestTime: toIso(-6, 16, 10),
+                    deviceId: 'VM-E09',
+                    location: '闵行区 紫竹园区',
+                    completedBy: '运维-杨杰',
+                    completedTime: toIso(-5, 14, 20),
+                    items: [
+                        { code: 'bean-light', name: '浅烘咖啡豆', quantity: 8, unit: 'kg' },
+                        { code: 'filter-paper', name: '滤纸', quantity: 12, unit: '盒' },
+                        { code: 'clean-kit', name: '清洁套装', quantity: 6, unit: '套' }
+                    ]
+                }
+            ];
+
+            return templates.map((order, index) => normalizeOrder({
+                ...order,
+                id: `DL${dateBase}${String(index + 1).padStart(2, '0')}`
+            }, index));
+        }
+
+        function readOrdersFromStorage() {
+            let orders = [];
+
+            try {
+                orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            } catch (error) {
+                orders = [];
+            }
+
+            if (!Array.isArray(orders)) {
+                orders = [];
+            }
+
+            const normalizedOrders = orders
+                .map((order, index) => normalizeOrder(order, index))
+                .filter(Boolean)
+                .sort((a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime());
+
+            if (normalizedOrders.length > 0) {
+                return normalizedOrders;
+            }
+
+            const sampleOrders = createSampleOrders();
+            localStorage.setItem('materialOrders', JSON.stringify(sampleOrders));
+            return sampleOrders;
+        }
+
         // 初始化
         function init() {
             loadOrders();
@@ -754,29 +922,15 @@
 
         // 加载发货单
         function loadOrders() {
-            let orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
-            // 容错处理：为没有 status 的订单添加默认值
-            orders = orders.map(o => {
-                if (!o.status) o.status = 'pending';
-                return o;
-            });
-            currentOrders = orders;
+            currentOrders = readOrdersFromStorage();
             renderOrders();
             updateBadges();
         }
 
         // 更新徽章数字
         function updateBadges() {
-            // 重新从 localStorage 读取，确保数据同步
-            let orders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
-            // 容错处理
-            orders = orders.map(o => {
-                if (!o.status) o.status = 'pending';
-                return o;
-            });
-            
             // 只计算待处理的订单数（红点代表还需处理的工作量）
-            const pendingCount = orders.filter(o => o.status === 'pending').length;
+            const pendingCount = currentOrders.filter(o => o.status === 'pending').length;
             
             const badgeAll = document.getElementById('badgeAll');
             const badgePending = document.getElementById('badgePending');
@@ -1039,7 +1193,7 @@
             localStorage.setItem('materialOrders', JSON.stringify(currentOrders));
             
             // 更新全局变量
-            currentOrders = JSON.parse(localStorage.getItem('materialOrders') || '[]');
+            currentOrders = readOrdersFromStorage();
             
             showToast('发货单已完成', 'success');
             

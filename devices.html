@@ -663,6 +663,10 @@
             grid-column: 1 / -1;
         }
 
+        .detail-card-maintenance {
+            grid-column: 1 / -1;
+        }
+
         .detail-card-title {
             font-size: 13px;
             font-weight: 700;
@@ -726,6 +730,19 @@
         .detail-entry-all .detail-row {
             padding: 10px 12px;
             background: #fff;
+        }
+
+        .maintenance-record {
+            margin-top: 10px;
+        }
+
+        .maintenance-record:first-child {
+            margin-top: 0;
+        }
+
+        .maintenance-record summary {
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .entry-image-grid {
@@ -909,6 +926,14 @@
 
         .entry-edit-field.full {
             grid-column: 1 / -1;
+        }
+
+        .entry-energy-time-fields {
+            display: contents;
+        }
+
+        .entry-energy-time-fields.hidden {
+            display: none;
         }
 
         .entry-edit-field span {
@@ -1654,6 +1679,7 @@
                         <span class="nav-icon">🛠️</span>
                         <span>故障列表</span>
                     </a>
+                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
@@ -1862,14 +1888,16 @@
                             <option value="弱">弱</option>
                         </select>
                     </label>
-                    <label class="entry-edit-field">
-                        <span>开启节能模式</span>
-                        <input id="editEnergyStartTime" type="time">
-                    </label>
-                    <label class="entry-edit-field">
-                        <span>关闭节能模式</span>
-                        <input id="editEnergyEndTime" type="time">
-                    </label>
+                    <div id="entryEnergyTimeFields" class="entry-energy-time-fields">
+                        <label class="entry-edit-field">
+                            <span>开启节能模式</span>
+                            <input id="editEnergyStartTime" type="time">
+                        </label>
+                        <label class="entry-edit-field">
+                            <span>关闭节能模式</span>
+                            <input id="editEnergyEndTime" type="time">
+                        </label>
+                    </div>
                     <label class="entry-edit-field">
                         <span>设备开始日期</span>
                         <input id="editDeviceStartDate" type="date">
@@ -2436,6 +2464,10 @@
             return list.length ? list.join('、') : '未选择';
         }
 
+        function isEnergyModeEnabled(mode) {
+            return normalizeEditableValue(mode) === '开启';
+        }
+
         function renderEntryCoreRows(device, runtimeLocationMap) {
             if (!device.entryInfo) {
                 return renderDetailRow('入场记录', '暂无入场记录');
@@ -2464,8 +2496,6 @@
                 ['纬度', info.latitude || '手动输入'],
                 ['网络信号', info.networkSignal || '-'],
                 ['节能模式', info.energyMode || '-'],
-                ['开启节能模式', info.energyStartTime || '-'],
-                ['关闭节能模式', info.energyEndTime || '-'],
                 ['设备开始日期', info.deviceStartDate || '-'],
                 ['设备结束日期', info.deviceEndDate || '-'],
                 ['第五代终端', info.terminalGeneration5 || '-'],
@@ -2474,6 +2504,9 @@
                 ['支付方式', resolvePaymentMethods(info)],
                 ['备注', info.notes || '-']
             ];
+            if (isEnergyModeEnabled(info.energyMode)) {
+                rows.splice(10, 0, ['开启节能模式', info.energyStartTime || '-'], ['关闭节能模式', info.energyEndTime || '-']);
+            }
             return rows.map(([label, value]) => renderDetailRow(label, value)).join('');
         }
 
@@ -2603,6 +2636,50 @@
             return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
         }
 
+        function getMaintenanceRecordsByDevice(deviceId) {
+            let records = [];
+            try {
+                records = JSON.parse(localStorage.getItem('deviceMaintenanceRecords') || '[]');
+            } catch (error) {
+                records = [];
+            }
+            if (!Array.isArray(records)) {
+                return [];
+            }
+            return records
+                .filter(record => String(record?.deviceId || '').toUpperCase() === String(deviceId || '').toUpperCase())
+                .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+        }
+
+        function normalizeRecordTime(value) {
+            const raw = value === undefined || value === null ? '' : String(value).trim();
+            if (!raw) return '-';
+            const parsed = new Date(raw);
+            if (Number.isNaN(parsed.getTime())) return raw;
+            const pad = n => String(n).padStart(2, '0');
+            return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())} ${pad(parsed.getHours())}:${pad(parsed.getMinutes())}:${pad(parsed.getSeconds())}`;
+        }
+
+        function renderMaintenanceRecordsRows(device, runtimeLocationMap) {
+            const records = getMaintenanceRecordsByDevice(device.id);
+            if (!records.length) {
+                return renderDetailRow('运维记录', '暂无运维记录');
+            }
+            const fallbackLocation = resolveEntryLocationName(device, runtimeLocationMap);
+            return records.slice(0, 10).map((record, index) => `
+                <details class="detail-entry-all maintenance-record" ${index === 0 ? 'open' : ''}>
+                    <summary>${escapeHtml(`${normalizeRecordTime(record.time)} · ${record.type || '运维'}`)}</summary>
+                    ${renderDetailRow('时间', normalizeRecordTime(record.time))}
+                    ${renderDetailRow('类型(清洁/补料)', record.type || '-')}
+                    ${renderDetailRow('内容', record.content || '-')}
+                    ${renderDetailRow('设备编号', record.deviceId || device.id)}
+                    ${renderDetailRow('设备地址', record.deviceLocation || fallbackLocation)}
+                    ${renderDetailRow('运维人员', record.operatorName || '当前用户')}
+                    ${renderDetailRow('运维人员电话', record.operatorPhone || '-')}
+                </details>
+            `).join('');
+        }
+
         function ensureEntryInfoForEditing(device, runtimeLocationMap) {
             if (!device.entryInfo) {
                 const seed = Number((device.id || '').replace(/\D/g, '').slice(-3)) || 1;
@@ -2702,6 +2779,13 @@
             }
         }
 
+        function toggleEntryEnergyTimeFields() {
+            const wrapper = document.getElementById('entryEnergyTimeFields');
+            const mode = document.getElementById('editEnergyMode')?.value;
+            if (!wrapper) return;
+            wrapper.classList.toggle('hidden', !isEnergyModeEnabled(mode));
+        }
+
         function openEntryEditModal() {
             if (!currentDetailDeviceId) return;
             const device = devicesData.find(d => d.id === currentDetailDeviceId);
@@ -2731,6 +2815,7 @@
             document.getElementById('editPayQr').checked = !!info.payQr;
             document.getElementById('editPayDigitalRmb').checked = !!info.payDigitalRmb;
             renderEntryEditImageDraft();
+            toggleEntryEnergyTimeFields();
             document.getElementById('entryEditModal').classList.add('active');
         }
 
@@ -2813,6 +2898,7 @@
             const entryCoreRows = renderEntryCoreRows(device, runtimeLocationMap);
             const entryAllRows = renderEntryAllRows(device, runtimeLocationMap);
             const entryImageGallery = renderEntryImageGallery(device);
+            const maintenanceRows = renderMaintenanceRecordsRows(device, runtimeLocationMap);
             const basicRows = [
                 renderDetailRow('设备编号', device.id),
                 renderDetailRow('所属商户', merchantMap[device.merchant] || device.merchant || '-'),
@@ -2836,6 +2922,7 @@
                     ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
                     ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
                     ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
+                    ${renderDetailCard('运维记录', maintenanceRows, 'detail-card-maintenance')}
                     ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
                 </div>
             `;
@@ -2882,6 +2969,8 @@
                 closeImagePreview();
             }
         });
+
+        document.getElementById('editEnergyMode').addEventListener('change', toggleEntryEnergyTimeFields);
 
         document.addEventListener('keydown', function(e) {
             const entryEditModal = document.getElementById('entryEditModal');
