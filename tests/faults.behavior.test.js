@@ -170,6 +170,33 @@ test('状态记录：点击异常记录后应显示图四详情', () => {
   assert.ok(detailPage.innerHTML.includes('设备疑似没网或断电'));
 });
 
+test('状态记录：点击运维记录后应显示当前设备运维记录', () => {
+  const ctx = loadFaultContext();
+  assert.strictEqual(typeof ctx.openStatusRecords, 'function');
+  assert.strictEqual(typeof ctx.openOperationRecords, 'function');
+  ctx.openStatusRecords('RCK019');
+  ctx.openOperationRecords();
+
+  const operationPage = ctx.document.getElementById('operationRecordPage');
+  assert.strictEqual(operationPage.classList.contains('active'), true);
+  assert.ok(operationPage.innerHTML.includes('RCK019-运维记录'));
+  assert.ok(operationPage.innerHTML.includes('操作人'));
+  assert.ok(operationPage.innerHTML.includes('操作项'));
+  assert.ok(operationPage.innerHTML.includes('处理结果'));
+});
+
+test('状态记录：运维记录返回后应回到状态页', () => {
+  const ctx = loadFaultContext();
+  ctx.openStatusRecords('RCK019');
+  ctx.openOperationRecords();
+  ctx.closeOperationRecords();
+
+  const statusPage = ctx.document.getElementById('statusRecordPage');
+  const operationPage = ctx.document.getElementById('operationRecordPage');
+  assert.strictEqual(statusPage.classList.contains('active'), true);
+  assert.strictEqual(operationPage.classList.contains('active'), false);
+});
+
 test('物料：点击后应跳转对应设备的物料页', () => {
   const ctx = loadFaultContext();
   assert.strictEqual(typeof ctx.goToDeviceMaterials, 'function');

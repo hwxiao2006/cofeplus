@@ -999,6 +999,7 @@
     <div id="editStatusSheet" class="fault-sheet-overlay"></div>
     <div id="statusRecordPage" class="status-page-overlay"></div>
     <div id="abnormalRecordPage" class="status-page-overlay"></div>
+    <div id="operationRecordPage" class="status-page-overlay"></div>
 
     <script>
         const tabConfig = [
@@ -1387,6 +1388,32 @@
             ];
         }
 
+        function getOperationRecords(deviceId) {
+            return [
+                {
+                    time: '2026-03-04 10:25:17',
+                    operator: '王天宇',
+                    action: '远程重启',
+                    result: '成功',
+                    note: `${deviceId} 重启后恢复出杯`
+                },
+                {
+                    time: '2026-03-04 09:57:40',
+                    operator: '李丽杰',
+                    action: '设备开门',
+                    result: '成功',
+                    note: `${deviceId} 已完成人工补料`
+                },
+                {
+                    time: '2026-03-04 08:11:05',
+                    operator: '系统',
+                    action: '更新配方',
+                    result: '失败',
+                    note: `${deviceId} 网络波动，待重试`
+                }
+            ];
+        }
+
         function openStatusRecords(deviceId) {
             activeFaultDeviceId = deviceId;
             const page = document.getElementById('statusRecordPage');
@@ -1410,7 +1437,7 @@
                         <span>异常记录</span>
                         <span class="status-record-arrow">›</span>
                     </button>
-                    <button type="button" class="status-record-item" onclick="alert('运维记录开发中')">
+                    <button type="button" class="status-record-item" onclick="openOperationRecords()">
                         <span>运维记录</span>
                         <span class="status-record-arrow">›</span>
                     </button>
@@ -1469,6 +1496,52 @@
 
         function closeAbnormalRecords() {
             const page = document.getElementById('abnormalRecordPage');
+            if (!page) return;
+            page.classList.remove('active');
+            page.classList.remove('desktop-mode');
+            page.onclick = null;
+            openStatusRecords(activeFaultDeviceId);
+        }
+
+        function openOperationRecords() {
+            const page = document.getElementById('operationRecordPage');
+            if (!page) return;
+            const statusPage = document.getElementById('statusRecordPage');
+            if (statusPage) statusPage.classList.remove('active');
+            const deviceId = activeFaultDeviceId || '-';
+            const records = getOperationRecords(deviceId);
+            const isDesktop = isDesktopInteractionMode();
+            page.classList.toggle('desktop-mode', isDesktop);
+            if (isDesktop) {
+                page.onclick = function(event) {
+                    if (event.target === page) closeOperationRecords();
+                };
+            } else {
+                page.onclick = null;
+            }
+            const content = `
+                <header class="status-page-header">
+                    <button type="button" class="status-page-back" onclick="closeOperationRecords()">‹</button>
+                    <div class="status-page-title">${escapeText(deviceId)}-运维记录</div>
+                </header>
+                <div class="abnormal-list">
+                    ${records.length ? records.map(item => `
+                        <article class="abnormal-card">
+                            <div class="abnormal-time">${escapeText(item.time || '-')}</div>
+                            <div class="abnormal-code">操作人：${escapeText(item.operator || '-')}</div>
+                            <div class="abnormal-code">操作项：${escapeText(item.action || '-')}</div>
+                            <div class="abnormal-code">处理结果：${escapeText(item.result || '-')}</div>
+                            <div class="abnormal-message">备注：${escapeText(item.note || '-')}</div>
+                        </article>
+                    `).join('') : '<div class="empty">暂无运维记录</div>'}
+                </div>
+            `;
+            page.innerHTML = wrapStatusPage(content, isDesktop);
+            page.classList.add('active');
+        }
+
+        function closeOperationRecords() {
+            const page = document.getElementById('operationRecordPage');
             if (!page) return;
             page.classList.remove('active');
             page.classList.remove('desktop-mode');
