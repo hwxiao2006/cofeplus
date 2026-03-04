@@ -3379,11 +3379,11 @@
             const normalized = normalizeDetailMaintenanceRecord(record);
             return `
                 <article class="detail-maint-record-card">
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row" data-maint-row="time">
                         <span class="detail-maint-record-label">时间</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalizeRecordTime(normalized.time))}</span>
                     </div>
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row" data-maint-row="type">
                         <span class="detail-maint-record-label">类型(清洁/补料)</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.type)}</span>
                     </div>
@@ -3391,24 +3391,54 @@
                         <div class="detail-maint-record-content-label">内容</div>
                         <div class="detail-maint-record-content-text">${escapeHtml(normalized.content)}</div>
                     </div>
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row" data-maint-row="deviceId">
                         <span class="detail-maint-record-label">设备编号</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.deviceId)}</span>
                     </div>
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row" data-maint-row="deviceLocation">
                         <span class="detail-maint-record-label">设备地址</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.deviceLocation)}</span>
                     </div>
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName">
                         <span class="detail-maint-record-label">运维人员</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
                     </div>
-                    <div class="detail-maint-record-row">
+                    <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone">
                         <span class="detail-maint-record-label">运维人员电话</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
                     </div>
                 </article>
             `;
+        }
+
+        function ensureDetailMaintenanceCardContactRows(records, container) {
+            if (!container || !Array.isArray(records) || !records.length) return;
+            const cards = container.querySelectorAll('.detail-maint-record-card');
+            if (!cards.length) return;
+            cards.forEach((card, index) => {
+                const sourceRecord = records[index] || {};
+                const normalized = normalizeDetailMaintenanceRecord(sourceRecord);
+                if (!card.querySelector('.detail-maint-operator-row')) {
+                    const operatorRow = document.createElement('div');
+                    operatorRow.className = 'detail-maint-record-row detail-maint-operator-row';
+                    operatorRow.setAttribute('data-maint-row', 'operatorName');
+                    operatorRow.innerHTML = `
+                        <span class="detail-maint-record-label">运维人员</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
+                    `;
+                    card.appendChild(operatorRow);
+                }
+                if (!card.querySelector('.detail-maint-phone-row')) {
+                    const phoneRow = document.createElement('div');
+                    phoneRow.className = 'detail-maint-record-row detail-maint-phone-row';
+                    phoneRow.setAttribute('data-maint-row', 'operatorPhone');
+                    phoneRow.innerHTML = `
+                        <span class="detail-maint-record-label">运维人员电话</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
+                    `;
+                    card.appendChild(phoneRow);
+                }
+            });
         }
 
         function renderDetailAbnormalRecordCard(record) {
@@ -3482,6 +3512,10 @@
                     </div>
                 </section>
             `;
+            if (!showingAbnormal) {
+                const listContainer = body.querySelector('.detail-fault-record-list');
+                ensureDetailMaintenanceCardContactRows(activeRecords, listContainer);
+            }
         }
 
         function switchDetailStatusRecordTab(tabKey) {

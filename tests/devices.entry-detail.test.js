@@ -44,6 +44,7 @@ test('设备详情应保留运维数据能力但不在卡片区重复展示', ()
   assert.ok(/function\s+renderDetailMaintenanceRecordCard\s*\(/.test(devicesHtml));
   assert.ok(/function\s+resolveMaintenanceOperatorInfo\s*\(/.test(devicesHtml));
   assert.ok(/function\s+normalizeDetailMaintenanceRecord\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+ensureDetailMaintenanceCardContactRows\s*\(/.test(devicesHtml));
   assert.ok(/function\s+resolveMaintenanceRecordDeviceId\s*\(/.test(devicesHtml));
   assert.ok(/normalizedRecord\.deviceCode/.test(devicesHtml));
   assert.ok(/normalizedRecord\.deviceAddress/.test(devicesHtml));
@@ -52,6 +53,9 @@ test('设备详情应保留运维数据能力但不在卡片区重复展示', ()
   assert.ok(/normalizedRecord\['运维人员电话'\]/.test(devicesHtml));
   assert.ok(/const\s+operator\s*=\s*resolveMaintenanceOperatorInfo\(\{[\s\S]*deviceId:\s*fallbackDeviceId/.test(devicesHtml));
   assert.ok(/const\s+normalized\s*=\s*normalizeDetailMaintenanceRecord\(record\)/.test(devicesHtml));
+  assert.ok(/detail-maint-operator-row/.test(devicesHtml));
+  assert.ok(/detail-maint-phone-row/.test(devicesHtml));
+  assert.ok(/ensureDetailMaintenanceCardContactRows\(activeRecords,\s*listContainer\)/.test(devicesHtml));
   assert.ok(/normalizedRecord\.maintainerName/.test(devicesHtml));
   assert.ok(/normalizedRecord\.maintenanceOperator/.test(devicesHtml));
   assert.ok(/normalizedRecord\.mobile/.test(devicesHtml));
