@@ -1283,6 +1283,44 @@
             font-weight: 600;
         }
 
+        .refund-type-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .refund-type-option {
+            position: relative;
+            display: block;
+            cursor: pointer;
+        }
+
+        .refund-type-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .refund-type-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+
+        .refund-type-option input:checked + .refund-type-label {
+            border-color: rgba(46, 196, 182, 0.5);
+            background: rgba(46, 196, 182, 0.16);
+            color: #0f766e;
+        }
+
         .refund-field input,
         .refund-field textarea {
             border: 1px solid var(--border);
@@ -1599,6 +1637,8 @@
             .order-search-panel {
                 width: 100%;
                 min-width: 0;
+                flex: 0 0 auto;
+                min-height: 0;
             }
 
             .order-search-select-row {
@@ -1870,6 +1910,14 @@
 
             .refund-line-list {
                 max-height: 220px;
+            }
+
+            .refund-type-options {
+                gap: 6px;
+            }
+
+            .refund-type-label {
+                height: 34px;
             }
 
             .refund-line-meta {
@@ -2192,6 +2240,20 @@
                 <div class="refund-line-list" id="refundLineItems"></div>
 
                 <label class="refund-field">
+                    <span>退款类型</span>
+                    <div class="refund-type-options">
+                        <label class="refund-type-option">
+                            <input type="radio" name="refundType" value="customerComplaint" onchange="setRefundType(this.value)" checked>
+                            <span class="refund-type-label">客诉退款</span>
+                        </label>
+                        <label class="refund-type-option">
+                            <input type="radio" name="refundType" value="complimentaryDrink" onchange="setRefundType(this.value)">
+                            <span class="refund-type-label">赠饮退款</span>
+                        </label>
+                    </div>
+                </label>
+
+                <label class="refund-field">
                     <span>退款原因（选填）</span>
                     <textarea id="refundReason" placeholder="请输入退款原因，最多100字" maxlength="100"></textarea>
                 </label>
@@ -2221,6 +2283,16 @@
             'cancelled': '已取消',
             'failed': '支付失败',
             'pending': '待支付'
+        };
+
+        const defaultRefundType = 'customerComplaint';
+        const refundTypeMap = {
+            customerComplaint: '客诉退款',
+            complimentaryDrink: '赠饮退款'
+        };
+        const refundTypeApiMap = {
+            customerComplaint: 'CUSTOMER_COMPLAINT',
+            complimentaryDrink: 'COMPLIMENTARY_DRINK'
         };
 
         const deviceContextMap = {
@@ -2344,7 +2416,8 @@
         let refundState = {
             orderId: '',
             lineItems: [],
-            selectedLineIds: new Set()
+            selectedLineIds: new Set(),
+            refundType: defaultRefundType
         };
 
         function init() {
@@ -2756,6 +2829,53 @@
             return lines;
         }
 
+        function setRefundType(type) {
+            if (!refundTypeMap[type]) return;
+            refundState.refundType = type;
+        }
+
+        function resetRefundType() {
+            refundState.refundType = defaultRefundType;
+            const defaultOption = document.querySelector('input[name="refundType"][value="customerComplaint"]');
+            if (defaultOption) {
+                defaultOption.checked = true;
+            }
+        }
+
+        function getRefundTypeText() {
+            return refundTypeMap[refundState.refundType] || '';
+        }
+
+        function buildRefundSubmitPayload(order, result) {
+            const selectedLines = refundState.lineItems.filter(line => refundState.selectedLineIds.has(line.id));
+            const reason = String(document.getElementById('refundReason')?.value || '').trim();
+            return {
+                orderId: order.id,
+                refundType: refundState.refundType,
+                refundTypeCode: refundTypeApiMap[refundState.refundType] || '',
+                refundTypeLabel: getRefundTypeText(),
+                refundMode: result.refundMode || '',
+                refundAmount: roundMoney(result.amount),
+                currency: 'CNY',
+                reason,
+                selectedLineIds: selectedLines.map(line => line.id),
+                selectedLines: selectedLines.map(line => ({
+                    lineId: line.id,
+                    name: line.name,
+                    maxAmount: roundMoney(line.maxAmount)
+                }))
+            };
+        }
+
+        async function submitRefundRequest(payload) {
+            const submitter = window.__COFEPLUS_REFUND_SUBMITTER__;
+            if (typeof submitter === 'function') {
+                return submitter(payload);
+            }
+            console.info('[refund-submit][mock]', payload);
+            return Promise.resolve({ success: true });
+        }
+
         function openRefundModal(orderId) {
             const order = ordersData.find(item => item.id === orderId);
             if (!order) {
@@ -2780,6 +2900,7 @@
             orderInput.value = '';
             document.getElementById('refundOrderManualLimit').textContent = `可退款上限：${formatCnyAmount(orderAmount)}`;
             document.getElementById('refundReason').value = '';
+            resetRefundType();
 
             renderRefundLineItems();
             updateRefundEstimation();
@@ -2791,6 +2912,7 @@
             refundState.orderId = '';
             refundState.lineItems = [];
             refundState.selectedLineIds = new Set();
+            resetRefundType();
         }
 
         function handleRefundOrderAmountInput(inputEl) {
@@ -2887,7 +3009,7 @@
             }
 
             if (hasOrderInput) {
-                return { ok: true, amount: roundMoney(orderRefundAmount), refundType: '整单金额退款' };
+                return { ok: true, amount: roundMoney(orderRefundAmount), refundMode: '整单金额退款' };
             }
 
             if (selectedLines.length > 0) {
@@ -2895,7 +3017,7 @@
                 if (lineRefundAmount > orderAmount) {
                     return { ok: false, error: '商品退款总金额不能超过订单实付金额' };
                 }
-                return { ok: true, amount: lineRefundAmount, refundType: '商品全额退款', selectedCount: selectedLines.length };
+                return { ok: true, amount: lineRefundAmount, refundMode: '商品全额退款', selectedCount: selectedLines.length };
             }
 
             return { ok: false, error: '请填写整单退款金额或选择至少一行商品退款' };
@@ -2908,7 +3030,7 @@
             amountEl.textContent = result.ok ? formatCnyAmount(result.amount) : 'CNY 0.00';
         }
 
-        function submitRefund() {
+        async function submitRefund() {
             if (!refundState.orderId) {
                 showToast('请先选择需要退款的订单', 'error');
                 return;
@@ -2925,10 +3047,43 @@
                 return;
             }
 
-            const modeText = result.refundType || '退款';
-            const orderIdShort = refundState.orderId.substring(0, 16);
-            closeRefundModal();
-            showToast(`订单 ${orderIdShort}... ${modeText}，退款金额 ${formatCnyAmount(result.amount)}，退款申请已提交`);
+            const refundTypeText = getRefundTypeText();
+            if (!refundTypeText) {
+                showToast('请选择退款类型', 'error');
+                return;
+            }
+
+            const payload = buildRefundSubmitPayload(order, result);
+            if (!payload.refundTypeCode) {
+                showToast('退款类型无效，请重新选择', 'error');
+                return;
+            }
+
+            const submitBtn = document.querySelector('.refund-footer-btn.primary');
+            const originalText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交中...';
+            }
+
+            try {
+                const response = await submitRefundRequest(payload);
+                if (response && response.success === false) {
+                    throw new Error(response.message || '退款提交失败，请稍后重试');
+                }
+
+                const modeText = result.refundMode || '退款';
+                const orderIdShort = refundState.orderId.substring(0, 16);
+                closeRefundModal();
+                showToast(`订单 ${orderIdShort}... ${refundTypeText}（${modeText}），退款金额 ${formatCnyAmount(result.amount)}，退款申请已提交`);
+            } catch (error) {
+                showToast(error?.message || '退款提交失败，请稍后重试', 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText || '提交退款';
+                }
+            }
         }
 
         function resolveOrderSearchValue(order, searchField) {

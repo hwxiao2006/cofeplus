@@ -51,3 +51,23 @@ test('整单退款与商品退款应在输入时互斥', () => {
   assert.ok(/function\s+handleRefundOrderAmountInput\s*\(/.test(html));
   assert.ok(/document\.getElementById\('refundOrderManualAmount'\)\.value\s*=\s*''/.test(html));
 });
+
+test('退款弹层应支持客诉退款与赠饮退款两种退款类型', () => {
+  assert.ok(/退款类型/.test(html));
+  assert.ok(/name="refundType"/.test(html));
+  assert.ok(/value="customerComplaint"/.test(html));
+  assert.ok(/客诉退款/.test(html));
+  assert.ok(/value="complimentaryDrink"/.test(html));
+  assert.ok(/赠饮退款/.test(html));
+  assert.ok(/const\s+refundTypeMap\s*=\s*\{[\s\S]*customerComplaint:\s*'客诉退款'[\s\S]*complimentaryDrink:\s*'赠饮退款'/.test(html));
+});
+
+test('退款提交载荷应包含退款类型字段并支持对接接口', () => {
+  assert.ok(/const\s+refundTypeApiMap\s*=\s*\{[\s\S]*customerComplaint:\s*'CUSTOMER_COMPLAINT'[\s\S]*complimentaryDrink:\s*'COMPLIMENTARY_DRINK'/.test(html));
+  assert.ok(/function\s+buildRefundSubmitPayload\s*\(/.test(html));
+  assert.ok(/refundType:\s*refundState\.refundType/.test(html));
+  assert.ok(/refundTypeCode:\s*refundTypeApiMap\[refundState\.refundType\]/.test(html));
+  assert.ok(/async\s+function\s+submitRefundRequest\s*\(/.test(html));
+  assert.ok(/window\.__COFEPLUS_REFUND_SUBMITTER__/.test(html));
+  assert.ok(/await\s+submitRefundRequest\(payload\)/.test(html));
+});
