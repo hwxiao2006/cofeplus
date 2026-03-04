@@ -38,11 +38,26 @@ test('设备详情渲染应读取 device.entryInfo', () => {
   assert.ok(/renderEntryAllRows\s*\(/.test(devicesHtml));
 });
 
-test('设备详情应支持展示补料运维记录', () => {
+test('设备详情应保留运维数据能力但不在卡片区重复展示', () => {
   assert.ok(/function\s+getMaintenanceRecordsByDevice\s*\(/.test(devicesHtml));
   assert.ok(/function\s+renderMaintenanceRecordsRows\s*\(/.test(devicesHtml));
-  assert.ok(/detail-card-maintenance/.test(devicesHtml));
+  assert.ok(/function\s+renderDetailMaintenanceRecordCard\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+resolveMaintenanceOperatorInfo\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+normalizeDetailMaintenanceRecord\s*\(/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.deviceCode/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.deviceAddress/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.recordTime/.test(devicesHtml));
+  assert.ok(/const\s+operator\s*=\s*resolveMaintenanceOperatorInfo\(\{[\s\S]*deviceId:\s*fallbackDeviceId/.test(devicesHtml));
+  assert.ok(/const\s+normalized\s*=\s*normalizeDetailMaintenanceRecord\(record\)/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.maintainerName/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.maintenanceOperator/.test(devicesHtml));
+  assert.ok(/normalizedRecord\.mobile/.test(devicesHtml));
+  assert.ok(/const\s+operationRecords\s*=\s*getMaintenanceRecordsByDevice\(deviceId\)/.test(devicesHtml));
+  assert.ok(/detail-maint-record-row/.test(devicesHtml));
+  assert.ok(/detail-maint-record-content-text/.test(devicesHtml));
+  assert.ok(/运维人员电话/.test(devicesHtml));
   assert.ok(/类型\(清洁\/补料\)/.test(devicesHtml));
+  assert.ok(!/renderDetailCard\('运维记录'/.test(devicesHtml));
 });
 
 test('缺少入场信息时应自动回填 mock 数据用于预览样式', () => {
@@ -127,4 +142,72 @@ test('节能模式关闭时编辑弹窗与详情应隐藏节能时间字段', ()
   assert.ok(/addEventListener\('change',\s*toggleEntryEnergyTimeFields\)/.test(devicesHtml));
   assert.ok(/toggleEntryEnergyTimeFields\(\)/.test(devicesHtml));
   assert.ok(/if\s*\(\s*isEnergyModeEnabled\(info\.energyMode\)\s*\)\s*\{[\s\S]*开启节能模式[\s\S]*关闭节能模式/.test(devicesHtml));
+});
+
+test('设备详情应整合故障处理卡片并支持四项操作入口', () => {
+  assert.ok(/function\s+renderFaultControlCard\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+buildDeviceFaultSnapshot\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+renderFaultActionButtons\s*\(/.test(devicesHtml));
+  assert.ok(/class="detail-fault-chip/.test(devicesHtml));
+  assert.ok(/openDetailRemoteActions\(/.test(devicesHtml));
+  assert.ok(/openDetailEditFaultStatus\(/.test(devicesHtml));
+  assert.ok(/goToDeviceMaterials\(/.test(devicesHtml));
+  assert.ok(/openDetailStatusRecords\(/.test(devicesHtml));
+});
+
+test('设备详情应通过单一分流方法隔离入场数据与故障数据', () => {
+  assert.ok(/function\s+splitDeviceDetailData\s*\(/.test(devicesHtml));
+  assert.ok(/const\s+detailData\s*=\s*splitDeviceDetailData\(device,\s*runtimeLocationMap\)/.test(devicesHtml));
+  assert.ok(/renderEntryCoreRows\(detailData\.entry\)/.test(devicesHtml));
+  assert.ok(/renderEntryAllRows\(detailData\.entry\)/.test(devicesHtml));
+  assert.ok(/renderFaultControlCard\(detailData\.fault\)/.test(devicesHtml));
+  assert.ok(!/renderMaintenanceRecordsRows\(detailData\.maintenance\.records,\s*detailData\.entry\.locationName\)/.test(devicesHtml));
+});
+
+test('设备详情卡片布局应避免单列卡片造成右侧空白', () => {
+  assert.ok(/\.detail-card-basic\s*\{[\s\S]*grid-column:\s*1\s*\/\s*-1/.test(devicesHtml));
+  assert.ok(/\.detail-card-entry-core\s*\{[\s\S]*grid-column:\s*1\s*\/\s*-1/.test(devicesHtml));
+});
+
+test('状态记录弹层应改为标签切换避免双栏拥挤', () => {
+  assert.ok(/function\s+switchDetailStatusRecordTab\s*\(/.test(devicesHtml));
+  assert.ok(/detail-fault-record-tabs/.test(devicesHtml));
+  assert.ok(/detail-fault-record-tab/.test(devicesHtml));
+  assert.ok(/openDetailStatusRecords[\s\S]*detailStatusRecordTab\s*=\s*'abnormal'/.test(devicesHtml));
+  assert.ok(/switchDetailStatusRecordTab\('abnormal'\)/.test(devicesHtml));
+  assert.ok(/switchDetailStatusRecordTab\('operation'\)/.test(devicesHtml));
+});
+
+test('状态记录双Tab应使用统一卡片与稳定容器避免切换跳动', () => {
+  assert.ok(/function\s+renderDetailAbnormalRecordCard\s*\(/.test(devicesHtml));
+  assert.ok(/return\s+renderDetailAbnormalRecordCard\(item\)/.test(devicesHtml));
+  assert.ok(/detail-fault-record-list[\s\S]*height:\s*\d+vh/.test(devicesHtml));
+  assert.ok(/detail-fault-record-list[\s\S]*scrollbar-gutter:\s*stable/.test(devicesHtml));
+  assert.ok(/\.stable-tab-switch\s*,/.test(devicesHtml));
+  assert.ok(/\.stable-tab-btn\s*,/.test(devicesHtml));
+  assert.ok(/\.stable-tab-panel\s*,/.test(devicesHtml));
+  assert.ok(/\.stable-tab-list\s*,/.test(devicesHtml));
+  assert.ok(/class=\"detail-fault-record-tabs stable-tab-switch\"/.test(devicesHtml));
+  assert.ok(/class=\"detail-fault-record-tab stable-tab-btn/.test(devicesHtml));
+  assert.ok(/class=\"detail-fault-record-section stable-tab-panel\"/.test(devicesHtml));
+  assert.ok(/class=\"detail-fault-record-list stable-tab-list\"/.test(devicesHtml));
+  assert.ok(/\.detail-fault-record-tab\s*\{[\s\S]*border:\s*1px\s+solid\s+transparent/.test(devicesHtml));
+  assert.ok(/\.detail-fault-record-tab\.active[\s\S]*box-shadow:\s*none/.test(devicesHtml));
+});
+
+test('运维记录卡片桌面端应使用固定列布局避免信息错位', () => {
+  assert.ok(/\.detail-maint-record-row\s*\{[\s\S]*grid-template-columns:\s*120px\s+minmax\(0,\s*1fr\)/.test(devicesHtml));
+  assert.ok(/\.detail-maint-record-label\s*\{[\s\S]*line-height:\s*1\.6/.test(devicesHtml));
+  assert.ok(/\.detail-maint-record-value\s*\{[\s\S]*line-height:\s*1\.6/.test(devicesHtml));
+});
+
+test('故障处理卡片应去除与设备信息卡片重复的基础字段', () => {
+  const match = devicesHtml.match(/function\s+renderFaultControlCard\s*\([\s\S]*?\n\s*}\n\n\s*function\s+getFaultRecordList/);
+  assert.ok(match);
+  const faultCardFn = match[0];
+
+  assert.ok(!/\['设备编号',\s*snapshot\.deviceId\]/.test(faultCardFn));
+  assert.ok(!/\['点位名称',\s*snapshot\.siteName\]/.test(faultCardFn));
+  assert.ok(!/\['设备状态',\s*snapshot\.deviceStatus\]/.test(faultCardFn));
+  assert.ok(!/\['停售状态',\s*snapshot\.sellStatus\]/.test(faultCardFn));
 });

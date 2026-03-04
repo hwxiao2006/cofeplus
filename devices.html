@@ -667,6 +667,18 @@
             grid-column: 1 / -1;
         }
 
+        .detail-card-fault-control {
+            grid-column: 1 / -1;
+        }
+
+        .detail-card-basic {
+            grid-column: 1 / -1;
+        }
+
+        .detail-card-entry-core {
+            grid-column: 1 / -1;
+        }
+
         .detail-card-title {
             font-size: 13px;
             font-weight: 700;
@@ -743,6 +755,396 @@
         .maintenance-record summary {
             color: var(--text-primary);
             font-weight: 600;
+        }
+
+        .detail-fault-summary {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .detail-fault-grid {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 16px;
+        }
+
+        .detail-fault-item {
+            display: grid;
+            grid-template-columns: 86px minmax(0, 1fr);
+            gap: 8px;
+            align-items: start;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .detail-fault-item:nth-last-child(-n+2) {
+            border-bottom: none;
+        }
+
+        .detail-fault-item .fault-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .detail-fault-item .fault-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .detail-fault-org {
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .detail-fault-org-title {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .detail-fault-chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .detail-fault-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #dbe1ea;
+            background: #f8fafc;
+            color: #596579;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .detail-fault-chip::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ab9ac;
+            flex: none;
+        }
+
+        .detail-fault-chip.lost::before {
+            background: #b8c4d3;
+        }
+
+        .detail-fault-chip.fault {
+            border-color: #f5c2c2;
+            background: #fff5f5;
+            color: #b42318;
+        }
+
+        .detail-fault-chip.fault::before {
+            background: #ef4444;
+        }
+
+        .detail-fault-actions {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .detail-fault-action-btn {
+            border: none;
+            border-right: 1px solid var(--border-light);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 700;
+            height: 46px;
+            cursor: pointer;
+        }
+
+        .detail-fault-action-btn:last-child {
+            border-right: none;
+        }
+
+        .detail-fault-action-btn:hover {
+            background: #f8fafc;
+        }
+
+        .detail-fault-sheet-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1300;
+            background: rgba(15, 23, 42, 0.38);
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .detail-fault-sheet-overlay.active {
+            display: flex;
+        }
+
+        .detail-fault-sheet-dialog {
+            width: min(360px, 100%);
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .detail-fault-sheet-title {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .detail-fault-sheet-option {
+            width: 100%;
+            height: 44px;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .detail-fault-sheet-option:last-child {
+            border-bottom: none;
+        }
+
+        .detail-fault-sheet-option:hover {
+            background: #f8fafc;
+        }
+
+        .detail-fault-record-modal {
+            width: min(940px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-fault-record-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-fault-record-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-fault-record-body {
+            padding: 12px 14px 14px;
+            display: grid;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .stable-tab-switch,
+        .detail-fault-record-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 2px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            background: #f8fafc;
+            min-height: 52px;
+        }
+
+        .stable-tab-btn,
+        .detail-fault-record-tab {
+            flex: 1;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 10px 12px;
+            min-height: 44px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .stable-tab-btn:hover,
+        .detail-fault-record-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .stable-tab-btn.active,
+        .detail-fault-record-tab.active {
+            background: #fff;
+            color: var(--text-primary);
+            border-color: var(--border-light);
+            box-shadow: none;
+        }
+
+        .stable-tab-count,
+        .detail-fault-record-tab-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            min-width: 3ch;
+            text-align: right;
+        }
+
+        .stable-tab-panel,
+        .detail-fault-record-section {
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 10px;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .stable-tab-panel-head,
+        .detail-fault-record-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .stable-tab-panel-title,
+        .detail-fault-record-section-title {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .stable-tab-list,
+        .detail-fault-record-list {
+            height: 52vh;
+            max-height: 52vh;
+            overflow-y: auto;
+            display: grid;
+            gap: 8px;
+            padding-right: 2px;
+            scrollbar-gutter: stable both-edges;
+            overscroll-behavior: contain;
+            min-height: 320px;
+        }
+
+        .detail-fault-record-item {
+            border: 1px solid var(--border-light);
+            background: #fff;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .detail-fault-record-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .detail-fault-record-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .detail-fault-record-empty {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border: 1px dashed var(--border-light);
+            border-radius: 8px;
+            background: #fff;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .detail-maint-record-card {
+            border: 1px solid var(--border-light);
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .detail-maint-record-row {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 1fr);
+            align-items: start;
+            gap: 10px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .detail-maint-record-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-maint-record-label {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .detail-maint-record-value {
+            text-align: right;
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 400;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .detail-maint-record-content {
+            border-bottom: 1px solid var(--border-light);
+            padding: 12px 14px;
+        }
+
+        .detail-maint-record-content-label {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .detail-maint-record-content-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #9ca3af;
+            line-height: 1.6;
+            word-break: break-word;
         }
 
         .entry-image-grid {
@@ -1446,6 +1848,103 @@
                 grid-column: auto;
             }
 
+            .detail-card-fault-control {
+                grid-column: auto;
+            }
+
+            .detail-fault-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .detail-fault-item {
+                grid-template-columns: 92px minmax(0, 1fr);
+            }
+
+            .detail-fault-item:nth-last-child(-n+2) {
+                border-bottom: 1px solid var(--border-light);
+            }
+
+            .detail-fault-item:last-child {
+                border-bottom: none;
+            }
+
+            .detail-fault-actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .detail-fault-action-btn {
+                border-right: 1px solid var(--border-light);
+                border-bottom: 1px solid var(--border-light);
+            }
+
+            .detail-fault-action-btn:nth-child(2n) {
+                border-right: none;
+            }
+
+            .detail-fault-action-btn:nth-last-child(-n+2) {
+                border-bottom: none;
+            }
+
+            .detail-fault-sheet-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .detail-fault-sheet-dialog {
+                width: 100%;
+                border-radius: 12px 12px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+            }
+
+            .detail-fault-record-modal {
+                width: 100%;
+                border-radius: 14px 14px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+                max-height: 92vh;
+            }
+
+            .detail-fault-record-body {
+                padding: 10px 12px 12px;
+            }
+
+            .detail-fault-record-tab {
+                justify-content: center;
+            }
+
+            .stable-tab-btn,
+            .detail-fault-record-tab {
+                min-height: 42px;
+                padding: 8px 10px;
+            }
+
+            .detail-maint-record-row {
+                grid-template-columns: 92px minmax(0, 1fr);
+                gap: 8px;
+                padding: 10px 12px;
+            }
+
+            .detail-maint-record-content {
+                padding: 10px 12px;
+            }
+
+            .detail-maint-record-label,
+            .detail-maint-record-value,
+            .detail-maint-record-content-label,
+            .detail-maint-record-content-text {
+                font-size: 13px;
+            }
+
+            .detail-fault-record-list {
+                height: 56vh;
+                max-height: 56vh;
+                min-height: 0;
+            }
+
             .entry-image-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 8px;
@@ -1970,6 +2469,19 @@
         </div>
     </div>
 
+    <div class="detail-fault-sheet-overlay" id="detailRemoteActionSheet"></div>
+    <div class="detail-fault-sheet-overlay" id="detailStatusEditSheet"></div>
+
+    <div class="modal-overlay" id="detailStatusRecordModal">
+        <div class="detail-fault-record-modal">
+            <div class="detail-fault-record-header">
+                <h3 class="detail-fault-record-title">状态记录</h3>
+                <button class="detail-modal-close" onclick="closeDetailStatusRecords()">×</button>
+            </div>
+            <div class="detail-fault-record-body" id="detailStatusRecordBody"></div>
+        </div>
+    </div>
+
     <div class="image-preview-overlay" id="imagePreviewModal">
         <div class="image-preview-modal">
             <button class="image-preview-close" onclick="closeImagePreview()" aria-label="关闭图片预览">×</button>
@@ -2055,6 +2567,8 @@
         let currentPreviewIndex = 0;
         let currentDetailDeviceId = '';
         let entryEditImageDraft = { display: [], location: [] };
+        let activeFaultActionDeviceId = '';
+        let detailStatusRecordTab = 'abnormal';
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -2464,32 +2978,635 @@
             return list.length ? list.join('、') : '未选择';
         }
 
+        function splitDeviceDetailData(device, runtimeLocationMap) {
+            const locationName = resolveEntryLocationName(device, runtimeLocationMap);
+            const entryInfo = device.entryInfo || null;
+            return {
+                base: {
+                    deviceId: device.id,
+                    merchantName: merchantMap[device.merchant] || device.merchant || '-',
+                    locationName: device.entered === false || !device.location ? '未入场' : locationName,
+                    categoryName: categoryMap[device.category] || device.category || '-',
+                    deploymentName: deploymentMap[device.deployment] || device.deployment || '-',
+                    statusName: statusMap[device.status] || device.status,
+                    salesName: salesMap[device.sales] || device.sales,
+                    heartbeat: device.heartbeat
+                },
+                entry: {
+                    info: entryInfo,
+                    locationName,
+                    paymentMethods: entryInfo ? resolvePaymentMethods(entryInfo) : '未选择'
+                },
+                fault: buildDeviceFaultSnapshot(device, runtimeLocationMap),
+                maintenance: {
+                    records: getMaintenanceRecordsByDevice(device.id)
+                }
+            };
+        }
+
+        function deriveFaultStatusLabel(statusKey) {
+            if (statusKey === 'fault') return '故障';
+            if (statusKey === 'lost') return '失联';
+            return '正常';
+        }
+
+        function normalizeFaultOrgStatus(list, deviceStatus) {
+            const defaults = [
+                { name: '咖啡机', status: 'normal' },
+                { name: '机械臂', status: 'normal' },
+                { name: '落杯器', status: 'normal' },
+                { name: '制冰机', status: deviceStatus === 'faulted' ? 'lost' : 'normal' },
+                { name: '前道浆', status: 'normal' },
+                { name: '压盖器', status: 'normal' },
+                { name: '出杯口1', status: 'normal' },
+                { name: '出杯口2', status: 'normal' },
+                { name: '温湿度', status: 'normal' },
+                { name: '混水水路', status: deviceStatus === 'faulted' ? 'fault' : 'normal' }
+            ];
+            const base = Array.isArray(list) && list.length ? list : defaults;
+            return base.map((part, index) => {
+                const rawStatus = String(part?.status || '').trim();
+                const status = rawStatus === 'fault' || rawStatus === 'lost' ? rawStatus : 'normal';
+                const name = String(part?.name || defaults[index % defaults.length].name || '-').trim();
+                return {
+                    name,
+                    status,
+                    label: String(part?.label || deriveFaultStatusLabel(status)).trim() || deriveFaultStatusLabel(status)
+                };
+            });
+        }
+
+        function getDeviceFaultSeed(deviceId) {
+            return Number(String(deviceId || '').replace(/\D/g, '').slice(-3)) || 1;
+        }
+
+        function buildDeviceFaultSnapshot(device, runtimeLocationMap) {
+            const base = device.faultInfo && typeof device.faultInfo === 'object' ? device.faultInfo : {};
+            const seed = getDeviceFaultSeed(device.id);
+            const siteName = runtimeLocationMap[device.location] || device.location || '-';
+            const statusKey = String(base.statusKey || (device.status === 'faulted' ? 'fault' : 'normal')).trim();
+            const deviceStatus = base.deviceStatus || (statusKey === 'fault' ? '离线' : (statusKey === 'shortage' ? '缺料' : '在线'));
+            const sellStatus = base.sellStatus || (device.sales === 'disabled' ? '已停卖' : '正常售卖');
+            const updateAt = normalizeRecordTime(base.updatedAt || formatCurrentDateTime());
+            const withTs = (value, fallbackValue) => `${value || fallbackValue} (${updateAt})`;
+            const orgStatus = normalizeFaultOrgStatus(base.orgStatus, device.status);
+            return {
+                deviceId: device.id,
+                siteName,
+                deviceStatus,
+                sellStatus,
+                fridgeTemp: withTs(base.fridgeTemp, `${((seed % 5) + 1).toFixed(1)}度`),
+                beanTemp: withTs(base.beanTemp, `${(seed % 3).toFixed(1)}度`),
+                craftTemp: withTs(base.craftTemp, `${(17 + (seed % 4) * 0.5).toFixed(1)}度`),
+                beanHumidity: withTs(base.beanHumidity, `${seed % 8}%`),
+                updatedAt: base.updatedAt ? normalizeRecordTime(base.updatedAt) : '-',
+                upperSoftware: base.upperSoftware || '-',
+                orderSoftware: base.orderSoftware || '-',
+                orderSystem: base.orderSystem || '-',
+                orderKernel: base.orderKernel || '-',
+                adVersion: base.adVersion || '-',
+                firmwareVersion: base.firmwareVersion || '-',
+                orgStatus,
+                hasFault: device.status === 'faulted' || orgStatus.some(part => part.status === 'fault' || part.status === 'lost')
+            };
+        }
+
+        function renderFaultActionButtons(snapshot) {
+            return `
+                <div class="detail-fault-actions">
+                    <button type="button" class="detail-fault-action-btn" onclick="openDetailRemoteActions('${escapeHtml(snapshot.deviceId)}')">远程操作</button>
+                    <button type="button" class="detail-fault-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(snapshot.deviceId)}')">编辑状态</button>
+                    <button type="button" class="detail-fault-action-btn" onclick="goToDeviceMaterials('${escapeHtml(snapshot.deviceId)}')">物料</button>
+                    <button type="button" class="detail-fault-action-btn" onclick="openDetailStatusRecords('${escapeHtml(snapshot.deviceId)}')">状态记录</button>
+                </div>
+            `;
+        }
+
+        function renderFaultControlCard(faultData) {
+            const snapshot = faultData || {
+                deviceId: '-',
+                siteName: '-',
+                deviceStatus: '-',
+                sellStatus: '-',
+                fridgeTemp: '-',
+                beanTemp: '-',
+                craftTemp: '-',
+                beanHumidity: '-',
+                updatedAt: '-',
+                upperSoftware: '-',
+                orderSoftware: '-',
+                orderSystem: '-',
+                orderKernel: '-',
+                adVersion: '-',
+                firmwareVersion: '-',
+                orgStatus: [],
+                hasFault: false
+            };
+            const rows = [
+                ['冰箱温度', snapshot.fridgeTemp],
+                ['豆仓温度', snapshot.beanTemp],
+                ['制作仓温度', snapshot.craftTemp],
+                ['豆仓湿度', snapshot.beanHumidity],
+                ['更新时间', snapshot.updatedAt],
+                ['上位机软件', snapshot.upperSoftware],
+                ['点单屏软件', snapshot.orderSoftware],
+                ['点单屏系统', snapshot.orderSystem],
+                ['点单屏内核', snapshot.orderKernel],
+                ['广告屏版本', snapshot.adVersion],
+                ['固件版本', snapshot.firmwareVersion]
+            ];
+            const rowHtml = rows.map(([label, value]) => `
+                <div class="detail-fault-item">
+                    <span class="fault-label">${escapeHtml(label)}</span>
+                    <strong class="fault-value">${escapeHtml(value || '-')}</strong>
+                </div>
+            `).join('');
+            const chipHtml = snapshot.orgStatus.map(part => `
+                <span class="detail-fault-chip ${escapeHtml(part.status)}">${escapeHtml(`${part.label} ${part.name}`)}</span>
+            `).join('');
+            const summary = snapshot.hasFault ? '检测到故障项，建议尽快远程排查或派单处理。' : '当前机构状态正常，可通过下方按钮进行远程维护。';
+            return renderDetailCard('故障处理', `
+                <div class="detail-fault-summary">${escapeHtml(summary)}</div>
+                <div class="detail-fault-grid">${rowHtml}</div>
+                <div class="detail-fault-org">
+                    <div class="detail-fault-org-title">机构状态</div>
+                    <div class="detail-fault-chip-list">${chipHtml}</div>
+                </div>
+                ${renderFaultActionButtons(snapshot)}
+            `, 'detail-card-fault-control');
+        }
+
+        function getFaultRecordList(storageKey) {
+            try {
+                const raw = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                return Array.isArray(raw) ? raw : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveFaultRecordList(storageKey, list) {
+            localStorage.setItem(storageKey, JSON.stringify(list));
+        }
+
+        function appendFaultOperationRecord(deviceId, action, result = '成功', note = '') {
+            const list = getFaultRecordList('deviceFaultOperationRecords');
+            list.push({
+                deviceId,
+                time: formatCurrentDateTime(),
+                operator: '当前用户',
+                action,
+                result,
+                note: note || `${deviceId} 已执行${action}`
+            });
+            saveFaultRecordList('deviceFaultOperationRecords', list.slice(-200));
+        }
+
+        function appendFaultAbnormalRecord(deviceId, message, code = '') {
+            const list = getFaultRecordList('deviceFaultAbnormalRecords');
+            list.push({
+                deviceId,
+                time: formatCurrentDateTime(),
+                code,
+                message
+            });
+            saveFaultRecordList('deviceFaultAbnormalRecords', list.slice(-200));
+        }
+
+        function getFaultOperationRecords(deviceId) {
+            const targetDeviceId = normalizeDeviceId(deviceId);
+            const list = getFaultRecordList('deviceFaultOperationRecords')
+                .filter(item => normalizeDeviceId(item?.deviceId) === targetDeviceId)
+                .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+            if (list.length) return list;
+            return [{
+                deviceId,
+                time: formatCurrentDateTime(),
+                operator: '系统',
+                action: '无操作记录',
+                result: '-',
+                note: '暂无远程操作记录'
+            }];
+        }
+
+        function getFaultAbnormalRecords(deviceId) {
+            const targetDeviceId = normalizeDeviceId(deviceId);
+            const list = getFaultRecordList('deviceFaultAbnormalRecords')
+                .filter(item => normalizeDeviceId(item?.deviceId) === targetDeviceId)
+                .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+            if (list.length) return list;
+            return [{
+                deviceId,
+                time: formatCurrentDateTime(),
+                code: '',
+                message: `${deviceId} 暂无异常记录`
+            }];
+        }
+
+        function resolveMaintenanceOperatorInfo(record) {
+            const normalizedRecord = record && typeof record === 'object' ? record : {};
+            const rawDeviceId = normalizeEditableValue(normalizedRecord.deviceId, '');
+            const fallbackDeviceId = rawDeviceId || activeFaultActionDeviceId || currentDetailDeviceId;
+            const targetDeviceId = normalizeDeviceId(fallbackDeviceId);
+            const device = devicesData.find(item => normalizeDeviceId(item?.id) === targetDeviceId);
+            const entryInfo = device?.entryInfo || {};
+            const pickValue = (...values) => {
+                for (const value of values) {
+                    const normalized = normalizeEditableValue(value, '');
+                    if (normalized) return normalized;
+                }
+                return '';
+            };
+            const fallbackName = pickValue(
+                entryInfo.operatorName,
+                entryInfo.operator,
+                entryInfo.operatorDisplayName,
+                entryInfo.contactName,
+                device?.operatorName,
+                '当前用户'
+            );
+            const fallbackPhone = pickValue(
+                entryInfo.operatorPhone,
+                entryInfo.phone,
+                entryInfo.mobile,
+                entryInfo.operatorMobile,
+                entryInfo.contactPhone,
+                device?.operatorPhone,
+                device?.operatorMobile,
+                '-'
+            );
+            const operatorName = pickValue(
+                normalizedRecord.operatorName,
+                normalizedRecord.operator,
+                normalizedRecord.maintainerName,
+                normalizedRecord.maintenanceOperator,
+                normalizedRecord.operatorDisplayName,
+                normalizedRecord.staffName,
+                normalizedRecord.userName,
+                normalizedRecord.operatorInfo?.name
+            ) || fallbackName;
+            const operatorPhone = pickValue(
+                normalizedRecord.operatorPhone,
+                normalizedRecord.phone,
+                normalizedRecord.mobile,
+                normalizedRecord.contactPhone,
+                normalizedRecord.operatorMobile,
+                normalizedRecord.maintainerPhone,
+                normalizedRecord.operatorInfo?.phone
+            ) || fallbackPhone;
+            return {
+                operatorName: operatorName || '当前用户',
+                operatorPhone: operatorPhone || '-'
+            };
+        }
+
+        function normalizeDetailMaintenanceRecord(record) {
+            const sourceRecord = record && typeof record === 'object' ? record : {};
+            const normalizedRecord = sourceRecord.maintenanceInfo && typeof sourceRecord.maintenanceInfo === 'object'
+                ? { ...sourceRecord.maintenanceInfo, ...sourceRecord }
+                : sourceRecord;
+            const pickValue = (...values) => {
+                for (const value of values) {
+                    const normalized = normalizeEditableValue(value, '');
+                    if (normalized) return normalized;
+                }
+                return '';
+            };
+            const fallbackDeviceId = pickValue(
+                normalizedRecord.deviceId,
+                normalizedRecord.deviceCode,
+                normalizedRecord.deviceNo,
+                normalizedRecord.deviceNum,
+                normalizedRecord.machineId,
+                normalizedRecord.equipmentId,
+                activeFaultActionDeviceId,
+                currentDetailDeviceId
+            );
+            const targetDeviceId = normalizeDeviceId(fallbackDeviceId);
+            const device = devicesData.find(item => normalizeDeviceId(item?.id) === targetDeviceId);
+            const entryInfo = device?.entryInfo || {};
+            const operator = resolveMaintenanceOperatorInfo({
+                ...normalizedRecord,
+                deviceId: fallbackDeviceId || normalizedRecord.deviceId
+            });
+            return {
+                time: pickValue(
+                    normalizedRecord.time,
+                    normalizedRecord.recordTime,
+                    normalizedRecord.operationTime,
+                    normalizedRecord.operateTime,
+                    normalizedRecord.createdAt,
+                    normalizedRecord.updatedAt,
+                    '-'
+                ) || '-',
+                type: pickValue(
+                    normalizedRecord.type,
+                    normalizedRecord.recordType,
+                    normalizedRecord.maintenanceType,
+                    normalizedRecord.actionType,
+                    normalizedRecord.operationType,
+                    normalizedRecord['类型'],
+                    normalizedRecord.category,
+                    '补料'
+                ) || '补料',
+                content: pickValue(
+                    normalizedRecord.content,
+                    normalizedRecord.contentText,
+                    normalizedRecord['内容'],
+                    normalizedRecord.note,
+                    normalizedRecord.remark,
+                    normalizedRecord.desc,
+                    normalizedRecord.description,
+                    normalizedRecord.detail,
+                    normalizedRecord.action,
+                    normalizedRecord.result,
+                    '-'
+                ) || '-',
+                deviceId: pickValue(
+                    normalizedRecord.deviceId,
+                    normalizedRecord.deviceCode,
+                    normalizedRecord.deviceNo,
+                    normalizedRecord.deviceNum,
+                    normalizedRecord.machineId,
+                    normalizedRecord.equipmentId,
+                    fallbackDeviceId,
+                    '-'
+                ) || '-',
+                deviceLocation: pickValue(
+                    normalizedRecord.deviceLocation,
+                    normalizedRecord.deviceAddress,
+                    normalizedRecord.address,
+                    normalizedRecord.siteAddress,
+                    normalizedRecord['设备地址'],
+                    normalizedRecord.locationName,
+                    normalizedRecord.location,
+                    normalizedRecord.siteName,
+                    entryInfo.locationAddress,
+                    entryInfo.locationName,
+                    '-'
+                ) || '-',
+                operatorName: operator.operatorName,
+                operatorPhone: operator.operatorPhone
+            };
+        }
+
+        function renderDetailMaintenanceRecordCard(record) {
+            const normalized = normalizeDetailMaintenanceRecord(record);
+            return `
+                <article class="detail-maint-record-card">
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">时间</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalizeRecordTime(normalized.time))}</span>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">类型(清洁/补料)</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.type)}</span>
+                    </div>
+                    <div class="detail-maint-record-content">
+                        <div class="detail-maint-record-content-label">内容</div>
+                        <div class="detail-maint-record-content-text">${escapeHtml(normalized.content)}</div>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">设备编号</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.deviceId)}</span>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">设备地址</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.deviceLocation)}</span>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">运维人员</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">运维人员电话</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderDetailAbnormalRecordCard(record) {
+            return `
+                <article class="detail-maint-record-card">
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">时间</span>
+                        <span class="detail-maint-record-value">${escapeHtml(normalizeRecordTime(record.time))}</span>
+                    </div>
+                    <div class="detail-maint-record-row">
+                        <span class="detail-maint-record-label">故障码</span>
+                        <span class="detail-maint-record-value">${escapeHtml(record.code || '-')}</span>
+                    </div>
+                    <div class="detail-maint-record-content">
+                        <div class="detail-maint-record-content-label">内容</div>
+                        <div class="detail-maint-record-content-text">${escapeHtml(record.message || '-')}</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderDetailStatusRecordItems(records, tabKey) {
+            if (!records.length) {
+                return `<div class="detail-fault-record-empty">${tabKey === 'abnormal' ? '暂无异常记录' : '暂无运维记录'}</div>`;
+            }
+            return records.map(item => {
+                if (tabKey === 'abnormal') {
+                    return renderDetailAbnormalRecordCard(item);
+                }
+                return renderDetailMaintenanceRecordCard(item);
+            }).join('');
+        }
+
+        function renderDetailStatusRecordBody() {
+            const body = document.getElementById('detailStatusRecordBody');
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            if (!body || !deviceId) return;
+            const abnormalRecords = getFaultAbnormalRecords(deviceId);
+            const operationRecords = getMaintenanceRecordsByDevice(deviceId);
+            const showingAbnormal = detailStatusRecordTab === 'abnormal';
+            const activeRecords = showingAbnormal ? abnormalRecords : operationRecords;
+            const listHtml = renderDetailStatusRecordItems(activeRecords, detailStatusRecordTab);
+            const sectionTitle = showingAbnormal ? '异常记录' : '运维记录';
+
+            body.innerHTML = `
+                <div class="detail-fault-record-tabs stable-tab-switch">
+                    <button
+                        type="button"
+                        class="detail-fault-record-tab stable-tab-btn ${showingAbnormal ? 'active' : ''}"
+                        onclick="switchDetailStatusRecordTab('abnormal')"
+                    >
+                        <span>异常记录</span>
+                        <span class="detail-fault-record-tab-count stable-tab-count">${abnormalRecords.length}</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="detail-fault-record-tab stable-tab-btn ${showingAbnormal ? '' : 'active'}"
+                        onclick="switchDetailStatusRecordTab('operation')"
+                    >
+                        <span>运维记录</span>
+                        <span class="detail-fault-record-tab-count stable-tab-count">${operationRecords.length}</span>
+                    </button>
+                </div>
+                <section class="detail-fault-record-section stable-tab-panel">
+                    <div class="detail-fault-record-section-head stable-tab-panel-head">
+                        <h5 class="detail-fault-record-section-title stable-tab-panel-title">${sectionTitle}</h5>
+                        <span class="detail-fault-record-tab-count stable-tab-count">共 ${activeRecords.length} 条</span>
+                    </div>
+                    <div class="detail-fault-record-list stable-tab-list">
+                        ${listHtml}
+                    </div>
+                </section>
+            `;
+        }
+
+        function switchDetailStatusRecordTab(tabKey) {
+            const nextTab = tabKey === 'operation' ? 'operation' : 'abnormal';
+            if (detailStatusRecordTab === nextTab) return;
+            detailStatusRecordTab = nextTab;
+            renderDetailStatusRecordBody();
+        }
+
+        function openDetailRemoteActions(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+            panel.innerHTML = `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备开门')">设备开门</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('更新配方')">更新配方</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备停售')">设备停售</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
+                </div>
+            `;
+            panel.classList.add('active');
+        }
+
+        function closeDetailRemoteActions() {
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+            panel.classList.remove('active');
+            panel.innerHTML = '';
+        }
+
+        function handleDetailRemoteAction(actionName) {
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            appendFaultOperationRecord(deviceId, actionName, '成功', `${deviceId} 已执行${actionName}`);
+            closeDetailRemoteActions();
+            showToast(`已向设备 ${deviceId} 下发指令：${actionName}`);
+        }
+
+        function openDetailEditFaultStatus(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            const panel = document.getElementById('detailStatusEditSheet');
+            if (!panel) return;
+            panel.innerHTML = `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">编辑状态 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="applyDetailFaultStatus('operational')">正常</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="applyDetailFaultStatus('faulted')">故障</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="applyDetailFaultStatus('shortage')">缺料</button>
+                </div>
+            `;
+            panel.classList.add('active');
+        }
+
+        function closeDetailEditFaultStatus() {
+            const panel = document.getElementById('detailStatusEditSheet');
+            if (!panel) return;
+            panel.classList.remove('active');
+            panel.innerHTML = '';
+        }
+
+        function applyDetailFaultStatus(statusKey) {
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            const device = devicesData.find(item => item.id === deviceId);
+            if (!device) return;
+            const nextStatus = statusKey === 'faulted' ? 'faulted' : 'operational';
+            const textMap = { operational: '在线', faulted: '离线', shortage: '缺料' };
+            const orgStatus = normalizeFaultOrgStatus(device.faultInfo?.orgStatus, nextStatus).map(part => {
+                if (statusKey === 'operational') {
+                    return { ...part, status: 'normal', label: '正常' };
+                }
+                if (statusKey === 'shortage' && part.name === '混水水路') {
+                    return { ...part, status: 'fault', label: '故障' };
+                }
+                return part;
+            });
+            device.status = nextStatus;
+            device.faultInfo = {
+                ...(device.faultInfo || {}),
+                statusKey,
+                deviceStatus: textMap[statusKey] || '在线',
+                sellStatus: device.sales === 'disabled' ? '已停卖' : '正常售卖',
+                updatedAt: formatCurrentDateTime(),
+                orgStatus
+            };
+            appendFaultOperationRecord(deviceId, '编辑状态', '成功', `${deviceId} 状态改为${textMap[statusKey] || '-'}`);
+            if (statusKey === 'faulted') {
+                appendFaultAbnormalRecord(deviceId, `${deviceId} 状态更新为故障`);
+            }
+            saveDevicesData();
+            updateStats();
+            renderTable();
+            closeDetailEditFaultStatus();
+            viewDetail(deviceId);
+            showToast(`设备 ${deviceId} 状态已更新`);
+        }
+
+        function openDetailStatusRecords(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            const modal = document.getElementById('detailStatusRecordModal');
+            if (!modal) return;
+            detailStatusRecordTab = 'abnormal';
+            renderDetailStatusRecordBody();
+            modal.classList.add('active');
+        }
+
+        function closeDetailStatusRecords() {
+            const modal = document.getElementById('detailStatusRecordModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+            detailStatusRecordTab = 'abnormal';
+            document.getElementById('detailStatusRecordBody').innerHTML = '';
+        }
+
+        function goToDeviceMaterials(deviceId) {
+            try {
+                sessionStorage.setItem('currentDevice', deviceId);
+            } catch (error) {
+                // ignore storage failures and continue navigation
+            }
+            window.location.href = `materials.html?device=${encodeURIComponent(deviceId)}`;
+        }
+
         function isEnergyModeEnabled(mode) {
             return normalizeEditableValue(mode) === '开启';
         }
 
-        function renderEntryCoreRows(device, runtimeLocationMap) {
-            if (!device.entryInfo) {
+        function renderEntryCoreRows(entryData) {
+            if (!entryData?.info) {
                 return renderDetailRow('入场记录', '暂无入场记录');
             }
-            const info = device.entryInfo;
+            const info = entryData.info;
             return [
                 renderDetailRow('入场时间', info.entryAt || '-'),
-                renderDetailRow('点位名称', resolveEntryLocationName(device, runtimeLocationMap)),
+                renderDetailRow('点位名称', entryData.locationName || '-'),
                 renderDetailRow('点位地址', info.locationAddress || '-'),
-                renderDetailRow('支付方式', resolvePaymentMethods(info)),
+                renderDetailRow('支付方式', entryData.paymentMethods || resolvePaymentMethods(info)),
                 renderDetailRow('节能模式', info.energyMode || '-')
             ].join('');
         }
 
-        function renderEntryAllRows(device, runtimeLocationMap) {
-            if (!device.entryInfo) return '';
-            const info = device.entryInfo;
+        function renderEntryAllRows(entryData) {
+            if (!entryData?.info) return '';
+            const info = entryData.info;
             const rows = [
                 ['入场时间', info.entryAt || '-'],
                 ['运维人员', info.operatorName || '未选择'],
                 ['运维电话', info.operatorPhone || '-'],
-                ['点位名称', resolveEntryLocationName(device, runtimeLocationMap)],
+                ['点位名称', entryData.locationName || '-'],
                 ['点位地址', info.locationAddress || '-'],
                 ['GPS定位', info.gpsAction || '未获取'],
                 ['经度', info.longitude || '手动输入'],
@@ -2501,7 +3618,7 @@
                 ['第五代终端', info.terminalGeneration5 || '-'],
                 ['订单并行制作', info.parallelProduction || '-'],
                 ['维护时段', info.maintenanceWindow || '-'],
-                ['支付方式', resolvePaymentMethods(info)],
+                ['支付方式', entryData.paymentMethods || resolvePaymentMethods(info)],
                 ['备注', info.notes || '-']
             ];
             if (isEnergyModeEnabled(info.energyMode)) {
@@ -2605,6 +3722,10 @@
             return raw;
         }
 
+        function normalizeDeviceId(value) {
+            return normalizeEditableValue(value, '').toUpperCase();
+        }
+
         function normalizeTimeInputValue(value) {
             const raw = normalizeEditableValue(value, '');
             return /^\d{2}:\d{2}$/.test(raw) ? raw : '';
@@ -2646,8 +3767,9 @@
             if (!Array.isArray(records)) {
                 return [];
             }
+            const targetDeviceId = normalizeDeviceId(deviceId);
             return records
-                .filter(record => String(record?.deviceId || '').toUpperCase() === String(deviceId || '').toUpperCase())
+                .filter(record => normalizeDeviceId(record?.deviceId) === targetDeviceId)
                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
         }
 
@@ -2660,19 +3782,19 @@
             return `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())} ${pad(parsed.getHours())}:${pad(parsed.getMinutes())}:${pad(parsed.getSeconds())}`;
         }
 
-        function renderMaintenanceRecordsRows(device, runtimeLocationMap) {
-            const records = getMaintenanceRecordsByDevice(device.id);
-            if (!records.length) {
+        function renderMaintenanceRecordsRows(records, fallbackLocation) {
+            const normalizedRecords = Array.isArray(records) ? records : [];
+            const fallbackDeviceId = currentDetailDeviceId || '-';
+            if (!normalizedRecords.length) {
                 return renderDetailRow('运维记录', '暂无运维记录');
             }
-            const fallbackLocation = resolveEntryLocationName(device, runtimeLocationMap);
-            return records.slice(0, 10).map((record, index) => `
+            return normalizedRecords.slice(0, 10).map((record, index) => `
                 <details class="detail-entry-all maintenance-record" ${index === 0 ? 'open' : ''}>
                     <summary>${escapeHtml(`${normalizeRecordTime(record.time)} · ${record.type || '运维'}`)}</summary>
                     ${renderDetailRow('时间', normalizeRecordTime(record.time))}
                     ${renderDetailRow('类型(清洁/补料)', record.type || '-')}
                     ${renderDetailRow('内容', record.content || '-')}
-                    ${renderDetailRow('设备编号', record.deviceId || device.id)}
+                    ${renderDetailRow('设备编号', record.deviceId || fallbackDeviceId)}
                     ${renderDetailRow('设备地址', record.deviceLocation || fallbackLocation)}
                     ${renderDetailRow('运维人员', record.operatorName || '当前用户')}
                     ${renderDetailRow('运维人员电话', record.operatorPhone || '-')}
@@ -2895,19 +4017,20 @@
                 }
             }
             const runtimeLocationMap = buildLocationMap();
-            const entryCoreRows = renderEntryCoreRows(device, runtimeLocationMap);
-            const entryAllRows = renderEntryAllRows(device, runtimeLocationMap);
+            const detailData = splitDeviceDetailData(device, runtimeLocationMap);
+            const entryCoreRows = renderEntryCoreRows(detailData.entry);
+            const entryAllRows = renderEntryAllRows(detailData.entry);
             const entryImageGallery = renderEntryImageGallery(device);
-            const maintenanceRows = renderMaintenanceRecordsRows(device, runtimeLocationMap);
+            const faultControlCard = renderFaultControlCard(detailData.fault);
             const basicRows = [
-                renderDetailRow('设备编号', device.id),
-                renderDetailRow('所属商户', merchantMap[device.merchant] || device.merchant || '-'),
-                renderDetailRow('点位', device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)),
-                renderDetailRow('设备类别', categoryMap[device.category] || device.category || '-'),
-                renderDetailRow('部署类型', deploymentMap[device.deployment] || device.deployment || '-'),
-                renderDetailRow('设备状态', statusMap[device.status] || device.status),
-                renderDetailRow('停卖状态', salesMap[device.sales] || device.sales),
-                renderDetailRow('最近心跳', device.heartbeat)
+                renderDetailRow('设备编号', detailData.base.deviceId),
+                renderDetailRow('所属商户', detailData.base.merchantName),
+                renderDetailRow('点位', detailData.base.locationName),
+                renderDetailRow('设备类别', detailData.base.categoryName),
+                renderDetailRow('部署类型', detailData.base.deploymentName),
+                renderDetailRow('设备状态', detailData.base.statusName),
+                renderDetailRow('停卖状态', detailData.base.salesName),
+                renderDetailRow('最近心跳', detailData.base.heartbeat)
             ].join('');
             const entryAllSectionRows = entryAllRows
                 ? `
@@ -2920,9 +4043,9 @@
             document.getElementById('detailModalBody').innerHTML = `
                 <div class="detail-grid">
                     ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
+                    ${faultControlCard}
                     ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
                     ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
-                    ${renderDetailCard('运维记录', maintenanceRows, 'detail-card-maintenance')}
                     ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
                 </div>
             `;
@@ -2934,7 +4057,11 @@
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('active');
             closeEntryEditModal();
+            closeDetailRemoteActions();
+            closeDetailEditFaultStatus();
+            closeDetailStatusRecords();
             currentDetailDeviceId = '';
+            activeFaultActionDeviceId = '';
         }
 
         function toggleSidebar() {
@@ -2970,12 +4097,45 @@
             }
         });
 
+        document.getElementById('detailRemoteActionSheet').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailRemoteActions();
+            }
+        });
+
+        document.getElementById('detailStatusEditSheet').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailEditFaultStatus();
+            }
+        });
+
+        document.getElementById('detailStatusRecordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailStatusRecords();
+            }
+        });
+
         document.getElementById('editEnergyMode').addEventListener('change', toggleEntryEnergyTimeFields);
 
         document.addEventListener('keydown', function(e) {
             const entryEditModal = document.getElementById('entryEditModal');
             if (entryEditModal.classList.contains('active') && e.key === 'Escape') {
                 closeEntryEditModal();
+                return;
+            }
+            const statusRecordModal = document.getElementById('detailStatusRecordModal');
+            if (statusRecordModal.classList.contains('active') && e.key === 'Escape') {
+                closeDetailStatusRecords();
+                return;
+            }
+            const remoteSheet = document.getElementById('detailRemoteActionSheet');
+            if (remoteSheet.classList.contains('active') && e.key === 'Escape') {
+                closeDetailRemoteActions();
+                return;
+            }
+            const statusSheet = document.getElementById('detailStatusEditSheet');
+            if (statusSheet.classList.contains('active') && e.key === 'Escape') {
+                closeDetailEditFaultStatus();
                 return;
             }
             const modal = document.getElementById('imagePreviewModal');
