@@ -24,21 +24,45 @@ test('物料页：应支持从 URL device 参数恢复设备', () => {
 });
 
 test('物料页：设备来源不在默认列表时应加入下拉选项', () => {
+  assert.ok(/function\s+loadDeviceOptionsFromStorage\s*\(/.test(html));
+  assert.ok(/localStorage\.getItem\('devicesData'\)/.test(html));
+  assert.ok(/function\s+rebuildDeviceSearchData\s*\(/.test(html));
   assert.ok(/if \(!allDeviceOptions\.includes\(currentDevice\)\)/.test(html));
   assert.ok(/allDeviceOptions\.unshift\(currentDevice\)/.test(html));
 });
 
 test('物料页：设备标题应同步展示点位信息', () => {
-  assert.ok(/const\s+deviceLocationMap\s*=\s*\{[\s\S]*RCK113:\s*'静安区 南京西路商圈'/.test(html));
+  assert.ok(/function\s+buildRuntimeLocationMap\s*\(/.test(html));
+  assert.ok(/function\s+resolveDeviceLocationName\s*\(/.test(html));
+  assert.ok(/runtimeLocationMap\[locationCode\]/.test(html));
   assert.ok(/function\s+syncDeviceContext\s*\(deviceId\)\s*\{[\s\S]*boardDeviceLocation/.test(html));
   assert.ok(/id="boardDeviceLocation"/.test(html));
+});
+
+test('物料页：应在测试阶段一次性清空旧运维记录，避免串历史数据', () => {
+  assert.ok(/function\s+resetMaintenanceRecordsForTesting\s*\(/.test(html));
+  assert.ok(/localStorage\.removeItem\('deviceMaintenanceRecords'\)/.test(html));
+  assert.ok(/localStorage\.setItem\('maintenanceRecordsResetToken'/.test(html));
+  assert.ok(/resetMaintenanceRecordsForTesting\(\);\s*currentDevice = resolveInitialDevice\(\);/.test(html));
 });
 
 test('物料页：确认补充后应写入设备运维记录', () => {
   assert.ok(/function\s+createRefillMaintenanceRecord\s*\(/.test(html));
   assert.ok(/localStorage\.setItem\('deviceMaintenanceRecords'/.test(html));
   assert.ok(/type:\s*'补料'/.test(html));
+  assert.ok(/operatorName:\s*operator\.operatorName/.test(html));
+  assert.ok(/operatorPhone:\s*operator\.operatorPhone/.test(html));
+  assert.ok(/maintainerName:\s*operator\.operatorName/.test(html));
+  assert.ok(/maintainerPhone:\s*operator\.operatorPhone/.test(html));
   assert.ok(/createRefillMaintenanceRecord\(material,\s*oldRemaining,\s*nextCurrent\)/.test(html));
+});
+
+test('物料页：写入运维记录前应补齐运维人员和电话字段', () => {
+  assert.ok(/function\s+pickFirstValidValue\s*\(/.test(html));
+  assert.ok(/function\s+resolveOperatorByDevice\s*\(deviceId\)\s*\{[\s\S]*entryInfo\.operatorPhone[\s\S]*entryInfo\.mobile/.test(html));
+  assert.ok(/const\s+normalizedRecord\s*=\s*\{[\s\S]*operatorName:\s*normalizedOperatorName[\s\S]*operatorPhone:\s*normalizedOperatorPhone/.test(html));
+  assert.ok(/operator:\s*normalizedOperatorName/.test(html));
+  assert.ok(/phone:\s*normalizedOperatorPhone/.test(html));
 });
 
 test('物料页：补充弹窗中当前量仅允许整数', () => {

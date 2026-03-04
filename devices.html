@@ -3204,8 +3204,20 @@
         }
 
         function resolveMaintenanceOperatorInfo(record) {
-            const normalizedRecord = record && typeof record === 'object' ? record : {};
-            const rawDeviceId = normalizeEditableValue(normalizedRecord.deviceId, '');
+            const sourceRecord = record && typeof record === 'object' ? record : {};
+            const nestedRecord = sourceRecord.maintenanceInfo && typeof sourceRecord.maintenanceInfo === 'object'
+                ? sourceRecord.maintenanceInfo
+                : {};
+            const normalizedRecord = { ...sourceRecord, ...nestedRecord };
+            const rawDeviceId = normalizeEditableValue(
+                normalizedRecord.deviceId
+                || normalizedRecord.deviceCode
+                || normalizedRecord.deviceNo
+                || normalizedRecord.deviceNum
+                || normalizedRecord.machineId
+                || normalizedRecord.equipmentId,
+                ''
+            );
             const fallbackDeviceId = rawDeviceId || activeFaultActionDeviceId || currentDetailDeviceId;
             const targetDeviceId = normalizeDeviceId(fallbackDeviceId);
             const device = devicesData.find(item => normalizeDeviceId(item?.id) === targetDeviceId);
@@ -3221,6 +3233,8 @@
                 entryInfo.operatorName,
                 entryInfo.operator,
                 entryInfo.operatorDisplayName,
+                entryInfo.maintenanceOperator,
+                entryInfo.maintainerName,
                 entryInfo.contactName,
                 device?.operatorName,
                 '当前用户'
@@ -3230,6 +3244,7 @@
                 entryInfo.phone,
                 entryInfo.mobile,
                 entryInfo.operatorMobile,
+                entryInfo.maintainerPhone,
                 entryInfo.contactPhone,
                 device?.operatorPhone,
                 device?.operatorMobile,
@@ -3243,6 +3258,8 @@
                 normalizedRecord.operatorDisplayName,
                 normalizedRecord.staffName,
                 normalizedRecord.userName,
+                normalizedRecord.maintenanceUser?.name,
+                normalizedRecord['运维人员'],
                 normalizedRecord.operatorInfo?.name
             ) || fallbackName;
             const operatorPhone = pickValue(
@@ -3252,6 +3269,8 @@
                 normalizedRecord.contactPhone,
                 normalizedRecord.operatorMobile,
                 normalizedRecord.maintainerPhone,
+                normalizedRecord.maintenanceUser?.phone,
+                normalizedRecord['运维人员电话'],
                 normalizedRecord.operatorInfo?.phone
             ) || fallbackPhone;
             return {
@@ -3262,9 +3281,10 @@
 
         function normalizeDetailMaintenanceRecord(record) {
             const sourceRecord = record && typeof record === 'object' ? record : {};
-            const normalizedRecord = sourceRecord.maintenanceInfo && typeof sourceRecord.maintenanceInfo === 'object'
-                ? { ...sourceRecord.maintenanceInfo, ...sourceRecord }
-                : sourceRecord;
+            const nestedRecord = sourceRecord.maintenanceInfo && typeof sourceRecord.maintenanceInfo === 'object'
+                ? sourceRecord.maintenanceInfo
+                : {};
+            const normalizedRecord = { ...sourceRecord, ...nestedRecord };
             const pickValue = (...values) => {
                 for (const value of values) {
                     const normalized = normalizeEditableValue(value, '');
@@ -3279,6 +3299,7 @@
                 normalizedRecord.deviceNum,
                 normalizedRecord.machineId,
                 normalizedRecord.equipmentId,
+                normalizedRecord['设备编号'],
                 activeFaultActionDeviceId,
                 currentDetailDeviceId
             );
@@ -3297,6 +3318,7 @@
                     normalizedRecord.operateTime,
                     normalizedRecord.createdAt,
                     normalizedRecord.updatedAt,
+                    normalizedRecord['时间'],
                     '-'
                 ) || '-',
                 type: pickValue(
@@ -3313,6 +3335,7 @@
                     normalizedRecord.content,
                     normalizedRecord.contentText,
                     normalizedRecord['内容'],
+                    normalizedRecord['操作内容'],
                     normalizedRecord.note,
                     normalizedRecord.remark,
                     normalizedRecord.desc,
@@ -3329,12 +3352,14 @@
                     normalizedRecord.deviceNum,
                     normalizedRecord.machineId,
                     normalizedRecord.equipmentId,
+                    normalizedRecord['设备编号'],
                     fallbackDeviceId,
                     '-'
                 ) || '-',
                 deviceLocation: pickValue(
                     normalizedRecord.deviceLocation,
                     normalizedRecord.deviceAddress,
+                    normalizedRecord.deviceSite,
                     normalizedRecord.address,
                     normalizedRecord.siteAddress,
                     normalizedRecord['设备地址'],
@@ -3726,6 +3751,19 @@
             return normalizeEditableValue(value, '').toUpperCase();
         }
 
+        function resolveMaintenanceRecordDeviceId(record) {
+            const normalizedRecord = record && typeof record === 'object' ? record : {};
+            return normalizeDeviceId(
+                normalizedRecord.deviceId
+                || normalizedRecord.deviceCode
+                || normalizedRecord.deviceNo
+                || normalizedRecord.deviceNum
+                || normalizedRecord.machineId
+                || normalizedRecord.equipmentId
+                || normalizedRecord['设备编号']
+            );
+        }
+
         function normalizeTimeInputValue(value) {
             const raw = normalizeEditableValue(value, '');
             return /^\d{2}:\d{2}$/.test(raw) ? raw : '';
@@ -3769,7 +3807,7 @@
             }
             const targetDeviceId = normalizeDeviceId(deviceId);
             return records
-                .filter(record => normalizeDeviceId(record?.deviceId) === targetDeviceId)
+                .filter(record => resolveMaintenanceRecordDeviceId(record) === targetDeviceId)
                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
         }
 

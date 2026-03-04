@@ -1291,47 +1291,157 @@
         ];
 
         let currentRefillCode = null;
-        let currentDevice = 'RCK111';
+        let currentDevice = '';
         let allDeviceOptions = [];
-        const deviceLocationMap = {
-            RCK111: '徐汇区 漕河泾创新园',
-            RCK112: '浦东新区 张江创智天地',
-            RCK113: '静安区 南京西路商圈'
+        let deviceLocationMap = {};
+
+        const DEFAULT_DEVICE_CONTEXT = [
+            { id: 'RCK111', location: '徐汇区 漕河泾创新园' },
+            { id: 'RCK112', location: '浦东新区 张江创智天地' },
+            { id: 'RCK113', location: '静安区 南京西路商圈' }
+        ];
+
+        const LOCATION_NAME_MAP = {
+            k8298: '上海市中心店',
+            k8667: '北京朝阳门店',
+            k9001: '广州天河店',
+            k9002: '深圳南山店'
         };
 
+        const MAINTENANCE_RECORD_RESET_TOKEN = 'materials-maintenance-reset-2026-03-04-v2';
+
+        function normalizeDeviceId(value) {
+            return String(value || '').trim().toUpperCase();
+        }
+
+        function normalizeText(value, fallback = '') {
+            const raw = String(value || '').trim();
+            if (!raw || raw === '-' || raw === '未选择' || raw === '未获取') return fallback;
+            return raw;
+        }
+
+        function parseStoredArray(storageKey) {
+            try {
+                const raw = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                return Array.isArray(raw) ? raw : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function buildRuntimeLocationMap() {
+            const runtimeLocationMap = { ...LOCATION_NAME_MAP };
+            parseStoredArray('locationsData').forEach(item => {
+                const code = normalizeText(item?.code);
+                const name = normalizeText(item?.name);
+                if (code && name) {
+                    runtimeLocationMap[code] = name;
+                }
+            });
+            return runtimeLocationMap;
+        }
+
+        function resolveDeviceLocationName(device, runtimeLocationMap) {
+            if (!device || typeof device !== 'object') return '未配置点位';
+            const entryInfo = device.entryInfo || {};
+            const locationFromEntry = normalizeText(entryInfo.locationName) || normalizeText(entryInfo.locationAddress);
+            if (locationFromEntry) return locationFromEntry;
+            const locationCode = normalizeText(device.location);
+            if (!locationCode || device.entered === false) return '未入场';
+            return runtimeLocationMap[locationCode] || locationCode;
+        }
+
+        function loadDeviceOptionsFromStorage() {
+            const runtimeLocationMap = buildRuntimeLocationMap();
+            const storedDevices = parseStoredArray('devicesData');
+            if (!storedDevices.length) {
+                return DEFAULT_DEVICE_CONTEXT.slice();
+            }
+
+            const locationByDevice = {};
+            const ids = [];
+            storedDevices.forEach(device => {
+                const normalizedId = normalizeDeviceId(device?.id);
+                if (!normalizedId) return;
+                if (!locationByDevice[normalizedId]) {
+                    ids.push(normalizedId);
+                }
+                locationByDevice[normalizedId] = resolveDeviceLocationName(device, runtimeLocationMap);
+            });
+
+            if (!ids.length) {
+                return DEFAULT_DEVICE_CONTEXT.slice();
+            }
+
+            return ids.map(id => ({
+                id,
+                location: locationByDevice[id] || '未配置点位'
+            }));
+        }
+
+        function rebuildDeviceSearchData() {
+            const options = loadDeviceOptionsFromStorage();
+            allDeviceOptions = options.map(item => item.id);
+            deviceLocationMap = {};
+            options.forEach(item => {
+                deviceLocationMap[item.id] = item.location;
+            });
+        }
+
         function getDeviceLocation(deviceId) {
-            const normalized = String(deviceId || '').trim().toUpperCase();
+            const normalized = normalizeDeviceId(deviceId);
             return deviceLocationMap[normalized] || '未配置点位';
         }
 
         function syncDeviceContext(deviceId) {
-            const location = getDeviceLocation(deviceId);
-            document.getElementById('boardDeviceCode').textContent = deviceId;
+            const normalizedId = normalizeDeviceId(deviceId) || '-';
+            const location = getDeviceLocation(normalizedId);
+            document.getElementById('boardDeviceCode').textContent = normalizedId;
             document.getElementById('boardDeviceLocation').textContent = location;
             document.getElementById('boardSubtitle').textContent = `已选料仓 · ${location}`;
         }
 
         function isValidDeviceCode(value) {
-            return /^RCK[0-9A-Z]+$/i.test(String(value || '').trim());
+            return /^[A-Z0-9]{4,}$/i.test(normalizeDeviceId(value));
         }
 
         function resolveInitialDevice() {
             const params = new URLSearchParams(window.location.search || '');
-            const fromQuery = (params.get('device') || '').trim().toUpperCase();
+            const fromQuery = normalizeDeviceId(params.get('device'));
             if (isValidDeviceCode(fromQuery)) return fromQuery;
 
-            const fromSession = (sessionStorage.getItem('currentDevice') || '').trim().toUpperCase();
+            const fromSession = normalizeDeviceId(sessionStorage.getItem('currentDevice'));
             if (isValidDeviceCode(fromSession)) return fromSession;
 
-            return currentDevice;
+            return '';
         }
 
         function initDeviceSearch() {
-            allDeviceOptions = ['RCK111', 'RCK112', 'RCK113'];
-            if (!allDeviceOptions.includes(currentDevice)) {
+            rebuildDeviceSearchData();
+            if (currentDevice && !allDeviceOptions.includes(currentDevice)) {
                 allDeviceOptions.unshift(currentDevice);
+                if (!deviceLocationMap[currentDevice]) {
+                    deviceLocationMap[currentDevice] = '未配置点位';
+                }
+            }
+            if (!allDeviceOptions.length) {
+                allDeviceOptions = DEFAULT_DEVICE_CONTEXT.map(item => item.id);
+                deviceLocationMap = {};
+                DEFAULT_DEVICE_CONTEXT.forEach(item => {
+                    deviceLocationMap[item.id] = item.location;
+                });
+            }
+            if (!allDeviceOptions.includes(currentDevice)) {
+                currentDevice = allDeviceOptions[0];
             }
             document.getElementById('deviceSearchInput').value = currentDevice;
+        }
+
+        function resetMaintenanceRecordsForTesting() {
+            const appliedToken = localStorage.getItem('maintenanceRecordsResetToken');
+            if (appliedToken === MAINTENANCE_RECORD_RESET_TOKEN) return;
+            localStorage.removeItem('deviceMaintenanceRecords');
+            localStorage.setItem('maintenanceRecordsResetToken', MAINTENANCE_RECORD_RESET_TOKEN);
         }
 
         function handleDeviceInputEnter(event) {
@@ -1525,6 +1635,14 @@
             return `${material.name}阈值调整，当前量${formatAmount(nextRemaining)}${material.unit}`;
         }
 
+        function pickFirstValidValue(...values) {
+            for (const value of values) {
+                const normalized = normalizeText(value, '');
+                if (normalized) return normalized;
+            }
+            return '';
+        }
+
         function resolveOperatorByDevice(deviceId) {
             let devices = [];
             try {
@@ -1533,14 +1651,42 @@
                 devices = [];
             }
 
+            const targetDeviceId = normalizeDeviceId(deviceId);
             const match = Array.isArray(devices)
-                ? devices.find(item => String(item?.id || '').toUpperCase() === String(deviceId || '').toUpperCase())
+                ? devices.find(item => normalizeDeviceId(item?.id) === targetDeviceId)
                 : null;
             const entryInfo = match?.entryInfo || {};
 
+            const operatorName = pickFirstValidValue(
+                entryInfo.operatorName,
+                entryInfo.operator,
+                entryInfo.operatorDisplayName,
+                entryInfo.maintenanceOperator,
+                entryInfo.maintainerName,
+                entryInfo.contactName,
+                match?.operatorName,
+                match?.operator,
+                match?.maintainerName,
+                '当前用户'
+            ) || '当前用户';
+
+            const operatorPhone = pickFirstValidValue(
+                entryInfo.operatorPhone,
+                entryInfo.phone,
+                entryInfo.mobile,
+                entryInfo.operatorMobile,
+                entryInfo.maintainerPhone,
+                entryInfo.contactPhone,
+                match?.operatorPhone,
+                match?.phone,
+                match?.mobile,
+                match?.operatorMobile,
+                '-'
+            ) || '-';
+
             return {
-                operatorName: entryInfo.operatorName && entryInfo.operatorName !== '未选择' ? entryInfo.operatorName : '当前用户',
-                operatorPhone: entryInfo.operatorPhone && entryInfo.operatorPhone !== '-' ? entryInfo.operatorPhone : '-'
+                operatorName,
+                operatorPhone
             };
         }
 
@@ -1554,21 +1700,65 @@
             if (!Array.isArray(records)) {
                 records = [];
             }
-            records.unshift(record);
+            const targetDeviceId = normalizeDeviceId(record?.deviceId || record?.deviceCode || currentDevice);
+            const fallbackOperator = resolveOperatorByDevice(targetDeviceId);
+            const normalizedOperatorName = pickFirstValidValue(
+                record?.operatorName,
+                record?.operator,
+                record?.maintainerName,
+                record?.maintenanceOperator,
+                fallbackOperator.operatorName,
+                '当前用户'
+            ) || '当前用户';
+            const normalizedOperatorPhone = pickFirstValidValue(
+                record?.operatorPhone,
+                record?.phone,
+                record?.mobile,
+                record?.operatorMobile,
+                record?.maintainerPhone,
+                fallbackOperator.operatorPhone,
+                '-'
+            ) || '-';
+            const normalizedLocation = pickFirstValidValue(
+                record?.deviceLocation,
+                record?.deviceAddress,
+                record?.address,
+                getDeviceLocation(targetDeviceId || currentDevice),
+                '未配置点位'
+            ) || '未配置点位';
+            const normalizedRecord = {
+                ...record,
+                deviceId: targetDeviceId || currentDevice,
+                deviceLocation: normalizedLocation,
+                deviceAddress: normalizedLocation,
+                operatorName: normalizedOperatorName,
+                operatorPhone: normalizedOperatorPhone,
+                operator: normalizedOperatorName,
+                phone: normalizedOperatorPhone,
+                maintainerName: normalizedOperatorName,
+                maintainerPhone: normalizedOperatorPhone
+            };
+            records.unshift(normalizedRecord);
             localStorage.setItem('deviceMaintenanceRecords', JSON.stringify(records.slice(0, 500)));
         }
 
         function createRefillMaintenanceRecord(material, oldRemaining, nextRemaining) {
             const operator = resolveOperatorByDevice(currentDevice);
+            const deviceLocation = getDeviceLocation(currentDevice);
             appendMaintenanceRecord({
                 id: `MR${Date.now()}`,
                 time: formatDateTimeWithSeconds(),
                 type: '补料',
                 content: buildRefillRecordContent(material, oldRemaining, nextRemaining),
                 deviceId: currentDevice,
-                deviceLocation: getDeviceLocation(currentDevice),
+                deviceLocation,
+                deviceAddress: deviceLocation,
                 operatorName: operator.operatorName,
                 operatorPhone: operator.operatorPhone,
+                operator: operator.operatorName,
+                phone: operator.operatorPhone,
+                maintainerName: operator.operatorName,
+                maintainerPhone: operator.operatorPhone,
                 materialCode: material.code
             });
         }
@@ -1646,6 +1836,7 @@
             }
         });
 
+        resetMaintenanceRecordsForTesting();
         currentDevice = resolveInitialDevice();
         initDeviceSearch();
         document.getElementById('deviceSearchInput').value = currentDevice;
