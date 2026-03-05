@@ -3411,6 +3411,28 @@
             `;
         }
 
+        function ensureMaintenanceContactRowsInCardHtml(cardHtml, record) {
+            const html = typeof cardHtml === 'string' ? cardHtml : '';
+            if (html.includes('运维人员电话') && html.includes('运维人员')) {
+                return html;
+            }
+            const normalized = normalizeDetailMaintenanceRecord(record);
+            const extraRows = `
+                <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName">
+                    <span class="detail-maint-record-label">运维人员</span>
+                    <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
+                </div>
+                <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone">
+                    <span class="detail-maint-record-label">运维人员电话</span>
+                    <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
+                </div>
+            `;
+            if (html.includes('</article>')) {
+                return html.replace('</article>', `${extraRows}</article>`);
+            }
+            return `${html}${extraRows}`;
+        }
+
         function ensureDetailMaintenanceCardContactRows(records, container) {
             if (!container || !Array.isArray(records) || !records.length) return;
             const cards = container.querySelectorAll('.detail-maint-record-card');
@@ -3468,7 +3490,7 @@
                 if (tabKey === 'abnormal') {
                     return renderDetailAbnormalRecordCard(item);
                 }
-                return renderDetailMaintenanceRecordCard(item);
+                return ensureMaintenanceContactRowsInCardHtml(renderDetailMaintenanceRecordCard(item), item);
             }).join('');
         }
 
@@ -3786,7 +3808,11 @@
         }
 
         function resolveMaintenanceRecordDeviceId(record) {
-            const normalizedRecord = record && typeof record === 'object' ? record : {};
+            const sourceRecord = record && typeof record === 'object' ? record : {};
+            const nestedRecord = sourceRecord.maintenanceInfo && typeof sourceRecord.maintenanceInfo === 'object'
+                ? sourceRecord.maintenanceInfo
+                : {};
+            const normalizedRecord = { ...sourceRecord, ...nestedRecord };
             return normalizeDeviceId(
                 normalizedRecord.deviceId
                 || normalizedRecord.deviceCode
