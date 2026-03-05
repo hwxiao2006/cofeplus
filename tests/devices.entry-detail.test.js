@@ -207,6 +207,8 @@ test('状态记录双Tab应使用统一卡片与稳定容器避免切换跳动',
 
 test('运维记录卡片桌面端应使用固定列布局避免信息错位', () => {
   assert.ok(/\.detail-maint-record-row\s*\{[\s\S]*grid-template-columns:\s*120px\s+minmax\(0,\s*1fr\)/.test(devicesHtml));
+  assert.ok(/#detailStatusRecordBody\s+\.detail-maint-record-row\[data-maint-row=\"operatorName\"\][\s\S]*display:\s*grid\s*!important/.test(devicesHtml));
+  assert.ok(/#detailStatusRecordBody\s+\.detail-maint-record-row\[data-maint-row=\"operatorPhone\"\][\s\S]*display:\s*grid\s*!important/.test(devicesHtml));
   assert.ok(/\.detail-maint-record-label\s*\{[\s\S]*line-height:\s*1\.6/.test(devicesHtml));
   assert.ok(/\.detail-maint-record-value\s*\{[\s\S]*line-height:\s*1\.6/.test(devicesHtml));
 });
