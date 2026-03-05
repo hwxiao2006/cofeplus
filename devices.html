@@ -3407,11 +3407,11 @@
                         <span class="detail-maint-record-label">设备地址</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.deviceLocation)}</span>
                     </div>
-                    <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName">
+                    <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName" style="display:grid;visibility:visible;opacity:1;">
                         <span class="detail-maint-record-label">运维人员</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
                     </div>
-                    <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone">
+                    <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone" style="display:grid;visibility:visible;opacity:1;">
                         <span class="detail-maint-record-label">运维人员电话</span>
                         <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
                     </div>
@@ -3426,11 +3426,11 @@
             }
             const normalized = normalizeDetailMaintenanceRecord(record);
             const extraRows = `
-                <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName">
+                <div class="detail-maint-record-row detail-maint-operator-row" data-maint-row="operatorName" style="display:grid;visibility:visible;opacity:1;">
                     <span class="detail-maint-record-label">运维人员</span>
                     <span class="detail-maint-record-value">${escapeHtml(normalized.operatorName)}</span>
                 </div>
-                <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone">
+                <div class="detail-maint-record-row detail-maint-phone-row" data-maint-row="operatorPhone" style="display:grid;visibility:visible;opacity:1;">
                     <span class="detail-maint-record-label">运维人员电话</span>
                     <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
                 </div>
@@ -3448,6 +3448,8 @@
             cards.forEach((card, index) => {
                 const sourceRecord = records[index] || {};
                 const normalized = normalizeDetailMaintenanceRecord(sourceRecord);
+                card.style.maxHeight = 'none';
+                card.style.height = 'auto';
                 if (!card.querySelector('.detail-maint-operator-row')) {
                     const operatorRow = document.createElement('div');
                     operatorRow.className = 'detail-maint-record-row detail-maint-operator-row';
@@ -3467,6 +3469,22 @@
                         <span class="detail-maint-record-value">${escapeHtml(normalized.operatorPhone)}</span>
                     `;
                     card.appendChild(phoneRow);
+                }
+                const operatorRowNode = card.querySelector('.detail-maint-operator-row');
+                if (operatorRowNode) {
+                    operatorRowNode.style.display = 'grid';
+                    operatorRowNode.style.visibility = 'visible';
+                    operatorRowNode.style.opacity = '1';
+                    const valueNode = operatorRowNode.querySelector('.detail-maint-record-value');
+                    if (valueNode) valueNode.textContent = normalized.operatorName || '-';
+                }
+                const phoneRowNode = card.querySelector('.detail-maint-phone-row');
+                if (phoneRowNode) {
+                    phoneRowNode.style.display = 'grid';
+                    phoneRowNode.style.visibility = 'visible';
+                    phoneRowNode.style.opacity = '1';
+                    const valueNode = phoneRowNode.querySelector('.detail-maint-record-value');
+                    if (valueNode) valueNode.textContent = normalized.operatorPhone || '-';
                 }
             });
         }
