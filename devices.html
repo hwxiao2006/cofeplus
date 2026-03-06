@@ -117,6 +117,44 @@
             margin-top: 2px;
         }
 
+
+        .sidebar-login {
+            margin-top: 8px;
+            padding-top: 8px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            border-top: 1px solid rgba(219, 234, 254, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        .sidebar-login-name {
+            color: rgba(241, 245, 249, 0.86);
+            font-weight: 500;
+            line-height: 1.2;
+            flex: 0 0 auto;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone {
+            color: rgba(219, 234, 254, 0.58);
+            line-height: 1.2;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.46);
+            margin: 0 6px;
+        }
+
         .sidebar-search {
             padding: 20px 20px 12px;
         }
@@ -2350,6 +2388,11 @@
                     <div class="brand-title">运营控制台</div>
                 </div>
                 <div class="brand-version">Prototype v0</div>
+
+                <div class="sidebar-login">
+                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                </div>
             </div>
             
             <nav class="sidebar-nav">
@@ -2701,6 +2744,55 @@
     <div class="toast" id="toast"></div>
 
     <script>
+
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
+            name: '运营管理员',
+            phone: '13800138000'
+        };
+
+        function getSidebarLoginProfile() {
+            try {
+                const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
+                if (!raw) return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+                const parsed = JSON.parse(raw);
+                return {
+                    name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                };
+            } catch (e) {
+                return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+            }
+        }
+
+        function renderSidebarLoginProfile() {
+            const profile = getSidebarLoginProfile();
+            const nameNode = document.getElementById('sidebarLoginName');
+            const phoneNode = document.getElementById('sidebarLoginPhone');
+            if (nameNode) {
+                nameNode.textContent = profile.name;
+            }
+            if (phoneNode) {
+                phoneNode.textContent = profile.phone;
+            }
+            fitSidebarLoginInline();
+        }
+
+        function fitSidebarLoginInline() {
+            const wrap = document.querySelector('.sidebar-login');
+            if (!wrap) return;
+            let size = 11;
+            wrap.style.fontSize = `${size}px`;
+            while (wrap.scrollWidth > wrap.clientWidth && size > 9) {
+                size -= 0.5;
+                wrap.style.fontSize = `${size}px`;
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            fitSidebarLoginInline();
+        });
+
         // 映射数据
         const locationMap = {
             'k8298': '上海市中心店',
@@ -2947,6 +3039,7 @@
         }
 
         function init() {
+            renderSidebarLoginProfile();
             const stored = JSON.parse(localStorage.getItem('devicesData') || '[]');
             if (stored.length === 0) {
                 devicesData = normalizeDevices(defaultDevicesData);

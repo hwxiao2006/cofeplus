@@ -152,3 +152,13 @@ test('标签文案保存后应支持按勾选同步到同标签商品', () => {
   assert.ok(/tagSyncState\s*=\s*\{[\s\S]*affectedEntries/.test(html));
   assert.ok(/toggleTagSyncProduct\('.*?',\s*this\.checked\)/.test(html));
 });
+
+test('标签编辑抽屉应支持设置附加价格并默认按 0 保存', () => {
+  assert.ok(html.includes('附加价格'));
+  assert.ok(html.includes('id="drawerTagExtraPrice"'));
+  assert.ok(/function\s+getTagExtraPrice\s*\(/.test(html));
+  assert.ok(/productData\.tagExtraPrices/.test(html));
+  assert.ok(/const\s+extraPriceInput\s*=\s*document\.getElementById\('drawerTagExtraPrice'\)/.test(html));
+  assert.ok(/setTagExtraPrice\(cfg\.specKey,\s*drawerSelectedTagKey,\s*extraPriceValue\)/.test(html));
+  assert.ok(/tagExtraPrices:\s*productData\.tagExtraPrices\s*\|\|\s*\{\}/.test(html));
+});

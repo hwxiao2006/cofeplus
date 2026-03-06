@@ -88,7 +88,11 @@ function loadMenuContext() {
 
   const context = {
     console,
-    window: { location: { pathname: '/menu-management.html', search: '', href: '' }, history: { replaceState() {} } },
+    window: {
+      location: { pathname: '/menu-management.html', search: '', href: '' },
+      history: { replaceState() {} },
+      addEventListener() {}
+    },
     localStorage,
     sessionStorage,
     document: {
@@ -257,6 +261,73 @@ test('点单屏预览：右侧标题仅显示分类名，不带“商品”', ()
   const title = ctx.document.getElementById('orderPreviewProductsTitle').textContent;
   assert.ok(title.includes('3D Latte Art'));
   assert.ok(!title.includes('商品'));
+});
+
+test('点单屏预览：应优先读取商品自定义标签附加价格', () => {
+  const ctx = loadMenuContext();
+  const product = {
+    tagI18n: {
+      syrup: {
+        榛果: { zh: '榛果', en: 'Hazelnut' }
+      }
+    },
+    tagExtraPrices: {
+      syrup: {
+        榛果: 1.5
+      }
+    }
+  };
+
+  const items = ctx.getOrderPreviewOptionItems(product, 'syrup', 'zh');
+  const hazelnut = items.find(item => item.key === '榛果');
+
+  assert.ok(hazelnut);
+  assert.strictEqual(hazelnut.extraPrice, 1.5);
+});
+
+test('点单屏详情预览：选择带附加价的标签后应更新顶部价格', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    Test: {
+      icon: '☕',
+      items: [{
+        id: 101,
+        names: { zh: '测试饮品' },
+        descs: { zh: '测试描述' },
+        price: 10,
+        defaultOptions: {
+          beans: '金奖黑咖-浓香意式',
+          sweetness: '无糖',
+          temperature: '热',
+          strength: '标准'
+        },
+        specs: {
+          zh: {
+            beans: '金奖黑咖-浓香意式',
+            sweetness: '无糖',
+            temperature: '热',
+            strength: '标准'
+          }
+        },
+        tagI18n: {
+          syrup: {
+            榛果: { zh: '榛果' }
+          }
+        },
+        tagExtraPrices: {
+          syrup: {
+            榛果: 2
+          }
+        }
+      }]
+    }
+  };
+
+  ctx.openOrderPreviewProductDetail(101, 'Test');
+  ctx.selectOrderPreviewDetailOption('syrup', encodeURIComponent('榛果'));
+
+  const detailHtml = ctx.document.getElementById('orderPreviewDetailOverlay').innerHTML;
+  assert.ok(/[¥$]\s?12\.00/.test(detailHtml));
 });
 
 test('点单屏预览：有原价时应显示划线原价', () => {

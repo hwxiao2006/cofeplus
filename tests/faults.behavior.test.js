@@ -27,6 +27,9 @@ function loadFaultContext(options = {}) {
         value: '',
         innerHTML: '',
         textContent: '',
+        style: {},
+        clientWidth: id === 'sidebarLoginWrap' ? 180 : 240,
+        scrollWidth: id === 'sidebarLoginWrap' ? 180 : 240,
         dataset: {},
         classList: {
           add(name) { classes.add(name); },
@@ -56,10 +59,19 @@ function loadFaultContext(options = {}) {
     console,
     window: {
       location: { href: '', pathname: '/faults.html', search: '' },
-      innerWidth: options.innerWidth || 1280
+      innerWidth: options.innerWidth || 1280,
+      addEventListener() {}
     },
     document: {
-      getElementById: getElement
+      getElementById: getElement,
+      querySelector(selector) {
+        if (selector === '.sidebar-login') return getElement('sidebarLoginWrap');
+        return null;
+      }
+    },
+    localStorage: {
+      getItem() { return null; },
+      setItem() {}
     },
     sessionStorage: {
       setItem(key, value) { sessionStore[key] = String(value); },
@@ -120,6 +132,13 @@ test('故障列表：操作按钮应只绑定远程操作动作', () => {
 
 test('故障列表：页面不应展示状态筛选Tab', () => {
   assert.ok(!faultsHtml.includes('id="tabs"'));
+});
+
+test('故障页：加载后应渲染默认登录名称和电话', () => {
+  const ctx = loadFaultContext();
+
+  assert.strictEqual(ctx.document.getElementById('sidebarLoginName').textContent, '运营管理员');
+  assert.strictEqual(ctx.document.getElementById('sidebarLoginPhone').textContent, '13800138000');
 });
 
 test('远程操作：点击后应显示图一菜单弹层', () => {

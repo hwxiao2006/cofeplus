@@ -108,6 +108,44 @@
             padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
         }
 
+
+        .sidebar-login {
+            margin-top: 8px;
+            padding-top: 8px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            border-top: 1px solid rgba(219, 234, 254, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        .sidebar-login-name {
+            color: rgba(241, 245, 249, 0.86);
+            font-weight: 500;
+            line-height: 1.2;
+            flex: 0 0 auto;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone {
+            color: rgba(219, 234, 254, 0.58);
+            line-height: 1.2;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.46);
+            margin: 0 6px;
+        }
+
         .sidebar-selectors {
             padding: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -3028,6 +3066,11 @@
                     <div class="brand-title">运营控制台</div>
                 </div>
                 <div class="brand-version">Prototype v0</div>
+
+                <div class="sidebar-login">
+                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                </div>
             </div>
             
             <nav class="sidebar-nav">
@@ -3469,6 +3512,55 @@
     <div class="toast" id="toast"></div>
 
     <script>
+
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
+            name: '运营管理员',
+            phone: '13800138000'
+        };
+
+        function getSidebarLoginProfile() {
+            try {
+                const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
+                if (!raw) return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+                const parsed = JSON.parse(raw);
+                return {
+                    name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                };
+            } catch (e) {
+                return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+            }
+        }
+
+        function renderSidebarLoginProfile() {
+            const profile = getSidebarLoginProfile();
+            const nameNode = document.getElementById('sidebarLoginName');
+            const phoneNode = document.getElementById('sidebarLoginPhone');
+            if (nameNode) {
+                nameNode.textContent = profile.name;
+            }
+            if (phoneNode) {
+                phoneNode.textContent = profile.phone;
+            }
+            fitSidebarLoginInline();
+        }
+
+        function fitSidebarLoginInline() {
+            const wrap = document.querySelector('.sidebar-login');
+            if (!wrap) return;
+            let size = 11;
+            wrap.style.fontSize = `${size}px`;
+            while (wrap.scrollWidth > wrap.clientWidth && size > 9) {
+                size -= 0.5;
+                wrap.style.fontSize = `${size}px`;
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            fitSidebarLoginInline();
+        });
+
         // ==================== 设备配置（可动态修改） ====================
         let deviceConfig = {
             'RCK111': {
@@ -3684,6 +3776,7 @@
 
         // ==================== 初始化 ====================
         function init() {
+            renderSidebarLoginProfile();
             applySavedProductEdits();
             applyInitialViewFromUrl();
             initDeviceSearch();
@@ -4673,6 +4766,21 @@
             return list.find(item => item.key === key) || null;
         }
 
+        function normalizeOrderPreviewExtraPrice(value) {
+            const number = Number(value);
+            if (!Number.isFinite(number) || number < 0) return 0;
+            return Math.round(number * 100) / 100;
+        }
+
+        function getOrderPreviewOptionExtraPrice(product, specKey, key) {
+            const extraPriceMap = product?.tagExtraPrices?.[specKey];
+            if (extraPriceMap && Object.prototype.hasOwnProperty.call(extraPriceMap, key)) {
+                return normalizeOrderPreviewExtraPrice(extraPriceMap[key]);
+            }
+            const libraryItem = getPreviewOptionLibraryItem(specKey, key);
+            return normalizeOrderPreviewExtraPrice(libraryItem?.extraPrice);
+        }
+
         function getOrderPreviewOptionLabel(product, specKey, key, lang) {
             const tagI18n = product?.tagI18n?.[specKey]?.[key];
             if (tagI18n) {
@@ -4747,14 +4855,22 @@
             orderedKeys.push(...Array.from(keys));
 
             return orderedKeys.map(key => {
-                const libraryItem = getPreviewOptionLibraryItem(specKey, key);
                 return {
                     key,
                     label: getOrderPreviewOptionLabel(product, specKey, key, lang),
                     desc: getOrderPreviewOptionDesc(product, specKey, key, lang),
-                    extraPrice: libraryItem?.extraPrice || 0
+                    extraPrice: getOrderPreviewOptionExtraPrice(product, specKey, key)
                 };
             });
+        }
+
+        function getOrderPreviewSelectedExtraPrice(product) {
+            if (!product || !orderPreviewDetailState.selected || typeof orderPreviewDetailState.selected !== 'object') {
+                return 0;
+            }
+            return Object.entries(orderPreviewDetailState.selected).reduce((sum, [specKey, key]) => {
+                return sum + getOrderPreviewOptionExtraPrice(product, specKey, key);
+            }, 0);
         }
 
         function getOrderPreviewPreferredOptionKey(product, specKey, lang) {
@@ -4876,7 +4992,7 @@
             const summaryDesc = getProductDescription(product, previewLang);
             const detailDesc = product.descs?.[previewLang] || product.descs?.zh || product.descs?.en || summaryDesc || '';
             const priceInfo = getProductPriceInfo(product);
-            const displayPrice = formatOrderPreviewDisplayMoney(priceInfo.preTax, priceInfo.currency);
+            const displayPrice = formatOrderPreviewDisplayMoney(priceInfo.preTax + getOrderPreviewSelectedExtraPrice(product), priceInfo.currency);
             const cupText = getOrderPreviewCupsizeText(product, previewLang);
             const quantity = Number(orderPreviewDetailState.quantity) > 0 ? Number(orderPreviewDetailState.quantity) : 1;
 

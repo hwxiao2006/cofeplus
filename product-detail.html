@@ -108,6 +108,44 @@
             padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
         }
 
+
+        .sidebar-login {
+            margin-top: 8px;
+            padding-top: 8px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            border-top: 1px solid rgba(219, 234, 254, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        .sidebar-login-name {
+            color: rgba(241, 245, 249, 0.86);
+            font-weight: 500;
+            line-height: 1.2;
+            flex: 0 0 auto;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone {
+            color: rgba(219, 234, 254, 0.58);
+            line-height: 1.2;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.46);
+            margin: 0 6px;
+        }
+
         .sidebar-nav {
             flex: 1;
             padding: 8px var(--sidebar-nav-padding-x);
@@ -1114,6 +1152,17 @@
             margin-top: 14px;
         }
 
+        .tag-extra-price-group {
+            max-width: 220px;
+            margin-top: 14px;
+        }
+
+        .tag-extra-price-hint {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .tag-default-check {
             display: inline-flex;
             align-items: center;
@@ -1384,6 +1433,11 @@
                     <div class="brand-title">运营控制台</div>
                 </div>
                 <div class="brand-version">Prototype v0</div>
+
+                <div class="sidebar-login">
+                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                </div>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-section">
@@ -1724,6 +1778,55 @@
     <div class="toast" id="toast"></div>
 
     <script>
+
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
+            name: '运营管理员',
+            phone: '13800138000'
+        };
+
+        function getSidebarLoginProfile() {
+            try {
+                const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
+                if (!raw) return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+                const parsed = JSON.parse(raw);
+                return {
+                    name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                };
+            } catch (e) {
+                return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+            }
+        }
+
+        function renderSidebarLoginProfile() {
+            const profile = getSidebarLoginProfile();
+            const nameNode = document.getElementById('sidebarLoginName');
+            const phoneNode = document.getElementById('sidebarLoginPhone');
+            if (nameNode) {
+                nameNode.textContent = profile.name;
+            }
+            if (phoneNode) {
+                phoneNode.textContent = profile.phone;
+            }
+            fitSidebarLoginInline();
+        }
+
+        function fitSidebarLoginInline() {
+            const wrap = document.querySelector('.sidebar-login');
+            if (!wrap) return;
+            let size = 11;
+            wrap.style.fontSize = `${size}px`;
+            while (wrap.scrollWidth > wrap.clientWidth && size > 9) {
+                size -= 0.5;
+                wrap.style.fontSize = `${size}px`;
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            fitSidebarLoginInline();
+        });
+
         // 设备配置
         const deviceConfig = {
             'RCK111': { langs: ['zh', 'en'], langNames: { 'zh': '中文', 'en': 'English' } },
@@ -1821,6 +1924,35 @@
                 if (!productData.tagI18n[specKey][key]) productData.tagI18n[specKey][key] = {};
                 if (!productData.tagI18n[specKey][key].zh) productData.tagI18n[specKey][key].zh = key;
             });
+        }
+
+        function ensureTagExtraPriceStore(specKey, targetProduct = productData) {
+            if (!targetProduct || typeof targetProduct !== 'object') return {};
+            if (!targetProduct.tagExtraPrices || typeof targetProduct.tagExtraPrices !== 'object') {
+                targetProduct.tagExtraPrices = {};
+            }
+            if (specKey && (!targetProduct.tagExtraPrices[specKey] || typeof targetProduct.tagExtraPrices[specKey] !== 'object')) {
+                targetProduct.tagExtraPrices[specKey] = {};
+            }
+            return specKey ? targetProduct.tagExtraPrices[specKey] : targetProduct.tagExtraPrices;
+        }
+
+        function normalizeTagExtraPrice(value) {
+            const number = Number(value);
+            if (!Number.isFinite(number) || number < 0) return 0;
+            return Math.round(number * 100) / 100;
+        }
+
+        function getTagExtraPrice(specKey, tagKey, targetProduct = productData) {
+            if (!tagKey) return 0;
+            const store = ensureTagExtraPriceStore(specKey, targetProduct);
+            return normalizeTagExtraPrice(store[tagKey]);
+        }
+
+        function setTagExtraPrice(specKey, tagKey, value, targetProduct = productData) {
+            if (!specKey || !tagKey || !targetProduct || typeof targetProduct !== 'object') return;
+            const store = ensureTagExtraPriceStore(specKey, targetProduct);
+            store[tagKey] = normalizeTagExtraPrice(value);
         }
 
         function getTagLabel(specKey, tagKey, lang) {
@@ -2767,6 +2899,7 @@
         }
 
         function initPage() {
+            renderSidebarLoginProfile();
             switchProductDetailTab('basic');
             // 解析 URL 参数
             const params = new URLSearchParams(window.location.search);
@@ -3127,6 +3260,14 @@
             `).join('');
 
             html += `
+                <div class="form-group tag-extra-price-group">
+                    <label class="form-label">附加价格</label>
+                    <input type="number" class="form-input" id="drawerTagExtraPrice" min="0" step="0.01" value="${getTagExtraPrice(cfg.specKey, drawerSelectedTagKey) || 0}" placeholder="默认 0">
+                    <div class="tag-extra-price-hint">客户选择该标签时额外加收，默认 0</div>
+                </div>
+            `;
+
+            html += `
                 <div class="tag-default-wrap">
                     <label class="tag-default-check">
                         <input type="checkbox" id="drawerTagDefaultSingle" ${(currentDefault && currentDefault === drawerSelectedTagKey) ? 'checked' : ''}>
@@ -3151,11 +3292,16 @@
                 else delete productData.tagI18n[cfg.specKey][drawerSelectedTagKey][lang];
             });
 
+            const extraPriceInput = document.getElementById('drawerTagExtraPrice');
+            const extraPriceValue = extraPriceInput ? extraPriceInput.value : 0;
+            setTagExtraPrice(cfg.specKey, drawerSelectedTagKey, extraPriceValue);
+
             const shouldDefault = !!(document.getElementById('drawerTagDefaultSingle') && document.getElementById('drawerTagDefaultSingle').checked);
             if (shouldDefault) setDefaultOption(cfg.specKey, drawerSelectedTagKey);
             if (!shouldDefault) setDefaultOption(cfg.specKey, '');
 
             refreshOptionListLabels(cfg.specKey);
+            updatePricePreview();
             const selectedKey = getCurrentSelectedTagKey(cfg.specKey);
             const effectiveKey = getDefaultOption(cfg.specKey) || selectedKey || drawerSelectedTagKey;
             if (effectiveKey) {
@@ -3296,6 +3442,7 @@
                 onSale: document.getElementById('onSaleSwitch').checked,
                 specs: productData.specs || {},
                 defaultOptions: productData.defaultOptions || {},
+                tagExtraPrices: productData.tagExtraPrices || {},
                 optionRecipes: productData.optionRecipes || {},
                 optionRecipeLinks: productData.optionRecipeLinks || {},
                 options: getSelectedOptions()
