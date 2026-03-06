@@ -2,6 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const faultsHtml = fs.readFileSync(path.join(__dirname, '..', 'faults.html'), 'utf8');
 
 function loadFaultContext(options = {}) {
   const htmlPath = path.join(__dirname, '..', 'faults.html');
@@ -85,38 +86,40 @@ function test(name, fn) {
   }
 }
 
-test('故障列表：故障设备应显示四个操作按钮', () => {
+test('故障列表：卡片中应仅保留远程操作按钮', () => {
   const ctx = loadFaultContext();
-  ctx.currentTab = 'fault';
   ctx.renderList();
 
   const listHtml = ctx.document.getElementById('list').innerHTML;
   assert.ok(listHtml.includes('fault-actions'));
   assert.ok(listHtml.includes('远程操作'));
-  assert.ok(listHtml.includes('编辑状态'));
-  assert.ok(listHtml.includes('物料'));
-  assert.ok(listHtml.includes('状态记录'));
+  assert.ok(!listHtml.includes('编辑状态'));
+  assert.ok(!listHtml.includes('物料'));
+  assert.ok(!listHtml.includes('状态记录'));
 });
 
-test('故障列表：非故障设备不显示故障操作按钮', () => {
+test('故障列表：应只展示故障设备', () => {
   const ctx = loadFaultContext();
-  ctx.currentTab = 'normal';
   ctx.renderList();
 
   const listHtml = ctx.document.getElementById('list').innerHTML;
-  assert.ok(!listHtml.includes('fault-actions'));
+  assert.ok(listHtml.includes('RCK019'));
+  assert.ok(!listHtml.includes('RCK021'));
 });
 
-test('故障列表：操作按钮应绑定对应动作', () => {
+test('故障列表：操作按钮应只绑定远程操作动作', () => {
   const ctx = loadFaultContext();
-  ctx.currentTab = 'fault';
   ctx.renderList();
 
   const listHtml = ctx.document.getElementById('list').innerHTML;
   assert.ok(listHtml.includes("openRemoteActions('RCK019')"));
-  assert.ok(listHtml.includes("openEditStatus('RCK019')"));
-  assert.ok(listHtml.includes("goToDeviceMaterials('RCK019')"));
-  assert.ok(listHtml.includes("openStatusRecords('RCK019')"));
+  assert.ok(!listHtml.includes("openEditStatus('RCK019')"));
+  assert.ok(!listHtml.includes("goToDeviceMaterials('RCK019')"));
+  assert.ok(!listHtml.includes("openStatusRecords('RCK019')"));
+});
+
+test('故障列表：页面不应展示状态筛选Tab', () => {
+  assert.ok(!faultsHtml.includes('id="tabs"'));
 });
 
 test('远程操作：点击后应显示图一菜单弹层', () => {

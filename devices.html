@@ -59,6 +59,9 @@
 
         /* 侧边栏 - 新设计 */
         .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
             width: 240px;
             background: var(--bg-sidebar);
             color: #dbeafe;
@@ -73,7 +76,7 @@
         }
 
         .sidebar-header {
-            padding: 24px;
+            padding: 24px var(--sidebar-header-padding-x);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -110,7 +113,7 @@
         .brand-version {
             font-size: 12px;
             color: rgba(219, 234, 254, 0.55);
-            margin-left: 54px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
             margin-top: 2px;
         }
 
@@ -189,7 +192,7 @@
 
         .sidebar-nav {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px var(--sidebar-nav-padding-x);
             min-height: 0;
             overflow-y: auto;
         }
@@ -204,7 +207,7 @@
             color: rgba(186, 230, 253, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 8px 14px;
+            padding: 8px var(--sidebar-section-title-padding-x);
             margin-bottom: 4px;
         }
 
@@ -610,6 +613,9 @@
             border-radius: 14px;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            max-height: 88vh;
         }
 
         .detail-modal-header {
@@ -637,22 +643,40 @@
         }
 
         .detail-modal-body {
-            padding: 14px 16px;
-            max-height: 70vh;
+            padding: 18px;
+            max-height: none;
             overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .detail-main {
+            min-width: 0;
         }
 
         .detail-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
         }
 
+        .detail-section {
+            scroll-margin-top: 10px;
+        }
+
+        .panel-card,
         .detail-card {
             border: 1px solid var(--border-light);
             border-radius: 12px;
             background: #fff;
-            padding: 12px 14px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
         .detail-card-entry-all {
@@ -680,19 +704,20 @@
         }
 
         .detail-card-title {
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
 
         .detail-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 10px 0;
+            display: grid;
+            grid-template-columns: 140px minmax(0, 1fr);
+            align-items: start;
+            gap: 12px;
+            padding: 11px 0;
             border-bottom: 1px solid var(--border-light);
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
         }
 
@@ -700,10 +725,20 @@
             border-bottom: none;
         }
 
+        .detail-row span {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
         .detail-row strong {
             color: var(--text-primary);
             text-align: right;
             word-break: break-word;
+            line-height: 1.55;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .detail-entry-all {
@@ -756,6 +791,121 @@
             color: var(--text-primary);
             font-weight: 600;
         }
+
+        .detail-aside {
+            min-width: 0;
+        }
+
+        .detail-aside-stack {
+            position: sticky;
+            top: 2px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-side-card {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .detail-side-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .detail-anchor-list {
+            display: grid;
+            gap: 6px;
+        }
+
+        .detail-anchor-btn {
+            width: 100%;
+            border: 1px solid transparent;
+            background: #f8fafc;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .detail-anchor-btn:hover {
+            color: var(--text-primary);
+            border-color: #dbeafe;
+        }
+
+        .detail-anchor-btn.active {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        .detail-side-state-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-side-state-chip {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-radius: 999px;
+            border: 1px solid var(--border-light);
+            background: #f8fafc;
+            padding: 6px 10px;
+            line-height: 1.2;
+        }
+
+        .detail-side-state-chip.ok {
+            border-color: #86efac;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .detail-side-state-chip.warn {
+            border-color: #fcd34d;
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .detail-side-state-chip.danger {
+            border-color: #fca5a5;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .detail-side-action-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-side-action-btn {
+            width: 100%;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .detail-side-action-btn:hover {
+            border-color: #bfdbfe;
+            background: #f8fafc;
+        }
+
 
         .detail-fault-summary {
             margin-top: 8px;
@@ -1117,6 +1267,24 @@
             visibility: visible !important;
             opacity: 1 !important;
             min-height: 0;
+        }
+
+        #detailStatusRecordBody .detail-maint-record-card {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+        }
+
+        #detailStatusRecordBody .detail-maint-record-row {
+            overflow: visible !important;
+            height: auto !important;
+            min-height: 0;
+        }
+
+        #detailStatusRecordBody .detail-maint-record-value {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .detail-maint-record-label {
@@ -1774,6 +1942,15 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .detail-layout {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .detail-aside {
+                display: none;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1846,6 +2023,22 @@
 
             .detail-card {
                 padding: 10px 12px;
+                box-shadow: none;
+            }
+
+            .detail-card-title {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .detail-row {
+                grid-template-columns: 98px minmax(0, 1fr);
+                gap: 8px;
+                padding: 9px 0;
+            }
+
+            .detail-row strong {
+                font-size: 13px;
             }
 
             .detail-card-entry-all {
@@ -2081,7 +2274,7 @@
             }
 
             .detail-modal {
-                width: min(1100px, calc(100vw - 64px));
+                width: min(1260px, calc(100vw - 64px));
             }
 
             .detail-modal-body {
@@ -2577,6 +2770,7 @@
         let entryEditImageDraft = { display: [], location: [] };
         let activeFaultActionDeviceId = '';
         let detailStatusRecordTab = 'abnormal';
+        let detailSectionSpyHandler = null;
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -3197,18 +3391,52 @@
             }];
         }
 
+        function buildMockFaultAbnormalRecords(deviceId, minCount = 3) {
+            const normalizedDeviceId = normalizeEditableValue(deviceId, '-') || '-';
+            const seed = getDeviceFaultSeed(normalizedDeviceId);
+            const count = Number.isFinite(minCount) && minCount > 0 ? Math.floor(minCount) : 3;
+            const templates = [
+                { code: 'NET-001', message: `${normalizedDeviceId} 设备疑似没网或断电` },
+                { code: 'CUP-012', message: `${normalizedDeviceId} 出杯口检测异常` },
+                { code: 'TMP-007', message: `${normalizedDeviceId} 制作仓温度波动` },
+                { code: 'MAT-021', message: `${normalizedDeviceId} 关键物料传感器抖动` },
+                { code: 'ARM-006', message: `${normalizedDeviceId} 机械臂动作超时` }
+            ];
+            const now = Date.now();
+            return Array.from({ length: count }, (_, index) => {
+                const template = templates[(seed + index) % templates.length];
+                const offsetMinutes = 6 + index * 18;
+                return {
+                    deviceId: normalizedDeviceId,
+                    time: formatCurrentDateTime(new Date(now - offsetMinutes * 60 * 1000)),
+                    code: template.code,
+                    message: template.message
+                };
+            });
+        }
+
         function getFaultAbnormalRecords(deviceId) {
             const targetDeviceId = normalizeDeviceId(deviceId);
             const list = getFaultRecordList('deviceFaultAbnormalRecords')
                 .filter(item => normalizeDeviceId(item?.deviceId) === targetDeviceId)
                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-            if (list.length) return list;
-            return [{
-                deviceId,
-                time: formatCurrentDateTime(),
-                code: '',
-                message: `${deviceId} 暂无异常记录`
-            }];
+            if (list.length >= 3) return list;
+            if (!list.length) {
+                return buildMockFaultAbnormalRecords(deviceId, 3);
+            }
+
+            const neededCount = 3 - list.length;
+            const mockRecords = buildMockFaultAbnormalRecords(deviceId, neededCount + 2);
+            const merged = [...list];
+            const seen = new Set(merged.map(item => `${item.time || ''}|${item.code || ''}|${item.message || ''}`));
+            mockRecords.forEach(record => {
+                if (merged.length >= list.length + neededCount) return;
+                const key = `${record.time || ''}|${record.code || ''}|${record.message || ''}`;
+                if (seen.has(key)) return;
+                merged.push(record);
+                seen.add(key);
+            });
+            return merged.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
         }
 
         function resolveMaintenanceOperatorInfo(record) {
@@ -3875,8 +4103,11 @@
             return raw.replace('T', ' ') + ':00';
         }
 
-        function formatCurrentDateTime() {
-            const now = new Date();
+        function formatCurrentDateTime(dateValue = new Date()) {
+            const now = dateValue instanceof Date ? dateValue : new Date(dateValue);
+            if (Number.isNaN(now.getTime())) {
+                return '-';
+            }
             const pad = n => String(n).padStart(2, '0');
             return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
         }
@@ -3892,9 +4123,60 @@
                 return [];
             }
             const targetDeviceId = normalizeDeviceId(deviceId);
-            return records
+            const matchedRecords = records
                 .filter(record => resolveMaintenanceRecordDeviceId(record) === targetDeviceId)
                 .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+            if (!matchedRecords.length) {
+                return [];
+            }
+            const fallbackContact = buildMaintenanceRecordContactFallback(matchedRecords, targetDeviceId);
+            return matchedRecords.map(record => {
+                const resolved = resolveMaintenanceOperatorInfo(record);
+                const rawName = normalizeEditableValue(resolved.operatorName, '');
+                const rawPhone = normalizeEditableValue(resolved.operatorPhone, '');
+                const operatorName = rawName && rawName !== '当前用户'
+                    ? rawName
+                    : (fallbackContact.operatorName || rawName || '当前用户');
+                const operatorPhone = rawPhone && rawPhone !== '-'
+                    ? rawPhone
+                    : (fallbackContact.operatorPhone || rawPhone || '-');
+                return {
+                    ...record,
+                    operatorName,
+                    operatorPhone,
+                    operator: operatorName,
+                    phone: operatorPhone,
+                    maintainerName: operatorName,
+                    maintainerPhone: operatorPhone
+                };
+            });
+        }
+
+        function buildMaintenanceRecordContactFallback(records, targetDeviceId) {
+            const matchedRecords = Array.isArray(records) ? records : [];
+            const fallback = {
+                operatorName: '',
+                operatorPhone: ''
+            };
+            matchedRecords.forEach(record => {
+                const resolved = resolveMaintenanceOperatorInfo(record);
+                const candidateName = normalizeEditableValue(resolved.operatorName, '');
+                const candidatePhone = normalizeEditableValue(resolved.operatorPhone, '');
+                if (!fallback.operatorName && candidateName && candidateName !== '当前用户') {
+                    fallback.operatorName = candidateName;
+                }
+                if (!fallback.operatorPhone && candidatePhone && candidatePhone !== '-') {
+                    fallback.operatorPhone = candidatePhone;
+                }
+            });
+            const deviceFallback = resolveMaintenanceOperatorInfo({ deviceId: targetDeviceId });
+            if (!fallback.operatorName) {
+                fallback.operatorName = normalizeEditableValue(deviceFallback.operatorName, '') || '当前用户';
+            }
+            if (!fallback.operatorPhone) {
+                fallback.operatorPhone = normalizeEditableValue(deviceFallback.operatorPhone, '') || '-';
+            }
+            return fallback;
         }
 
         function normalizeRecordTime(value) {
@@ -4129,6 +4411,135 @@
             showToast('入场信息已更新');
         }
 
+        function getDetailSectionConfig() {
+            return [
+                { id: 'detail-section-overview', label: '设备概览' },
+                { id: 'detail-section-fault', label: '故障处理' },
+                { id: 'detail-section-entry-core', label: '入场核心' },
+                { id: 'detail-section-entry-all', label: '入场详情' },
+                { id: 'detail-section-entry-images', label: '图片信息' }
+            ];
+        }
+
+        function getDetailStateChipClass(type, value) {
+            const text = normalizeEditableValue(value, '-');
+            if (type === 'status') {
+                if (text.includes('故障') || text.includes('离线')) return 'danger';
+                return 'ok';
+            }
+            if (type === 'sales') {
+                if (text.includes('停卖')) return 'warn';
+                return 'ok';
+            }
+            if (type === 'entry') {
+                if (text.includes('未入场')) return 'warn';
+                return 'ok';
+            }
+            return 'ok';
+        }
+
+        function renderDetailAside(detailData, counts) {
+            const sectionItems = getDetailSectionConfig();
+            const summary = detailData?.base || {};
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
+            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
+            const entryStatus = summary.locationName === '未入场' ? '未入场' : '已入场';
+            return `
+                <aside class="detail-aside">
+                    <div class="detail-aside-stack">
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">目录导航</div>
+                            <div class="detail-anchor-list">
+                                ${sectionItems.map((item, index) => `
+                                    <button
+                                        type="button"
+                                        class="detail-anchor-btn ${index === 0 ? 'active' : ''}"
+                                        data-detail-anchor="${item.id}"
+                                        onclick="scrollDetailToSection('${item.id}')"
+                                    >${escapeHtml(item.label)}</button>
+                                `).join('')}
+                            </div>
+                        </section>
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">状态摘要</div>
+                            <div class="detail-side-state-list">
+                                <span class="detail-side-state-chip ${getDetailStateChipClass('status', summary.statusName)}">设备状态：${escapeHtml(summary.statusName || '-')}</span>
+                                <span class="detail-side-state-chip ${getDetailStateChipClass('sales', summary.salesName)}">停卖状态：${escapeHtml(summary.salesName || '-')}</span>
+                                <span class="detail-side-state-chip ${getDetailStateChipClass('entry', entryStatus)}">入场状态：${escapeHtml(entryStatus)}</span>
+                                <span class="detail-side-state-chip">异常记录：${abnormalCount} 条</span>
+                                <span class="detail-side-state-chip">运维记录：${operationCount} 条</span>
+                            </div>
+                        </section>
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">快捷操作</div>
+                            <div class="detail-side-action-list">
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
+                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
+                            </div>
+                        </section>
+                    </div>
+                </aside>
+            `;
+        }
+
+        function setActiveDetailAnchor(sectionId) {
+            document.querySelectorAll('[data-detail-anchor]').forEach(button => {
+                const anchorId = button.getAttribute('data-detail-anchor');
+                button.classList.toggle('active', anchorId === sectionId);
+            });
+        }
+
+        function scrollDetailToSection(sectionId) {
+            const container = document.getElementById('detailModalBody');
+            const section = document.getElementById(sectionId);
+            if (!container || !section) return;
+            const containerRect = container.getBoundingClientRect();
+            const sectionRect = section.getBoundingClientRect();
+            const nextTop = container.scrollTop + sectionRect.top - containerRect.top - 6;
+            container.scrollTo({
+                top: Math.max(nextTop, 0),
+                behavior: 'smooth'
+            });
+            setActiveDetailAnchor(sectionId);
+        }
+
+        function updateActiveDetailAnchorByScroll() {
+            const container = document.getElementById('detailModalBody');
+            if (!container) return;
+            const sections = getDetailSectionConfig()
+                .map(item => ({ ...item, element: document.getElementById(item.id) }))
+                .filter(item => item.element);
+            if (!sections.length) return;
+            const containerRect = container.getBoundingClientRect();
+            let nearest = sections[0];
+            let minDistance = Number.POSITIVE_INFINITY;
+            sections.forEach(item => {
+                const distance = Math.abs(item.element.getBoundingClientRect().top - containerRect.top - 14);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = item;
+                }
+            });
+            if (nearest?.id) {
+                setActiveDetailAnchor(nearest.id);
+            }
+        }
+
+        function bindDetailSectionSpy() {
+            const container = document.getElementById('detailModalBody');
+            if (!container) return;
+            if (detailSectionSpyHandler) {
+                container.removeEventListener('scroll', detailSectionSpyHandler);
+            }
+            detailSectionSpyHandler = function() {
+                updateActiveDetailAnchorByScroll();
+            };
+            container.addEventListener('scroll', detailSectionSpyHandler, { passive: true });
+            updateActiveDetailAnchorByScroll();
+        }
+
         function viewDetail(deviceId) {
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
@@ -4146,6 +4557,12 @@
             const entryAllRows = renderEntryAllRows(detailData.entry);
             const entryImageGallery = renderEntryImageGallery(device);
             const faultControlCard = renderFaultControlCard(detailData.fault);
+            const abnormalRecords = getFaultAbnormalRecords(deviceId);
+            const operationRecords = getMaintenanceRecordsByDevice(deviceId);
+            const detailRecordCounts = {
+                abnormal: abnormalRecords.length,
+                operation: operationRecords.length
+            };
             const basicRows = [
                 renderDetailRow('设备编号', detailData.base.deviceId),
                 renderDetailRow('所属商户', detailData.base.merchantName),
@@ -4165,25 +4582,50 @@
                 `
                 : renderDetailRow('入场记录', '暂无入场记录');
             document.getElementById('detailModalBody').innerHTML = `
-                <div class="detail-grid">
-                    ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
-                    ${faultControlCard}
-                    ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
-                    ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
-                    ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
+                <div class="detail-layout">
+                    <div class="detail-main">
+                        <div class="detail-grid">
+                            <section class="detail-section" id="detail-section-overview">
+                                ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
+                            </section>
+                            <section class="detail-section" id="detail-section-fault">
+                                ${faultControlCard}
+                            </section>
+                            <section class="detail-section" id="detail-section-entry-core">
+                                ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
+                            </section>
+                            <section class="detail-section" id="detail-section-entry-all">
+                                ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
+                            </section>
+                            <section class="detail-section" id="detail-section-entry-images">
+                                ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
+                            </section>
+                        </div>
+                    </div>
+                    ${renderDetailAside(detailData, detailRecordCounts)}
                 </div>
             `;
             detailPreviewImages = collectEntryPreviewImages(device);
             bindEntryImageThumbEvents();
+            bindDetailSectionSpy();
             document.getElementById('detailModal').classList.add('active');
         }
 
         function closeDetailModal() {
+            const detailBody = document.getElementById('detailModalBody');
+            if (detailBody && detailSectionSpyHandler) {
+                detailBody.removeEventListener('scroll', detailSectionSpyHandler);
+                detailSectionSpyHandler = null;
+            }
             document.getElementById('detailModal').classList.remove('active');
             closeEntryEditModal();
             closeDetailRemoteActions();
             closeDetailEditFaultStatus();
             closeDetailStatusRecords();
+            if (detailBody) {
+                detailBody.scrollTop = 0;
+                detailBody.innerHTML = '';
+            }
             currentDetailDeviceId = '';
             activeFaultActionDeviceId = '';
         }

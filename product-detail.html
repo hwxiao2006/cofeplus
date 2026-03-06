@@ -50,6 +50,9 @@
         }
 
         .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
             width: 240px;
             background: var(--bg-sidebar);
             color: #dbeafe;
@@ -64,7 +67,7 @@
         }
 
         .sidebar-header {
-            padding: 28px 24px;
+            padding: 28px var(--sidebar-header-padding-x);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -102,12 +105,12 @@
         .brand-version {
             font-size: 12px;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: 52px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
         }
 
         .sidebar-nav {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px var(--sidebar-nav-padding-x);
             min-height: 0;
             overflow-y: auto;
         }
@@ -122,7 +125,7 @@
             color: rgba(186, 230, 253, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 8px 14px;
+            padding: 8px var(--sidebar-section-title-padding-x);
             margin-bottom: 4px;
         }
 
@@ -755,6 +758,46 @@
             border-bottom: 1px solid var(--border);
         }
 
+        .recipe-editor-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .recipe-editor-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #f8fffd 0%, #f2fbfa 100%);
+        }
+
+        .recipe-editor-tools-tip {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .recipe-editor-tools-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .recipe-upload-btn-prominent {
+            height: 36px;
+            padding: 0 16px;
+            font-size: 13px;
+            border-radius: 10px;
+            box-shadow: 0 6px 14px rgba(78, 205, 196, 0.24);
+            white-space: nowrap;
+        }
+
         .recipe-editor-title {
             font-size: 18px;
             font-weight: 700;
@@ -881,6 +924,45 @@
             justify-content: flex-end;
             gap: 10px;
             background: #fff;
+        }
+
+        .recipe-upload-content {
+            padding: 12px 20px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recipe-upload-tip {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            background: #f8fafc;
+            border: 1px dashed #d7e1ea;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .recipe-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recipe-upload-file-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: #fff;
+        }
+
+        .recipe-upload-file-name {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .recipe-impact-overlay {
@@ -1176,6 +1258,40 @@
             .recipe-editor-header,
             .recipe-editor-body,
             .recipe-editor-footer {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .recipe-editor-header {
+                align-items: center;
+            }
+
+            .recipe-editor-header-actions {
+                gap: 8px;
+            }
+
+            .recipe-editor-tools {
+                padding-left: 14px;
+                padding-right: 14px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .recipe-editor-tools-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .recipe-upload-btn-prominent {
+                width: 100%;
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .recipe-upload-content {
                 padding-left: 14px;
                 padding-right: 14px;
             }
@@ -1512,7 +1628,16 @@
                     <div class="recipe-editor-title">配方调整</div>
                     <div class="recipe-editor-subtitle" id="recipeEditorSubtitle">--</div>
                 </div>
-                <button class="modal-close" type="button" onclick="closeRecipeEditor()">×</button>
+                <div class="recipe-editor-header-actions">
+                    <button class="modal-close" type="button" onclick="closeRecipeEditor()">×</button>
+                </div>
+            </div>
+            <div class="recipe-editor-tools">
+                <div class="recipe-editor-tools-tip">需要批量导入时可直接上传基底咖啡配方文件</div>
+                <div class="recipe-editor-tools-actions">
+                    <button class="btn btn-default recipe-upload-btn-prominent" type="button" onclick="resetRecipeToFactoryDefaults()">恢复出厂设置</button>
+                    <button class="btn btn-primary recipe-upload-btn-prominent" type="button" onclick="openBaseRecipeUploadModal()">上传基底咖啡配方</button>
+                </div>
             </div>
             <div class="recipe-editor-body" id="recipeEditorBody"></div>
             <div class="recipe-editor-footer">
@@ -1522,21 +1647,47 @@
         </div>
     </div>
 
+    <div class="recipe-impact-overlay" id="baseRecipeUploadModal">
+        <div class="recipe-impact-modal">
+            <div class="recipe-impact-header">
+                <div>
+                    <div class="recipe-impact-title">上传基底咖啡配方文件</div>
+                    <div class="recipe-impact-subtitle">导入后将覆盖当前选项的“基底咖啡液”配方</div>
+                </div>
+                <button class="modal-close" type="button" onclick="closeBaseRecipeUploadModal()">×</button>
+            </div>
+            <div class="recipe-upload-content">
+                <div class="recipe-upload-tip">
+                    支持 Excel 文件上传（.xlsx / .xls）。
+                </div>
+                <div class="recipe-upload-row">
+                    <button type="button" class="btn btn-default" onclick="downloadBaseRecipeTemplate()">下载样例文件</button>
+                </div>
+                <input type="file" id="baseRecipeUploadInput" class="recipe-upload-file-input" accept=".xlsx,.xls,.csv,text/csv" onchange="handleBaseRecipeFileChange(event)">
+                <div class="recipe-upload-file-name" id="baseRecipeUploadFileName">未选择文件</div>
+            </div>
+            <div class="recipe-impact-footer">
+                <button class="btn btn-default" type="button" onclick="closeBaseRecipeUploadModal()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="applyBaseRecipeUpload()">上传并应用</button>
+            </div>
+        </div>
+    </div>
+
     <div class="recipe-impact-overlay" id="recipeImpactModal">
         <div class="recipe-impact-modal">
             <div class="recipe-impact-header">
                 <div>
                     <div class="recipe-impact-title">影响商品确认</div>
-                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">勾选的商品将保持原配方不变</div>
+                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">勾选的商品将关联更新</div>
                 </div>
                 <button class="modal-close" type="button" onclick="closeRecipeImpactModal()">×</button>
             </div>
             <div class="recipe-impact-toolbar">
                 <div class="left">
-                    <button type="button" class="recipe-control-btn" onclick="selectAllRecipeImpactExclusions()">全选排除</button>
-                    <button type="button" class="recipe-control-btn" onclick="clearRecipeImpactExclusions()">清空排除</button>
+                    <button type="button" class="recipe-control-btn" onclick="selectAllRecipeImpactLinks()">全选关联</button>
+                    <button type="button" class="recipe-control-btn" onclick="clearRecipeImpactLinks()">清空关联</button>
                 </div>
-                <div class="right" id="recipeImpactSummary">将更新 0 个，排除 0 个</div>
+                <div class="right" id="recipeImpactSummary">关联 0 个，不关联 0 个</div>
             </div>
             <div class="recipe-impact-body" id="recipeImpactBody"></div>
             <div class="recipe-impact-footer">
@@ -1962,6 +2113,211 @@
                 .sort((a, b) => a.id - b.id);
         }
 
+        function extractBaseRecipePayload(rawPayload) {
+            if (rawPayload === null || rawPayload === undefined) {
+                return null;
+            }
+
+            let payload = rawPayload;
+            if (payload && typeof payload === 'object' && payload.baseCoffeeLiquid) {
+                payload = payload.baseCoffeeLiquid;
+            }
+
+            let names = [];
+            if (typeof payload === 'string') {
+                names = [payload.trim()];
+            } else if (Array.isArray(payload)) {
+                names = payload.map(item => String(item || '').trim()).filter(Boolean);
+            } else if (payload && typeof payload === 'object') {
+                if (Array.isArray(payload.names)) {
+                    names = payload.names.map(item => String(item || '').trim()).filter(Boolean);
+                } else if (typeof payload.name === 'string') {
+                    names = [payload.name.trim()];
+                }
+            }
+
+            if (!names.length) {
+                return null;
+            }
+
+            let percent = 100;
+            if (payload && typeof payload === 'object' && payload.percent !== undefined) {
+                percent = normalizeRecipePercent(payload.percent);
+            }
+
+            return {
+                names,
+                percent
+            };
+        }
+
+        function extractBaseRecipePayloadFromSheetText(rawText) {
+            const text = String(rawText || '').replace(/\r/g, '').trim();
+            if (!text) return null;
+
+            const rows = text
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean);
+            if (!rows.length) return null;
+
+            const detectDelimiter = (line) => {
+                if (line.includes('\t')) return '\t';
+                if (line.includes(',')) return ',';
+                if (line.includes(';')) return ';';
+                return '\t';
+            };
+            const delimiter = detectDelimiter(rows[0]);
+            const parseRow = (line) => line
+                .split(delimiter)
+                .map(cell => String(cell || '').trim().replace(/^"|"$/g, ''));
+
+            const headers = parseRow(rows[0]).map(cell => cell.toLowerCase().replace(/\s+/g, ''));
+            let nameIndex = headers.findIndex(key => ['names', 'name', 'basecoffeeliquid', 'base_coffee_liquid', '基底咖啡液', '原料名称'].includes(key));
+            let percentIndex = headers.findIndex(key => ['percent', 'ratio', '占比', '百分比'].includes(key));
+
+            let values = [];
+            if (nameIndex >= 0) {
+                values = parseRow(rows[1] || '');
+            } else {
+                values = parseRow(rows[0]);
+                nameIndex = 0;
+                if (values.length > 1) percentIndex = 1;
+            }
+
+            const namesRaw = String(values[nameIndex] || '').trim();
+            if (!namesRaw) return null;
+
+            const names = namesRaw
+                .split(/[、,，;]/)
+                .map(item => String(item || '').trim())
+                .filter(Boolean);
+            if (!names.length) return null;
+
+            let percent = 100;
+            if (percentIndex >= 0 && values[percentIndex] !== undefined) {
+                percent = normalizeRecipePercent(String(values[percentIndex]).replace('%', '').trim());
+            }
+
+            return {
+                names,
+                percent
+            };
+        }
+
+        function openBaseRecipeUploadModal() {
+            if (!recipeEditorState) {
+                showToast('请先进入配方调整', 'error');
+                return;
+            }
+            const input = document.getElementById('baseRecipeUploadInput');
+            const fileName = document.getElementById('baseRecipeUploadFileName');
+            if (input) input.value = '';
+            if (fileName) fileName.textContent = '未选择文件';
+            const modal = document.getElementById('baseRecipeUploadModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeBaseRecipeUploadModal() {
+            const modal = document.getElementById('baseRecipeUploadModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function handleBaseRecipeFileChange(event) {
+            const file = event && event.target && event.target.files ? event.target.files[0] : null;
+            const fileName = document.getElementById('baseRecipeUploadFileName');
+            if (fileName) {
+                fileName.textContent = file ? `已选择：${file.name}` : '未选择文件';
+            }
+        }
+
+        function resetRecipeToFactoryDefaults() {
+            if (!recipeEditorState) {
+                showToast('请先进入配方调整', 'error');
+                return;
+            }
+            const shouldReset = confirm('确认恢复出厂设置？确认后将直接进入关联饮品确认。');
+            if (!shouldReset) {
+                return;
+            }
+            recipeEditorState.recipe = getDefaultRecipeData(recipeEditorState.tagLabel);
+            renderRecipeEditor();
+            showToast('已恢复为出厂配方，正在进入关联饮品确认');
+            saveRecipeEditor();
+        }
+
+        function downloadBaseRecipeTemplate() {
+            const tagLabel = recipeEditorState?.tagLabel || '示例基底';
+            const content = `names\tpercent\n${tagLabel}\t100\n`;
+            const blob = new Blob(['\ufeff' + content], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'base-coffee-recipe-template.xls';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function applyBaseRecipeUpload() {
+            if (!recipeEditorState) {
+                showToast('请先进入配方调整', 'error');
+                return;
+            }
+
+            const input = document.getElementById('baseRecipeUploadInput');
+            const file = input && input.files ? input.files[0] : null;
+            if (!file) {
+                showToast('请先选择配方文件', 'error');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('文件过大，请选择 2MB 以内 Excel 文件', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(loadEvent) {
+                try {
+                    const rawText = loadEvent && loadEvent.target ? String(loadEvent.target.result || '') : '';
+                    let payload = null;
+                    try {
+                        const parsed = JSON.parse(rawText);
+                        payload = extractBaseRecipePayload(parsed);
+                    } catch (e) {
+                        payload = null;
+                    }
+                    if (!payload) {
+                        payload = extractBaseRecipePayloadFromSheetText(rawText);
+                    }
+                    if (!payload) {
+                        showToast('文件格式错误，请下载样例并按格式填写', 'error');
+                        return;
+                    }
+
+                    if (!recipeEditorState.recipe.groups.baseCoffeeLiquid) {
+                        recipeEditorState.recipe.groups.baseCoffeeLiquid = { names: [], percent: 100 };
+                    }
+
+                    recipeEditorState.recipe.groups.baseCoffeeLiquid.names = payload.names;
+                    recipeEditorState.recipe.groups.baseCoffeeLiquid.percent = payload.percent;
+                    renderRecipeEditor();
+                    closeBaseRecipeUploadModal();
+                    showToast('基底咖啡配方已导入，正在进入关联饮品确认');
+                    saveRecipeEditor();
+                } catch (error) {
+                    console.error('解析基底配方文件失败', error);
+                    showToast('解析失败，请确认文件是有效 Excel 文件', 'error');
+                }
+            };
+            reader.onerror = function() {
+                showToast('文件读取失败，请重试', 'error');
+            };
+            reader.readAsText(file);
+        }
+
         function cloneTagLabels(specKey, tagKey, targetProduct = productData) {
             const labels = {};
             const i18n = targetProduct?.tagI18n?.[specKey]?.[tagKey] || {};
@@ -2165,24 +2521,24 @@
             recipeImpactState = null;
         }
 
-        function selectAllRecipeImpactExclusions() {
+        function selectAllRecipeImpactLinks() {
             if (!recipeImpactState) return;
-            recipeImpactState.excludedIds = new Set(recipeImpactState.affectedEntries.map(item => item.id));
+            recipeImpactState.selectedIds = new Set(recipeImpactState.affectedEntries.map(item => item.id));
             renderRecipeImpactModal();
         }
 
-        function clearRecipeImpactExclusions() {
+        function clearRecipeImpactLinks() {
             if (!recipeImpactState) return;
-            recipeImpactState.excludedIds = new Set();
+            recipeImpactState.selectedIds = new Set();
             renderRecipeImpactModal();
         }
 
-        function toggleRecipeImpactExclusion(productId, checked) {
+        function toggleRecipeImpactLink(productId, checked) {
             if (!recipeImpactState) return;
             const id = Number(productId);
             if (!Number.isFinite(id)) return;
-            if (checked) recipeImpactState.excludedIds.add(id);
-            else recipeImpactState.excludedIds.delete(id);
+            if (checked) recipeImpactState.selectedIds.add(id);
+            else recipeImpactState.selectedIds.delete(id);
             renderRecipeImpactModal();
         }
 
@@ -2194,11 +2550,11 @@
             if (!subtitle || !body || !summary) return;
 
             const total = recipeImpactState.affectedEntries.length;
-            const excluded = recipeImpactState.excludedIds.size;
-            const willUpdate = Math.max(0, total - excluded);
+            const linked = recipeImpactState.selectedIds.size;
+            const unlinked = Math.max(0, total - linked);
 
-            subtitle.textContent = `当前商品会直接更新。以下为关联商品：勾选后保持原配方不变`;
-            summary.textContent = `关联商品将更新 ${willUpdate} 个，排除 ${excluded} 个`;
+            subtitle.textContent = `当前商品会直接更新。以下为关联商品：勾选后将同步新配方，不勾选则不关联`;
+            summary.textContent = `关联 ${linked} 个，不关联 ${unlinked} 个`;
 
             if (!total) {
                 body.innerHTML = '<div class="recipe-impact-empty">没有关联商品受影响，确认后仅更新当前商品</div>';
@@ -2206,10 +2562,10 @@
             }
 
             body.innerHTML = recipeImpactState.affectedEntries.map(item => {
-                const checked = recipeImpactState.excludedIds.has(item.id);
+                const checked = recipeImpactState.selectedIds.has(item.id);
                 return `
                     <label class="recipe-impact-item">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleRecipeImpactExclusion('${item.id}', this.checked)">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleRecipeImpactLink('${item.id}', this.checked)">
                         <div class="recipe-impact-item-body">
                             <div class="recipe-impact-item-name">
                                 ${escAttr(item.name)}
@@ -2246,9 +2602,9 @@
         function confirmRecipeImpactApply() {
             if (!recipeImpactState) return;
             const total = recipeImpactState.affectedEntries.length;
-            const excluded = recipeImpactState.excludedIds.size;
-            const updatedCount = Math.max(0, total - excluded);
-            const excludedIds = recipeImpactState.excludedIds;
+            const linked = recipeImpactState.selectedIds.size;
+            const updatedCount = Math.max(0, linked);
+            const selectedIds = recipeImpactState.selectedIds;
             const changedProducts = [];
             const currentProductId = Number(productData?.id);
 
@@ -2272,7 +2628,7 @@
             recipeImpactState.affectedEntries.forEach(item => {
                 const product = item.product;
                 if (!product) return;
-                if (excludedIds.has(item.id)) {
+                if (!selectedIds.has(item.id)) {
                     const isolatedLinkId = buildUniqueRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, item.id);
                     setOptionRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, isolatedLinkId, product);
                     changedProducts.push(product);
@@ -2400,7 +2756,7 @@
                 linkId,
                 recipe: normalizeRecipeData(recipeEditorState.recipe, recipeEditorState.tagLabel),
                 affectedEntries,
-                excludedIds: new Set()
+                selectedIds: new Set(affectedEntries.map(item => item.id))
             };
 
             openRecipeImpactModal();
@@ -2551,6 +2907,13 @@
                 });
             }
 
+            const baseRecipeUploadModal = document.getElementById('baseRecipeUploadModal');
+            if (baseRecipeUploadModal) {
+                baseRecipeUploadModal.addEventListener('click', function(e) {
+                    if (e.target === baseRecipeUploadModal) closeBaseRecipeUploadModal();
+                });
+            }
+
             const recipeImpactModal = document.getElementById('recipeImpactModal');
             if (recipeImpactModal) {
                 recipeImpactModal.addEventListener('click', function(e) {
@@ -2570,6 +2933,11 @@
                 const drawer = document.getElementById('tagConfigDrawer');
                 if (drawer && drawer.classList.contains('active')) {
                     closeTagConfigDrawer();
+                    return;
+                }
+                const recipeUpload = document.getElementById('baseRecipeUploadModal');
+                if (recipeUpload && recipeUpload.classList.contains('active')) {
+                    closeBaseRecipeUploadModal();
                     return;
                 }
                 const impact = document.getElementById('recipeImpactModal');

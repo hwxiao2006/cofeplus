@@ -86,6 +86,22 @@ test('设备详情桌面端应使用超宽弹层与分组卡片布局', () => {
   assert.ok(/detail-card-entry-all/.test(devicesHtml));
 });
 
+test('设备详情桌面端应采用左主内容与右侧导航布局', () => {
+  assert.ok(/class=\"detail-layout\"/.test(devicesHtml));
+  assert.ok(/class=\"detail-main\"/.test(devicesHtml));
+  assert.ok(/class=\"detail-aside\"/.test(devicesHtml));
+  assert.ok(/function\s+renderDetailAside\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+scrollDetailToSection\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+bindDetailSectionSpy\s*\(/.test(devicesHtml));
+  assert.ok(/data-detail-anchor=/.test(devicesHtml));
+  assert.ok(/detail-section-overview/.test(devicesHtml));
+  assert.ok(/detail-section-fault/.test(devicesHtml));
+  assert.ok(/detail-section-entry-core/.test(devicesHtml));
+  assert.ok(/detail-section-entry-all/.test(devicesHtml));
+  assert.ok(/detail-section-entry-images/.test(devicesHtml));
+  assert.ok(!/detail-section-records/.test(devicesHtml));
+});
+
 test('设备详情移动端应回退为单列卡片布局', () => {
   assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.detail-grid\s*\{[\s\S]*grid-template-columns:\s*1fr/.test(devicesHtml));
 });

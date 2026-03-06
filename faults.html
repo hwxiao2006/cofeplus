@@ -45,6 +45,9 @@
         }
 
         .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
             width: 240px;
             background: var(--bg-sidebar);
             color: #dbeafe;
@@ -59,7 +62,7 @@
         }
 
         .sidebar-header {
-            padding: 24px;
+            padding: 24px var(--sidebar-header-padding-x);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -96,12 +99,12 @@
         .brand-version {
             font-size: 12px;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: 52px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
         }
 
         .sidebar-nav {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px var(--sidebar-nav-padding-x);
             min-height: 0;
             overflow-y: auto;
         }
@@ -116,7 +119,7 @@
             color: rgba(186, 230, 253, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 8px 14px;
+            padding: 8px var(--sidebar-section-title-padding-x);
             margin-bottom: 4px;
         }
 
@@ -213,49 +216,49 @@
         }
 
         .content {
-            padding: 20px;
+            padding: 22px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
         }
 
         .tabs-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 1px solid #dde3ea;
             border-radius: 14px;
-            padding: 12px;
-            box-shadow: var(--shadow);
+            padding: 14px 16px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
         }
 
         .search-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            gap: 12px;
         }
 
         .search-box {
             position: relative;
             width: 100%;
-            max-width: 460px;
+            max-width: 420px;
         }
 
         .search-input {
             width: 100%;
-            height: 44px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            height: 40px;
+            border: 1px solid #d4dce5;
+            border-radius: 10px;
             padding: 0 14px 0 40px;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-primary);
-            background: #fff;
+            background: #fbfdff;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
+            border-color: #2ec4b6;
+            box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.16);
         }
 
         .search-input::placeholder {
@@ -271,167 +274,125 @@
             color: var(--text-tertiary);
         }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: nowrap;
-        }
-
-        .tab {
-            border: 1px solid var(--border);
-            background: #fff;
-            border-radius: 12px;
-            padding: 9px 18px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.15s;
-            font-weight: 600;
-        }
-
-        .tab.active {
-            border-color: var(--primary);
-            color: var(--primary-dark);
-            background: var(--primary-light);
-            font-weight: 600;
-        }
-
         .summary {
-            margin-top: 10px;
-            padding: 0 4px;
-            font-size: 13px;
-            color: var(--text-tertiary);
-            text-align: right;
+            font-size: 12px;
+            color: #475569;
+            background: #f1f5f9;
+            border: 1px solid #dbe3ed;
+            border-radius: 999px;
+            padding: 6px 10px;
+            white-space: nowrap;
         }
 
         .list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
-            gap: 16px;
+            display: block;
         }
 
-        .fault-card {
+        .fault-table {
             background: var(--bg-card);
-            border: 1px solid var(--border);
+            border: 1px solid #d8e0ea;
             border-radius: 14px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
             overflow: hidden;
-            padding: 14px 16px 12px;
         }
 
-        .fault-grid {
+        .fault-table-head,
+        .fault-table-row {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0 24px;
+            grid-template-columns: 128px minmax(220px, 1.2fr) minmax(230px, 1.4fr) 186px 110px;
+            gap: 14px;
+            align-items: center;
+            padding: 0 18px;
         }
 
-        .fault-row {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-light);
-            align-items: start;
+        .fault-table-head {
+            min-height: 46px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            color: #64748b;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .fault-row:last-of-type {
+        .fault-table-body {
+            max-height: calc(100vh - 312px);
+            overflow: auto;
+        }
+
+        .fault-table-row {
+            min-height: 68px;
+            border-bottom: 1px solid #edf2f7;
+            background: #fff;
+            transition: background-color 0.18s ease;
+        }
+
+        .fault-table-row:hover {
+            background: #f8fbff;
+        }
+
+        .fault-table-row:last-child {
             border-bottom: none;
         }
 
-        .fault-label {
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .fault-value {
-            color: var(--text-primary);
+        .fault-cell {
             font-size: 14px;
+            color: #0f172a;
             line-height: 1.45;
-            text-align: left;
             word-break: break-word;
+            min-width: 0;
+            padding: 12px 0;
         }
 
-        .org-status {
-            margin-top: 12px;
-            padding: 12px 0 2px;
-            border-top: 1px solid var(--border-light);
+        .fault-cell-id {
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        .org-title {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 600;
+        .fault-cell-site {
+            color: #334155;
         }
 
-        .org-grid {
+        .fault-cell-content {
+            color: #b45309;
+        }
+
+        .fault-cell-time {
+            color: #475569;
+            white-space: nowrap;
+        }
+
+        .fault-cell-action {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .org-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: #f8fafc;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .org-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #9ca3af;
-        }
-
-        .org-chip.normal .org-dot {
-            background: #2ec4b6;
-        }
-
-        .org-chip.lost .org-dot {
-            background: #cbd5e1;
-        }
-
-        .org-chip.fault .org-dot {
-            background: #ef4444;
+            justify-content: flex-end;
         }
 
         .fault-actions {
-            margin: 12px -16px -12px;
-            border-top: 1px solid var(--border-light);
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            background: #fff;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
         }
 
         .fault-action-btn {
-            height: 52px;
+            width: 88px;
+            height: 34px;
             border: none;
-            border-right: 1px solid var(--border-light);
-            background: #fff;
-            color: var(--text-primary);
-            font-size: 15px;
-            font-weight: 500;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2ec4b6, #14b8a6);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
         }
 
-        .fault-action-btn:last-child {
-            border-right: none;
-        }
-
         .fault-action-btn:hover {
-            background: #f8fafc;
+            background: linear-gradient(135deg, #26b4a7, #0ea899);
         }
 
         .fault-action-btn:active {
-            background: #eef2f7;
+            background: #0f988a;
         }
 
         .fault-sheet-overlay {
@@ -765,12 +726,15 @@
                 font-size: 32px;
             }
 
-            .list {
-                grid-template-columns: 1fr;
+            .fault-table-head,
+            .fault-table-row {
+                grid-template-columns: 112px minmax(180px, 1fr) minmax(180px, 1.2fr) 158px 100px;
+                gap: 10px;
+                padding: 0 14px;
             }
 
-            .fault-grid {
-                grid-template-columns: 1fr;
+            .fault-cell {
+                font-size: 13px;
             }
         }
 
@@ -822,38 +786,92 @@
                 gap: 12px;
             }
 
-            .tabs {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
             .search-row {
-                margin-bottom: 8px;
+                align-items: stretch;
+                flex-direction: column;
             }
 
             .search-input {
                 width: 100%;
             }
 
-            .tab {
-                text-align: center;
+            .summary {
+                width: fit-content;
+                align-self: flex-start;
             }
 
-            .fault-row {
-                grid-template-columns: 86px 1fr;
-                gap: 8px;
-                padding: 10px 12px;
+            .fault-table {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                display: grid;
+                gap: 12px;
             }
 
-            .fault-label,
-            .fault-value {
-                font-size: 12px;
+            .fault-table-head {
+                display: none;
+            }
+
+            .fault-table-body {
+                max-height: none;
+                overflow: visible;
+                display: grid;
+                gap: 12px;
+            }
+
+            .fault-table-row {
+                display: block;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+                padding: 0 14px 14px;
+            }
+
+            .fault-table-row:hover {
+                background: #fff;
+            }
+
+            .fault-cell {
+                border-bottom: 1px solid #f1f5f9;
+                padding: 12px 0;
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                font-size: 14px;
+            }
+
+            .fault-cell::before {
+                content: attr(data-label);
+                color: #64748b;
+                font-size: 13px;
+                flex-shrink: 0;
+            }
+
+            .fault-cell-time {
+                white-space: normal;
+            }
+
+            .fault-cell-action {
+                border-bottom: none;
+                padding-top: 14px;
+            }
+
+            .fault-cell-action::before {
+                display: none;
+            }
+
+            .fault-actions {
+                justify-content: center;
             }
 
             .fault-action-btn {
-                height: 44px;
-                font-size: 14px;
+                width: 100%;
+                max-width: 320px;
+                height: 46px;
+                border-radius: 10px;
+                font-size: 15px;
             }
+
 
             .fault-sheet-option {
                 height: 64px;
@@ -921,7 +939,7 @@
                 padding: 14px;
             }
 
-            .fault-card,
+            .fault-table-row,
             .fault-list,
             .filter-section,
             .stats-bar {
@@ -966,13 +984,13 @@
         <main class="main">
             <div class="mobile-header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                <strong>设备速览</strong>
+                <strong>故障管理</strong>
             </div>
 
             <header class="header">
                 <div>
-                    <h1 class="header-title">设备速览</h1>
-                    <div class="header-desc">设备状态与机构详情</div>
+                    <h1 class="header-title">故障管理</h1>
+                    <div class="header-desc">故障设备清单与远程处置</div>
                 </div>
                 <div class="header-right">
                     <button class="btn-icon" onclick="window.location.href='devices.html'">返回设备页</button>
@@ -986,9 +1004,8 @@
                             <span class="search-icon">🔍</span>
                             <input type="text" id="deviceSearch" class="search-input" placeholder="搜索设备编号或点位名称" oninput="handleSearch()">
                         </div>
+                        <div class="summary" id="summary"></div>
                     </div>
-                    <div class="tabs" id="tabs"></div>
-                    <div class="summary" id="summary"></div>
                 </div>
                 <div class="list" id="list"></div>
             </section>
@@ -1002,13 +1019,6 @@
     <div id="operationRecordPage" class="status-page-overlay"></div>
 
     <script>
-        const tabConfig = [
-            { key: 'normal', label: '正常' },
-            { key: 'shortage', label: '缺料' },
-            { key: 'fault', label: '故障' }
-        ];
-
-        let currentTab = 'fault';
         let searchKeyword = '';
         let activeFaultDeviceId = '';
 
@@ -1240,17 +1250,10 @@
             overlay.classList.toggle('show');
         }
 
-        function renderTabs() {
-            const tabWrap = document.getElementById('tabs');
-            tabWrap.innerHTML = tabConfig.map(tab => (
-                `<button class="tab ${tab.key === currentTab ? 'active' : ''}" onclick="switchTab('${tab.key}')">${tab.label}</button>`
-            )).join('');
-        }
-
         function getFilteredFaults() {
             const keyword = searchKeyword.trim().toLowerCase();
             return faults.filter(item => {
-                if (item.status !== currentTab) return false;
+                if (item.status !== 'fault') return false;
                 if (!keyword) return true;
                 return item.id.toLowerCase().includes(keyword) || item.siteName.toLowerCase().includes(keyword);
             });
@@ -1264,7 +1267,27 @@
 
         function renderSummary() {
             const list = getFilteredFaults();
-            document.getElementById('summary').textContent = `总计 ${list.length} 台设备`;
+            document.getElementById('summary').textContent = `故障设备 ${list.length} 台`;
+        }
+
+        function getFaultContent(item) {
+            const abnormalParts = (item.orgStatus || []).filter(part => part.status === 'fault' || part.status === 'lost');
+            if (abnormalParts.length) {
+                return abnormalParts.map(part => `${part.name}${part.status === 'lost' ? '失联' : '故障'}`).join('，');
+            }
+            return `${item.id} 设备异常`;
+        }
+
+        function getFaultOccurredTime(item) {
+            const rawUpdatedAt = String(item.updatedAt || '').trim();
+            if (rawUpdatedAt && rawUpdatedAt !== '-') return rawUpdatedAt;
+            const textSources = [item.fridgeTemp, item.beanTemp, item.craftTemp, item.beanHumidity];
+            for (const source of textSources) {
+                const text = String(source || '').trim();
+                const match = text.match(/\(([^)]+)\)/);
+                if (match?.[1]) return match[1];
+            }
+            return '-';
         }
 
         function isDesktopInteractionMode() {
@@ -1372,7 +1395,6 @@
                 }
             }
             closeEditStatus();
-            renderTabs();
             renderSummary();
             renderList();
         }
@@ -1558,19 +1580,10 @@
             window.location.href = `materials.html?device=${encodeURIComponent(deviceId)}`;
         }
 
-        function shouldShowFaultActions(item) {
-            const deviceStatusText = String(item?.deviceStatus || '').trim().toLowerCase();
-            return item?.status === 'fault' || deviceStatusText === '故障' || deviceStatusText === 'fault';
-        }
-
         function renderFaultActions(item) {
-            if (!shouldShowFaultActions(item)) return '';
             return `
                 <div class="fault-actions">
                     <button type="button" class="fault-action-btn" onclick="openRemoteActions('${item.id}')">远程操作</button>
-                    <button type="button" class="fault-action-btn" onclick="openEditStatus('${item.id}')">编辑状态</button>
-                    <button type="button" class="fault-action-btn" onclick="goToDeviceMaterials('${item.id}')">物料</button>
-                    <button type="button" class="fault-action-btn" onclick="openStatusRecords('${item.id}')">状态记录</button>
                 </div>
             `;
         }
@@ -1579,59 +1592,36 @@
             const container = document.getElementById('list');
             const data = getFilteredFaults();
             if (!data.length) {
-                container.innerHTML = '<div class="empty">当前状态下暂无故障单</div>';
+                container.innerHTML = '<div class="empty">暂无故障记录</div>';
                 return;
             }
 
-            container.innerHTML = data.map(item => `
-                <article class="fault-card">
-                    <div class="fault-grid">
-                        <div class="fault-row"><div class="fault-label">设备编号</div><div class="fault-value">${item.id}</div></div>
-                        <div class="fault-row"><div class="fault-label">点位名称</div><div class="fault-value">${item.siteName}</div></div>
-                        <div class="fault-row"><div class="fault-label">设备状态</div><div class="fault-value">${item.deviceStatus}</div></div>
-                        <div class="fault-row"><div class="fault-label">停售状态</div><div class="fault-value">${item.sellStatus}</div></div>
-                        <div class="fault-row"><div class="fault-label">冰箱温度</div><div class="fault-value">${item.fridgeTemp}</div></div>
-                        <div class="fault-row"><div class="fault-label">豆仓温度</div><div class="fault-value">${item.beanTemp}</div></div>
-                        <div class="fault-row"><div class="fault-label">制作仓温度</div><div class="fault-value">${item.craftTemp}</div></div>
-                        <div class="fault-row"><div class="fault-label">豆仓湿度</div><div class="fault-value">${item.beanHumidity}</div></div>
-                        <div class="fault-row"><div class="fault-label">更新时间</div><div class="fault-value">${item.updatedAt}</div></div>
-                        <div class="fault-row"><div class="fault-label">上位机软件</div><div class="fault-value">${item.upperSoftware}</div></div>
-                        <div class="fault-row"><div class="fault-label">点单屏软件</div><div class="fault-value">${item.orderSoftware}</div></div>
-                        <div class="fault-row"><div class="fault-label">点单屏系统</div><div class="fault-value">${item.orderSystem}</div></div>
-                        <div class="fault-row"><div class="fault-label">点单屏内核</div><div class="fault-value">${item.orderKernel}</div></div>
-                        <div class="fault-row"><div class="fault-label">广告屏版本</div><div class="fault-value">${item.adVersion}</div></div>
-                        <div class="fault-row"><div class="fault-label">固件版本</div><div class="fault-value">${item.firmwareVersion}</div></div>
+            container.innerHTML = `
+                <section class="fault-table">
+                    <div class="fault-table-head">
+                        <div>设备编号</div>
+                        <div>设备地址</div>
+                        <div>故障内容</div>
+                        <div>故障发生时间</div>
+                        <div>操作</div>
                     </div>
-                    <div class="org-status">
-                        <div class="org-title">机构状态</div>
-                        <div class="org-grid">
-                            ${(item.orgStatus || []).map(part => `
-                                <span class="org-chip ${part.status}">
-                                    <span class="org-dot"></span>
-                                    <span>${part.label} ${part.name}</span>
-                                </span>
-                            `).join('')}
-                        </div>
+                    <div class="fault-table-body">
+                        ${data.map(item => `
+                            <article class="fault-table-row">
+                                <div class="fault-cell fault-cell-id" data-label="设备编号">${escapeText(item.id)}</div>
+                                <div class="fault-cell fault-cell-site" data-label="设备地址">${escapeText(item.siteName)}</div>
+                                <div class="fault-cell fault-cell-content" data-label="故障内容">${escapeText(getFaultContent(item))}</div>
+                                <div class="fault-cell fault-cell-time" data-label="故障发生时间">${escapeText(getFaultOccurredTime(item))}</div>
+                                <div class="fault-cell fault-cell-action" data-label="操作">
+                                    ${renderFaultActions(item)}
+                                </div>
+                            </article>
+                        `).join('')}
                     </div>
-                    ${renderFaultActions(item)}
-                </article>
-            `).join('');
+                </section>
+            `;
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            renderTabs();
-            renderSummary();
-            renderList();
-        }
-
-        function viewFault(id) {
-            const target = faults.find(item => item.id === id);
-            if (!target) return;
-            alert(`设备 ${target.id}\n点位: ${target.siteName}\n状态: ${tabConfig.find(t => t.key === target.status).label}`);
-        }
-
-        renderTabs();
         renderSummary();
         renderList();
     </script>

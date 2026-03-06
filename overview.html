@@ -50,6 +50,9 @@
         }
 
         .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
             width: 240px;
             background: var(--bg-sidebar);
             color: #dbeafe;
@@ -64,7 +67,7 @@
         }
 
         .sidebar-header {
-            padding: 28px 24px;
+            padding: 28px var(--sidebar-header-padding-x);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -102,7 +105,44 @@
         .brand-version {
             font-size: 12px;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: 52px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+        }
+
+        .sidebar-login {
+            margin-top: 8px;
+            padding-top: 8px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            border-top: 1px solid rgba(219, 234, 254, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        .sidebar-login-name {
+            color: rgba(241, 245, 249, 0.86);
+            font-weight: 500;
+            line-height: 1.2;
+            flex: 0 0 auto;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone {
+            color: rgba(219, 234, 254, 0.58);
+            line-height: 1.2;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+
+        .sidebar-login-phone::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.46);
+            margin: 0 6px;
         }
 
         .sidebar-selectors {
@@ -384,7 +424,7 @@
 
         .sidebar-nav {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px var(--sidebar-nav-padding-x);
             min-height: 0;
             overflow-y: auto;
         }
@@ -399,7 +439,7 @@
             color: rgba(186, 230, 253, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 8px 14px;
+            padding: 8px var(--sidebar-section-title-padding-x);
             margin-bottom: 4px;
         }
 
@@ -697,6 +737,12 @@
             margin-bottom: 16px;
         }
 
+        .overview-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: -4px 0 12px;
+        }
+
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -763,7 +809,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+        }
+
+        .hour-value {
+            font-size: 10px;
+            color: var(--text-secondary);
+            line-height: 1;
         }
 
         .hour-bar {
@@ -1168,13 +1220,6 @@
             font-size: 18px;
             color: var(--danger);
             font-weight: 700;
-        }
-
-        .product-price::before {
-            content: 'CNY ';
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
         }
 
         .product-status {
@@ -1909,6 +1954,10 @@
                     <div class="brand-title">运营控制台</div>
                 </div>
                 <div class="brand-version">Prototype v0</div>
+                <div class="sidebar-login">
+                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                </div>
             </div>
             
             <nav class="sidebar-nav">
@@ -2031,11 +2080,13 @@
                                 </div>
                             </div>
                             <div class="compare-row" id="ovCompareRow"></div>
+                            <div class="overview-note" id="hourlyChartTypeLabel">图表类型：柱状图（小时销售额）</div>
                             <div class="hourly-chart" id="hourlyChart"></div>
                         </section>
 
                         <section class="overview-block">
                             <h3 class="overview-title">产品结构</h3>
+                            <div class="overview-note" id="structurePeriodLabel">时间周期：-</div>
                             <div class="structure-list" id="structureList"></div>
                             <div class="top5-list" id="top5List"></div>
                         </section>
@@ -2193,9 +2244,9 @@
                     <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">支持 JPG、PNG 格式图片链接</div>
                 </div>
                 
-                <div class="form-row">
+                    <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">价格 (CNY) <span class="required">*</span></label>
+                        <label class="form-label" id="productPriceLabel">价格 (CNY) <span class="required">*</span></label>
                         <input type="number" class="form-input" id="productPrice" placeholder="9.9" step="0.1" min="0">
                     </div>
                     <div class="form-group">
@@ -2277,6 +2328,20 @@
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
         let currentTab = 'overview';
+        const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const SUPPORTED_CURRENCIES = {
+            CNY: { decimals: 2 },
+            USD: { decimals: 2 },
+            EUR: { decimals: 2 },
+            HKD: { decimals: 2 },
+            JPY: { decimals: 0 }
+        };
+        const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
+            name: '运营管理员',
+            phone: '13800138000'
+        };
+        let overviewCurrency = 'CNY';
         const salesHistoryData = [
             { date: '2026-02-07', gross: 3120, net: 2980, orders: 183, cups: 239, hourly: [0,0,0,0,0,20,42,85,120,168,220,262,290,315,305,286,240,210,186,155,120,80,40,12] },
             { date: '2026-02-08', gross: 3280, net: 3095, orders: 190, cups: 251, hourly: [0,0,0,0,0,22,45,90,132,180,234,280,305,325,314,296,250,220,190,165,130,90,45,15] },
@@ -2337,7 +2402,9 @@
 
         // ==================== 初始化 ====================
         function init() {
-                        applySavedProductEdits();
+            syncOverviewCurrency();
+            renderSidebarLoginProfile();
+            applySavedProductEdits();
             initDeviceSearch();
             initOverviewDeviceFilter();
             updateDeviceLangs();
@@ -2347,6 +2414,90 @@
             updateStats();
             initIconPicker();
             setViewByTab(currentTab);
+        }
+
+        function normalizeOverviewCurrency(currency) {
+            const code = String(currency || 'CNY').toUpperCase();
+            return SUPPORTED_CURRENCIES[code] ? code : 'CNY';
+        }
+
+        function loadOverviewCurrency() {
+            const previousCurrency = overviewCurrency;
+            overviewCurrency = 'CNY';
+            try {
+                const raw = localStorage.getItem(MENU_BASIC_SETTINGS_KEY);
+                if (!raw) return previousCurrency !== overviewCurrency;
+                const parsed = JSON.parse(raw);
+                overviewCurrency = normalizeOverviewCurrency(parsed.currency);
+            } catch (e) {
+                overviewCurrency = 'CNY';
+            }
+            return previousCurrency !== overviewCurrency;
+        }
+
+        function getSidebarLoginProfile() {
+            try {
+                const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
+                if (!raw) return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+                const parsed = JSON.parse(raw);
+                return {
+                    name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                };
+            } catch (e) {
+                return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+            }
+        }
+
+        function renderSidebarLoginProfile() {
+            const profile = getSidebarLoginProfile();
+            const nameNode = document.getElementById('sidebarLoginName');
+            const phoneNode = document.getElementById('sidebarLoginPhone');
+            if (nameNode) {
+                nameNode.textContent = profile.name;
+            }
+            if (phoneNode) {
+                phoneNode.textContent = profile.phone;
+            }
+            fitSidebarLoginInline();
+        }
+
+        function fitSidebarLoginInline() {
+            const wrap = document.querySelector('.sidebar-login');
+            if (!wrap) return;
+            let size = 11;
+            wrap.style.fontSize = `${size}px`;
+            while (wrap.scrollWidth > wrap.clientWidth && size > 9) {
+                size -= 0.5;
+                wrap.style.fontSize = `${size}px`;
+            }
+        }
+
+        function syncOverviewCurrency() {
+            const currencyChanged = loadOverviewCurrency();
+            if (currencyChanged) {
+                updateProductPriceLabel();
+            }
+            return currencyChanged;
+        }
+
+        function rerenderCurrentTabForCurrencyChange() {
+            if (currentTab === 'overview') {
+                renderOverview();
+            } else {
+                renderMenu();
+                updateStats();
+            }
+        }
+
+        function getMenuDisplayCurrency() {
+            return overviewCurrency;
+        }
+
+        function updateProductPriceLabel() {
+            const label = document.getElementById('productPriceLabel');
+            if (!label) return;
+            label.innerHTML = `价格 (${getMenuDisplayCurrency()}) <span class="required">*</span>`;
         }
 
         function applySavedProductEdits() {
@@ -2663,7 +2814,18 @@
         }
 
         function formatCurrency(amount) {
-            return `¥${Math.round(amount).toLocaleString('zh-CN')}`;
+            return formatMoneyByCurrency(amount, overviewCurrency);
+        }
+
+        function formatMoneyByCurrency(amount, currency) {
+            const normalized = normalizeOverviewCurrency(currency);
+            const decimals = SUPPORTED_CURRENCIES[normalized].decimals;
+            const safeAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+            const formatted = safeAmount.toLocaleString('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+            return `${normalized} ${formatted}`;
         }
 
         function formatPercent(value) {
@@ -2705,15 +2867,18 @@
         }
 
         function renderOverview() {
+            syncOverviewCurrency();
             const aggregated = aggregateSalesForOverview();
             if (!aggregated.history.length) {
-                document.getElementById('ovGrossSales').textContent = '¥0';
-                document.getElementById('ovNetSales').textContent = '¥0';
+                document.getElementById('ovGrossSales').textContent = formatCurrency(0);
+                document.getElementById('ovNetSales').textContent = formatCurrency(0);
                 document.getElementById('ovOrders').textContent = '0';
                 document.getElementById('ovCups').textContent = '0';
                 document.getElementById('ovTodayCups').textContent = '0 杯';
-                document.getElementById('ovAvgSales').textContent = '¥0';
+                document.getElementById('ovAvgSales').textContent = formatCurrency(0);
                 document.getElementById('ovCompareRow').innerHTML = '<span class="compare-chip">请选择设备</span>';
+                document.getElementById('hourlyChartTypeLabel').textContent = `图表类型：柱状图（小时销售额，单位 ${overviewCurrency}）`;
+                document.getElementById('structurePeriodLabel').textContent = '时间周期：请选择设备';
                 document.getElementById('hourlyChart').innerHTML = '';
                 return;
             }
@@ -2735,6 +2900,8 @@
             document.getElementById('ovCups').textContent = today.cups.toLocaleString('zh-CN');
             document.getElementById('ovTodayCups').textContent = `${today.cups.toLocaleString('zh-CN')} 杯`;
             document.getElementById('ovAvgSales').textContent = formatCurrency(avgSales);
+            document.getElementById('hourlyChartTypeLabel').textContent = `图表类型：柱状图（${today.date} 07:00-18:00 小时销售额，单位 ${overviewCurrency}）`;
+            document.getElementById('structurePeriodLabel').textContent = `时间周期：${today.date}（当日销售结构）`;
 
             document.getElementById('ovCompareRow').innerHTML = `
                 <span class="compare-chip ${compareClass(vsYesterday)}">较昨日 ${formatPercent(vsYesterday)}</span>
@@ -2749,7 +2916,8 @@
                 const height = Math.max(4, Math.round((hourValues[idx] / hourMax) * 132));
                 return `
                     <div class="hour-bar-wrap">
-                        <div class="hour-bar" style="height:${height}px" title="${hour}:00 ¥${hourValues[idx]}"></div>
+                        <div class="hour-value">${hourValues[idx].toLocaleString('zh-CN')}</div>
+                        <div class="hour-bar" style="height:${height}px" title="${hour}:00 ${formatCurrency(hourValues[idx])}"></div>
                         <div class="hour-label">${hour}</div>
                     </div>
                 `;
@@ -2780,6 +2948,7 @@
 
         // ==================== 渲染菜单 ====================
         function renderMenu() {
+            syncOverviewCurrency();
             const container = document.getElementById('categoriesContainer');
             
             let html = '';
@@ -2830,7 +2999,7 @@
                                         <div class="product-desc">${getProductDescription(p, currentLang)}</div>
                                         <div class="product-footer">
                                             <div class="product-meta">
-                                                <div class="product-price">${p.price.toFixed(1)}</div>
+                                                <div class="product-price">${formatMoneyByCurrency(p.price, getMenuDisplayCurrency())}</div>
                                                 <div class="product-status ${isProductOnSale(p) ? '' : 'off'}">
                                                     <span class="status-dot"></span>
                                                     <span>${isProductOnSale(p) ? '在售' : '不在售'}</span>
@@ -3342,6 +3511,21 @@
             if (overviewWrap && !overviewWrap.contains(e.target)) {
                 closeOverviewDeviceFilterDropdown();
             }
+        });
+
+        window.addEventListener('storage', function(event) {
+            if (event.key && event.key !== MENU_BASIC_SETTINGS_KEY) return;
+            if (!syncOverviewCurrency()) return;
+            rerenderCurrentTabForCurrencyChange();
+        });
+
+        window.addEventListener('focus', function() {
+            if (!syncOverviewCurrency()) return;
+            rerenderCurrentTabForCurrencyChange();
+        });
+
+        window.addEventListener('resize', function() {
+            fitSidebarLoginInline();
         });
 
         window.onload = init;

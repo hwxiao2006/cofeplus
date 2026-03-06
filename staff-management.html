@@ -48,6 +48,9 @@
         }
 
         .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
             width: 240px;
             background: var(--bg-sidebar);
             color: #dbeafe;
@@ -63,7 +66,7 @@
         }
 
         .sidebar-header {
-            padding: 24px;
+            padding: 24px var(--sidebar-header-padding-x);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -100,12 +103,12 @@
         .brand-version {
             font-size: 12px;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: 52px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
         }
 
         .sidebar-nav {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px var(--sidebar-nav-padding-x);
             min-height: 0;
             overflow-y: auto;
         }
@@ -120,7 +123,7 @@
             color: rgba(186, 230, 253, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 8px 14px;
+            padding: 8px var(--sidebar-section-title-padding-x);
             margin-bottom: 4px;
         }
 
