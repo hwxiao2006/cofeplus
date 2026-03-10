@@ -318,6 +318,23 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
+        .search-select {
+            min-width: 180px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
         /* 统计卡片 */
         .stats-grid {
             display: grid;
@@ -603,6 +620,35 @@
             resize: vertical;
         }
 
+        .code-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-input-group .form-input {
+            flex: 1;
+        }
+
+        .code-regenerate-btn {
+            padding: 0 12px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-body);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .code-regenerate-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -842,6 +888,11 @@
                 <!-- 搜索栏 -->
                 <div class="search-bar">
                     <input type="text" class="search-input" id="searchInput" placeholder="搜索点位名称、地址、编码..." oninput="searchLocations()">
+                    <select class="search-select" id="pointCategoryFilter" onchange="filterLocations()">
+                        <option value="all">全部点位分类</option>
+                        <option value="exhibition">展会点位</option>
+                        <option value="operation">运营点位</option>
+                    </select>
                 </div>
 
                 <!-- 点位列表 -->
@@ -866,11 +917,14 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">点位编码 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="locationCode" placeholder="如: k8298">
+                    <div class="code-input-group">
+                        <input type="text" class="form-input" id="locationCode" placeholder="自动生成，可手动修改">
+                        <button type="button" class="code-regenerate-btn" id="locationCodeRegenerate" onclick="regenerateLocationCode()">重新生成</button>
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">所属客户 <span class="required">*</span></label>
+                        <label class="form-label">所属客户（可选）</label>
                         <select class="form-select" id="customerSelect">
                             <option value="">选择客户</option>
                         </select>
@@ -882,6 +936,13 @@
                             <option value="closed">暂停运营</option>
                         </select>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">点位分类 <span class="required">*</span></label>
+                    <select class="form-select" id="locationCategory">
+                        <option value="exhibition">展会点位</option>
+                        <option value="operation">运营点位</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">详细地址 <span class="required">*</span></label>
@@ -964,20 +1025,173 @@
         // 点位数据
         let locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
         let editingLocationId = null;
+        const POINT_CATEGORY_OPTIONS = [
+            { value: 'exhibition', label: '展会点位' },
+            { value: 'operation', label: '运营点位' }
+        ];
+        const MIN_POINT_CATEGORY_MOCK_COUNT = {
+            exhibition: 2
+        };
 
         // 默认点位数据
         const defaultLocations = [
-            { id: 'L001', code: 'k8298', name: '上海市中心店', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市浦东新区陆家嘴环路1000号', manager: '张店长', phone: '13800138001', status: 'operational', createTime: '2024-01-15', remark: '核心商圈' },
-            { id: 'L002', code: 'k8667', name: '北京朝阳门店', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京市朝阳区建国路88号', manager: '李经理', phone: '13800138002', status: 'operational', createTime: '2024-02-20', remark: '' },
-            { id: 'L003', code: 'k9001', name: '广州天河店', customerId: 'C003', customerName: '太平洋咖啡', address: '广州市天河区天河路208号', manager: '王店长', phone: '13800138003', status: 'operational', createTime: '2024-03-10', remark: '' },
-            { id: 'L004', code: 'k9002', name: '深圳南山店', customerId: 'C004', customerName: 'Costa咖啡', address: '深圳市南山区科技园南路88号', manager: '赵经理', phone: '13800138004', status: 'closed', createTime: '2024-04-05', remark: '暂停营业' },
+            { id: 'L001', code: 'k8298', name: '上海市中心店', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市浦东新区陆家嘴环路1000号', manager: '张店长', phone: '13800138001', status: 'operational', pointCategory: 'operation', createTime: '2024-01-15', remark: '核心商圈' },
+            { id: 'L002', code: 'k8667', name: '北京朝阳门店', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京市朝阳区建国路88号', manager: '李经理', phone: '13800138002', status: 'operational', pointCategory: 'exhibition', createTime: '2024-02-20', remark: '' },
+            { id: 'L003', code: 'k9001', name: '广州天河店', customerId: 'C003', customerName: '太平洋咖啡', address: '广州市天河区天河路208号', manager: '王店长', phone: '13800138003', status: 'operational', pointCategory: 'operation', createTime: '2024-03-10', remark: '' },
+            { id: 'L004', code: 'k9002', name: '深圳南山会展店', customerId: 'C004', customerName: 'Costa咖啡', address: '深圳市南山区科技园南路88号', manager: '赵经理', phone: '13800138004', status: 'closed', pointCategory: 'exhibition', createTime: '2024-04-05', remark: '会展档期暂停营业' },
+            { id: 'L005', code: 'k9100', name: '上海国家会展中心A馆', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市青浦区崧泽大道333号 A馆 1层', manager: '周运营', phone: '13800138100', status: 'operational', pointCategory: 'exhibition', createTime: '2024-04-18', remark: '展会高峰点位' },
         ];
+
+        function normalizePointCategory(value, fallbackIndex = 0) {
+            const normalized = String(value || '').trim();
+            if (POINT_CATEGORY_OPTIONS.some(option => option.value === normalized)) {
+                return normalized;
+            }
+            if (!POINT_CATEGORY_OPTIONS.length) return 'operation';
+            const safeIndex = Math.abs(Number(fallbackIndex) || 0) % POINT_CATEGORY_OPTIONS.length;
+            return POINT_CATEGORY_OPTIONS[safeIndex].value;
+        }
+
+        function resolvePointCategoryLabel(value) {
+            const normalized = normalizePointCategory(value);
+            const matched = POINT_CATEGORY_OPTIONS.find(option => option.value === normalized);
+            return matched ? matched.label : '运营点位';
+        }
+
+        function renderPointCategoryOptions() {
+            const filterNode = document.getElementById('pointCategoryFilter');
+            const formNode = document.getElementById('locationCategory');
+            const optionHtml = POINT_CATEGORY_OPTIONS
+                .map(option => `<option value="${option.value}">${option.label}</option>`)
+                .join('');
+            if (filterNode) {
+                filterNode.innerHTML = `<option value="all">全部点位分类</option>${optionHtml}`;
+            }
+            if (formNode) {
+                formNode.innerHTML = optionHtml;
+            }
+        }
+
+        function normalizeLocationsPointCategory(data) {
+            let changed = false;
+            const normalized = data.map((item, index) => {
+                const nextCategory = normalizePointCategory(item.pointCategory, index);
+                if (item.pointCategory !== nextCategory) changed = true;
+                return {
+                    ...item,
+                    pointCategory: nextCategory
+                };
+            });
+            return { normalized, changed };
+        }
+
+        function buildNextLocationId(data) {
+            const maxId = data.reduce((max, item) => {
+                const num = Number(String(item?.id || '').replace(/^L/, ''));
+                return Number.isFinite(num) ? Math.max(max, num) : max;
+            }, 0);
+            return `L${String(maxId + 1).padStart(3, '0')}`;
+        }
+
+        function extractLocationCodeNumber(code) {
+            const matched = String(code || '').trim().match(/^k(\d+)$/i);
+            if (!matched) return null;
+            const parsed = Number(matched[1]);
+            return Number.isFinite(parsed) ? parsed : null;
+        }
+
+        function generateNextLocationCode() {
+            const used = new Set();
+            let maxCodeNumber = 999;
+            locationsData.forEach(item => {
+                const rawCode = String(item?.code || '').trim();
+                if (!rawCode) return;
+                used.add(rawCode.toLowerCase());
+                const codeNumber = extractLocationCodeNumber(rawCode);
+                if (Number.isFinite(codeNumber)) {
+                    maxCodeNumber = Math.max(maxCodeNumber, codeNumber);
+                }
+            });
+            let next = maxCodeNumber + 1;
+            let candidate = `k${next}`;
+            while (used.has(candidate.toLowerCase())) {
+                next += 1;
+                candidate = `k${next}`;
+            }
+            return candidate;
+        }
+
+        function regenerateLocationCode() {
+            document.getElementById('locationCode').value = generateNextLocationCode();
+        }
+
+        function buildFallbackMockLocation(option, seedIndex) {
+            const serial = String(seedIndex + 1).padStart(2, '0');
+            const typeLabel = option?.label || '点位';
+            const typeValue = option?.value || 'operation';
+            return {
+                code: `k9${String(500 + seedIndex).padStart(3, '0')}`,
+                name: `${typeLabel}Mock点位${serial}`,
+                customerId: 'C001',
+                customerName: '星巴克咖啡',
+                address: `Mock示例地址 ${serial} 号`,
+                manager: 'Mock负责人',
+                phone: `13800139${String(seedIndex).padStart(3, '0')}`,
+                status: 'operational',
+                pointCategory: typeValue,
+                remark: `${typeLabel}自动补齐mock`
+            };
+        }
+
+        function ensurePointCategoryMockCoverage(data) {
+            let changed = false;
+            const normalized = [...data];
+            const existingCodes = new Set(normalized.map(item => String(item?.code || '').trim()).filter(Boolean));
+            const counts = {};
+            normalized.forEach(item => {
+                const category = normalizePointCategory(item.pointCategory);
+                counts[category] = (counts[category] || 0) + 1;
+            });
+
+            POINT_CATEGORY_OPTIONS.forEach((option, optionIndex) => {
+                const minCount = MIN_POINT_CATEGORY_MOCK_COUNT[option.value] || 1;
+                while ((counts[option.value] || 0) < minCount) {
+                    const seed = defaultLocations.find(item =>
+                        normalizePointCategory(item.pointCategory) === option.value &&
+                        !existingCodes.has(String(item.code || ''))
+                    );
+                    const fallback = buildFallbackMockLocation(option, normalized.length + optionIndex);
+                    const next = seed ? { ...seed } : fallback;
+                    normalized.push({
+                        ...next,
+                        id: buildNextLocationId(normalized),
+                        pointCategory: option.value,
+                        createTime: new Date().toISOString().split('T')[0]
+                    });
+                    existingCodes.add(String(next.code || ''));
+                    counts[option.value] = (counts[option.value] || 0) + 1;
+                    changed = true;
+                }
+            });
+            return { normalized, changed };
+        }
 
         // 初始化
         function init() {
             renderSidebarLoginProfile();
+            renderPointCategoryOptions();
+            let changed = false;
             if (locationsData.length === 0) {
                 locationsData = [...defaultLocations];
+                changed = true;
+            }
+            const normalizedResult = normalizeLocationsPointCategory(locationsData);
+            locationsData = normalizedResult.normalized;
+            if (normalizedResult.changed) changed = true;
+            const coverageResult = ensurePointCategoryMockCoverage(locationsData);
+            locationsData = coverageResult.normalized;
+            if (coverageResult.changed) changed = true;
+            if (changed) {
                 saveToStorage();
             }
             loadCustomers();
@@ -1016,21 +1230,30 @@
             document.getElementById('totalLocations').textContent = total;
             document.getElementById('activeLocations').textContent = active;
             document.getElementById('totalDevices').textContent = devicesData.length || 15;
-            document.getElementById('totalCustomers').textContent = new Set(locationsData.map(l => l.customerId)).size || customersData.length || 4;
+            const customerIds = locationsData
+                .map(l => String(l.customerId || '').trim())
+                .filter(Boolean);
+            document.getElementById('totalCustomers').textContent = new Set(customerIds).size || customersData.length || 4;
         }
 
         // 渲染点位列表
-        function renderLocations(filterText = '') {
+        function renderLocations() {
             const list = document.getElementById('locationList');
-            
+            const filterText = document.getElementById('searchInput').value.trim();
+            const categoryFilter = document.getElementById('pointCategoryFilter').value;
+
             let filtered = locationsData;
             if (filterText) {
                 const lower = filterText.toLowerCase();
-                filtered = locationsData.filter(l => 
+                filtered = filtered.filter(l =>
                     l.name.toLowerCase().includes(lower) ||
                     l.code.toLowerCase().includes(lower) ||
                     l.address.toLowerCase().includes(lower)
                 );
+            }
+
+            if (categoryFilter !== 'all') {
+                filtered = filtered.filter(l => normalizePointCategory(l.pointCategory) === categoryFilter);
             }
 
             if (filtered.length === 0) {
@@ -1050,7 +1273,8 @@
                         <div class="location-name">${location.name}</div>
                         <div class="location-meta">
                             <span>🏷️ ${location.code}</span>
-                            <span>🏢 ${location.customerName || '未知客户'}</span>
+                            <span>🏢 ${location.customerName || '未关联商户'}</span>
+                            <span>🧭 ${resolvePointCategoryLabel(location.pointCategory)}</span>
                             <span>📍 ${location.address}</span>
                         </div>
                     </div>
@@ -1067,8 +1291,11 @@
 
         // 搜索点位
         function searchLocations() {
-            const text = document.getElementById('searchInput').value;
-            renderLocations(text);
+            renderLocations();
+        }
+
+        function filterLocations() {
+            renderLocations();
         }
 
         // 打开模态框
@@ -1077,9 +1304,10 @@
             loadCustomers();
             document.getElementById('modalTitle').textContent = '新增点位';
             document.getElementById('locationName').value = '';
-            document.getElementById('locationCode').value = '';
+            document.getElementById('locationCode').value = generateNextLocationCode();
             document.getElementById('customerSelect').value = '';
             document.getElementById('locationStatus').value = 'operational';
+            document.getElementById('locationCategory').value = normalizePointCategory('', locationsData.length);
             document.getElementById('locationAddress').value = '';
             document.getElementById('locationManager').value = '';
             document.getElementById('locationPhone').value = '';
@@ -1105,6 +1333,7 @@
             document.getElementById('locationCode').value = location.code;
             document.getElementById('customerSelect').value = location.customerId;
             document.getElementById('locationStatus').value = location.status;
+            document.getElementById('locationCategory').value = normalizePointCategory(location.pointCategory);
             document.getElementById('locationAddress').value = location.address;
             document.getElementById('locationManager').value = location.manager || '';
             document.getElementById('locationPhone').value = location.phone || '';
@@ -1118,12 +1347,13 @@
             const code = document.getElementById('locationCode').value.trim();
             const customerId = document.getElementById('customerSelect').value;
             const status = document.getElementById('locationStatus').value;
+            const pointCategory = document.getElementById('locationCategory').value;
             const address = document.getElementById('locationAddress').value.trim();
             const manager = document.getElementById('locationManager').value.trim();
             const phone = document.getElementById('locationPhone').value.trim();
             const remark = document.getElementById('locationRemark').value.trim();
 
-            if (!name || !code || !customerId || !address) {
+            if (!name || !code || !address) {
                 showToast('请填写必填项', 'error');
                 return;
             }
@@ -1139,7 +1369,7 @@
                     locationsData[index] = {
                         ...locationsData[index],
                         name, code, customerId, customerName: customer?.name || '',
-                        status, address, manager, phone, remark
+                        status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark
                     };
                 }
                 showToast('点位信息已更新');
@@ -1149,7 +1379,7 @@
                 locationsData.push({
                     id: newId,
                     name, code, customerId, customerName: customer?.name || '',
-                    status, address, manager, phone, remark,
+                    status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark,
                     createTime: new Date().toISOString().split('T')[0]
                 });
                 showToast('点位添加成功');

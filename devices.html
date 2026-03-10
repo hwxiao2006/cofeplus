@@ -2425,6 +2425,14 @@
                             <option value="faulted">故障中</option>
                         </select>
                     </div>
+                    <div class="main-filter-item">
+                        <label class="filter-label">点位分类</label>
+                        <select class="filter-select" id="locationCategoryFilter" onchange="filterDevices()">
+                            <option value="all">全部点位分类</option>
+                            <option value="exhibition">展会点位</option>
+                            <option value="operation">运营点位</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- 统计卡片 -->
@@ -2747,6 +2755,16 @@
             'k9002': '深圳南山店'
         };
 
+        const locationPointCategoryMap = {
+            'k8298': 'operation',
+            'k8667': 'exhibition',
+            'k9001': 'operation',
+            'k9002': 'exhibition',
+            'k9100': 'exhibition'
+        };
+
+        const LOCATION_POINT_CATEGORY_OPTIONS = ['exhibition', 'operation'];
+
         const statusMap = {
             'operational': '运行中',
             'faulted': '故障'
@@ -2825,12 +2843,30 @@
             }));
         }
 
+        function normalizePointCategory(value, fallbackIndex = 0) {
+            const normalized = String(value || '').trim();
+            if (LOCATION_POINT_CATEGORY_OPTIONS.includes(normalized)) return normalized;
+            const safeIndex = Math.abs(Number(fallbackIndex) || 0) % LOCATION_POINT_CATEGORY_OPTIONS.length;
+            return LOCATION_POINT_CATEGORY_OPTIONS[safeIndex];
+        }
+
         function buildLocationMap() {
             const map = { ...locationMap };
             const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
             locationsData.forEach(l => {
                 if (l.code && l.name) {
                     map[l.code] = l.name;
+                }
+            });
+            return map;
+        }
+
+        function buildLocationCategoryMap() {
+            const map = { ...locationPointCategoryMap };
+            const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            locationsData.forEach((l, index) => {
+                if (l.code) {
+                    map[l.code] = normalizePointCategory(l.pointCategory, index);
                 }
             });
             return map;
@@ -3118,7 +3154,9 @@
 
         function filterDevices() {
             const filter = document.getElementById('deviceFilter').value;
+            const locationCategoryFilter = document.getElementById('locationCategoryFilter').value;
             const searchKeyword = document.getElementById('deviceSearch').value.trim().toLowerCase();
+            const runtimeLocationCategoryMap = buildLocationCategoryMap();
             
             if (filter === 'all') {
                 filteredData = [...devicesData];
@@ -3126,6 +3164,14 @@
                 filteredData = devicesData.filter(d => d.status === 'operational');
             } else if (filter === 'faulted') {
                 filteredData = devicesData.filter(d => d.status === 'faulted');
+            }
+
+            if (locationCategoryFilter !== 'all') {
+                filteredData = filteredData.filter(d =>
+                    d.entered !== false &&
+                    d.location &&
+                    normalizePointCategory(runtimeLocationCategoryMap[d.location]) === locationCategoryFilter
+                );
             }
             
             if (searchKeyword) {
