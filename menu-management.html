@@ -1891,6 +1891,62 @@
             justify-content: flex-end;
         }
 
+        .copy-product-modal {
+            max-width: 620px;
+        }
+
+        .copy-product-hint {
+            margin-top: -4px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .copy-product-preview {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #f8fafc;
+            padding: 16px;
+        }
+
+        .copy-product-preview.empty {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .copy-product-preview-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .copy-product-preview-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .copy-product-preview-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .copy-product-preview-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
         .btn {
             padding: 12px 24px;
             border-radius: var(--radius-sm);
@@ -3150,9 +3206,9 @@
                     <div class="lang-selector" id="langSelector">
                         <!-- 动态渲染语言切换 -->
                     </div>
-                    <button class="action-btn header-menu-action header-manage-action" onclick="openProductModal()">
+                    <button class="action-btn header-menu-action header-manage-action" onclick="openCopyProductModal()">
                         <span>+</span>
-                        <span>商品</span>
+                        <span>复制商品</span>
                     </button>
                     <button class="action-btn secondary header-menu-action header-manage-action" onclick="openCategoryModal()">
                         <span>+</span>
@@ -3457,11 +3513,41 @@
         </div>
     </div>
 
-    <!-- 新增商品模态框 -->
+    <!-- 复制商品模态框 -->
+    <div class="modal-overlay" id="copyProductModal">
+        <div class="modal copy-product-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">复制商品</h3>
+                <button class="modal-close" onclick="closeCopyProductModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="copy-product-hint">先选择当前设备下的一个商品作为模板，下一步可继续修改分类、名称、价格与图片，标签和配方结构将沿用模板商品。</div>
+                <div class="form-group">
+                    <label class="form-label">模板所属分类 <span class="required">*</span></label>
+                    <select class="form-select" id="copyProductSourceCategory" onchange="updateCopyProductSourceCategory()">
+                        <option value="">请选择分类</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">模板商品 <span class="required">*</span></label>
+                    <select class="form-select" id="copyProductSourceProduct" onchange="updateCopyProductSourceProduct()">
+                        <option value="">请选择商品</option>
+                    </select>
+                </div>
+                <div class="copy-product-preview empty" id="copyProductSourcePreview">请选择要复制的模板商品</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeCopyProductModal()">取消</button>
+                <button class="btn btn-primary" onclick="startCopyProduct()">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 复制/编辑商品模态框 -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title" id="productModalTitle">新增商品</h3>
+                <h3 class="modal-title" id="productModalTitle">复制商品</h3>
                 <button class="modal-close" onclick="closeProductModal()">×</button>
             </div>
             <div class="modal-body">
@@ -3504,7 +3590,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" onclick="closeProductModal()">取消</button>
-                <button class="btn btn-primary" id="productSubmitBtn" onclick="addProduct()">确认添加</button>
+                <button class="btn btn-primary" id="productSubmitBtn" onclick="addProduct()">确认复制</button>
             </div>
         </div>
     </div>
@@ -3616,6 +3702,9 @@
         let selectedCategoryIcon = '☕';
         let editingProductId = null;
         let editingProductCategory = '';
+        let productCopySource = null;
+        let productCopySourceCategory = '';
+        let productCopyTargetCategory = '';
         let allDeviceOptions = [];
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
@@ -5606,9 +5695,9 @@
                                     </div>
                                 </div>
                             `).join('')}
-                            <div class="product-card add-product-card" onclick="openProductModal('${categoryName}')">
+                            <div class="product-card add-product-card" onclick="openCopyProductModal('${categoryName}')">
                                 <div class="add-product-icon">+</div>
-                                <span>添加商品</span>
+                                <span>复制商品</span>
                             </div>
                         </div>
                     </div>
@@ -5811,10 +5900,187 @@
             reader.readAsDataURL(file);
         }
 
-        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '') {
+        function cloneProductValue(value) {
+            if (value === undefined || value === null) return value;
+            return JSON.parse(JSON.stringify(value));
+        }
+
+        function cloneProductForCopy(sourceProduct) {
+            if (!sourceProduct || typeof sourceProduct !== 'object') {
+                return {
+                    id: nextProductId++,
+                    price: 0,
+                    originalPrice: null,
+                    currency: menuBasicSettings.currency,
+                    taxEnabled: menuBasicSettings.taxEnabled,
+                    taxRate: menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0,
+                    featured: true,
+                    image: null,
+                    names: {},
+                    descs: {},
+                    specs: {},
+                    options: {},
+                    defaultOptions: {},
+                    tagI18n: {},
+                    tagExtraPrices: {},
+                    optionRecipes: {},
+                    optionRecipeLinks: {},
+                    onSale: true
+                };
+            }
+
+            const cloned = cloneProductValue(sourceProduct) || {};
+            return {
+                ...cloned,
+                id: nextProductId++,
+                price: Number.isFinite(Number(cloned.price)) ? Number(cloned.price) : 0,
+                originalPrice: Number.isFinite(Number(cloned.originalPrice)) && Number(cloned.originalPrice) > 0 ? Number(cloned.originalPrice) : null,
+                currency: normalizeProductCurrency({ currency: cloned.currency || menuBasicSettings.currency }),
+                taxEnabled: cloned.taxEnabled !== undefined ? Boolean(cloned.taxEnabled) : Boolean(menuBasicSettings.taxEnabled),
+                taxRate: cloned.taxEnabled === false
+                    ? 0
+                    : (Number.isFinite(Number(cloned.taxRate)) ? Number(cloned.taxRate) : (menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0)),
+                featured: cloned.featured !== false,
+                image: cloned.image || null,
+                names: cloneProductValue(cloned.names) || {},
+                descs: cloneProductValue(cloned.descs) || {},
+                specs: cloneProductValue(cloned.specs) || {},
+                options: cloneProductValue(cloned.options) || {},
+                defaultOptions: cloneProductValue(cloned.defaultOptions) || {},
+                tagI18n: cloneProductValue(cloned.tagI18n) || {},
+                tagExtraPrices: cloneProductValue(cloned.tagExtraPrices) || {},
+                optionRecipes: cloneProductValue(cloned.optionRecipes) || {},
+                optionRecipeLinks: cloneProductValue(cloned.optionRecipeLinks) || {},
+                onSale: true
+            };
+        }
+
+        function populateProductModalFields(sourceProduct = null) {
+            const product = sourceProduct && typeof sourceProduct === 'object' ? sourceProduct : null;
+            document.getElementById('productImage').value = product?.image || '';
+            document.getElementById('productImageFile').value = '';
+            document.getElementById('productPrice').value = product?.price || '';
+            document.getElementById('productOriginalPrice').value = product?.originalPrice || '';
+            document.getElementById('productFeatured').checked = product ? !!product.featured : true;
+
+            const langs = getDeviceLangs();
+            langs.forEach(lang => {
+                const nameEl = document.querySelector('.product-name-' + lang);
+                const descEl = document.querySelector('.product-desc-' + lang);
+                const beansEl = document.querySelector('.product-beans-' + lang);
+                const temperatureEl = document.querySelector('.product-temperature-' + lang);
+                const strengthEl = document.querySelector('.product-strength-' + lang);
+                const noteEl = document.querySelector('.product-note-' + lang);
+                const spec = product?.specs?.[lang] || {};
+
+                if (nameEl) nameEl.value = product?.names?.[lang] || '';
+                if (descEl) descEl.value = product?.descs?.[lang] || '';
+                if (beansEl) beansEl.value = spec.beans || '';
+                if (temperatureEl) temperatureEl.value = spec.temperature || '';
+                if (strengthEl) strengthEl.value = spec.strength || '';
+                if (noteEl) noteEl.value = spec.note || '';
+            });
+        }
+
+        function getCopyableProductCategories() {
+            return Object.keys(productsData).filter(categoryName => {
+                return Array.isArray(productsData[categoryName]?.items) && productsData[categoryName].items.length > 0;
+            });
+        }
+
+        function getSelectedCopyProductSource() {
+            const categoryName = document.getElementById('copyProductSourceCategory').value;
+            const productId = Number(document.getElementById('copyProductSourceProduct').value);
+            if (!categoryName || !Number.isFinite(productId)) return null;
+            const items = productsData[categoryName]?.items || [];
+            const product = items.find(item => Number(item.id) === productId);
+            if (!product) return null;
+            return { categoryName, product };
+        }
+
+        function renderCopyProductSourcePreview() {
+            const preview = document.getElementById('copyProductSourcePreview');
+            if (!preview) return;
+            const selected = getSelectedCopyProductSource();
+            if (!selected) {
+                preview.classList.add('empty');
+                preview.innerHTML = '请选择要复制的模板商品';
+                return;
+            }
+
+            const productName = selected.product.names?.[currentLang] || selected.product.names?.zh || selected.product.names?.en || `商品 ${selected.product.id}`;
+            const desc = getProductDescription(selected.product, currentLang) || '标签和配方结构将按模板商品完整复制';
+            preview.classList.remove('empty');
+            preview.innerHTML = `
+                <div class="copy-product-preview-name">${productName}</div>
+                <div class="copy-product-preview-meta">
+                    <span class="copy-product-preview-chip">分类：${getCategoryName(selected.categoryName)}</span>
+                    <span class="copy-product-preview-chip">ID：${selected.product.id}</span>
+                    <span class="copy-product-preview-chip">${isProductOnSale(selected.product) ? '当前在售' : '当前下架'}</span>
+                </div>
+                <div class="copy-product-preview-desc">${desc}</div>
+            `;
+        }
+
+        function updateCopyProductSourceCategory() {
+            const categoryName = document.getElementById('copyProductSourceCategory').value;
+            const productSelect = document.getElementById('copyProductSourceProduct');
+            const items = productsData[categoryName]?.items || [];
+
+            if (!items.length) {
+                productSelect.innerHTML = '<option value="">该分类暂无可复制商品</option>';
+                renderCopyProductSourcePreview();
+                return;
+            }
+
+            productSelect.innerHTML = items.map(item => {
+                const name = item.names?.[currentLang] || item.names?.zh || item.names?.en || `商品 ${item.id}`;
+                return `<option value="${item.id}">${name}</option>`;
+            }).join('');
+            renderCopyProductSourcePreview();
+        }
+
+        function updateCopyProductSourceProduct() {
+            renderCopyProductSourcePreview();
+        }
+
+        function openCopyProductModal(preselectedCategory = '') {
+            const copyableCategories = getCopyableProductCategories();
+            if (!copyableCategories.length) {
+                showToast('当前设备暂无可复制商品', 'error');
+                return;
+            }
+
+            productCopyTargetCategory = preselectedCategory && productsData[preselectedCategory] ? preselectedCategory : '';
+            const categorySelect = document.getElementById('copyProductSourceCategory');
+            const selectedCategory = copyableCategories.includes(preselectedCategory) ? preselectedCategory : copyableCategories[0];
+            categorySelect.innerHTML = copyableCategories.map(categoryName => `
+                <option value="${categoryName}" ${categoryName === selectedCategory ? 'selected' : ''}>${getCategoryName(categoryName)}</option>
+            `).join('');
+            updateCopyProductSourceCategory();
+            document.getElementById('copyProductModal').classList.add('active');
+        }
+
+        function closeCopyProductModal() {
+            document.getElementById('copyProductModal').classList.remove('active');
+        }
+
+        function startCopyProduct() {
+            const selected = getSelectedCopyProductSource();
+            if (!selected) {
+                showToast('请选择模板商品', 'error');
+                return;
+            }
+
+            closeCopyProductModal();
+            openProductModal(productCopyTargetCategory || selected.categoryName, null, '', selected.product, selected.categoryName);
+        }
+
+        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '') {
             const modal = document.getElementById('productModal');
             const select = document.getElementById('productCategory');
             const isEdit = !!productToEdit;
+            const isCopy = !isEdit && !!copySourceProduct;
             
             select.innerHTML = '<option value="">请选择分类</option>';
             for (const categoryName of Object.keys(productsData)) {
@@ -5828,47 +6094,23 @@
             }
 
             generateLangInputs('productLangInputs', 'product');
-            document.getElementById('productModalTitle').textContent = isEdit ? '编辑商品' : '新增商品';
-            document.getElementById('productSubmitBtn').textContent = isEdit ? '保存修改' : '确认添加';
+            document.getElementById('productModalTitle').textContent = isEdit ? '编辑商品' : '复制商品';
+            document.getElementById('productSubmitBtn').textContent = isEdit ? '保存修改' : '确认复制';
             updateProductPricingRuleHint();
             
             if (isEdit) {
                 editingProductId = productToEdit.id;
                 editingProductCategory = sourceCategory;
-                document.getElementById('productImage').value = productToEdit.image || '';
-                document.getElementById('productImageFile').value = '';
-                document.getElementById('productPrice').value = productToEdit.price;
-                document.getElementById('productOriginalPrice').value = productToEdit.originalPrice || '';
-                document.getElementById('productFeatured').checked = !!productToEdit.featured;
-
-                const langs = getDeviceLangs();
-                langs.forEach(lang => {
-                    const nameEl = document.querySelector('.product-name-' + lang);
-                    const descEl = document.querySelector('.product-desc-' + lang);
-                    const beansEl = document.querySelector('.product-beans-' + lang);
-                    const temperatureEl = document.querySelector('.product-temperature-' + lang);
-                    const strengthEl = document.querySelector('.product-strength-' + lang);
-                    const noteEl = document.querySelector('.product-note-' + lang);
-                    const spec = productToEdit.specs?.[lang] || {};
-                    if (nameEl) {
-                        nameEl.value = productToEdit.names?.[lang] || '';
-                    }
-                    if (descEl) {
-                        descEl.value = productToEdit.descs?.[lang] || '';
-                    }
-                    if (beansEl) beansEl.value = spec.beans || '';
-                    if (temperatureEl) temperatureEl.value = spec.temperature || '';
-                    if (strengthEl) strengthEl.value = spec.strength || '';
-                    if (noteEl) noteEl.value = spec.note || '';
-                });
+                productCopySource = null;
+                productCopySourceCategory = '';
+                productCopyTargetCategory = '';
+                populateProductModalFields(productToEdit);
             } else {
                 editingProductId = null;
                 editingProductCategory = '';
-                document.getElementById('productImage').value = '';
-                document.getElementById('productImageFile').value = '';
-                document.getElementById('productPrice').value = '';
-                document.getElementById('productOriginalPrice').value = '';
-                document.getElementById('productFeatured').checked = true;
+                productCopySource = isCopy ? cloneProductValue(copySourceProduct) : null;
+                productCopySourceCategory = isCopy ? copySourceCategory : '';
+                populateProductModalFields(isCopy ? copySourceProduct : null);
             }
 
             modal.classList.add('active');
@@ -5883,8 +6125,34 @@
             document.getElementById('productModal').classList.remove('active');
             editingProductId = null;
             editingProductCategory = '';
+            productCopySource = null;
+            productCopySourceCategory = '';
+            productCopyTargetCategory = '';
             const fileInput = document.getElementById('productImageFile');
             if (fileInput) fileInput.value = '';
+        }
+
+        function mergeLocalizedProductFields(baseNames, baseDescs, baseSpecs, nextNames, nextDescs, nextSpecs, langs) {
+            const mergedNames = { ...(baseNames || {}) };
+            const mergedDescs = { ...(baseDescs || {}) };
+            const mergedSpecs = { ...(baseSpecs || {}) };
+
+            langs.forEach(lang => {
+                if (Object.prototype.hasOwnProperty.call(nextNames, lang)) mergedNames[lang] = nextNames[lang];
+                else delete mergedNames[lang];
+
+                if (Object.prototype.hasOwnProperty.call(nextDescs, lang)) mergedDescs[lang] = nextDescs[lang];
+                else delete mergedDescs[lang];
+
+                if (Object.prototype.hasOwnProperty.call(nextSpecs, lang)) mergedSpecs[lang] = nextSpecs[lang];
+                else delete mergedSpecs[lang];
+            });
+
+            return {
+                names: mergedNames,
+                descs: mergedDescs,
+                specs: mergedSpecs
+            };
         }
 
         function addProduct() {
@@ -5937,6 +6205,11 @@
             let existingDescs = {};
             let existingSpecs = {};
             let oldOnSale = true;
+            if (productCopySource && editingProductId === null) {
+                existingNames = { ...(productCopySource.names || {}) };
+                existingDescs = { ...(productCopySource.descs || {}) };
+                existingSpecs = { ...(productCopySource.specs || {}) };
+            }
             if (editingProductId !== null && editingProductCategory && productsData[editingProductCategory]) {
                 const oldProduct = productsData[editingProductCategory].items.find(item => item.id === editingProductId);
                 if (oldProduct) {
@@ -5990,26 +6263,10 @@
                     return;
                 }
 
+                const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs);
                 const updatedProduct = {
                     ...sourceItems[index],
-                    ...(() => {
-                        const updatedNames = { ...existingNames };
-                        const updatedDescs = { ...existingDescs };
-                        const updatedSpecs = { ...existingSpecs };
-
-                        langs.forEach(lang => {
-                            if (Object.prototype.hasOwnProperty.call(names, lang)) updatedNames[lang] = names[lang];
-                            else delete updatedNames[lang];
-
-                            if (Object.prototype.hasOwnProperty.call(descs, lang)) updatedDescs[lang] = descs[lang];
-                            else delete updatedDescs[lang];
-
-                            if (Object.prototype.hasOwnProperty.call(specs, lang)) updatedSpecs[lang] = specs[lang];
-                            else delete updatedSpecs[lang];
-                        });
-
-                        return { names: updatedNames, descs: updatedDescs, specs: updatedSpecs };
-                    })(),
+                    ...mergedLocalizedFields,
                     price: price,
                     originalPrice: originalPrice,
                     currency: currency,
@@ -6032,8 +6289,16 @@
                 return;
             }
 
+            if (!productCopySource) {
+                showToast('请先选择复制模板商品', 'error');
+                return;
+            }
+
+            const copiedTemplate = cloneProductForCopy(productCopySource);
+            const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs);
             const newProduct = {
-                id: nextProductId++,
+                ...copiedTemplate,
+                ...mergedLocalizedFields,
                 price: price,
                 originalPrice: originalPrice,
                 currency: currency,
@@ -6041,9 +6306,6 @@
                 taxRate: taxEnabled ? taxRate : 0,
                 featured: featured,
                 image: image || null,
-                names: names,
-                descs: descs,
-                specs: specs,
                 onSale: true
             };
 
@@ -6052,7 +6314,7 @@
             closeProductModal();
             renderMenu();
             updateStats();
-            showToast('商品添加成功');
+            showToast('商品复制成功');
         }
 
         function editProduct(categoryName, productId) {

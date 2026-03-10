@@ -422,16 +422,61 @@ test('点单屏详情预览：选项默认值应关联商品属性', () => {
   assert.ok(overlayHtml.includes('473ml'));
 });
 
-test('新增商品表单应包含原价输入项', () => {
+test('复制商品流程应替换新增商品入口文案', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('openCopyProductModal()'));
+  assert.ok(html.includes('openCopyProductModal(\'${categoryName}\')'));
+  assert.ok(html.includes('复制商品'));
+  assert.ok(!html.includes('>添加商品<'));
+  assert.ok(!html.includes('>新增商品<'));
+});
+
+test('复制商品表单应包含原价输入项', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
   assert.ok(html.includes('id="productOriginalPrice"'));
 });
 
-test('新增商品表单应支持本地图片上传', () => {
+test('复制商品表单应支持本地图片上传', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
   assert.ok(html.includes('id="productImageFile"'));
   assert.ok(html.includes('handleProductImageFileChange(event)'));
   assert.ok(/function\s+handleProductImageFileChange\s*\(/.test(html));
+});
+
+test('复制商品应继承标签与配方相关结构，并生成新的商品ID', () => {
+  const ctx = loadMenuContext();
+  ctx.nextProductId = 200;
+  const source = {
+    id: 88,
+    price: 15.5,
+    originalPrice: 18.5,
+    featured: false,
+    image: 'https://example.com/a.png',
+    names: { zh: '原商品' },
+    descs: { zh: '原描述' },
+    specs: { zh: { beans: '豆A' } },
+    options: { BEAN: '豆A' },
+    defaultOptions: { beans: 'beanA' },
+    tagI18n: { beans: { beanA: { zh: '豆A' } } },
+    tagExtraPrices: { beans: { beanA: 2 } },
+    optionRecipes: { beans: { beanA: { syrup: { names: ['糖浆'], percent: 100 } } } },
+    optionRecipeLinks: { beans: { beanA: 'beans:beanA' } },
+    onSale: false
+  };
+
+  const copied = ctx.cloneProductForCopy(source);
+
+  assert.strictEqual(copied.id, 200);
+  assert.strictEqual(ctx.nextProductId, 201);
+  assert.strictEqual(copied.price, 15.5);
+  assert.strictEqual(copied.originalPrice, 18.5);
+  assert.strictEqual(JSON.stringify(copied.defaultOptions), JSON.stringify({ beans: 'beanA' }));
+  assert.strictEqual(JSON.stringify(copied.tagExtraPrices), JSON.stringify({ beans: { beanA: 2 } }));
+  assert.strictEqual(JSON.stringify(copied.optionRecipeLinks), JSON.stringify({ beans: { beanA: 'beans:beanA' } }));
+  copied.tagExtraPrices.beans.beanA = 9;
+  assert.strictEqual(source.tagExtraPrices.beans.beanA, 2);
+  copied.optionRecipes.beans.beanA.syrup.percent = 60;
+  assert.strictEqual(source.optionRecipes.beans.beanA.syrup.percent, 100);
 });
 
 test('商品售价：支持币种展示与税前税后计算', () => {
