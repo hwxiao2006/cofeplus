@@ -477,164 +477,349 @@
         }
 
         .content {
-            padding: 24px 28px;
+            padding: 20px 24px;
             flex: 1;
         }
 
-        .main-device-filter {
+        .desktop-toolbar {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 14px;
-            margin-bottom: 14px;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
             display: flex;
-            align-items: center;
-            justify-content: flex-start;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.045);
         }
 
-        .main-device-filter .device-search-wrap {
+        .toolbar-device-switcher {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .toolbar-switcher-copy {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #0f766e;
+        }
+
+        .toolbar-switcher-hint {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .toolbar-device-switcher .device-search-wrap {
             width: 100%;
-            max-width: 460px;
+            max-width: 620px;
         }
 
-        .main-device-filter .search-box {
+        .toolbar-device-switcher .search-box {
             position: relative;
         }
 
-        .main-device-filter .search-input {
+        .toolbar-device-switcher .search-input {
             width: 100%;
-            height: 44px;
-            padding: 0 14px 0 40px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 14px;
+            height: 42px;
+            padding: 0 14px 0 38px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
             color: var(--text-primary);
-            background: #fff;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
             margin-bottom: 0;
         }
 
-        .main-device-filter .search-input:focus {
+        .toolbar-device-switcher .search-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .main-device-filter .search-input::placeholder {
+        .toolbar-device-switcher .search-input::placeholder {
             color: var(--text-tertiary);
+            font-weight: 500;
         }
 
-        .main-device-filter .search-icon {
+        .toolbar-device-switcher .search-icon {
             position: absolute;
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-tertiary);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .desktop-toolbar .lang-btn,
+        .desktop-toolbar .btn-primary {
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .desktop-toolbar .platform-lang-selector::after {
+            right: 10px;
+        }
+
+        .desktop-toolbar .platform-lang-select {
+            height: 34px;
+            min-width: 92px;
+            padding: 0 22px 0 10px;
+            border-radius: 12px;
+            font-size: 12px;
         }
 
         .board {
             background: #fff;
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 18px;
-            box-shadow: var(--shadow);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
         }
 
         .board-head {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .board-heading {
+            min-width: 0;
         }
 
         .board-title {
             display: flex;
-            align-items: flex-end;
-            gap: 10px;
+            align-items: baseline;
+            gap: 8px;
             flex-wrap: wrap;
             line-height: 1.1;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .board-device-code {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             color: var(--text-primary);
         }
 
         .board-device-location {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-secondary);
-            padding-bottom: 4px;
+            padding-bottom: 2px;
         }
 
         .board-subtitle {
             color: var(--text-tertiary);
-            font-size: 14px;
+            font-size: 12px;
+        }
+
+        .board-summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(80px, auto));
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .summary-stat {
+            min-width: 80px;
+            padding: 6px 8px;
+            border: 1px solid #e9eef5;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            text-align: right;
+        }
+
+        .summary-stat-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+
+        .summary-stat-value {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-primary);
         }
 
         .board-count {
             color: var(--text-tertiary);
-            margin-top: 8px;
-            font-size: 16px;
+            margin-top: 6px;
+            font-size: 14px;
             white-space: nowrap;
         }
 
         .materials-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(240px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
         }
 
         .material-card {
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 12px 14px;
-            background: #fff;
-            min-height: 180px;
-            transition: all 0.2s;
+            border-radius: 14px;
+            padding: 8px 8px 6px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+            min-height: 144px;
+            transition: all 0.2s ease, transform 0.2s ease;
         }
 
         .material-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.15);
+            border-color: rgba(78, 205, 196, 0.5);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+            transform: translateY(-1px);
         }
 
-        .card-top {
+        .material-card.healthy {
+            box-shadow: inset 0 0 0 1px rgba(78, 205, 196, 0.12);
+        }
+
+        .material-card.critical {
+            box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.1);
+        }
+
+        .material-card-head {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .material-card-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .material-card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .material-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .material-meta-chip,
+        .material-code-chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 18px;
+            padding: 0 6px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .material-meta-chip {
+            color: #475569;
+            background: #f1f5f9;
+        }
+
+        .material-code-chip {
+            color: #0f172a;
+            background: #e8f4f7;
+        }
+
+        .material-card-body {
+            padding: 0 0 8px;
+        }
+
+        .material-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 8px;
-            margin-bottom: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #edf2f7;
         }
 
         .material-name {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 3px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 0;
+            letter-spacing: -0.01em;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .material-meta {
             color: var(--text-tertiary);
-            font-size: 12px;
+            font-size: 10px;
+            line-height: 1.35;
         }
 
         .card-actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 6px;
+            flex-wrap: nowrap;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .material-card-footer .card-actions {
+            margin-left: auto;
+        }
+
+        .material-card-footer .ship-btn span:first-child,
+        .material-card-footer .refill-btn span:first-child {
+            display: none;
         }
 
         .detail-mini-btn {
             border: 1px solid var(--border);
             background: #fff;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             color: var(--text-secondary);
             cursor: pointer;
@@ -642,7 +827,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 13px;
             transition: all 0.2s;
         }
 
@@ -654,14 +839,15 @@
 
         .ship-btn,
         .refill-btn {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 0 9px;
+            min-height: 28px;
+            border-radius: 999px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             transition: all 0.2s;
             white-space: nowrap;
         }
@@ -688,26 +874,52 @@
             background: #f8fafc;
         }
 
-        .stock-line {
-            margin-bottom: 8px;
-            font-size: 21px;
-            font-weight: 700;
+        .stock-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            margin-bottom: 5px;
         }
 
-        .stock-line span {
+        .stock-line-label {
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 600;
-            margin-right: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stock-line-value {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .stock-line-value strong {
+            font-size: 22px;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            color: var(--text-primary);
+        }
+
+        .stock-line-value em {
+            font-style: normal;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding-bottom: 1px;
         }
 
         .stock-bar {
             position: relative;
-            height: 8px;
+            height: 6px;
             border-radius: 999px;
             background: #f1f5f9;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .stock-fill {
@@ -737,34 +949,39 @@
             background: #ef4444;
         }
 
-        .threshold-row {
+        .threshold-meta {
             display: flex;
             align-items: center;
             justify-content: space-between;
             color: var(--text-tertiary);
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        .status-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
+            font-size: 10px;
+            font-weight: 600;
         }
 
         .use-text {
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1680px) {
+            .materials-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 1480px) {
+            .materials-grid {
+                grid-template-columns: repeat(3, minmax(220px, 1fr));
+            }
         }
 
         .status-pill {
-            min-width: 66px;
+            min-width: 54px;
             text-align: center;
             border-radius: 999px;
-            padding: 4px 10px;
-            font-size: 12px;
+            padding: 2px 7px;
+            font-size: 10px;
             font-weight: 600;
         }
 
@@ -1067,11 +1284,6 @@
                 gap: 12px;
             }
 
-            .header-right {
-                width: 100%;
-                justify-content: flex-end;
-            }
-
             .device-tag {
                 max-width: 100%;
             }
@@ -1094,13 +1306,48 @@
                 padding: 16px;
             }
 
-            .main-device-filter {
+            .desktop-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+                padding: 14px;
+            }
+
+            .toolbar-device-switcher .device-search-wrap {
+                max-width: none;
+            }
+
+            .toolbar-switcher-copy {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .toolbar-actions {
+                justify-content: flex-start;
+            }
+
+            .board-head {
+                flex-direction: column;
+            }
+
+            .board-summary-stats {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                width: 100%;
+            }
+
+            .summary-stat {
+                min-width: 0;
+            }
+
+            .material-card-head {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .main-device-filter .device-search-wrap {
-                max-width: none;
+            .card-actions {
+                flex-wrap: wrap;
+                justify-content: flex-start;
             }
 
             .materials-grid {
@@ -1146,11 +1393,6 @@
                 line-height: 1;
             }
 
-            .header-right {
-                flex-direction: row;
-                gap: 8px;
-                flex-wrap: wrap;
-            }
             .platform-lang-select {
                 min-width: 90px;
                 height: 32px;
@@ -1220,51 +1462,68 @@
                     </div>
                     <div class="header-desc">设备物料余量。 · 语言=中文</div>
                 </div>
-                <div class="header-right">
-                    <!-- 发货清单按钮 -->
-                    <button class="lang-btn" onclick="goToOrdersList()">
-                        <span>📋</span>
-                        <span>发货清单</span>
-                    </button>
-                    <!-- 全局补充物料按钮 -->
-                    <button class="btn-primary" onclick="goToRefillPage()">
-                        <span>➕</span>
-                        <span>补充物料</span>
-                    </button>
-                    <button class="lang-btn">只读</button>
-                    <div class="platform-lang-selector">
-                        <select class="platform-lang-select" aria-label="平台语言">
-                            <option selected>中文</option>
-                            <option>English</option>
-                            <option>日本語</option>
-                            <option>한국어</option>
-                            <option>ไทย</option>
-                        </select>
-                    </div>
-                </div>
             </header>
 
             <div class="content">
-                <div class="main-device-filter">
-                    <div class="device-search-wrap">
-                        <div class="search-box">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="deviceSearchInput" class="search-input" placeholder="搜索设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                <div class="desktop-toolbar">
+                    <div class="toolbar-device-switcher">
+                        <div class="toolbar-switcher-copy">
+                            <span class="toolbar-eyebrow">设备切换</span>
+                            <span class="toolbar-switcher-hint">支持设备编号 / 点位搜索</span>
                         </div>
-                        <div id="deviceDropdown" class="device-dropdown"></div>
+                        <div class="device-search-wrap">
+                            <div class="search-box">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" id="deviceSearchInput" class="search-input" placeholder="搜索设备编号或点位名称..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                            </div>
+                            <div id="deviceDropdown" class="device-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="toolbar-actions">
+                        <button class="lang-btn" onclick="goToOrdersList()">
+                            <span>📋</span>
+                            <span>发货清单</span>
+                        </button>
+                        <button class="btn-primary" onclick="goToRefillPage()">
+                            <span>➕</span>
+                            <span>补充物料</span>
+                        </button>
+                        <button class="lang-btn">只读</button>
+                        <div class="platform-lang-selector">
+                            <select class="platform-lang-select" aria-label="平台语言">
+                                <option selected>中文</option>
+                                <option>English</option>
+                                <option>日本語</option>
+                                <option>한국어</option>
+                                <option>ไทย</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <section class="board">
                     <div class="board-head">
-                        <div>
+                        <div class="board-heading">
                             <div class="board-title" id="boardTitle">
                                 <span class="board-device-code" id="boardDeviceCode">RCK111</span>
                                 <span class="board-device-location" id="boardDeviceLocation">徐汇区 漕河泾创新园</span>
                             </div>
                             <div class="board-subtitle" id="boardSubtitle">已选料仓</div>
                         </div>
-                        <div class="board-count"><span id="materialCount">0</span> 个物料</div>
+                        <div class="board-summary-stats">
+                            <div class="summary-stat">
+                                <span class="summary-stat-label">物料总数</span>
+                                <span class="summary-stat-value"><span id="materialCount">0</span></span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="summary-stat-label">告急</span>
+                                <span class="summary-stat-value"><span id="criticalCount">0</span></span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="summary-stat-label">正常</span>
+                                <span class="summary-stat-value"><span id="healthyCount">0</span></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="materials-grid" id="materialsGrid"></div>
                 </section>
@@ -1596,6 +1855,8 @@
 
         function renderMaterials() {
             const grid = document.getElementById("materialsGrid");
+            const healthyCount = materialsData.filter(item => item.status === "healthy").length;
+            const criticalCount = materialsData.filter(item => item.status !== "healthy").length;
             grid.innerHTML = materialsData.map(item => {
                 const fillPct = Math.max(0, Math.min(100, (item.remaining / item.max) * 100));
                 const warningPct = Math.max(0, Math.min(100, (item.warning / item.max) * 100));
@@ -1604,12 +1865,40 @@
                 const statusClass = item.status === "healthy" ? "healthy" : "critical";
 
                 return `
-                    <article class="material-card">
-                        <div class="card-top">
-                            <div>
-                                <h3 class="material-name">${item.name}</h3>
-                                <div class="material-meta">${item.index} · ${item.category} · ${item.code}</div>
+                    <article class="material-card ${statusClass}">
+                        <div class="material-card-head">
+                            <div class="material-card-copy">
+                                <div class="material-card-title-row">
+                                    <h3 class="material-name">${item.name}</h3>
+                                    <span class="status-pill ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="material-meta-row">
+                                    <span class="material-meta-chip">${item.index}</span>
+                                    <span class="material-meta-chip">${item.category}</span>
+                                    <span class="material-code-chip">${item.code}</span>
+                                </div>
                             </div>
+                        </div>
+                        <div class="material-card-body">
+                            <div class="stock-metrics">
+                                <span class="stock-line-label">剩余量</span>
+                                <div class="stock-line-value">
+                                    <strong>${item.remaining}</strong>
+                                    <em>${item.unit}</em>
+                                </div>
+                            </div>
+                            <div class="stock-bar">
+                                <div class="stock-fill" style="width:${fillPct}%;"></div>
+                                <span class="threshold warning" style="left:${warningPct}%;"></span>
+                                <span class="threshold critical" style="left:${criticalPct}%;"></span>
+                            </div>
+                            <div class="threshold-meta">
+                                <span>预警 ${item.warning} ${item.unit}</span>
+                                <span>告警 ${item.critical} ${item.unit}</span>
+                            </div>
+                        </div>
+                        <div class="material-card-footer">
+                            <span class="use-text">使用中</span>
                             <div class="card-actions">
                                 <button class="ship-btn" onclick="goToRefillPage('${item.code}')">
                                     <span>📦</span>
@@ -1622,25 +1911,13 @@
                                 <button class="detail-mini-btn" onclick="viewMaterial('${item.code}')">→</button>
                             </div>
                         </div>
-                        <div class="stock-line"><span>剩余:</span>${item.remaining} ${item.unit}</div>
-                        <div class="stock-bar">
-                            <div class="stock-fill" style="width:${fillPct}%;"></div>
-                            <span class="threshold warning" style="left:${warningPct}%;"></span>
-                            <span class="threshold critical" style="left:${criticalPct}%;"></span>
-                        </div>
-                        <div class="threshold-row">
-                            <span>预警 ${item.warning} ${item.unit}</span>
-                            <span>告警 ${item.critical} ${item.unit}</span>
-                        </div>
-                        <div class="status-row">
-                            <span class="use-text">使用中</span>
-                            <span class="status-pill ${statusClass}">${statusText}</span>
-                        </div>
                     </article>
                 `;
             }).join("");
 
             document.getElementById("materialCount").textContent = materialsData.length;
+            document.getElementById("criticalCount").textContent = criticalCount;
+            document.getElementById("healthyCount").textContent = healthyCount;
         }
 
         function viewMaterial(code) {

@@ -39,6 +39,14 @@ test('物料页：设备标题应同步展示点位信息', () => {
   assert.ok(/id="boardDeviceLocation"/.test(html));
 });
 
+test('物料页：桌面端应提供统一工具栏与设备摘要区', () => {
+  assert.ok(/class="desktop-toolbar"/.test(html));
+  assert.ok(/class="toolbar-device-switcher"/.test(html));
+  assert.ok(/class="toolbar-actions"/.test(html));
+  assert.ok(/class="board-summary-stats"/.test(html));
+  assert.ok(/class="summary-stat"/.test(html));
+});
+
 test('物料页：应在测试阶段一次性清空旧运维记录，避免串历史数据', () => {
   assert.ok(/function\s+resetMaintenanceRecordsForTesting\s*\(/.test(html));
   assert.ok(/localStorage\.removeItem\('deviceMaintenanceRecords'\)/.test(html));
@@ -68,6 +76,36 @@ test('物料页：写入运维记录前应补齐运维人员和电话字段', ()
 test('物料页：补充弹窗中当前量仅允许整数', () => {
   assert.ok(/id="adjustCurrent"[^>]*step="1"/.test(html));
   assert.ok(/if\s*\(!Number\.isInteger\(nextCurrent\)\)/.test(html));
+});
+
+test('物料页：桌面物料卡片应拆分为头部主体和底部状态区', () => {
+  assert.ok(/class="material-card-head"/.test(html));
+  assert.ok(/class="material-card-body"/.test(html));
+  assert.ok(/class="material-card-footer"/.test(html));
+  assert.ok(/class="stock-metrics"/.test(html));
+  assert.ok(/class="threshold-meta"/.test(html));
+});
+
+test('物料页：桌面卡片应优先采用五列后台布局', () => {
+  assert.ok(/\.materials-grid\s*\{[\s\S]*grid-template-columns:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\);/.test(html));
+  assert.ok(/@media\s*\(max-width:\s*1680px\)\s*\{[\s\S]*\.materials-grid\s*\{[\s\S]*repeat\(4,\s*minmax\(0,\s*1fr\)\);/.test(html));
+  assert.ok(/@media\s*\(max-width:\s*1480px\)\s*\{[\s\S]*\.materials-grid\s*\{[\s\S]*repeat\(3,\s*minmax\(220px,\s*1fr\)\);/.test(html));
+  assert.ok(/\.materials-grid\s*\{[\s\S]*gap:\s*8px;/.test(html));
+});
+
+test('物料页：五列卡片应将状态与操作重排为更紧凑的组合', () => {
+  assert.ok(/class="material-card-title-row"/.test(html));
+  assert.ok(/class="material-meta-row"/.test(html));
+  assert.ok(/class="material-card-footer">[\s\S]*class="card-actions"/.test(html));
+});
+
+test('物料页：桌面端应继续压缩为更强运营后台密度', () => {
+  assert.ok(/\.board\s*\{[\s\S]*padding:\s*16px;/.test(html));
+  assert.ok(/\.desktop-toolbar\s*\{[\s\S]*padding:\s*12px 14px;/.test(html));
+  assert.ok(/\.board-device-code\s*\{[\s\S]*font-size:\s*32px;/.test(html));
+  assert.ok(/\.material-card\s*\{[\s\S]*min-height:\s*144px;/.test(html));
+  assert.ok(/\.ship-btn,\s*[\s\S]*\.refill-btn\s*\{[\s\S]*min-height:\s*28px;/.test(html));
+  assert.ok(/\.stock-line-value strong\s*\{[\s\S]*font-size:\s*22px;/.test(html));
 });
 
 test('物料页：发货清单入口应跳转到运维清单页面', () => {
