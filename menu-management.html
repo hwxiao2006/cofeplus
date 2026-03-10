@@ -1298,6 +1298,39 @@
             flex: 0 0 auto;
         }
 
+        .menu-manage-scope-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 4px;
+            padding: 4px;
+            min-height: 48px;
+            border-radius: 16px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            background: #f3f4f6;
+        }
+
+        .menu-manage-scope-btn {
+            min-width: 0;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .menu-manage-scope-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .menu-manage-scope-btn.active {
+            background: #fff;
+            color: var(--primary-dark);
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+        }
+
         .menu-manage-content {
             padding: 16px 20px 20px;
         }
@@ -1331,26 +1364,6 @@
             text-align: center;
             color: var(--text-muted);
             font-size: 14px;
-        }
-
-        .menu-manage-search-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .menu-manage-search-tag {
-            min-height: 24px;
-            padding: 0 10px;
-            border-radius: 999px;
-            background: #eef2f7;
-            color: #425466;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
         }
 
         .category-section {
@@ -4079,11 +4092,11 @@
                                             <select class="form-select" id="menuManageCategorySelect" onchange="setMenuManageActiveCategory(this.value)"></select>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label" for="menuManageScopeSelect">搜索范围</label>
-                                            <select class="form-select" id="menuManageScopeSelect" onchange="setMenuManageProductScope(this.value)">
-                                                <option value="current">当前分类</option>
-                                                <option value="all">全部分类</option>
-                                            </select>
+                                            <label class="form-label">搜索范围</label>
+                                            <div class="menu-manage-scope-toggle" role="group" aria-label="搜索范围">
+                                                <button type="button" class="menu-manage-scope-btn active" id="menuManageScopeCurrentBtn" aria-pressed="true" onclick="setMenuManageProductScope('current')">当前分类</button>
+                                                <button type="button" class="menu-manage-scope-btn" id="menuManageScopeAllBtn" aria-pressed="false" onclick="setMenuManageProductScope('all')">全部分类</button>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
@@ -6953,12 +6966,27 @@
             const keywordInput = document.getElementById('menuManageCategoryKeyword');
             const categoryList = document.getElementById('menuManageCategoryList');
             const mobileSelect = document.getElementById('menuManageCategorySelect');
-            const scopeSelect = document.getElementById('menuManageScopeSelect');
+            const scopeCurrentBtn = document.getElementById('menuManageScopeCurrentBtn');
+            const scopeAllBtn = document.getElementById('menuManageScopeAllBtn');
             const productKeywordInput = document.getElementById('menuManageProductKeyword');
+            const isCurrentScope = menuManageProductScope !== 'all';
 
             if (keywordInput) keywordInput.value = menuManageCategoryKeyword;
-            if (scopeSelect) scopeSelect.value = menuManageProductScope;
             if (productKeywordInput) productKeywordInput.value = menuManageProductKeyword;
+            if (scopeCurrentBtn) {
+                scopeCurrentBtn.classList.toggle('active', isCurrentScope);
+                scopeCurrentBtn.dataset.scope = 'current';
+                if (typeof scopeCurrentBtn.setAttribute === 'function') {
+                    scopeCurrentBtn.setAttribute('aria-pressed', isCurrentScope ? 'true' : 'false');
+                }
+            }
+            if (scopeAllBtn) {
+                scopeAllBtn.classList.toggle('active', !isCurrentScope);
+                scopeAllBtn.dataset.scope = 'all';
+                if (typeof scopeAllBtn.setAttribute === 'function') {
+                    scopeAllBtn.setAttribute('aria-pressed', !isCurrentScope ? 'true' : 'false');
+                }
+            }
 
             const visibleKeys = getMenuManageVisibleCategoryKeys();
             if (visibleKeys.length && !visibleKeys.includes(menuManageActiveCategory)) {
@@ -6999,8 +7027,6 @@
 
         function renderMenuManageProductCard(product, options = {}) {
             const categoryKey = options.categoryKey || menuManageActiveCategory;
-            const showCategoryTags = !!options.showCategoryTags;
-            const categoryTags = Array.isArray(options.categoryTags) ? options.categoryTags : [];
             const productName = getMenuManageProductName(product);
 
             return `
@@ -7020,11 +7046,6 @@
                             ${product.featured ? '<span class="featured-badge">推荐</span>' : ''}
                         </div>
                         <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
-                        ${showCategoryTags && categoryTags.length ? `
-                            <div class="menu-manage-search-tags">
-                                ${categoryTags.map(tag => `<span class="menu-manage-search-tag">${escapePreviewText(tag)}</span>`).join('')}
-                            </div>
-                        ` : ''}
                         <div class="product-footer">
                             <div class="product-meta">
                                 ${renderProductPriceHtml(product)}
@@ -7070,15 +7091,13 @@
 
             if (isGlobalScope) {
                 title = normalizeMenuManageKeyword(menuManageProductKeyword) ? '全部分类搜索结果' : '全部分类商品';
-                desc = '按商品 ID 去重展示；商品可同时显示所属的多个分类。';
+                desc = '按商品 ID 去重展示，避免多分类商品重复出现。';
                 summary = `${globalEntries.length} 个去重结果`;
                 contentHtml = globalEntries.length
                     ? `
                         <div class="product-grid">
                             ${globalEntries.map(entry => renderMenuManageProductCard(entry.product, {
-                                categoryKey: getBatchFixedPriceEntryCategoryKeys(entry)[0] || menuManageActiveCategory,
-                                showCategoryTags: true,
-                                categoryTags: Array.isArray(entry.categoryNames) ? entry.categoryNames : [getBatchFixedPriceEntryCategoryLabel(entry)]
+                                categoryKey: getBatchFixedPriceEntryCategoryKeys(entry)[0] || menuManageActiveCategory
                             })).join('')}
                         </div>
                     `
