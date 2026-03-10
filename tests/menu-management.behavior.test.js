@@ -21,6 +21,8 @@ function loadMenuContext() {
     .replace("let selectedCategoryIcon = '☕';", "globalThis.selectedCategoryIcon = '☕';")
     .replace('let editingProductId = null;', 'globalThis.editingProductId = null;')
     .replace("let editingProductCategory = '';", "globalThis.editingProductCategory = '';")
+    .replace("let productCopyTargetCategory = '';", "globalThis.productCopyTargetCategory = '';")
+    .replace("let categoryModalContext = 'default';", "globalThis.categoryModalContext = 'default';")
     .replace('let allDeviceOptions = [];', 'globalThis.allDeviceOptions = [];')
     .replace('let overviewAllDevices = [];', 'globalThis.overviewAllDevices = [];')
     .replace('let overviewSelectedDevices = new Set();', 'globalThis.overviewSelectedDevices = new Set();')
@@ -116,6 +118,7 @@ function loadMenuContext() {
   context.renderOverview = () => {};
   context.updateStats = () => {};
   context.showToast = () => {};
+  context.__realUpdateDeviceLangs = context.updateDeviceLangs;
   context.updateDeviceLangs = () => {};
   return context;
 }
@@ -201,6 +204,7 @@ test('点单屏预览：切换分类后，右侧商品列表应联动更新', ()
 test('点单屏预览：应按当前语言展示分类与商品名称', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'en';
+  ctx.deviceConfig.RCK111.defaultOrderPreviewLang = '';
   ctx.openOrderPreviewModal();
 
   const categoryHtml = ctx.document.getElementById('orderPreviewCategories').innerHTML;
@@ -229,6 +233,31 @@ test('点单屏预览：语言切换下拉应与设备语言一致', () => {
   assert.ok(!optionsHtml.includes('value="ko"'));
 });
 
+test('语言管理：应支持为设备设置点单屏默认语言', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('点单屏默认'));
+  assert.ok(/function\s+setDefaultOrderPreviewLang\s*\(/.test(html));
+
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK111';
+  ctx.openLangModal();
+
+  const langListHtml = ctx.document.getElementById('langList').innerHTML;
+  assert.ok(langListHtml.includes('点单屏默认'));
+});
+
+test('点单屏预览：打开时应优先使用设备配置的默认语言', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.currentLang = 'zh';
+  ctx.deviceConfig.RCK112.defaultOrderPreviewLang = 'jp';
+
+  ctx.openOrderPreviewModal();
+
+  assert.strictEqual(ctx.document.getElementById('orderPreviewLangSelect').value, 'jp');
+  assert.ok(ctx.document.getElementById('orderPreviewMeta').textContent.includes('日本語'));
+});
+
 test('点单屏预览：切换预览语言后应刷新商品文案', () => {
   const ctx = loadMenuContext();
   ctx.currentDevice = 'RCK111';
@@ -244,6 +273,90 @@ test('点单屏预览：切换预览语言后应刷新商品文案', () => {
   assert.ok(meta.includes('English'));
 });
 
+test('点单屏预览：切换预览语言不应改写设备默认语言', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.deviceConfig.RCK112.defaultOrderPreviewLang = 'zh';
+  ctx.openOrderPreviewModal();
+
+  ctx.setOrderPreviewLang('en');
+
+  assert.strictEqual(ctx.deviceConfig.RCK112.defaultOrderPreviewLang, 'zh');
+});
+
+test('语言管理：隐藏语言后应仅从当前设备可见语言中移除并保留语言数据', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  let confirmMessage = '';
+  ctx.confirm = message => {
+    confirmMessage = message;
+    return true;
+  };
+
+  ctx.hideLanguage('jp');
+
+  assert.ok(confirmMessage.includes('隐藏语言后，该语言的菜单将会不可见'));
+  assert.deepStrictEqual(Array.from(ctx.getDeviceLangs()), ['zh', 'en']);
+  assert.deepStrictEqual(Array.from(ctx.deviceConfig.RCK112.langs), ['zh', 'en', 'jp']);
+  assert.strictEqual(ctx.deviceConfig.RCK112.langNames.jp, '日本語');
+});
+
+test('语言管理：隐藏当前默认语言后应回退到剩余第一种可见语言', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.deviceConfig.RCK112.defaultOrderPreviewLang = 'jp';
+
+  ctx.hideLanguage('jp');
+
+  assert.strictEqual(ctx.deviceConfig.RCK112.defaultOrderPreviewLang, 'zh');
+});
+
+test('点单屏预览：隐藏语言后不应再显示该语言选项', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+
+  ctx.hideLanguage('jp');
+  ctx.openOrderPreviewModal();
+
+  const optionsHtml = ctx.document.getElementById('orderPreviewLangSelect').innerHTML;
+  assert.ok(optionsHtml.includes('value="zh"'));
+  assert.ok(optionsHtml.includes('value="en"'));
+  assert.ok(!optionsHtml.includes('value="jp"'));
+});
+
+test('语言管理：应单独展示已隐藏语言列表并提供恢复显示按钮', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('已隐藏语言'));
+  assert.ok(html.includes('id="hiddenLangList"'));
+
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.hideLanguage('jp');
+  ctx.openLangModal();
+
+  const visibleHtml = ctx.document.getElementById('langList').innerHTML;
+  const hiddenHtml = ctx.document.getElementById('hiddenLangList').innerHTML;
+
+  assert.ok(!visibleHtml.includes('日本語'));
+  assert.ok(hiddenHtml.includes('日本語'));
+  assert.ok(hiddenHtml.includes('恢复显示'));
+});
+
+test('语言管理：恢复隐藏语言后应重新出现在设备语言与点单屏预览中', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.hideLanguage('jp');
+
+  ctx.restoreHiddenLanguage('jp');
+
+  assert.deepStrictEqual(Array.from(ctx.getDeviceLangs()), ['zh', 'en', 'jp']);
+  assert.deepStrictEqual(Array.from(ctx.deviceConfig.RCK112.hiddenLangs || []), []);
+
+  ctx.openOrderPreviewModal();
+  const optionsHtml = ctx.document.getElementById('orderPreviewLangSelect').innerHTML;
+  assert.ok(optionsHtml.includes('value="jp"'));
+});
+
 test('点单屏预览：左侧分类不显示在售商品合计', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
@@ -256,6 +369,7 @@ test('点单屏预览：左侧分类不显示在售商品合计', () => {
 test('点单屏预览：右侧标题仅显示分类名，不带“商品”', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'en';
+  ctx.deviceConfig.RCK111.defaultOrderPreviewLang = '';
   ctx.openOrderPreviewModal();
 
   const title = ctx.document.getElementById('orderPreviewProductsTitle').textContent;
@@ -431,9 +545,25 @@ test('复制商品流程应替换新增商品入口文案', () => {
   assert.ok(!html.includes('>新增商品<'));
 });
 
+test('复制商品第一步应先选择目标分类，并支持直接新增分类', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('目标分类'));
+  assert.ok(html.includes('id="copyProductTargetCategory"'));
+  assert.ok(html.includes("openCategoryModal('copyTargetCategory')"));
+  assert.ok(!html.includes('模板所属分类'));
+});
+
 test('复制商品表单应包含原价输入项', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
   assert.ok(html.includes('id="productOriginalPrice"'));
+});
+
+test('复制/编辑商品弹窗应支持多分类归属选择', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('id="productCategorySummary"'));
+  assert.ok(html.includes('id="productCategoryChips"'));
+  assert.ok(html.includes('id="productCategoryOptions"'));
+  assert.ok(!html.includes('id="productCategory"'));
 });
 
 test('复制商品表单应支持本地图片上传', () => {
@@ -479,7 +609,183 @@ test('复制商品应继承标签与配方相关结构，并生成新的商品ID
   assert.strictEqual(source.optionRecipes.beans.beanA.syrup.percent, 100);
 });
 
-test('商品售价：支持币种展示与税前税后计算', () => {
+test('复制商品模板列表应支持跨分类聚合，并显示来源分类', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, names: { zh: '干卡布其诺' } }]
+    },
+    新品: {
+      icon: '🆕',
+      names: { zh: '新品' },
+      items: [{ id: 2, names: { zh: '橘皮拿铁' } }]
+    }
+  };
+
+  const entries = ctx.getCopyProductTemplateEntries();
+
+  assert.strictEqual(entries.length, 2);
+  assert.ok(entries.some(item => item.categoryName === '拉花' && item.label.includes('拉花')));
+  assert.ok(entries.some(item => item.categoryName === '新品' && item.label.includes('新品')));
+});
+
+test('从复制商品流程新增分类后，应自动选中新建的目标分类', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, names: { zh: '干卡布其诺' } }]
+    },
+    新品分类: {
+      icon: '🆕',
+      names: { zh: '新品分类' },
+      items: []
+    }
+  };
+
+  ctx.applyCopyProductTargetCategory('新品分类');
+
+  assert.strictEqual(ctx.productCopyTargetCategory, '新品分类');
+  assert.strictEqual(ctx.document.getElementById('copyProductTargetCategory').value, '新品分类');
+});
+
+test('编辑商品弹窗：应默认勾选同一商品已挂载的所有分类', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    },
+    新品: {
+      icon: '🆕',
+      names: { zh: '新品' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    },
+    经典: {
+      icon: '⭐',
+      names: { zh: '经典' },
+      items: []
+    }
+  };
+
+  ctx.openProductModal('拉花', ctx.productsData.拉花.items[0], '拉花');
+
+  const selected = Array.from(ctx.getSelectedProductModalCategories()).sort();
+  assert.strictEqual(selected.join(','), '拉花,新品');
+});
+
+test('复制商品弹窗：应默认勾选目标分类，并允许追加其他分类', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    },
+    新品: {
+      icon: '🆕',
+      names: { zh: '新品' },
+      items: []
+    },
+    经典: {
+      icon: '⭐',
+      names: { zh: '经典' },
+      items: []
+    }
+  };
+
+  ctx.openProductModal('新品', null, '', ctx.productsData.拉花.items[0], '拉花');
+
+  let selected = ctx.getSelectedProductModalCategories();
+  assert.strictEqual(selected.join(','), '新品');
+
+  ctx.setProductModalSelectedCategories(['新品', '经典']);
+  selected = ctx.getSelectedProductModalCategories().sort();
+  assert.strictEqual(selected.join(','), '新品,经典');
+});
+
+test('编辑商品弹窗：保存后应按多分类归属回放商品挂载', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    },
+    新品: {
+      icon: '🆕',
+      names: { zh: '新品' },
+      items: []
+    },
+    经典: {
+      icon: '⭐',
+      names: { zh: '经典' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    }
+  };
+
+  const nameInput = ctx.document.querySelector('.product-name-zh');
+  ctx.openProductModal('拉花', ctx.productsData.拉花.items[0], '拉花');
+  ctx.setProductModalSelectedCategories(['拉花', '新品']);
+  nameInput.value = '商品1-新';
+  ctx.document.getElementById('productPrice').value = '11';
+  ctx.document.getElementById('productOriginalPrice').value = '13';
+  ctx.document.getElementById('productFeatured').checked = true;
+
+  ctx.addProduct();
+
+  const assignments = JSON.parse(ctx.localStorage.getItem('menuProductCategoryAssignments') || '{}');
+  assert.deepStrictEqual(assignments['1'], ['拉花', '新品']);
+  assert.strictEqual(ctx.productsData.拉花.items.filter(item => item.id === 1).length, 1);
+  assert.strictEqual(ctx.productsData.新品.items.filter(item => item.id === 1).length, 1);
+  assert.strictEqual(ctx.productsData.经典.items.filter(item => item.id === 1).length, 0);
+  assert.strictEqual(ctx.productsData.新品.items.find(item => item.id === 1).price, 11);
+});
+
+test('复制商品弹窗：保存后应按多分类归属挂载新商品', () => {
+  const ctx = loadMenuContext();
+  ctx.nextProductId = 100;
+  ctx.productsData = {
+    拉花: {
+      icon: '☕',
+      names: { zh: '拉花' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' }, onSale: true }]
+    },
+    新品: {
+      icon: '🆕',
+      names: { zh: '新品' },
+      items: []
+    },
+    经典: {
+      icon: '⭐',
+      names: { zh: '经典' },
+      items: []
+    }
+  };
+
+  const nameInput = ctx.document.querySelector('.product-name-zh');
+  ctx.openProductModal('新品', null, '', ctx.productsData.拉花.items[0], '拉花');
+  ctx.setProductModalSelectedCategories(['新品', '经典']);
+  nameInput.value = '商品100';
+  ctx.document.getElementById('productPrice').value = '12';
+  ctx.document.getElementById('productOriginalPrice').value = '15';
+  ctx.document.getElementById('productFeatured').checked = true;
+
+  ctx.addProduct();
+
+  const assignments = JSON.parse(ctx.localStorage.getItem('menuProductCategoryAssignments') || '{}');
+  assert.deepStrictEqual(assignments['100'], ['新品', '经典']);
+  assert.strictEqual(ctx.productsData.新品.items.filter(item => item.id === 100).length, 1);
+  assert.strictEqual(ctx.productsData.经典.items.filter(item => item.id === 100).length, 1);
+  assert.strictEqual(ctx.productsData.拉花.items.filter(item => item.id === 100).length, 0);
+  assert.strictEqual(ctx.productsData.新品.items.find(item => item.id === 100).price, 12);
+});
+
+test('商品售价：启用税费后应以税后价为主展示，并显示按税率倒推的税前价', () => {
   const ctx = loadMenuContext();
   ctx.document.getElementById('globalCurrencySelect').value = 'USD';
   ctx.document.getElementById('globalTaxEnabled').checked = true;
@@ -489,10 +795,16 @@ test('商品售价：支持币种展示与税前税后计算', () => {
     price: 10
   }, { compact: false });
 
+  assert.ok(!html.includes('税后'));
   assert.ok(html.includes('税前'));
-  assert.ok(html.includes('税后'));
   assert.ok(html.includes('USD 10.00'));
-  assert.ok(html.includes('USD 11.00'));
+  assert.ok(html.includes('USD 9.09'));
+});
+
+test('基础设置：税率设置文案应说明前台默认显示税后价格', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('默认显示税后价格，并展示税前价格'));
+  assert.ok(!html.includes('显示税前/税后价格'));
 });
 
 test('商品售价：未加税时仅展示单一价格', () => {
@@ -528,6 +840,50 @@ test('基础设置应包含设备语言、币种、税率配置输入，后台�
   assert.ok(html.includes('id="globalCurrencySelect"'));
   assert.ok(html.includes('id="globalTaxEnabled"'));
   assert.ok(html.includes('id="globalTaxRate"'));
+});
+
+test('税率设置输入框应采用紧凑宽度样式', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(/\.settings-tax-row\s*\{[^}]*align-items:\s*flex-start;[^}]*\}/.test(html));
+  assert.ok(/\.settings-tax-input-wrap\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(html));
+  assert.ok(/\.settings-tax-input\s*\{[^}]*width:\s*96px;[^}]*\}/.test(html));
+});
+
+test('基础设置：应分别展示售价币种卡片和税率设置卡片', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(/<section class="settings-card(?:[^>]*)>[\s\S]*?<h3 class="settings-title">售价币种<\/h3>[\s\S]*?id="globalCurrencySelect"[\s\S]*?<\/section>/.test(html));
+  assert.ok(/<section class="settings-card(?:[^>]*)>[\s\S]*?<h3 class="settings-title">税率设置<\/h3>[\s\S]*?id="globalTaxEnabled"[\s\S]*?id="globalTaxRate"[\s\S]*?<\/section>/.test(html));
+  assert.ok(!html.includes('>价格与税率<'));
+});
+
+test('基础设置：三张卡片应恢复同排等高布局', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(!/\.settings-grid\s*\{[^}]*align-items:\s*start;[^}]*\}/.test(html));
+});
+
+test('基础设置：语言卡片应保留顶部编辑入口和语言列表，但不显示卡片内设备编号', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const langCardMatch = html.match(/<section class="settings-card settings-card-language">[\s\S]*?<div class="settings-card-head">[\s\S]*?>编辑<\/button>[\s\S]*?<div class="settings-device-summary">[\s\S]*?id="deviceLangs"[\s\S]*?<\/section>/);
+  assert.ok(langCardMatch, '语言卡片未保留顶部编辑入口和语言列表布局');
+  assert.ok(!html.includes('id="settingsDeviceTag"'));
+});
+
+test('基础设置：语言卡片应在等高布局下使用紧凑纵向 flex 排布', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(/\.settings-card-language\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*\}/.test(html));
+  assert.ok(/\.settings-device-summary\s*\{[^}]*justify-content:\s*center;[^}]*\}/.test(html));
+});
+
+test('基础设置：价格与税率卡片的税费控件应采用桌面端行内布局', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('class="settings-tax-row settings-tax-inline-row"'));
+  assert.ok(/\.settings-tax-inline-row\s*\{[^}]*flex-direction:\s*row;[^}]*\}/.test(html));
+});
+
+test('基础设置：语言卡片不应展示默认点单屏语言和已启用语言数量摘要', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(!html.includes('id="settingsDefaultOrderPreviewLang"'));
+  assert.ok(!html.includes('id="settingsVisibleLangCount"'));
 });
 
 test('按钮归属：预览点单屏在基本设置tab，新增分类不在基本设置tab', () => {
@@ -601,6 +957,8 @@ test('跳转商品详情应使用短链接并将详情数据写入会话存储',
   assert.ok(payload.category);
   assert.ok(Array.isArray(payload.catalog));
   assert.ok(payload.catalog.length > 0);
+  assert.ok(Array.isArray(payload.categoryOptions));
+  assert.ok(payload.categoryOptions.length > 0);
 });
 
 test('跳转商品详情：会话存储异常时应降级到 window.name 传输', () => {
@@ -624,9 +982,40 @@ test('跳转商品详情：会话存储异常时应降级到 window.name 传输'
   assert.ok(wrapped.payload && wrapped.payload.product && wrapped.payload.product.id === 2);
   assert.ok(Array.isArray(wrapped.payload.catalog));
   assert.ok(wrapped.payload.catalog.length > 0);
+  assert.ok(Array.isArray(wrapped.payload.categoryOptions));
+  assert.ok(wrapped.payload.categoryOptions.length > 0);
   assert.ok(wrapped.payloadKey);
   assert.ok(!ctx.window.location.href.includes('product='));
   assert.ok(!ctx.window.location.href.includes('category='));
+});
+
+test('菜单管理：应根据本地商品分类归属将同一商品挂载到多个分类', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    A: {
+      names: { zh: '分类A' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' } }]
+    },
+    B: {
+      names: { zh: '分类B' },
+      items: []
+    },
+    C: {
+      names: { zh: '分类C' },
+      items: [{ id: 1, price: 10, originalPrice: 12, names: { zh: '商品1' } }]
+    }
+  };
+
+  ctx.localStorage.setItem('menuProductCategoryAssignments', JSON.stringify({
+    1: ['A', 'B']
+  }));
+
+  assert.strictEqual(typeof ctx.applySavedProductCategoryAssignments, 'function');
+  ctx.applySavedProductCategoryAssignments();
+
+  assert.strictEqual(ctx.productsData.A.items.filter(item => item.id === 1).length, 1);
+  assert.strictEqual(ctx.productsData.B.items.filter(item => item.id === 1).length, 1);
+  assert.strictEqual(ctx.productsData.C.items.filter(item => item.id === 1).length, 0);
 });
 
 test('保存基础设置后，应将币种税率应用到菜单商品', () => {
@@ -662,8 +1051,28 @@ test('批量改价应作为第三个tab，且提供列表与分类筛选', () =>
   assert.ok(html.includes('id="batchSaleOffBtn"'), '缺少批量下架按钮');
   assert.ok(html.includes('submitBatchSaleStatusUpdate(true)'), '缺少批量上架动作');
   assert.ok(html.includes('submitBatchSaleStatusUpdate(false)'), '缺少批量下架动作');
-  assert.ok(html.includes('id="batchFixedRetryBtn"'), '缺少失败重试按钮');
+  assert.ok(!html.includes('id="batchFixedRetryBtn"'), '不应再展示失败重试按钮');
   assert.ok(!html.includes('id="batchFixedModeBtn"'), '不应保留菜单管理头部批量按钮');
+});
+
+test('批量改价：筛选条件与批量编辑区应分开显示', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const filterGroupMatch = html.match(/<div class="batch-fixed-group batch-fixed-filter-group">[\s\S]*?<\/div>\s*<\/div>/);
+  const editorGroupMatch = html.match(/<div class="batch-fixed-group batch-fixed-editor-group">[\s\S]*?<\/div>\s*<\/div>/);
+  assert.ok(filterGroupMatch, '筛选区结构缺失');
+  assert.ok(editorGroupMatch, '批量编辑区结构缺失');
+
+  const filterGroupHtml = filterGroupMatch[0];
+  const editorGroupHtml = editorGroupMatch[0];
+  assert.ok(filterGroupHtml.includes('>批量筛选</h3>'));
+  assert.ok(filterGroupHtml.includes('id="batchFixedCategorySelect"'));
+  assert.ok(filterGroupHtml.includes('id="batchFixedKeyword"'));
+  assert.ok(!filterGroupHtml.includes('id="batchFixedCurrentPrice"'), '现价输入不应放在筛选区');
+  assert.ok(!filterGroupHtml.includes('id="batchFixedOriginalPrice"'), '原价输入不应放在筛选区');
+  assert.ok(editorGroupHtml.includes('>批量编辑</h3>'));
+  assert.ok(editorGroupHtml.includes('id="batchFixedCurrentPrice"'));
+  assert.ok(editorGroupHtml.includes('id="batchFixedOriginalPrice"'));
+  assert.ok(editorGroupHtml.includes('id="batchFixedSubmitBtn"'));
 });
 
 test('批量改价列表应为文本行，不展示商品图片', () => {
@@ -674,6 +1083,16 @@ test('批量改价列表应为文本行，不展示商品图片', () => {
   const listHtml = ctx.document.getElementById('batchFixedListContainer').innerHTML;
   assert.ok(!listHtml.includes('<img'));
   assert.ok(!listHtml.includes('product-image'));
+});
+
+test('批量改价：移动端应改为无横向滚动的堆叠卡片布局', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-wrap\s*\{[^}]*overflow:\s*visible;[^}]*\}/.test(html));
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-head\s*\{[^}]*display:\s*none;[^}]*\}/.test(html));
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-row\s*\{[^}]*grid-template-columns:\s*1fr;[^}]*min-width:\s*0;[^}]*\}/.test(html));
+  assert.ok(html.includes('class="batch-fixed-cell-label">现价</span>'));
+  assert.ok(html.includes('class="batch-fixed-cell-label">原价</span>'));
+  assert.ok(html.includes('class="batch-fixed-cell-label">状态</span>'));
 });
 
 test('批量改价：商品名搜索应过滤列表，且全选只作用于筛选结果', () => {
@@ -704,6 +1123,45 @@ test('批量改价：商品名搜索应过滤列表，且全选只作用于筛�
   assert.strictEqual(snapshot.selectedIds.includes(1), true);
   assert.strictEqual(snapshot.selectedIds.includes(2), true);
   assert.strictEqual(snapshot.selectedIds.includes(3), false);
+});
+
+test('批量改价：多分类商品在全量列表中应按商品ID去重，并按唯一商品计数提交结果', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    经典系列: {
+      icon: '☕',
+      items: [
+        { id: 1, price: 10, originalPrice: 12, names: { zh: '同款拿铁' } }
+      ]
+    },
+    今日推荐: {
+      icon: '⭐',
+      items: [
+        { id: 1, price: 10, originalPrice: 12, names: { zh: '同款拿铁' } },
+        { id: 2, price: 13, originalPrice: 15, names: { zh: '抹茶牛奶' } }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('batch');
+  ctx.setBatchFixedPriceActiveCategory('__ALL__');
+
+  const entries = ctx.getBatchFixedPriceEntries('__ALL__');
+  assert.strictEqual(entries.length, 2);
+  const entryIds = Array.from(entries, entry => Number(entry.product.id));
+  assert.strictEqual(entryIds.join(','), '1,2');
+
+  const listHtml = ctx.document.getElementById('batchFixedListContainer').innerHTML;
+  assert.strictEqual((listHtml.match(/同款拿铁/g) || []).length, 1);
+  assert.ok(listHtml.includes('经典系列'));
+  assert.ok(listHtml.includes('今日推荐'));
+
+  ctx.setBatchFixedPriceSelectedIds([1]);
+  const result = ctx.applyBatchFixedPriceBySelection('__ALL__', { currentPrice: 11, originalPrice: null });
+  assert.strictEqual(result.successCount, 1);
+  assert.strictEqual(result.failedCount, 0);
+  assert.strictEqual(ctx.productsData.经典系列.items[0].price, 11);
+  assert.strictEqual(ctx.productsData.今日推荐.items[0].price, 11);
 });
 
 test('批量固定改价：原价可不填，填写时必须大于现价', () => {
@@ -821,6 +1279,79 @@ test('批量固定改价：重试失败项成功后应清除失败状态', () =>
   const batchState = ctx.getBatchFixedPriceStateSnapshot();
   assert.strictEqual(batchState.failedMap[2], undefined);
   assert.strictEqual(batchState.selectedIds.includes(2), false);
+});
+
+test('批量固定改价：多选提交时应先模拟失败一行，第二次提交再成功', () => {
+  const ctx = loadMenuContext();
+  const toasts = [];
+  ctx.showToast = (message, type) => {
+    toasts.push({ message, type });
+  };
+  ctx.productsData = {
+    测试分类: {
+      icon: '☕',
+      items: [
+        { id: 1, price: 10, originalPrice: 15, names: { zh: '商品1' } },
+        { id: 2, price: 8, originalPrice: 12, names: { zh: '商品2' } }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('batch');
+  ctx.setBatchFixedPriceActiveCategory('测试分类');
+  ctx.setBatchFixedPriceSelectedIds([1, 2]);
+  ctx.document.getElementById('batchFixedCurrentPrice').value = '11';
+  ctx.document.getElementById('batchFixedOriginalPrice').value = '';
+
+  ctx.submitBatchFixedPriceUpdate();
+
+  let batchState = ctx.getBatchFixedPriceStateSnapshot();
+  const failedIds = Object.keys(batchState.failedMap).map(id => Number(id));
+  assert.strictEqual(failedIds.length, 1);
+  assert.strictEqual(batchState.successIds.length, 1);
+  assert.ok(String(batchState.failedMap[failedIds[0]]).includes('模拟失败'));
+  assert.ok(toasts.some(item => item.message.includes('成功 1，失败 1')));
+
+  const failedProduct = ctx.productsData.测试分类.items.find(item => item.id === failedIds[0]);
+  assert.strictEqual(failedProduct.price, failedIds[0] === 1 ? 10 : 8);
+
+  ctx.document.getElementById('batchFixedCurrentPrice').value = '12';
+  ctx.document.getElementById('batchFixedOriginalPrice').value = '16';
+  ctx.submitBatchFixedPriceUpdate();
+
+  batchState = ctx.getBatchFixedPriceStateSnapshot();
+  assert.strictEqual(Object.keys(batchState.failedMap).length, 0);
+  assert.strictEqual(batchState.selectedIds.length, 0);
+  assert.ok(toasts.some(item => item.message.includes('成功 1，失败 0')));
+  assert.strictEqual(ctx.productsData.测试分类.items[0].price, 11);
+  assert.strictEqual(ctx.productsData.测试分类.items[1].price, 12);
+  assert.strictEqual(ctx.productsData.测试分类.items[1].originalPrice, 16);
+});
+
+test('批量固定改价：失败后摘要应提示失败项保留选中并再次点击提交改价', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    测试分类: {
+      icon: '☕',
+      items: [
+        { id: 1, price: 10, originalPrice: 15, names: { zh: '商品1' } },
+        { id: 2, price: 8, originalPrice: 12, names: { zh: '商品2' } }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('batch');
+  ctx.setBatchFixedPriceActiveCategory('测试分类');
+  ctx.setBatchFixedPriceSelectedIds([1, 2]);
+  ctx.document.getElementById('batchFixedCurrentPrice').value = '11';
+  ctx.document.getElementById('batchFixedOriginalPrice').value = '';
+
+  ctx.submitBatchFixedPriceUpdate();
+
+  const summaryText = ctx.document.getElementById('batchFixedSummary').textContent;
+  assert.ok(summaryText.includes('失败 1'));
+  assert.ok(summaryText.includes('失败项已保留选中'));
+  assert.ok(summaryText.includes('再次点击提交改价'));
 });
 
 test('批量固定改价：仅改原价时应保持现价，并对不合法行做部分失败', () => {

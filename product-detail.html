@@ -395,6 +395,138 @@
             resize: vertical;
         }
 
+        .product-category-selector {
+            position: relative;
+        }
+
+        .product-category-summary {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .product-category-summary.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .product-category-summary-text {
+            min-width: 0;
+            flex: 1;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-category-summary-arrow {
+            color: var(--text-muted);
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .product-category-summary.active .product-category-summary-arrow {
+            transform: rotate(180deg);
+        }
+
+        .product-category-chips {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .product-category-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--primary-light);
+            color: #1f7f79;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-category-options {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid rgba(78, 205, 196, 0.18);
+            border-radius: 12px;
+            background: #f8fcfc;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .product-category-options.active {
+            display: flex;
+        }
+
+        .product-category-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .product-category-option:hover {
+            border-color: rgba(78, 205, 196, 0.42);
+        }
+
+        .product-category-option.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .product-category-option input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-dark);
+            flex-shrink: 0;
+        }
+
+        .product-category-option-text {
+            min-width: 0;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .product-category-empty {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-muted);
+            font-size: 13px;
+            border: 1px dashed var(--border);
+        }
+
+        .product-category-hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
         .lang-section {
             background: #f8f9fa;
             padding: 20px;
@@ -1531,8 +1663,16 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">所属分类</label>
-                                <input type="text" class="form-input" id="categoryName" readonly>
+                                <label class="form-label">所属分类 <span class="required">*</span></label>
+                                <div class="product-category-selector" id="productCategorySelector">
+                                    <button type="button" class="product-category-summary" id="productCategorySummary" onclick="toggleProductCategorySelector(); event.stopPropagation();">
+                                        <span class="product-category-summary-text" id="productCategorySummaryText">请选择所属分类</span>
+                                        <span class="product-category-summary-arrow">▼</span>
+                                    </button>
+                                    <div class="product-category-chips" id="productCategoryChips"></div>
+                                    <div class="product-category-options" id="productCategoryOptions"></div>
+                                </div>
+                                <div class="product-category-hint">一个商品可同时出现在多个分类中；保存后会同步更新所有同 ID 商品。</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">商品价格 <span class="required">*</span></label>
@@ -1837,6 +1977,11 @@
         let productData = null;
         let categoryNames = {};
         let linkedProductCatalog = [];
+        let payloadCategoryOptions = [];
+        let productCategoryOptions = [];
+        let selectedProductCategoryKeys = new Set();
+        let isProductCategorySelectorOpen = false;
+        let currentCategoryKey = '';
         let currentDevice = 'RCK111';
         let currentLang = 'zh';
         let currentProductDetailTab = 'basic';
@@ -1856,6 +2001,7 @@
             { specKey: 'lid', title: '杯盖', listId: 'lidOptions', optionTitle: 'LID' },
             { specKey: 'latteArt', title: '拉花', listId: 'latteArtOptions', optionTitle: 'LATTE-ART' }
         ];
+        const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
         const RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
@@ -2898,6 +3044,177 @@
             return String(v || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
+        function normalizeCategoryOptionEntry(entry) {
+            if (!entry || typeof entry !== 'object') return null;
+            const key = String(entry.key || entry.categoryKey || '').trim();
+            if (!key) return null;
+
+            const sourceNames = entry.names || entry.category || entry.categoryNames || {};
+            const names = {};
+            if (sourceNames && typeof sourceNames === 'object') {
+                Object.keys(sourceNames).forEach(lang => {
+                    const value = String(sourceNames[lang] || '').trim();
+                    if (value) names[lang] = value;
+                });
+            }
+
+            if (!Object.keys(names).length) {
+                names.zh = key;
+                names.en = key;
+            }
+
+            return { key, names };
+        }
+
+        function resolveCategoryOptionLabel(option) {
+            if (!option) return '-';
+            return String(option.names?.[currentLang] || option.names?.zh || option.names?.en || option.key || '-');
+        }
+
+        function getAvailableCategoryOptions() {
+            const optionMap = new Map();
+
+            (payloadCategoryOptions || []).forEach(entry => {
+                const normalized = normalizeCategoryOptionEntry(entry);
+                if (normalized) optionMap.set(normalized.key, normalized);
+            });
+
+            (linkedProductCatalog || []).forEach(entry => {
+                const normalized = normalizeCategoryOptionEntry({
+                    key: entry?.categoryKey,
+                    names: entry?.category || entry?.categoryNames || {}
+                });
+                if (normalized && !optionMap.has(normalized.key)) {
+                    optionMap.set(normalized.key, normalized);
+                }
+            });
+
+            if (currentCategoryKey && !optionMap.has(currentCategoryKey)) {
+                optionMap.set(currentCategoryKey, normalizeCategoryOptionEntry({
+                    key: currentCategoryKey,
+                    names: categoryNames
+                }));
+            }
+
+            if (!optionMap.size && categoryNames && Object.keys(categoryNames).length) {
+                const fallbackKey = currentCategoryKey || String(categoryNames.zh || categoryNames.en || 'default').trim();
+                const normalized = normalizeCategoryOptionEntry({ key: fallbackKey, names: categoryNames });
+                if (normalized) optionMap.set(normalized.key, normalized);
+            }
+
+            return Array.from(optionMap.values());
+        }
+
+        function getProductCategoryAssignments() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(PRODUCT_CATEGORY_ASSIGNMENTS_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function getInitialAssignedCategoryKeys() {
+            const availableOptions = getAvailableCategoryOptions();
+            const availableKeys = new Set(availableOptions.map(option => option.key));
+            const normalizeKeys = (values) => Array.from(new Set((values || [])
+                .map(value => String(value || '').trim())
+                .filter(Boolean)
+                .filter(value => availableKeys.size === 0 || availableKeys.has(value))));
+
+            const productId = Number(productData?.id);
+            if (Number.isFinite(productId)) {
+                const assignmentMap = getProductCategoryAssignments();
+                const storedKeys = normalizeKeys(assignmentMap[productId]);
+                if (storedKeys.length) {
+                    return storedKeys;
+                }
+            }
+
+            const catalogKeys = normalizeKeys((linkedProductCatalog || [])
+                .filter(entry => Number(entry?.product?.id ?? entry?.id) === productId)
+                .map(entry => entry?.categoryKey));
+            if (catalogKeys.length) {
+                return catalogKeys;
+            }
+
+            if (currentCategoryKey) {
+                return normalizeKeys([currentCategoryKey]);
+            }
+
+            return [];
+        }
+
+        function toggleProductCategorySelector(forceOpen = null) {
+            if (typeof forceOpen === 'boolean') {
+                isProductCategorySelectorOpen = forceOpen;
+            } else {
+                isProductCategorySelectorOpen = !isProductCategorySelectorOpen;
+            }
+            renderProductCategorySelector();
+        }
+
+        function toggleProductCategorySelection(categoryKey, checked) {
+            const normalizedKey = String(categoryKey || '').trim();
+            if (!normalizedKey) return;
+            if (checked) {
+                selectedProductCategoryKeys.add(normalizedKey);
+            } else {
+                selectedProductCategoryKeys.delete(normalizedKey);
+            }
+            renderProductCategorySelector();
+        }
+
+        function collectSelectedProductCategories() {
+            return productCategoryOptions
+                .map(option => option.key)
+                .filter(key => selectedProductCategoryKeys.has(key));
+        }
+
+        function persistProductCategoryAssignments(productId, categoryKeys = []) {
+            if (!Number.isFinite(Number(productId))) return;
+            const assignments = getProductCategoryAssignments();
+            assignments[Number(productId)] = Array.from(new Set((categoryKeys || [])
+                .map(key => String(key || '').trim())
+                .filter(Boolean)));
+            localStorage.setItem(PRODUCT_CATEGORY_ASSIGNMENTS_KEY, JSON.stringify(assignments));
+        }
+
+        function renderProductCategorySelector() {
+            const summary = document.getElementById('productCategorySummary');
+            const summaryText = document.getElementById('productCategorySummaryText');
+            const chips = document.getElementById('productCategoryChips');
+            const options = document.getElementById('productCategoryOptions');
+            if (!summary || !summaryText || !chips || !options) return;
+
+            productCategoryOptions = getAvailableCategoryOptions();
+            const selectedOptions = productCategoryOptions.filter(option => selectedProductCategoryKeys.has(option.key));
+            const selectedLabels = selectedOptions.map(resolveCategoryOptionLabel);
+
+            summary.classList.toggle('active', isProductCategorySelectorOpen);
+            options.classList.toggle('active', isProductCategorySelectorOpen);
+            summaryText.textContent = selectedLabels.length ? selectedLabels.join('、') : '请选择所属分类';
+
+            chips.innerHTML = selectedOptions.length
+                ? selectedOptions.map(option => `<span class="product-category-chip">${escAttr(resolveCategoryOptionLabel(option))}</span>`).join('')
+                : '<span class="product-category-chip" style="background:#f3f4f6;color:#6b7280;">未选择分类</span>';
+
+            if (!productCategoryOptions.length) {
+                options.innerHTML = '<div class="product-category-empty">暂无可选分类</div>';
+                return;
+            }
+
+            options.innerHTML = productCategoryOptions.map(option => {
+                const checked = selectedProductCategoryKeys.has(option.key);
+                return `
+                    <label class="product-category-option ${checked ? 'active' : ''}" onclick="event.stopPropagation()">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleProductCategorySelection('${escAttr(option.key)}', this.checked)">
+                        <span class="product-category-option-text">${escAttr(resolveCategoryOptionLabel(option))}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
         function initPage() {
             renderSidebarLoginProfile();
             switchProductDetailTab('basic');
@@ -2922,8 +3239,14 @@
                         if (payload && payload.product) {
                             productData = payload.product;
                         }
+                        if (payload && payload.categoryKey) {
+                            currentCategoryKey = String(payload.categoryKey);
+                        }
                         if (payload && payload.category) {
                             categoryNames = payload.category;
+                        }
+                        if (payload && Array.isArray(payload.categoryOptions)) {
+                            payloadCategoryOptions = payload.categoryOptions;
                         }
                         if (payload && Array.isArray(payload.catalog)) {
                             linkedProductCatalog = payload.catalog;
@@ -2943,8 +3266,14 @@
                             if (wrapped.payload && wrapped.payload.product) {
                                 productData = wrapped.payload.product;
                             }
+                            if (wrapped.payload && wrapped.payload.categoryKey) {
+                                currentCategoryKey = String(wrapped.payload.categoryKey);
+                            }
                             if (wrapped.payload && wrapped.payload.category) {
                                 categoryNames = wrapped.payload.category;
+                            }
+                            if (wrapped.payload && Array.isArray(wrapped.payload.categoryOptions)) {
+                                payloadCategoryOptions = wrapped.payload.categoryOptions;
                             }
                             if (wrapped.payload && Array.isArray(wrapped.payload.catalog)) {
                                 linkedProductCatalog = wrapped.payload.catalog;
@@ -2988,10 +3317,13 @@
                 if (!Array.isArray(linkedProductCatalog) || linkedProductCatalog.length === 0) {
                     linkedProductCatalog = [{
                         id: productData.id,
+                        categoryKey: currentCategoryKey,
                         category: categoryNames,
                         product: productData
                     }];
                 }
+                productCategoryOptions = getAvailableCategoryOptions();
+                selectedProductCategoryKeys = new Set(getInitialAssignedCategoryKeys());
                 renderMultiLangInputs();
                 fillFormData();
             }
@@ -3061,8 +3393,19 @@
                 });
             }
 
+            document.addEventListener('click', function(e) {
+                const selector = document.getElementById('productCategorySelector');
+                if (selector && !selector.contains(e.target)) {
+                    toggleProductCategorySelector(false);
+                }
+            });
+
             document.addEventListener('keydown', function(e) {
                 if (e.key !== 'Escape') return;
+                if (isProductCategorySelectorOpen) {
+                    toggleProductCategorySelector(false);
+                    return;
+                }
                 const drawer = document.getElementById('tagConfigDrawer');
                 if (drawer && drawer.classList.contains('active')) {
                     closeTagConfigDrawer();
@@ -3113,8 +3456,7 @@
         }
 
         function fillFormData() {
-            // 分类名称（显示当前语言）
-            document.getElementById('categoryName').value = categoryNames[currentLang] || categoryNames['zh'] || categoryNames['en'] || '--';
+            renderProductCategorySelector();
             
             // 图片
             document.getElementById('productImage').value = productData.image || '';
@@ -3382,6 +3724,12 @@
 
             const langs = getDeviceLangs();
             const firstLang = langs[0];
+            const selectedCategories = collectSelectedProductCategories();
+
+            if (!selectedCategories.length) {
+                showToast('请至少选择一个所属分类', 'error');
+                return;
+            }
 
             // 验证主语言名称
             const firstName = document.querySelector('.product-name-' + firstLang).value.trim();
@@ -3448,9 +3796,16 @@
                 options: getSelectedOptions()
             };
 
+            const primaryCategory = productCategoryOptions.find(option => option.key === selectedCategories[0]);
+            if (primaryCategory) {
+                currentCategoryKey = primaryCategory.key;
+                categoryNames = { ...(primaryCategory.names || {}) };
+            }
+
             const edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
             edits[updatedProduct.id] = updatedProduct;
             localStorage.setItem('menuProductEdits', JSON.stringify(edits));
+            persistProductCategoryAssignments(updatedProduct.id, selectedCategories);
 
             showToast('商品配置已保存');
 
