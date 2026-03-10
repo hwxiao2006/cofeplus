@@ -627,44 +627,6 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .lang-selector {
-            position: relative;
-            display: inline-block;
-        }
-
-        .lang-selector::after {
-            content: '\25BE';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            pointer-events: none;
-            font-size: 12px;
-        }
-
-        .lang-select {
-            height: 34px;
-            min-width: 98px;
-            padding: 0 24px 0 8px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 999px;
-            background: #fff;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1;
-            appearance: none;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .lang-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.18);
-        }
-
         .action-btn {
             padding: 10px 20px;
             background: var(--primary);
@@ -1922,13 +1884,6 @@
                 border-radius: 10px;
                 font-size: 13px;
             }
-            .lang-select {
-                min-width: 90px;
-                height: 32px;
-                font-size: 12px;
-                padding: 0 24px 0 8px;
-            }
-
             .content {
                 padding: 14px;
             }
@@ -2033,9 +1988,6 @@
                             </label>
                             <div id="overviewDeviceFilterOptions"></div>
                         </div>
-                    </div>
-                    <div class="lang-selector" id="langSelector">
-                        <!-- 动态渲染语言切换 -->
                     </div>
                     <button class="action-btn secondary header-menu-action" onclick="openCategoryModal()">
                         <span>+</span>
@@ -2781,15 +2733,7 @@
 
         // ==================== 语言选择器 ====================
         function renderLangSelector() {
-            const container = document.getElementById('langSelector');
-            const langs = ['zh', 'en', 'jp', 'ko', 'th'];
-            const labels = { zh: '中文', en: 'English', jp: '日本語', ko: '한국어', th: 'ไทย' };
-
-            container.innerHTML = `
-                <select class="lang-select" onchange="setPlatformLang(this.value)" aria-label="平台语言">
-                    ${langs.map(lang => `<option value="${lang}" ${lang === platformLang ? 'selected' : ''}>${labels[lang]}</option>`).join('')}
-                </select>
-            `;
+            return;
         }
 
         function setPlatformLang(lang) {

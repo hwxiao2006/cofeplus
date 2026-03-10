@@ -32,7 +32,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: var(--bg-body);
             min-height: 100vh;
             color: var(--text-primary);
@@ -416,44 +416,6 @@
             color: #fff;
             border-color: var(--primary);
         }
-        .platform-lang-selector {
-            position: relative;
-            display: inline-block;
-        }
-
-        .platform-lang-selector::after {
-            content: '\25BE';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            pointer-events: none;
-            font-size: 12px;
-        }
-
-        .platform-lang-select {
-            height: 34px;
-            min-width: 98px;
-            padding: 0 24px 0 8px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 999px;
-            background: #fff;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1;
-            appearance: none;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .platform-lang-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.18);
-        }
-
         /* 全局补充物料按钮 */
         .btn-primary {
             padding: 8px 16px;
@@ -582,18 +544,6 @@
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
-        }
-
-        .desktop-toolbar .platform-lang-selector::after {
-            right: 10px;
-        }
-
-        .desktop-toolbar .platform-lang-select {
-            height: 34px;
-            min-width: 92px;
-            padding: 0 22px 0 10px;
-            border-radius: 12px;
-            font-size: 12px;
         }
 
         .board {
@@ -1393,13 +1343,6 @@
                 line-height: 1;
             }
 
-            .platform-lang-select {
-                min-width: 90px;
-                height: 32px;
-                font-size: 12px;
-                padding: 0 24px 0 8px;
-            }
-
             .content {
                 padding: 14px;
             }
@@ -1489,15 +1432,6 @@
                             <span>补充物料</span>
                         </button>
                         <button class="lang-btn">只读</button>
-                        <div class="platform-lang-selector">
-                            <select class="platform-lang-select" aria-label="平台语言">
-                                <option selected>中文</option>
-                                <option>English</option>
-                                <option>日本語</option>
-                                <option>한국어</option>
-                                <option>ไทย</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 

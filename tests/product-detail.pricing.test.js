@@ -24,6 +24,13 @@ test('商品编辑表单应包含原价输入项', () => {
   assert.ok(html.includes('id="productOriginalPrice"'));
 });
 
+test('商品编辑表单应将所属分类改为可编辑多分类选择', () => {
+  assert.ok(html.includes('id="productCategorySummary"'));
+  assert.ok(html.includes('id="productCategoryChips"'));
+  assert.ok(html.includes('id="productCategoryOptions"'));
+  assert.ok(!/id="categoryName"[^>]*readonly/.test(html));
+});
+
 test('原价输入区域应采用紧凑宽度样式', () => {
   assert.ok(html.includes('class="form-group form-group-original-price"'));
   assert.ok(/\.form-group-original-price\s*\{[\s\S]*max-width:\s*420px;/.test(html));
@@ -49,6 +56,12 @@ test('saveProduct 应持久化 originalPrice 字段', () => {
   assert.ok(/originalPrice:\s*originalPrice/.test(html));
 });
 
+test('saveProduct 应持久化商品所属分类，并要求至少选择一个分类', () => {
+  assert.ok(html.includes("menuProductCategoryAssignments"));
+  assert.ok(/function\s+persistProductCategoryAssignments\s*\(/.test(html));
+  assert.ok(/showToast\('请至少选择一个所属分类'/.test(html));
+});
+
 test('返回菜单页应默认定位到菜单管理内层tab', () => {
   assert.ok(/menu-management\.html\?tab=menu&innerTab=manage/.test(html));
 });
@@ -56,6 +69,7 @@ test('返回菜单页应默认定位到菜单管理内层tab', () => {
 test('详情页应支持通过 payloadKey 从会话存储读取数据', () => {
   assert.ok(/const\s+payloadKey\s*=\s*params\.get\('payloadKey'\)/.test(html));
   assert.ok(/sessionStorage\.getItem\(`productDetailPayload:\$\{payloadKey\}`\)/.test(html));
+  assert.ok(/payload && Array\.isArray\(payload\.categoryOptions\)/.test(html));
 });
 
 test('详情页应支持通过 window.name 读取大图商品数据', () => {
@@ -69,6 +83,13 @@ test('详情页在缺少 payload 时应支持按商品ID读取本地编辑数据
   assert.ok(/const\s+productId\s*=\s*Number\(params\.get\('id'\)\)/.test(html));
   assert.ok(/localStorage\.getItem\('menuProductEdits'\)/.test(html));
   assert.ok(/edits && edits\[productId\]/.test(html));
+});
+
+test('详情页应支持渲染当前商品的多分类归属并切换分类勾选', () => {
+  assert.ok(/function\s+getInitialAssignedCategoryKeys\s*\(/.test(html));
+  assert.ok(/function\s+renderProductCategorySelector\s*\(/.test(html));
+  assert.ok(/function\s+toggleProductCategorySelection\s*\(/.test(html));
+  assert.ok(/function\s+persistProductCategoryAssignments\s*\(/.test(html));
 });
 
 test('详情页应将基本信息与配方配置拆分为分页签', () => {

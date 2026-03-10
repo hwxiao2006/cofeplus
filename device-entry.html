@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: var(--bg-page);
             color: var(--text-primary);
         }
@@ -334,6 +334,173 @@
             font-size: 13px;
         }
 
+        .location-select-wrap {
+            width: min(380px, 100%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .location-select-wrap select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .quick-link-btn {
+            border: 1px solid var(--primary);
+            background: #ecfbfa;
+            color: var(--primary-dark);
+            border-radius: 8px;
+            padding: 0 10px;
+            height: 34px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .quick-link-btn:hover {
+            background: #d9f7f5;
+        }
+
+        .quick-location-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.42);
+            z-index: 120;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quick-location-modal-overlay.show {
+            display: flex;
+        }
+
+        .quick-location-modal {
+            width: min(640px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            overflow: hidden;
+        }
+
+        .quick-location-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .quick-location-modal-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quick-location-modal-close {
+            border: none;
+            background: transparent;
+            font-size: 22px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .quick-location-modal-body {
+            padding: 14px 16px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .quick-location-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .quick-location-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .quick-location-code-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-location-code-row input {
+            flex: 1;
+        }
+
+        .quick-code-regenerate-btn {
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .quick-code-regenerate-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            background: #ecfbfa;
+        }
+
+        .quick-location-field input,
+        .quick-location-field select,
+        .quick-location-field textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            background: #fff;
+        }
+
+        .quick-location-field textarea {
+            min-height: 74px;
+            resize: vertical;
+        }
+
+        .quick-location-field input:focus,
+        .quick-location-field select:focus,
+        .quick-location-field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.14);
+        }
+
+        .quick-location-modal-footer {
+            padding: 12px 16px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .quick-location-modal-footer .btn {
+            flex: none;
+            min-width: 112px;
+            height: 38px;
+            padding: 0 14px;
+        }
+
         @media (max-width: 1023px) {
             .page {
                 padding: 12px 12px 18px;
@@ -426,6 +593,53 @@
                 height: 90px;
             }
 
+            .location-select-wrap {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quick-link-btn {
+                width: 100%;
+                height: 36px;
+            }
+
+            .quick-location-modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .quick-location-modal {
+                width: 100%;
+                border-radius: 14px 14px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+                max-height: 86vh;
+                overflow-y: auto;
+            }
+
+            .quick-location-modal-body {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-location-modal-footer {
+                padding-bottom: 20px;
+            }
+
+            .quick-location-modal-footer .btn {
+                flex: 1;
+            }
+
+            .quick-location-code-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quick-code-regenerate-btn {
+                width: 100%;
+            }
+
             .actions {
                 padding: 12px;
             }
@@ -465,9 +679,12 @@
                             <div class="row">
                                 <div class="label">点位名称</div>
                                 <div class="value">
-                                    <select id="locationSelect" onchange="onLocationChange()">
-                                        <option value="">请选择</option>
-                                    </select>
+                                    <div class="location-select-wrap">
+                                        <select id="locationSelect" onchange="onLocationChange()">
+                                            <option value="">请选择</option>
+                                        </select>
+                                        <button type="button" class="quick-link-btn" onclick="openQuickCreateLocationModal()">+ 新增点位</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -619,6 +836,68 @@
         </div>
     </div>
 
+    <div class="quick-location-modal-overlay" id="quickCreateLocationModal">
+        <div class="quick-location-modal">
+            <div class="quick-location-modal-header">
+                <h3 class="quick-location-modal-title">快速新增点位</h3>
+                <button type="button" class="quick-location-modal-close" onclick="closeQuickCreateLocationModal()">×</button>
+            </div>
+            <div class="quick-location-modal-body">
+                <label class="quick-location-field">
+                    <span>点位名称 *</span>
+                    <input id="quickLocationName" placeholder="请输入点位名称">
+                </label>
+                <label class="quick-location-field">
+                    <span>点位编码 *</span>
+                    <div class="quick-location-code-row">
+                        <input id="quickLocationCode" placeholder="自动生成，可手动修改">
+                        <button type="button" class="quick-code-regenerate-btn" id="quickLocationCodeRegenerate" onclick="regenerateQuickLocationCode()">重新生成</button>
+                    </div>
+                </label>
+                <label class="quick-location-field">
+                    <span>点位分类 *</span>
+                    <select id="quickLocationCategory">
+                        <option value="exhibition">展会点位</option>
+                        <option value="operation">运营点位</option>
+                    </select>
+                </label>
+                <label class="quick-location-field">
+                    <span>点位状态</span>
+                    <select id="quickLocationStatus">
+                        <option value="operational">运营中</option>
+                        <option value="closed">暂停运营</option>
+                    </select>
+                </label>
+                <label class="quick-location-field">
+                    <span>所属商户（可选）</span>
+                    <select id="quickLocationCustomer">
+                        <option value="">不关联商户</option>
+                    </select>
+                </label>
+                <label class="quick-location-field">
+                    <span>负责人（可选）</span>
+                    <input id="quickLocationManager" placeholder="请输入负责人">
+                </label>
+                <label class="quick-location-field">
+                    <span>联系电话（可选）</span>
+                    <input id="quickLocationPhone" placeholder="请输入联系电话">
+                </label>
+                <label class="quick-location-field full">
+                    <span>详细地址 *</span>
+                    <input id="quickLocationAddress" placeholder="请输入详细地址">
+                </label>
+                <label class="quick-location-field full">
+                    <span>备注（可选）</span>
+                    <textarea id="quickLocationRemark" placeholder="可填写补充说明"></textarea>
+                </label>
+            </div>
+            <div class="quick-location-modal-footer">
+                <button type="button" class="btn" onclick="closeQuickCreateLocationModal()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="createLocationFromEntry()">保存并选中</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const merchantMap = {
             'mer001': '星巴克咖啡',
@@ -627,20 +906,30 @@
             'mer004': 'Costa咖啡'
         };
 
+        const POINT_CATEGORY_OPTIONS = ['exhibition', 'operation'];
+
         let devicesData = [];
         let locationsData = [];
+        let customersData = [];
         let selectedDevice = null;
         let unenteredDeviceOptions = [];
 
         function initPage() {
             devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
             locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
             renderDeviceOptions();
             renderLocationOptions();
+            renderQuickLocationCustomerOptions();
             initSwitchGroups();
             setTodayAsDefaultDeviceStartDate();
             toggleEnergyTimeRowsVisibility();
             document.getElementById('gpsActionDisplay').addEventListener('click', requestCurrentLocation);
+            document.getElementById('quickCreateLocationModal').addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeQuickCreateLocationModal();
+                }
+            });
         }
 
         function renderDeviceOptions() {
@@ -666,6 +955,138 @@
                 html += `<option value="${l.code}" data-address="${l.address || ''}">${l.name}（${l.code}）</option>`;
             });
             select.innerHTML = html;
+        }
+
+        function normalizePointCategory(value) {
+            const normalized = String(value || '').trim();
+            if (POINT_CATEGORY_OPTIONS.includes(normalized)) return normalized;
+            return 'operation';
+        }
+
+        function extractLocationCodeNumber(code) {
+            const matched = String(code || '').trim().match(/^k(\d+)$/i);
+            if (!matched) return null;
+            const parsed = Number(matched[1]);
+            return Number.isFinite(parsed) ? parsed : null;
+        }
+
+        function generateNextLocationCodeForEntry() {
+            const used = new Set();
+            let maxCodeNumber = 999;
+            locationsData.forEach(item => {
+                const rawCode = String(item?.code || '').trim();
+                if (!rawCode) return;
+                used.add(rawCode.toLowerCase());
+                const codeNumber = extractLocationCodeNumber(rawCode);
+                if (Number.isFinite(codeNumber)) {
+                    maxCodeNumber = Math.max(maxCodeNumber, codeNumber);
+                }
+            });
+            let next = maxCodeNumber + 1;
+            let candidate = `k${next}`;
+            while (used.has(candidate.toLowerCase())) {
+                next += 1;
+                candidate = `k${next}`;
+            }
+            return candidate;
+        }
+
+        function regenerateQuickLocationCode() {
+            document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
+        }
+
+        function renderQuickLocationCustomerOptions() {
+            const select = document.getElementById('quickLocationCustomer');
+            if (!select) return;
+            let html = '<option value="">不关联商户</option>';
+            customersData.forEach(customer => {
+                if (customer?.status === 'active') {
+                    html += `<option value="${customer.id}">${customer.name}</option>`;
+                }
+            });
+            select.innerHTML = html;
+        }
+
+        function openQuickCreateLocationModal() {
+            resetQuickCreateLocationForm();
+            document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
+            renderQuickLocationCustomerOptions();
+            document.getElementById('quickCreateLocationModal').classList.add('show');
+        }
+
+        function closeQuickCreateLocationModal() {
+            document.getElementById('quickCreateLocationModal').classList.remove('show');
+        }
+
+        function resetQuickCreateLocationForm() {
+            document.getElementById('quickLocationName').value = '';
+            document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
+            document.getElementById('quickLocationCategory').value = 'operation';
+            document.getElementById('quickLocationStatus').value = 'operational';
+            document.getElementById('quickLocationCustomer').value = '';
+            document.getElementById('quickLocationManager').value = '';
+            document.getElementById('quickLocationPhone').value = '';
+            document.getElementById('quickLocationAddress').value = '';
+            document.getElementById('quickLocationRemark').value = '';
+        }
+
+        function buildNextLocationId() {
+            const maxId = locationsData.reduce((max, location) => {
+                const raw = String(location?.id || '').replace(/^L/i, '');
+                const num = Number(raw);
+                if (!Number.isFinite(num)) return max;
+                return Math.max(max, num);
+            }, 0);
+            return `L${String(maxId + 1).padStart(3, '0')}`;
+        }
+
+        function buildLocationPayloadForEntry() {
+            const customerId = document.getElementById('quickLocationCustomer').value;
+            const customer = customersData.find(item => item.id === customerId);
+            return {
+                id: buildNextLocationId(),
+                name: document.getElementById('quickLocationName').value.trim(),
+                code: document.getElementById('quickLocationCode').value.trim(),
+                pointCategory: normalizePointCategory(document.getElementById('quickLocationCategory').value),
+                status: document.getElementById('quickLocationStatus').value || 'operational',
+                customerId,
+                customerName: customer?.name || '',
+                manager: document.getElementById('quickLocationManager').value.trim(),
+                phone: document.getElementById('quickLocationPhone').value.trim(),
+                address: document.getElementById('quickLocationAddress').value.trim(),
+                remark: document.getElementById('quickLocationRemark').value.trim(),
+                createTime: new Date().toISOString().split('T')[0]
+            };
+        }
+
+        function validateQuickCreateLocation(location) {
+            if (!location.name || !location.code || !location.address) {
+                return '请填写点位名称、编码和地址';
+            }
+            const normalizedCode = String(location.code || '').trim();
+            const duplicated = locationsData.some(existing =>
+                String(existing?.code || '').trim().toLowerCase() === normalizedCode.toLowerCase()
+            );
+            if (duplicated) {
+                return '点位编码已存在';
+            }
+            return '';
+        }
+
+        function createLocationFromEntry() {
+            const location = buildLocationPayloadForEntry();
+            const message = validateQuickCreateLocation(location);
+            if (message) {
+                alert(message);
+                return;
+            }
+            locationsData.push(location);
+            localStorage.setItem('locationsData', JSON.stringify(locationsData));
+            renderLocationOptions();
+            document.getElementById('locationSelect').value = location.code;
+            onLocationChange();
+            closeQuickCreateLocationModal();
+            alert(`点位 ${location.name} 已创建并选中`);
         }
 
         function onDeviceInput() {

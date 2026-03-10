@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>设备管理 - 运营控制台</title>
     <meta name="format-detection" content="telephone=no">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4ECDC4;
@@ -44,7 +43,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background-color: var(--bg-body);
             min-height: 100vh;
             font-size: 14px;
@@ -353,44 +352,6 @@
             color: #fff;
             border-color: var(--primary);
         }
-        .platform-lang-selector {
-            position: relative;
-            display: inline-block;
-        }
-
-        .platform-lang-selector::after {
-            content: '\25BE';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            pointer-events: none;
-            font-size: 12px;
-        }
-
-        .platform-lang-select {
-            height: 34px;
-            min-width: 98px;
-            padding: 0 24px 0 8px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 999px;
-            background: #fff;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1;
-            appearance: none;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .platform-lang-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.18);
-        }
-
         /* 内容区 */
         .content {
             padding: 24px 28px;
@@ -2355,13 +2316,6 @@
                 font-size: 13px;
                 border-radius: 10px;
             }
-            .platform-lang-select {
-                min-width: 90px;
-                height: 32px;
-                font-size: 12px;
-                padding: 0 24px 0 8px;
-            }
-
             .content {
                 padding: 14px;
             }
@@ -2453,15 +2407,6 @@
                 <div class="header-actions">
                     <button class="btn-icon" onclick="window.location.href='faults.html'">🛠️ 故障列表</button>
                     <button class="btn-icon">📖 只读</button>
-                    <div class="platform-lang-selector">
-                        <select class="platform-lang-select" aria-label="平台语言">
-                            <option selected>中文</option>
-                            <option>English</option>
-                            <option>日本語</option>
-                            <option>한국어</option>
-                            <option>ไทย</option>
-                        </select>
-                    </div>
                 </div>
             </header>
 
@@ -2477,6 +2422,14 @@
                             <option value="all">全部设备</option>
                             <option value="operational">运行中</option>
                             <option value="faulted">故障中</option>
+                        </select>
+                    </div>
+                    <div class="main-filter-item">
+                        <label class="filter-label">点位分类</label>
+                        <select class="filter-select" id="locationCategoryFilter" onchange="filterDevices()">
+                            <option value="all">全部点位分类</option>
+                            <option value="exhibition">展会点位</option>
+                            <option value="operation">运营点位</option>
                         </select>
                     </div>
                 </div>
@@ -2801,6 +2754,16 @@
             'k9002': '深圳南山店'
         };
 
+        const locationPointCategoryMap = {
+            'k8298': 'operation',
+            'k8667': 'exhibition',
+            'k9001': 'operation',
+            'k9002': 'exhibition',
+            'k9100': 'exhibition'
+        };
+
+        const LOCATION_POINT_CATEGORY_OPTIONS = ['exhibition', 'operation'];
+
         const statusMap = {
             'operational': '运行中',
             'faulted': '故障'
@@ -2879,12 +2842,30 @@
             }));
         }
 
+        function normalizePointCategory(value, fallbackIndex = 0) {
+            const normalized = String(value || '').trim();
+            if (LOCATION_POINT_CATEGORY_OPTIONS.includes(normalized)) return normalized;
+            const safeIndex = Math.abs(Number(fallbackIndex) || 0) % LOCATION_POINT_CATEGORY_OPTIONS.length;
+            return LOCATION_POINT_CATEGORY_OPTIONS[safeIndex];
+        }
+
         function buildLocationMap() {
             const map = { ...locationMap };
             const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
             locationsData.forEach(l => {
                 if (l.code && l.name) {
                     map[l.code] = l.name;
+                }
+            });
+            return map;
+        }
+
+        function buildLocationCategoryMap() {
+            const map = { ...locationPointCategoryMap };
+            const locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            locationsData.forEach((l, index) => {
+                if (l.code) {
+                    map[l.code] = normalizePointCategory(l.pointCategory, index);
                 }
             });
             return map;
@@ -3172,7 +3153,9 @@
 
         function filterDevices() {
             const filter = document.getElementById('deviceFilter').value;
+            const locationCategoryFilter = document.getElementById('locationCategoryFilter').value;
             const searchKeyword = document.getElementById('deviceSearch').value.trim().toLowerCase();
+            const runtimeLocationCategoryMap = buildLocationCategoryMap();
             
             if (filter === 'all') {
                 filteredData = [...devicesData];
@@ -3180,6 +3163,14 @@
                 filteredData = devicesData.filter(d => d.status === 'operational');
             } else if (filter === 'faulted') {
                 filteredData = devicesData.filter(d => d.status === 'faulted');
+            }
+
+            if (locationCategoryFilter !== 'all') {
+                filteredData = filteredData.filter(d =>
+                    d.entered !== false &&
+                    d.location &&
+                    normalizePointCategory(runtimeLocationCategoryMap[d.location]) === locationCategoryFilter
+                );
             }
             
             if (searchKeyword) {
