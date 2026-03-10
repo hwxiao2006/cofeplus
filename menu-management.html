@@ -1189,6 +1189,213 @@
             color: var(--text-muted);
         }
 
+        .menu-manage-workspace {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .menu-manage-sidebar,
+        .menu-manage-main {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .menu-manage-sidebar {
+            padding: 18px;
+            position: sticky;
+            top: 16px;
+        }
+
+        .menu-manage-sidebar-head,
+        .menu-manage-main-head {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .menu-manage-sidebar-title,
+        .menu-manage-main-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .menu-manage-sidebar-desc,
+        .menu-manage-main-desc {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .menu-manage-category-search {
+            margin-bottom: 14px;
+        }
+
+        .menu-manage-category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-manage-category-item {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            background: #fff;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .menu-manage-category-item:hover,
+        .menu-manage-category-item.active {
+            border-color: rgba(11, 166, 153, 0.28);
+            background: #eaf7f4;
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .menu-manage-category-item-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .menu-manage-category-item-text {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .menu-manage-category-item-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .menu-manage-category-item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .menu-manage-category-item-count {
+            flex-shrink: 0;
+            min-width: 56px;
+            height: 28px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .menu-manage-mobile-bar {
+            display: none;
+        }
+
+        .menu-manage-toolbar {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-manage-toolbar-fields {
+            flex: 1 1 560px;
+            min-width: 0;
+            display: grid;
+            grid-template-columns: minmax(160px, 200px) minmax(320px, 1fr);
+            gap: 12px;
+            align-items: end;
+        }
+
+        .menu-manage-toolbar-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            flex: 0 0 auto;
+        }
+
+        .menu-manage-toolbar-actions .btn {
+            flex: 0 0 auto;
+        }
+
+        .menu-manage-content {
+            padding: 16px 20px 20px;
+        }
+
+        .menu-manage-workspace-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .menu-manage-summary-badge {
+            min-height: 32px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .menu-manage-empty {
+            padding: 48px 20px;
+            border: 1px dashed rgba(14, 35, 52, 0.18);
+            border-radius: 18px;
+            background: linear-gradient(180deg, #fcfdfd 0%, #f8fafc 100%);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .menu-manage-search-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .menu-manage-search-tag {
+            min-height: 24px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: #eef2f7;
+            color: #425466;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
         .category-section {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -3070,6 +3277,12 @@
                 padding: 16px 20px;
             }
 
+            .menu-manage-content .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+                padding: 0;
+            }
+
             .product-table-head {
                 display: none;
             }
@@ -3164,6 +3377,27 @@
 
             .menu-topbar .header-device-search {
                 width: 100%;
+            }
+
+            .menu-manage-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-manage-sidebar {
+                position: static;
+            }
+
+            .menu-manage-toolbar {
+                align-items: stretch;
+            }
+
+            .menu-manage-toolbar-fields {
+                grid-template-columns: 1fr;
+                flex-basis: 100%;
+            }
+
+            .menu-manage-toolbar-actions {
+                justify-content: flex-start;
             }
 
             .overview-multi-device-filter {
@@ -3304,6 +3538,41 @@
 
             .content {
                 padding: 16px;
+            }
+
+            .menu-manage-workspace {
+                gap: 14px;
+            }
+
+            .menu-manage-sidebar {
+                display: none;
+            }
+
+            .menu-manage-mobile-bar {
+                display: block;
+            }
+
+            .menu-manage-main {
+                overflow: hidden;
+            }
+
+            .menu-manage-toolbar {
+                padding: 14px;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .menu-manage-toolbar-fields {
+                grid-template-columns: 1fr;
+                flex-basis: 100%;
+            }
+
+            .menu-manage-content {
+                padding: 14px;
+            }
+
+            .menu-manage-workspace-head {
+                flex-direction: column;
             }
 
             .category-header {
@@ -3843,8 +4112,46 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="categoriesContainer">
-                            <!-- 动态渲染 -->
+                        <div id="menuManageWorkspace" class="menu-manage-workspace">
+                            <aside class="menu-manage-sidebar">
+                                <div class="menu-manage-sidebar-head">
+                                    <h3 class="menu-manage-sidebar-title">分类导航</h3>
+                                    <p class="menu-manage-sidebar-desc">分类变多时，左侧负责定位，右侧只展示当前工作区商品。</p>
+                                </div>
+                                <div class="form-group menu-manage-category-search">
+                                    <label class="form-label" for="menuManageCategoryKeyword">搜索分类</label>
+                                    <input type="text" class="form-input" id="menuManageCategoryKeyword" placeholder="输入分类名称" oninput="setMenuManageCategoryKeyword(this.value)">
+                                </div>
+                                <div id="menuManageCategoryList" class="menu-manage-category-list"></div>
+                            </aside>
+                            <section class="menu-manage-main">
+                                <div class="menu-manage-toolbar">
+                                    <div class="menu-manage-toolbar-fields">
+                                        <div class="form-group menu-manage-mobile-bar">
+                                            <label class="form-label" for="menuManageCategorySelect">当前分类</label>
+                                            <select class="form-select" id="menuManageCategorySelect" onchange="setMenuManageActiveCategory(this.value)"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="menuManageScopeSelect">搜索范围</label>
+                                            <select class="form-select" id="menuManageScopeSelect" onchange="setMenuManageProductScope(this.value)">
+                                                <option value="current">当前分类</option>
+                                                <option value="all">全部分类</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
+                                            <input type="text" class="form-input" id="menuManageProductKeyword" placeholder="输入商品名或 ID" oninput="setMenuManageProductKeyword(this.value)">
+                                        </div>
+                                    </div>
+                                    <div class="menu-manage-toolbar-actions">
+                                        <button type="button" class="btn btn-default" onclick="openCategoryModal()">新增分类</button>
+                                        <button type="button" class="btn btn-default" onclick="openCopyProductModal(menuManageActiveCategory || '')">复制商品</button>
+                                    </div>
+                                </div>
+                                <div id="categoriesContainer" class="menu-manage-content">
+                                    <!-- 动态渲染 -->
+                                </div>
+                            </section>
                         </div>
                     </div>
 
@@ -4188,6 +4495,7 @@
         let productsData = {
             '3D拉花': {
                 icon: '🎨',
+                names: { zh: '3D拉花', en: '3D Latte Art', jp: '3Dラテアート' },
                 items: [
                     { id: 1, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop', names: { zh: '干卡布其诺*', en: 'Dry Cappuccino*', jp: 'ドライカプチーノ' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup', jp: 'エスプレッソ、ミルク、大カップ' } },
                     { id: 2, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop', names: { zh: '鲜牛奶*', en: 'Fresh Milk*' }, descs: { zh: '牛奶、大杯型', en: 'Milk, large cup' } },
@@ -4198,6 +4506,7 @@
             },
             '千人千味': {
                 icon: '✨',
+                names: { zh: '千人千味', en: 'Custom Taste', jp: '千人千味' },
                 items: [
                     { id: 6, price: 9.9, featured: true, image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop', names: { zh: '美式拿铁', en: 'Americano Latte' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } },
                     { id: 7, price: 9.9, featured: true, image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&h=300&fit=crop', names: { zh: '美式拿铁*', en: 'Americano Latte*' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } }
@@ -4205,6 +4514,7 @@
             },
             '新品推荐': {
                 icon: '🆕',
+                names: { zh: '新品推荐', en: 'New Arrivals', jp: '新商品' },
                 items: [
                     { id: 8, price: 16.9, featured: false, image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=300&fit=crop', names: { zh: '橘皮拿铁', en: 'Orange Latte' }, descs: { zh: '浓缩咖啡、橘皮糖浆、大杯型', en: 'Espresso, orange syrup, large cup' } },
                     { id: 9, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&h=300&fit=crop', names: { zh: '白玉兰拿铁', en: 'Magnolia Latte' }, descs: { zh: '浓缩咖啡、牛奶、白玉兰糖浆、大杯型', en: 'Espresso, milk, magnolia syrup, large cup' } },
@@ -4213,13 +4523,73 @@
                     { id: 12, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=400&h=300&fit=crop', names: { zh: '热红酒拿铁', en: 'Mulled Wine Latte' }, descs: { zh: '热红酒糖浆、牛奶、浓缩咖啡、大杯型', en: 'Wine syrup, milk, espresso, large cup' } },
                     { id: 13, price: 18.9, featured: false, names: { zh: '热红酒美式', en: 'Mulled Wine Americano' }, descs: { zh: '热红酒糖浆、水、浓缩咖啡、大杯型', en: 'Wine syrup, water, espresso, large cup' } }
                 ]
+            },
+            '经典咖啡': {
+                icon: '☕',
+                names: { zh: '经典咖啡', en: 'Classic Coffee', jp: 'クラシックコーヒー' },
+                items: [
+                    { id: 14, price: 12.9, featured: true, image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop', names: { zh: '经典美式', en: 'Classic Americano' }, descs: { zh: '双份浓缩、水、中杯型', en: 'Double espresso, water, medium cup' } },
+                    { id: 15, price: 14.9, featured: false, image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', names: { zh: '榛果美式', en: 'Hazelnut Americano' }, descs: { zh: '浓缩咖啡、榛果糖浆、中杯型', en: 'Espresso, hazelnut syrup, medium cup' } },
+                    { id: 16, price: 15.9, featured: false, image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400&h=300&fit=crop', names: { zh: '厚乳黑咖', en: 'Milk Foam Black Coffee' }, descs: { zh: '黑咖啡、轻奶泡、大杯型', en: 'Black coffee, milk foam, large cup' } }
+                ]
+            },
+            '奶咖系列': {
+                icon: '🥛',
+                names: { zh: '奶咖系列', en: 'Milk Coffee', jp: 'ミルクコーヒー' },
+                items: [
+                    { id: 17, price: 18.9, featured: true, image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop', names: { zh: '丝绒拿铁', en: 'Velvet Latte' }, descs: { zh: '浓缩咖啡、鲜奶、丝绒奶泡', en: 'Espresso, milk, velvet foam' } },
+                    { id: 18, price: 19.9, featured: false, image: 'https://images.unsplash.com/photo-1579992357154-faf4bde95b3d?w=400&h=300&fit=crop', names: { zh: '焦糖玛奇朵', en: 'Caramel Macchiato' }, descs: { zh: '牛奶、焦糖酱、浓缩咖啡', en: 'Milk, caramel, espresso' } },
+                    { id: 19, price: 20.9, featured: false, image: 'https://images.unsplash.com/photo-1494314671902-399b18174975?w=400&h=300&fit=crop', names: { zh: '海盐拿铁', en: 'Sea Salt Latte' }, descs: { zh: '海盐奶盖、牛奶、咖啡', en: 'Sea-salt cream, milk, coffee' } }
+                ]
+            },
+            '茶饮特调': {
+                icon: '🍵',
+                names: { zh: '茶饮特调', en: 'Tea Specials', jp: 'ティースペシャル' },
+                items: [
+                    { id: 20, price: 16.9, featured: false, image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&h=300&fit=crop', names: { zh: '抹茶牛奶', en: 'Matcha Milk' }, descs: { zh: '抹茶、牛奶、冰块', en: 'Matcha, milk, ice' } },
+                    { id: 21, price: 17.9, featured: true, image: 'https://images.unsplash.com/photo-1464306076886-da185f6a9d05?w=400&h=300&fit=crop', names: { zh: '柚香红茶', en: 'Yuzu Black Tea' }, descs: { zh: '红茶、柚子果酱、柠檬片', en: 'Black tea, yuzu jam, lemon' } },
+                    { id: 22, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&h=300&fit=crop', names: { zh: '茉莉冷萃茶', en: 'Jasmine Cold Brew Tea' }, descs: { zh: '茉莉茶底、冷萃工艺', en: 'Jasmine tea, cold brewed' } }
+                ]
+            },
+            '冰饮冷萃': {
+                icon: '🧊',
+                names: { zh: '冰饮冷萃', en: 'Cold Brew', jp: 'コールドブリュー' },
+                items: [
+                    { id: 23, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1462917882517-e150004895fa?w=400&h=300&fit=crop', names: { zh: '冷萃咖啡', en: 'Cold Brew Coffee' }, descs: { zh: '冷萃咖啡液、冰块', en: 'Cold brew concentrate, ice' } },
+                    { id: 24, price: 22.9, featured: true, image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=300&fit=crop', names: { zh: '椰青冷萃', en: 'Coconut Cold Brew' }, descs: { zh: '冷萃、椰子水、轻甜感', en: 'Cold brew, coconut water' } }
+                ]
+            },
+            '低糖轻享': {
+                icon: '🌿',
+                names: { zh: '低糖轻享', en: 'Light Choice', jp: 'ライトチョイス' },
+                items: [
+                    { id: 25, price: 17.9, featured: false, image: 'https://images.unsplash.com/photo-1527169402691-a7f2bdf3a2af?w=400&h=300&fit=crop', names: { zh: '轻盈拿铁', en: 'Light Latte' }, descs: { zh: '低脂奶、少糖、双份浓缩', en: 'Low-fat milk, less sugar, double espresso' } },
+                    { id: 26, price: 15.9, featured: false, image: 'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=400&h=300&fit=crop', names: { zh: '燕麦美式', en: 'Oat Americano' }, descs: { zh: '美式咖啡、燕麦奶', en: 'Americano, oat milk' } }
+                ]
+            },
+            '早餐搭配': {
+                icon: '🥐',
+                names: { zh: '早餐搭配', en: 'Breakfast Pairing', jp: '朝食セット' },
+                items: [
+                    { id: 27, price: 23.9, featured: false, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop', names: { zh: '可颂拿铁套餐', en: 'Croissant Latte Set' }, descs: { zh: '拿铁、黄油可颂、早餐组合', en: 'Latte with butter croissant' } },
+                    { id: 28, price: 21.9, featured: false, image: 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&h=300&fit=crop', names: { zh: '贝果美式套餐', en: 'Bagel Americano Set' }, descs: { zh: '经典美式、谷物贝果', en: 'Americano with grain bagel' } }
+                ]
+            },
+            '季节限定': {
+                icon: '🍂',
+                names: { zh: '季节限定', en: 'Seasonal Limited', jp: '季節限定' },
+                items: [
+                    { id: 29, price: 21.9, featured: true, image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&h=300&fit=crop', names: { zh: '桂花燕麦拿铁', en: 'Osmanthus Oat Latte' }, descs: { zh: '桂花糖浆、燕麦奶、浓缩咖啡', en: 'Osmanthus syrup, oat milk, espresso' } },
+                    { id: 30, price: 20.9, featured: false, image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&h=300&fit=crop', names: { zh: '莓果冷萃', en: 'Berry Cold Brew' }, descs: { zh: '冷萃咖啡、莓果果酱、冰块', en: 'Cold brew, berry jam, ice' } },
+                    { id: 31, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1464306076886-da185f6a9d05?w=400&h=300&fit=crop', names: { zh: '南瓜香料奶咖', en: 'Pumpkin Spice Latte' }, descs: { zh: '南瓜香料、牛奶、浓缩咖啡', en: 'Pumpkin spice, milk, espresso' } }
+                ]
             }
         };
 
         let currentDevice = 'RCK111';
         let currentLang = 'zh';
         let platformLang = 'zh';
-        let nextProductId = 14;
+        let nextProductId = 32;
         let selectedCategoryIcon = '☕';
         let editingProductId = null;
         let editingProductCategory = '';
@@ -4248,6 +4618,10 @@
         let batchFixedPriceSelectedIds = new Set();
         let batchFixedPriceSuccessIds = new Set();
         let batchFixedPriceFailedMap = {};
+        let menuManageActiveCategory = '';
+        let menuManageCategoryKeyword = '';
+        let menuManageProductKeyword = '';
+        let menuManageProductScope = 'current';
         let productModalCategoryOptions = [];
         let selectedProductModalCategoryKeys = new Set();
         let isProductModalCategorySelectorOpen = false;
@@ -6568,89 +6942,262 @@
         }
 
         // ==================== 渲染菜单 ====================
+        function normalizeMenuManageKeyword(raw = '') {
+            return String(raw || '').trim().toLowerCase();
+        }
+
+        function getMenuManageCategoryKeys() {
+            return Object.keys(productsData || {});
+        }
+
+        function ensureMenuManageActiveCategory(preferredCategory = '') {
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) {
+                menuManageActiveCategory = '';
+                return;
+            }
+
+            const preferred = String(preferredCategory || '').trim();
+            if (preferred && categoryKeys.includes(preferred)) {
+                menuManageActiveCategory = preferred;
+                return;
+            }
+
+            if (menuManageActiveCategory && categoryKeys.includes(menuManageActiveCategory)) {
+                return;
+            }
+
+            menuManageActiveCategory = categoryKeys[0];
+        }
+
+        function getMenuManageVisibleCategoryKeys(keyword = menuManageCategoryKeyword) {
+            const normalizedKeyword = normalizeMenuManageKeyword(keyword);
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!normalizedKeyword) return categoryKeys;
+
+            return categoryKeys.filter(categoryKey => {
+                const names = productsData[categoryKey]?.names || {};
+                const candidates = [getCategoryNameByLang(categoryKey, currentLang), ...Object.values(names)];
+                return candidates.some(value => String(value || '').toLowerCase().includes(normalizedKeyword));
+            });
+        }
+
+        function getMenuManageProductName(product = {}) {
+            return product.names?.[currentLang] || product.names?.zh || product.names?.en || `商品 ${product.id || '-'}`;
+        }
+
+        function getMenuManageCurrentCategoryItems() {
+            ensureMenuManageActiveCategory();
+            const category = productsData[menuManageActiveCategory];
+            const items = Array.isArray(category?.items) ? category.items : [];
+            const normalizedKeyword = normalizeMenuManageKeyword(menuManageProductKeyword);
+            if (!normalizedKeyword) return items;
+
+            return items.filter(product => {
+                const names = product?.names || {};
+                const candidates = Object.values(names).map(value => String(value || '').toLowerCase());
+                const idCandidate = String(product?.id || '').toLowerCase();
+                return idCandidate.includes(normalizedKeyword) || candidates.some(name => name.includes(normalizedKeyword));
+            });
+        }
+
+        function getMenuManageGlobalSearchEntries() {
+            const normalizedKeyword = normalizeMenuManageKeyword(menuManageProductKeyword);
+            const entries = normalizedKeyword
+                ? getBatchFixedPriceFilteredEntries('__ALL__', menuManageProductKeyword)
+                : getBatchFixedPriceEntries('__ALL__');
+            return entries;
+        }
+
+        function renderMenuManageCategoryNavigation() {
+            ensureMenuManageActiveCategory();
+
+            const keywordInput = document.getElementById('menuManageCategoryKeyword');
+            const categoryList = document.getElementById('menuManageCategoryList');
+            const mobileSelect = document.getElementById('menuManageCategorySelect');
+            const scopeSelect = document.getElementById('menuManageScopeSelect');
+            const productKeywordInput = document.getElementById('menuManageProductKeyword');
+
+            if (keywordInput) keywordInput.value = menuManageCategoryKeyword;
+            if (scopeSelect) scopeSelect.value = menuManageProductScope;
+            if (productKeywordInput) productKeywordInput.value = menuManageProductKeyword;
+
+            const visibleKeys = getMenuManageVisibleCategoryKeys();
+            if (visibleKeys.length && !visibleKeys.includes(menuManageActiveCategory)) {
+                menuManageActiveCategory = visibleKeys[0];
+            }
+
+            if (categoryList) {
+                if (!visibleKeys.length) {
+                    categoryList.innerHTML = '<div class="menu-manage-empty" style="padding:20px 14px;">暂无匹配分类</div>';
+                } else {
+                    categoryList.innerHTML = visibleKeys.map(categoryKey => {
+                        const category = productsData[categoryKey] || {};
+                        const count = Array.isArray(category.items) ? category.items.length : 0;
+                        return `
+                            <button type="button" class="menu-manage-category-item ${categoryKey === menuManageActiveCategory ? 'active' : ''}" onclick="setMenuManageActiveCategory('${escapePreviewText(categoryKey)}')">
+                                <span class="menu-manage-category-item-main">
+                                    <span class="category-icon">${escapePreviewText(category.icon || '☕')}</span>
+                                    <span class="menu-manage-category-item-text">
+                                        <span class="menu-manage-category-item-name">${escapePreviewText(getCategoryName(categoryKey))}</span>
+                                        <span class="menu-manage-category-item-meta">${count} 个商品</span>
+                                    </span>
+                                </span>
+                                <span class="menu-manage-category-item-count">${count}</span>
+                            </button>
+                        `;
+                    }).join('');
+                }
+            }
+
+            if (mobileSelect) {
+                const allKeys = getMenuManageCategoryKeys();
+                mobileSelect.innerHTML = allKeys.map(categoryKey => `
+                    <option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryName(categoryKey))}</option>
+                `).join('');
+                mobileSelect.value = menuManageActiveCategory;
+            }
+        }
+
+        function renderMenuManageProductCard(product, options = {}) {
+            const categoryKey = options.categoryKey || menuManageActiveCategory;
+            const showCategoryTags = !!options.showCategoryTags;
+            const categoryTags = Array.isArray(options.categoryTags) ? options.categoryTags : [];
+            const productName = getMenuManageProductName(product);
+
+            return `
+                <div class="product-card product-row" onclick="goToDetail(${product.id})">
+                    <div class="product-image-wrapper">
+                        ${product.image
+                            ? `<img class="product-image" src="${product.image}" alt="${escapePreviewText(productName)}" loading="lazy">`
+                            : `<div class="product-image-placeholder">
+                                <span class="icon">☕</span>
+                                <span>暂无图片</span>
+                            </div>`
+                        }
+                    </div>
+                    <div class="product-content">
+                        <div class="product-card-header">
+                            <div class="product-name">${escapePreviewText(productName)}</div>
+                            ${product.featured ? '<span class="featured-badge">推荐</span>' : ''}
+                        </div>
+                        <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
+                        ${showCategoryTags && categoryTags.length ? `
+                            <div class="menu-manage-search-tags">
+                                ${categoryTags.map(tag => `<span class="menu-manage-search-tag">${escapePreviewText(tag)}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="product-footer">
+                            <div class="product-meta">
+                                ${renderProductPriceHtml(product)}
+                                <div class="product-status ${isProductOnSale(product) ? '' : 'off'}">
+                                    <span class="status-dot"></span>
+                                    <span>${isProductOnSale(product) ? '在售' : '不在售'}</span>
+                                </div>
+                            </div>
+                            <div class="product-actions">
+                                <button class="product-action-btn" onclick="event.stopPropagation(); editProduct('${escapePreviewText(categoryKey)}', ${product.id})">编辑</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderMenu() {
             const container = document.getElementById('categoriesContainer');
             if (!container) return;
-            
-            let html = '';
-            let delay = 0;
-            
-            for (const [categoryName, categoryData] of Object.entries(productsData)) {
-                const { icon, items } = categoryData;
-                
-                html += `
-                    <div class="category-section" style="animation-delay: ${delay}ms">
-                        <div class="category-header">
-                            <div class="category-title-wrapper">
-                                <div class="category-icon">${icon}</div>
-                                <h2 class="category-title">${getCategoryName(categoryName)}</h2>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <span class="category-count">${items.length} 个商品</span>
-                                <div class="category-actions">
-                                    <button class="icon-btn" onclick="event.stopPropagation(); editCategory('${categoryName}')" title="编辑分类">✏️</button>
-                                    <button class="icon-btn" onclick="event.stopPropagation(); deleteCategory('${categoryName}')" title="删除分类">🗑️</button>
-                                </div>
-                            </div>
-                        </div>
+
+            ensureMenuManageActiveCategory();
+            renderMenuManageCategoryNavigation();
+
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) {
+                container.innerHTML = '<div class="menu-manage-empty">当前设备暂无商品分类，请先新增分类。</div>';
+                refreshOrderPreviewIfOpen();
+                return;
+            }
+
+            const isGlobalScope = menuManageProductScope === 'all';
+            const activeCategory = productsData[menuManageActiveCategory] || { items: [] };
+            const currentItems = getMenuManageCurrentCategoryItems();
+            const globalEntries = getMenuManageGlobalSearchEntries();
+
+            let title = `${getCategoryName(menuManageActiveCategory)} · 商品列表`;
+            let desc = normalizeMenuManageKeyword(menuManageProductKeyword)
+                ? `当前分类搜索结果 ${currentItems.length} 个商品`
+                : '默认只展示当前分类，分类很多时页面也不会无限拉长。';
+            let summary = `${currentItems.length} 个商品`;
+            let contentHtml = '';
+
+            if (isGlobalScope) {
+                title = normalizeMenuManageKeyword(menuManageProductKeyword) ? '全部分类搜索结果' : '全部分类商品';
+                desc = '按商品 ID 去重展示；商品可同时显示所属的多个分类。';
+                summary = `${globalEntries.length} 个去重结果`;
+                contentHtml = globalEntries.length
+                    ? `
                         <div class="product-grid">
-                            <div class="product-table-head">
-                                <span>缩略图</span>
-                                <span>商品信息</span>
-                                <span>售价</span>
-                                <span>状态</span>
-                                <span>操作</span>
-                            </div>
-                            ${items.map(p => `
-                                <div class="product-card product-row" onclick="goToDetail(${p.id})">
-                                    <div class="product-image-wrapper">
-                                        ${p.image ? 
-                                            `<img class="product-image" src="${p.image}" alt="${p.names[currentLang] || p.names['zh'] || p.names['en']}" loading="lazy">` :
-                                            `<div class="product-image-placeholder">
-                                                <span class="icon">☕</span>
-                                                <span>暂无图片</span>
-                                            </div>`
-                                        }
-                                    </div>
-                                    <div class="product-content">
-                                        <div class="product-card-header">
-                                            <div class="product-name">${p.names[currentLang] || p.names['zh'] || p.names['en']}</div>
-                                            ${p.featured ? '<span class="featured-badge">推荐</span>' : ''}
-                                        </div>
-                                        <div class="product-desc">${getProductDescription(p, currentLang)}</div>
-                                        <div class="product-footer">
-                                            <div class="product-meta">
-                                                ${renderProductPriceHtml(p)}
-                                                <div class="product-status ${isProductOnSale(p) ? '' : 'off'}">
-                                                    <span class="status-dot"></span>
-                                                    <span>${isProductOnSale(p) ? '在售' : '不在售'}</span>
-                                                </div>
-                                            </div>
-                                            <div class="product-actions">
-                                                <button class="product-action-btn" onclick="event.stopPropagation(); toggleProductSale('${categoryName}', ${p.id})">
-                                                    ${isProductOnSale(p) ? '下架' : '上架'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
+                            ${globalEntries.map(entry => renderMenuManageProductCard(entry.product, {
+                                categoryKey: getBatchFixedPriceEntryCategoryKeys(entry)[0] || menuManageActiveCategory,
+                                showCategoryTags: true,
+                                categoryTags: Array.isArray(entry.categoryNames) ? entry.categoryNames : [getBatchFixedPriceEntryCategoryLabel(entry)]
+                            })).join('')}
+                        </div>
+                    `
+                    : '<div class="menu-manage-empty">当前搜索范围下暂无匹配商品</div>';
+            } else {
+                const categoryName = menuManageActiveCategory;
+                contentHtml = currentItems.length
+                    ? `
+                        <div class="product-grid">
+                            ${currentItems.map(product => renderMenuManageProductCard(product, { categoryKey: menuManageActiveCategory })).join('')}
                             <div class="product-card add-product-card" onclick="openCopyProductModal('${categoryName}')">
                                 <div class="add-product-icon">+</div>
                                 <span>复制商品</span>
                             </div>
                         </div>
-                    </div>
-                `;
-                delay += 100;
+                    `
+                    : '<div class="menu-manage-empty">当前分类下暂无匹配商品</div>';
             }
-            
-            container.innerHTML = html;
+
+            container.innerHTML = `
+                <div class="menu-manage-workspace-head">
+                    <div class="menu-manage-main-head" style="margin-bottom:0;">
+                        <h3 class="menu-manage-main-title">${escapePreviewText(title)}</h3>
+                        <p class="menu-manage-main-desc">${escapePreviewText(desc)}</p>
+                    </div>
+                    <div class="menu-manage-summary-badge">${escapePreviewText(summary)}</div>
+                </div>
+                ${contentHtml}
+            `;
+
             if (currentMenuInnerTab === 'batch') {
                 renderBatchFixedPricePanel();
                 renderBatchFixedPriceList();
             }
             refreshOrderPreviewIfOpen();
+        }
+
+        function setMenuManageActiveCategory(categoryKey) {
+            menuManageActiveCategory = String(categoryKey || '').trim();
+            ensureMenuManageActiveCategory();
+            menuManageProductScope = 'current';
+            renderMenu();
+        }
+
+        function setMenuManageCategoryKeyword(keyword = '') {
+            menuManageCategoryKeyword = String(keyword || '');
+            renderMenu();
+        }
+
+        function setMenuManageProductKeyword(keyword = '') {
+            menuManageProductKeyword = String(keyword || '');
+            renderMenu();
+        }
+
+        function setMenuManageProductScope(scope = 'current') {
+            menuManageProductScope = scope === 'all' ? 'all' : 'current';
+            renderMenu();
         }
 
         function getCategoryNameByLang(key, lang = currentLang) {
