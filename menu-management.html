@@ -4577,6 +4577,44 @@
             }
         };
 
+        const DEFAULT_DEVICE_LANGUAGE_CODES = ['zh', 'en'];
+        const DEFAULT_DEVICE_LANGUAGE_NAMES = {
+            zh: '中文',
+            en: 'English'
+        };
+
+        function createDefaultDeviceLanguageConfig() {
+            return {
+                langs: DEFAULT_DEVICE_LANGUAGE_CODES.slice(),
+                hiddenLangs: [],
+                langNames: { ...DEFAULT_DEVICE_LANGUAGE_NAMES },
+                defaultOrderPreviewLang: 'zh'
+            };
+        }
+
+        function ensureDeviceLanguageConfig(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) return null;
+
+            let device = deviceConfig[normalizedDeviceId];
+            if (!device || typeof device !== 'object') {
+                device = createDefaultDeviceLanguageConfig();
+                deviceConfig[normalizedDeviceId] = device;
+                return device;
+            }
+
+            if (!Array.isArray(device.langs) || !device.langs.length) {
+                device.langs = DEFAULT_DEVICE_LANGUAGE_CODES.slice();
+            }
+            if (!device.langNames || typeof device.langNames !== 'object') {
+                device.langNames = { ...DEFAULT_DEVICE_LANGUAGE_NAMES };
+            }
+            if (!Array.isArray(device.hiddenLangs)) {
+                device.hiddenLangs = [];
+            }
+            return device;
+        }
+
         // ==================== 商品数据（多语言结构） ====================
         let productsData = {
             '3D拉花': {
@@ -6070,7 +6108,7 @@
         }
 
         function getHiddenDeviceLangs(deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             if (!device) return [];
             if (!Array.isArray(device.hiddenLangs)) {
                 device.hiddenLangs = [];
@@ -6081,7 +6119,7 @@
         }
 
         function getDeviceLangs(deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             if (!device || !Array.isArray(device.langs)) return [];
             const hiddenLangs = new Set(getHiddenDeviceLangs(deviceId));
             return device.langs.filter(lang => !hiddenLangs.has(lang));
@@ -6100,7 +6138,9 @@
         }
 
         function getLangName(lang) {
-            return deviceConfig[currentDevice].langNames[lang] || lang;
+            const device = ensureDeviceLanguageConfig(currentDevice);
+            if (!device || !device.langNames) return lang;
+            return device.langNames[lang] || lang;
         }
 
         function isProductOnSale(product) {
@@ -6821,6 +6861,7 @@
         }
 
         function openLangModal() {
+            ensureDeviceLanguageConfig(currentDevice);
             document.getElementById('langManageDevice').textContent = currentDevice;
             renderLangList();
             document.getElementById('langModal').classList.add('active');
@@ -6832,7 +6873,7 @@
         }
 
         function getConfiguredOrderPreviewDefaultLang(deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             const langs = getDeviceLangs(deviceId);
             if (!device || !langs.length) return '';
             const configured = String(device.defaultOrderPreviewLang || '').trim();
@@ -6840,7 +6881,7 @@
         }
 
         function ensureOrderPreviewDefaultLang(deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             const langs = getDeviceLangs(deviceId);
             if (!device || !langs.length) return '';
             const configured = getConfiguredOrderPreviewDefaultLang(deviceId);
@@ -6850,7 +6891,7 @@
         }
 
         function setDefaultOrderPreviewLang(lang, deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             const langs = getDeviceLangs(deviceId);
             if (!device || !langs.includes(lang)) return;
             device.defaultOrderPreviewLang = lang;
@@ -6908,7 +6949,7 @@
                 return;
             }
 
-            const device = deviceConfig[currentDevice];
+            const device = ensureDeviceLanguageConfig(currentDevice);
             const allLangs = Array.isArray(device.langs) ? device.langs : (device.langs = []);
             const existingCode = findExistingLanguageCodeByName(name);
             const code = existingCode || generateLanguageCode(name, allLangs);
@@ -6955,7 +6996,7 @@
             }
 
             if (confirm(`确定要隐藏语言 "${getLangName(lang)}" 吗？\n隐藏语言后，该语言的菜单将会不可见`)) {
-                const device = deviceConfig[currentDevice];
+                const device = ensureDeviceLanguageConfig(currentDevice);
                 const hiddenLangs = new Set(getHiddenDeviceLangs());
                 hiddenLangs.add(lang);
                 device.hiddenLangs = device.langs.filter(code => hiddenLangs.has(code));
@@ -6985,7 +7026,7 @@
         }
 
         function restoreHiddenLanguage(lang) {
-            const device = deviceConfig[currentDevice];
+            const device = ensureDeviceLanguageConfig(currentDevice);
             const hiddenLangs = getHiddenDeviceLangs();
             if (!device || !hiddenLangs.includes(lang)) return;
 
@@ -8452,6 +8493,7 @@
                 return;
             }
             currentDevice = matched;
+            ensureDeviceLanguageConfig(currentDevice);
             input.value = matched;
             updateCurrentDeviceTag();
             

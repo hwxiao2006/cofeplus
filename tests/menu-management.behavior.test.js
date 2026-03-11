@@ -457,6 +457,27 @@ test('语言管理：自动生成的编码若已存在应阻止重复新增', ()
   assert.strictEqual(toastMessage, 'error:该语言已存在');
 });
 
+test('语言管理：切换到新设备时应自动初始化默认语言配置', () => {
+  const ctx = loadMenuContext();
+  let toastMessage = '';
+  ctx.showToast = (message, type) => {
+    toastMessage = `${type || 'info'}:${message}`;
+  };
+  ctx.allDeviceOptions = ['RCK111', 'RCK385'];
+  ctx.document.getElementById('deviceSearchInput').value = 'RCK385';
+
+  ctx.changeDeviceByInput();
+
+  assert.strictEqual(ctx.currentDevice, 'RCK385');
+  assert.deepStrictEqual(Array.from(ctx.deviceConfig.RCK385.langs), ['zh', 'en']);
+  assert.strictEqual(ctx.deviceConfig.RCK385.defaultOrderPreviewLang, 'zh');
+
+  ctx.document.getElementById('newLangName').value = '中文';
+  ctx.addLanguage();
+
+  assert.strictEqual(toastMessage, 'error:该语言已存在');
+});
+
 test('点单屏预览：左侧分类不显示在售商品合计', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
