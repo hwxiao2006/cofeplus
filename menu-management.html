@@ -691,18 +691,69 @@
         .menu-topbar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .menu-topbar .menu-inner-tabs {
-            margin-bottom: 0;
-            flex-shrink: 0;
+            margin-bottom: 14px;
         }
 
         .menu-topbar .header-device-search {
             width: min(460px, 100%);
+        }
+
+        .menu-shared-context {
+            margin-bottom: 0;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .menu-shared-context-slot {
+            margin-bottom: 18px;
+        }
+
+        .menu-shared-context-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .menu-shared-context-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .menu-shared-context-desc {
+            margin: 4px 0 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .menu-shared-context-controls {
+            display: grid;
+            grid-template-columns: minmax(220px, 280px) minmax(280px, 1fr) auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .menu-shared-context-controls .form-group {
+            margin: 0;
+        }
+
+        .menu-shared-context-actions {
+            display: flex;
+            align-items: end;
+        }
+
+        .menu-shared-context-actions .btn {
+            min-height: 48px;
+            white-space: nowrap;
         }
 
         .menu-inner-tab-btn {
@@ -1278,10 +1329,10 @@
         }
 
         .menu-manage-toolbar-fields {
-            flex: 1 1 560px;
+            flex: 1 1 220px;
             min-width: 0;
             display: grid;
-            grid-template-columns: minmax(160px, 200px) minmax(320px, 1fr);
+            grid-template-columns: minmax(220px, 260px);
             gap: 12px;
             align-items: end;
         }
@@ -1329,6 +1380,36 @@
             background: #fff;
             color: var(--primary-dark);
             box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+        }
+
+        @media (min-width: 1025px) {
+            .menu-manage-toolbar {
+                display: grid;
+                grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+                align-items: end;
+            }
+
+            .menu-manage-toolbar-actions {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .menu-manage-toolbar-actions {
+                justify-self: end;
+            }
+
+            .menu-manage-toolbar .form-group {
+                margin: 0;
+            }
+
+            .menu-manage-toolbar .btn {
+                min-height: 48px;
+                white-space: nowrap;
+            }
+
+            .menu-manage-toolbar-actions .btn {
+                width: auto;
+            }
         }
 
         .menu-manage-content {
@@ -1464,12 +1545,12 @@
 
         .batch-fixed-panel {
             display: none;
-            margin: 0 24px 16px;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 14px;
-            box-shadow: var(--shadow-sm);
+            margin: 0 0 16px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
             gap: 10px;
         }
 
@@ -1479,9 +1560,7 @@
         }
 
         .batch-fixed-toolbar {
-            display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-            gap: 12px;
+            display: block;
         }
 
         .batch-fixed-group {
@@ -1522,7 +1601,13 @@
         }
 
         .batch-fixed-editor-controls {
-            grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) auto;
+            grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) auto auto auto;
+        }
+
+        .batch-fixed-editor-controls .btn,
+        .batch-fixed-submit-wrap .btn {
+            min-height: 36px;
+            white-space: nowrap;
         }
 
         .batch-fixed-submit-wrap {
@@ -1565,7 +1650,7 @@
         }
 
         .batch-fixed-list-wrap {
-            margin: 0 24px 22px;
+            margin: 0 0 22px;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
@@ -3349,6 +3434,14 @@
                 width: 100%;
             }
 
+            .menu-shared-context-controls {
+                grid-template-columns: minmax(220px, 280px) minmax(220px, 1fr);
+            }
+
+            .menu-shared-context-actions {
+                grid-column: 1 / -1;
+            }
+
             .menu-manage-workspace {
                 grid-template-columns: 1fr;
             }
@@ -3430,6 +3523,23 @@
             .menu-config-row {
                 width: 100%;
                 grid-template-columns: 1fr;
+            }
+
+            .menu-shared-context {
+                padding: 14px;
+            }
+
+            .menu-shared-context-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-shared-context-actions {
+                grid-column: auto;
+            }
+
+            .menu-shared-context-actions .btn {
+                width: 100%;
+                justify-content: center;
             }
 
             .menu-inner-tabs {
@@ -3518,10 +3628,6 @@
                 display: none;
             }
 
-            .menu-manage-mobile-bar {
-                display: block;
-            }
-
             .menu-manage-main {
                 overflow: hidden;
             }
@@ -3564,7 +3670,7 @@
             }
 
             .batch-fixed-toolbar {
-                grid-template-columns: 1fr;
+                display: block;
             }
 
             .batch-fixed-controls {
@@ -3576,18 +3682,11 @@
             }
 
             .batch-fixed-actions {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-            }
-
-            .batch-fixed-actions .btn {
-                width: 100%;
-                justify-content: center;
+                display: block;
             }
 
             .batch-select-toggle {
-                grid-column: 1 / -1;
+                width: 100%;
                 min-height: 40px;
                 padding: 0 12px;
                 border: 1px dashed rgba(14, 35, 52, 0.12);
@@ -3918,14 +4017,6 @@
                             <div id="overviewDeviceFilterOptions"></div>
                         </div>
                     </div>
-                    <button class="action-btn header-menu-action header-manage-action" onclick="openCopyProductModal()">
-                        <span>+</span>
-                        <span>复制商品</span>
-                    </button>
-                    <button class="action-btn secondary header-menu-action header-manage-action" onclick="openCategoryModal()">
-                        <span>+</span>
-                        <span>分类</span>
-                    </button>
                 </div>
             </header>
 
@@ -3979,11 +4070,11 @@
                             <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="changeDeviceByInput()" onkeydown="handleDeviceInputEnter(event)">
                             <div id="deviceDropdown" class="device-dropdown"></div>
                         </div>
-                        <div class="menu-inner-tabs">
-                            <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('settings')">基本设置</button>
-                            <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('manage')">菜单管理</button>
-                            <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
-                        </div>
+                    </div>
+                    <div class="menu-inner-tabs">
+                        <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('settings')">基本设置</button>
+                        <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
                     </div>
 
                     <div id="menuSettingsPanel" class="menu-inner-panel active">
@@ -4072,6 +4163,23 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="menuManageSharedContextSlot" class="menu-shared-context-slot">
+                            <section id="menuSharedContext" class="menu-shared-context">
+                                <div class="menu-shared-context-controls">
+                                    <div class="form-group">
+                                        <label class="form-label" for="menuManageCategorySelect">当前分类</label>
+                                        <select class="form-select" id="menuManageCategorySelect" onchange="setMenuSharedCategoryFilter(this.value)"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
+                                        <input type="text" class="form-input" id="menuManageProductKeyword" placeholder="输入商品名或 ID" oninput="setMenuSharedProductKeyword(this.value)">
+                                    </div>
+                                    <div class="menu-shared-context-actions">
+                                        <button type="button" class="btn btn-default" id="menuSharedClearBtn" onclick="clearMenuSharedFilters()">清空</button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
                         <div id="menuManageWorkspace" class="menu-manage-workspace">
                             <aside class="menu-manage-sidebar">
                                 <div class="menu-manage-sidebar-head">
@@ -4087,20 +4195,12 @@
                             <section class="menu-manage-main">
                                 <div class="menu-manage-toolbar">
                                     <div class="menu-manage-toolbar-fields">
-                                        <div class="form-group menu-manage-mobile-bar">
-                                            <label class="form-label" for="menuManageCategorySelect">当前分类</label>
-                                            <select class="form-select" id="menuManageCategorySelect" onchange="setMenuManageActiveCategory(this.value)"></select>
-                                        </div>
                                         <div class="form-group">
                                             <label class="form-label">搜索范围</label>
                                             <div class="menu-manage-scope-toggle" role="group" aria-label="搜索范围">
                                                 <button type="button" class="menu-manage-scope-btn active" id="menuManageScopeCurrentBtn" aria-pressed="true" onclick="setMenuManageProductScope('current')">当前分类</button>
                                                 <button type="button" class="menu-manage-scope-btn" id="menuManageScopeAllBtn" aria-pressed="false" onclick="setMenuManageProductScope('all')">全部分类</button>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
-                                            <input type="text" class="form-input" id="menuManageProductKeyword" placeholder="输入商品名或 ID" oninput="setMenuManageProductKeyword(this.value)">
                                         </div>
                                     </div>
                                     <div class="menu-manage-toolbar-actions">
@@ -4116,28 +4216,13 @@
                     </div>
 
                     <div id="menuBatchPanel" class="menu-inner-panel">
+                        <div id="menuBatchSharedContextSlot" class="menu-shared-context-slot"></div>
                         <section id="batchFixedPricePanel" class="batch-fixed-panel active" style="display:flex;">
                             <div class="batch-fixed-toolbar">
-                                <div class="batch-fixed-group batch-fixed-filter-group">
-                                    <div class="batch-fixed-group-head">
-                                        <h3 class="batch-fixed-group-title">批量筛选</h3>
-                                        <p class="batch-fixed-group-desc">先缩小当前列表范围，再对筛选后的商品执行批量操作。</p>
-                                    </div>
-                                    <div class="batch-fixed-controls batch-fixed-filter-controls">
-                                        <div class="batch-fixed-field">
-                                            <label for="batchFixedCategorySelect">分类筛选</label>
-                                            <select id="batchFixedCategorySelect" onchange="setBatchFixedPriceActiveCategory(this.value)"></select>
-                                        </div>
-                                        <div class="batch-fixed-field">
-                                            <label for="batchFixedKeyword">商品名称搜索</label>
-                                            <input type="text" id="batchFixedKeyword" placeholder="输入商品名关键词" oninput="setBatchFixedPriceKeyword(this.value)">
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="batch-fixed-group batch-fixed-editor-group">
                                     <div class="batch-fixed-group-head">
-                                        <h3 class="batch-fixed-group-title">批量编辑</h3>
-                                        <p class="batch-fixed-group-desc">对已选商品统一设置价格，留空表示该项不改动。</p>
+                                        <h3 class="batch-fixed-group-title">批量改价</h3>
+                                        <p class="batch-fixed-group-desc" id="batchFixedContextSummary">当前范围：-</p>
                                     </div>
                                     <div class="batch-fixed-controls batch-fixed-editor-controls">
                                         <div class="batch-fixed-field">
@@ -4148,6 +4233,8 @@
                                             <label for="batchFixedOriginalPrice">原价（可不填）</label>
                                             <input type="number" id="batchFixedOriginalPrice" min="0" step="0.1" placeholder="留空则不修改原价">
                                         </div>
+                                        <button type="button" class="btn btn-default" id="batchSaleOnBtn" onclick="submitBatchSaleStatusUpdate(true)">批量上架</button>
+                                        <button type="button" class="btn btn-default" id="batchSaleOffBtn" onclick="submitBatchSaleStatusUpdate(false)">批量下架</button>
                                         <div class="batch-fixed-submit-wrap">
                                             <button type="button" class="btn btn-primary" id="batchFixedSubmitBtn" onclick="submitBatchFixedPriceUpdate()">提交改价</button>
                                         </div>
@@ -4155,8 +4242,6 @@
                                 </div>
                             </div>
                             <div class="batch-fixed-actions">
-                                <button type="button" class="btn btn-default" id="batchSaleOnBtn" onclick="submitBatchSaleStatusUpdate(true)">批量上架</button>
-                                <button type="button" class="btn btn-default" id="batchSaleOffBtn" onclick="submitBatchSaleStatusUpdate(false)">批量下架</button>
                                 <label class="batch-select-toggle">
                                     <input type="checkbox" id="batchFixedSelectAll" onchange="handleBatchFixedSelectAllToggle(this.checked)">
                                     <span>全选当前列表</span>
@@ -4301,9 +4386,14 @@
                 <div class="copy-product-target-row">
                     <div class="form-group">
                         <label class="form-label">目标分类 <span class="required">*</span></label>
-                        <select class="form-select" id="copyProductTargetCategory" onchange="applyCopyProductTargetCategory(this.value)">
-                            <option value="">请选择分类</option>
-                        </select>
+                        <div class="product-modal-category-selector" id="copyProductTargetCategorySelector">
+                            <button type="button" class="product-modal-category-summary" id="copyProductTargetCategorySummary" onclick="toggleCopyProductTargetCategorySelector(); event.stopPropagation();">
+                                <span class="product-modal-category-summary-text" id="copyProductTargetCategorySummaryText">请选择目标分类</span>
+                                <span class="product-modal-category-summary-arrow">▼</span>
+                            </button>
+                            <div class="product-modal-category-chips" id="copyProductTargetCategoryChips"></div>
+                            <div class="product-modal-category-options" id="copyProductTargetCategoryOptions"></div>
+                        </div>
                     </div>
                     <button type="button" class="btn btn-default copy-product-target-action" onclick="openCategoryModal('copyTargetCategory')">新增分类</button>
                 </div>
@@ -4557,6 +4647,9 @@
         let productCopySource = null;
         let productCopySourceCategory = '';
         let productCopyTargetCategory = '';
+        let copyProductTargetCategoryOptions = [];
+        let selectedCopyProductTargetCategoryKeys = new Set();
+        let isCopyProductTargetCategorySelectorOpen = false;
         let allDeviceOptions = [];
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
@@ -4578,6 +4671,7 @@
         let batchFixedPriceSelectedIds = new Set();
         let batchFixedPriceSuccessIds = new Set();
         let batchFixedPriceFailedMap = {};
+        let menuSharedCategoryFilter = '';
         let menuManageActiveCategory = '';
         let menuManageCategoryKeyword = '';
         let menuManageProductKeyword = '';
@@ -5116,10 +5210,19 @@
             const keys = getBatchFixedPriceCategoryKeys();
             if (!keys.length) {
                 batchFixedPriceActiveCategory = '__ALL__';
+                menuSharedCategoryFilter = '';
+                return;
+            }
+            if (menuSharedCategoryFilter === '__ALL__') {
+                batchFixedPriceActiveCategory = '__ALL__';
+                return;
+            }
+            if (menuSharedCategoryFilter && keys.includes(menuSharedCategoryFilter)) {
+                batchFixedPriceActiveCategory = menuSharedCategoryFilter;
                 return;
             }
             if (batchFixedPriceActiveCategory !== '__ALL__' && !keys.includes(batchFixedPriceActiveCategory)) {
-                batchFixedPriceActiveCategory = '__ALL__';
+                batchFixedPriceActiveCategory = getMenuSharedDefaultCategory() || '__ALL__';
             }
         }
 
@@ -5216,7 +5319,6 @@
         }
 
         function clearBatchFixedPriceRuntimeState() {
-            batchFixedPriceKeyword = '';
             batchFixedPriceSelectedIds = new Set();
             batchFixedPriceSuccessIds = new Set();
             batchFixedPriceFailedMap = {};
@@ -5229,16 +5331,11 @@
         }
 
         function setBatchFixedPriceActiveCategory(categoryKey) {
-            batchFixedPriceActiveCategory = categoryKey || '__ALL__';
-            ensureBatchFixedPriceActiveCategory();
-            renderBatchFixedPricePanel();
-            renderBatchFixedPriceList();
+            setMenuSharedCategoryFilter(categoryKey || '__ALL__');
         }
 
         function setBatchFixedPriceKeyword(keyword = '') {
-            batchFixedPriceKeyword = String(keyword || '');
-            renderBatchFixedPricePanel();
-            renderBatchFixedPriceList();
+            setMenuSharedProductKeyword(keyword);
         }
 
         function getBatchFixedPriceStateSnapshot() {
@@ -5263,27 +5360,25 @@
             }
 
             ensureBatchFixedPriceActiveCategory();
+            renderMenuSharedContext();
             panel.classList.add('active');
             panel.style.display = 'flex';
 
-            const categorySelect = document.getElementById('batchFixedCategorySelect');
-            const keywordInput = document.getElementById('batchFixedKeyword');
+            const contextSummary = document.getElementById('batchFixedContextSummary');
             const summary = document.getElementById('batchFixedSummary');
             const failuresEl = document.getElementById('batchFixedFailures');
             const selectAllInput = document.getElementById('batchFixedSelectAll');
             const retryBtn = document.getElementById('batchFixedRetryBtn');
 
-            const categories = getBatchFixedPriceCategoryKeys();
-            if (categorySelect) {
-                const allOption = `<option value="__ALL__">全部分类</option>`;
-                const categoryOptions = categories
-                    .map(categoryKey => `<option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryNameByLang(categoryKey, currentLang))}</option>`)
-                    .join('');
-                categorySelect.innerHTML = `${allOption}${categoryOptions}`;
-                categorySelect.value = batchFixedPriceActiveCategory;
-            }
-            if (keywordInput) {
-                keywordInput.value = batchFixedPriceKeyword;
+            if (contextSummary) {
+                const categoryLabel = batchFixedPriceActiveCategory === '__ALL__'
+                    ? '全部分类'
+                    : getCategoryName(batchFixedPriceActiveCategory);
+                const categoryCount = getMenuSharedCategoryCount(batchFixedPriceActiveCategory === '__ALL__' ? '__ALL__' : batchFixedPriceActiveCategory);
+                const keyword = String(batchFixedPriceKeyword || '').trim();
+                contextSummary.textContent = keyword
+                    ? `当前范围：${categoryLabel}（${categoryCount}个商品） / 关键词“${keyword}”`
+                    : `当前范围：${categoryLabel}（${categoryCount}个商品）`;
             }
 
             const visibleEntries = getBatchFixedPriceFilteredEntries(batchFixedPriceActiveCategory);
@@ -6921,6 +7016,152 @@
             menuManageActiveCategory = categoryKeys[0];
         }
 
+        function getMenuSharedDefaultCategory() {
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) return '';
+            if (menuManageActiveCategory && categoryKeys.includes(menuManageActiveCategory)) {
+                return menuManageActiveCategory;
+            }
+            return categoryKeys[0];
+        }
+
+        function ensureMenuSharedCategoryFilter(preferredCategory = '') {
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) {
+                menuSharedCategoryFilter = '';
+                batchFixedPriceActiveCategory = '__ALL__';
+                return;
+            }
+
+            const preferred = String(preferredCategory || '').trim();
+            if (preferred === '__ALL__') {
+                menuSharedCategoryFilter = '__ALL__';
+                batchFixedPriceActiveCategory = '__ALL__';
+                return;
+            }
+
+            if (preferred && categoryKeys.includes(preferred)) {
+                menuSharedCategoryFilter = preferred;
+                batchFixedPriceActiveCategory = preferred;
+                return;
+            }
+
+            if (menuSharedCategoryFilter === '__ALL__') {
+                batchFixedPriceActiveCategory = '__ALL__';
+                return;
+            }
+
+            if (menuSharedCategoryFilter && categoryKeys.includes(menuSharedCategoryFilter)) {
+                batchFixedPriceActiveCategory = menuSharedCategoryFilter;
+                return;
+            }
+
+            const fallback = getMenuSharedDefaultCategory();
+            menuSharedCategoryFilter = fallback;
+            batchFixedPriceActiveCategory = fallback || '__ALL__';
+        }
+
+        function getMenuSharedCategoryCount(categoryKey = '') {
+            if (categoryKey === '__ALL__') {
+                return getBatchFixedPriceEntries('__ALL__').length;
+            }
+            const category = productsData[categoryKey];
+            return Array.isArray(category?.items) ? category.items.length : 0;
+        }
+
+        function renderMenuSharedContext() {
+            const wrap = document.getElementById('menuSharedContext');
+            const categorySelect = document.getElementById('menuManageCategorySelect');
+            const productKeywordInput = document.getElementById('menuManageProductKeyword');
+            if (!wrap || !categorySelect || !productKeywordInput) return;
+
+            const isVisible = currentTab === 'menu' && (currentMenuInnerTab === 'manage' || currentMenuInnerTab === 'batch');
+            const manageSlot = document.getElementById('menuManageSharedContextSlot');
+            const batchSlot = document.getElementById('menuBatchSharedContextSlot');
+            const targetSlot = currentMenuInnerTab === 'batch' ? batchSlot : manageSlot;
+
+            if (isVisible && targetSlot && wrap.parentNode !== targetSlot && typeof targetSlot.appendChild === 'function') {
+                targetSlot.appendChild(wrap);
+            }
+
+            wrap.style.display = isVisible ? '' : 'none';
+            if (!isVisible) return;
+
+            ensureMenuManageActiveCategory();
+            ensureMenuSharedCategoryFilter();
+
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) {
+                categorySelect.innerHTML = '<option value="">暂无分类</option>';
+                categorySelect.value = '';
+            } else {
+                const allCount = getMenuSharedCategoryCount('__ALL__');
+                const categoryOptions = categoryKeys.map(categoryKey => {
+                    const count = getMenuSharedCategoryCount(categoryKey);
+                    return `<option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryName(categoryKey))}（${count}个商品）</option>`;
+                }).join('');
+                categorySelect.innerHTML = `<option value="__ALL__">全部分类（${allCount}个商品）</option>${categoryOptions}`;
+                categorySelect.value = menuSharedCategoryFilter || getMenuSharedDefaultCategory();
+            }
+
+            productKeywordInput.value = menuManageProductKeyword;
+        }
+
+        function setMenuSharedCategoryFilter(categoryKey = '') {
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) {
+                menuSharedCategoryFilter = '';
+                batchFixedPriceActiveCategory = '__ALL__';
+                renderMenuSharedContext();
+                return;
+            }
+
+            const normalized = String(categoryKey || '').trim();
+            const nextCategory = normalized === '__ALL__'
+                ? '__ALL__'
+                : (categoryKeys.includes(normalized) ? normalized : getMenuSharedDefaultCategory());
+
+            menuSharedCategoryFilter = nextCategory;
+            batchFixedPriceActiveCategory = nextCategory === '__ALL__' ? '__ALL__' : nextCategory;
+
+            if (nextCategory === '__ALL__') {
+                ensureMenuManageActiveCategory();
+                menuManageProductScope = 'all';
+            } else {
+                menuManageActiveCategory = nextCategory;
+                menuManageProductScope = 'current';
+            }
+
+            renderMenuSharedContext();
+
+            if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            } else {
+                renderMenu();
+            }
+        }
+
+        function setMenuSharedProductKeyword(keyword = '') {
+            const normalized = String(keyword || '');
+            menuManageProductKeyword = normalized;
+            batchFixedPriceKeyword = normalized;
+            renderMenuSharedContext();
+
+            if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            } else if (currentMenuInnerTab === 'manage') {
+                renderMenu();
+            }
+        }
+
+        function clearMenuSharedFilters() {
+            menuManageProductKeyword = '';
+            batchFixedPriceKeyword = '';
+            setMenuSharedCategoryFilter(getMenuManageCategoryKeys().length ? getMenuManageCategoryKeys()[0] : '');
+        }
+
         function getMenuManageVisibleCategoryKeys(keyword = menuManageCategoryKeyword) {
             const normalizedKeyword = normalizeMenuManageKeyword(keyword);
             const categoryKeys = getMenuManageCategoryKeys();
@@ -6962,6 +7203,7 @@
 
         function renderMenuManageCategoryNavigation() {
             ensureMenuManageActiveCategory();
+            ensureMenuSharedCategoryFilter();
 
             const keywordInput = document.getElementById('menuManageCategoryKeyword');
             const categoryList = document.getElementById('menuManageCategoryList');
@@ -7018,10 +7260,16 @@
 
             if (mobileSelect) {
                 const allKeys = getMenuManageCategoryKeys();
-                mobileSelect.innerHTML = allKeys.map(categoryKey => `
-                    <option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryName(categoryKey))}</option>
-                `).join('');
-                mobileSelect.value = menuManageActiveCategory;
+                const allOption = `<option value="__ALL__">全部分类（${getMenuSharedCategoryCount('__ALL__')}个商品）</option>`;
+                const categoryOptions = allKeys.map(categoryKey => {
+                    const category = productsData[categoryKey] || {};
+                    const count = Array.isArray(category.items) ? category.items.length : 0;
+                    return `
+                    <option value="${escapePreviewText(categoryKey)}">${escapePreviewText(getCategoryName(categoryKey))}（${count}个商品）</option>
+                `;
+                }).join('');
+                mobileSelect.innerHTML = `${allOption}${categoryOptions}`;
+                mobileSelect.value = menuSharedCategoryFilter === '__ALL__' ? '__ALL__' : menuManageActiveCategory;
             }
         }
 
@@ -7068,6 +7316,7 @@
             if (!container) return;
 
             ensureMenuManageActiveCategory();
+            renderMenuSharedContext();
             renderMenuManageCategoryNavigation();
 
             const categoryKeys = getMenuManageCategoryKeys();
@@ -7136,10 +7385,7 @@
         }
 
         function setMenuManageActiveCategory(categoryKey) {
-            menuManageActiveCategory = String(categoryKey || '').trim();
-            ensureMenuManageActiveCategory();
-            menuManageProductScope = 'current';
-            renderMenu();
+            setMenuSharedCategoryFilter(String(categoryKey || '').trim());
         }
 
         function setMenuManageCategoryKeyword(keyword = '') {
@@ -7148,12 +7394,20 @@
         }
 
         function setMenuManageProductKeyword(keyword = '') {
-            menuManageProductKeyword = String(keyword || '');
-            renderMenu();
+            setMenuSharedProductKeyword(keyword);
         }
 
         function setMenuManageProductScope(scope = 'current') {
             menuManageProductScope = scope === 'all' ? 'all' : 'current';
+            if (menuManageProductScope === 'all') {
+                menuSharedCategoryFilter = '__ALL__';
+                batchFixedPriceActiveCategory = '__ALL__';
+            } else {
+                ensureMenuManageActiveCategory();
+                menuSharedCategoryFilter = menuManageActiveCategory || getMenuSharedDefaultCategory();
+                batchFixedPriceActiveCategory = menuSharedCategoryFilter || '__ALL__';
+            }
+            renderMenuSharedContext();
             renderMenu();
         }
 
@@ -7462,27 +7716,107 @@
             });
         }
 
-        function renderCopyProductTargetCategoryOptions(selectedCategory = '') {
-            const categorySelect = document.getElementById('copyProductTargetCategory');
-            if (!categorySelect) return;
-            const categories = Object.keys(productsData);
-            if (!categories.length) {
-                categorySelect.innerHTML = '<option value="">请选择分类</option>';
-                categorySelect.value = '';
+        function getCopyProductTargetCategoryOptions() {
+            return Object.keys(productsData || {}).map(categoryKey => ({
+                key: categoryKey,
+                label: getCategoryName(categoryKey)
+            }));
+        }
+
+        function getSelectedCopyProductTargetCategories() {
+            return copyProductTargetCategoryOptions
+                .map(option => option.key)
+                .filter(key => selectedCopyProductTargetCategoryKeys.has(key));
+        }
+
+        function renderCopyProductTargetCategorySelector() {
+            const summary = document.getElementById('copyProductTargetCategorySummary');
+            const summaryText = document.getElementById('copyProductTargetCategorySummaryText');
+            const chips = document.getElementById('copyProductTargetCategoryChips');
+            const options = document.getElementById('copyProductTargetCategoryOptions');
+            if (!summary || !summaryText || !chips || !options) return;
+
+            copyProductTargetCategoryOptions = getCopyProductTargetCategoryOptions();
+            const selectedOptions = copyProductTargetCategoryOptions.filter(option => selectedCopyProductTargetCategoryKeys.has(option.key));
+
+            summary.classList.toggle('active', isCopyProductTargetCategorySelectorOpen);
+            options.classList.toggle('active', isCopyProductTargetCategorySelectorOpen);
+            summaryText.textContent = selectedOptions.length ? selectedOptions.map(option => option.label).join('、') : '请选择目标分类';
+
+            chips.innerHTML = selectedOptions.length
+                ? selectedOptions.map(option => `<span class="product-modal-category-chip">${escapePreviewText(option.label)}</span>`).join('')
+                : '<span class="product-modal-category-chip" style="background:#f3f4f6;color:#6b7280;">未选择分类</span>';
+
+            if (!copyProductTargetCategoryOptions.length) {
+                options.innerHTML = '<div class="product-modal-category-empty">暂无可选分类</div>';
                 productCopyTargetCategory = '';
                 return;
             }
 
-            const preferred = categories.includes(selectedCategory) ? selectedCategory : (categories.includes(productCopyTargetCategory) ? productCopyTargetCategory : categories[0]);
-            categorySelect.innerHTML = categories.map(categoryName => `
-                <option value="${categoryName}" ${categoryName === preferred ? 'selected' : ''}>${getCategoryName(categoryName)}</option>
-            `).join('');
-            categorySelect.value = preferred;
-            productCopyTargetCategory = preferred;
+            options.innerHTML = copyProductTargetCategoryOptions.map(option => {
+                const checked = selectedCopyProductTargetCategoryKeys.has(option.key);
+                return `
+                    <label class="product-modal-category-option ${checked ? 'active' : ''}" onclick="event.stopPropagation()">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCopyProductTargetCategorySelection('${escapePreviewText(option.key)}', this.checked)">
+                        <span class="product-modal-category-option-text">${escapePreviewText(option.label)}</span>
+                    </label>
+                `;
+            }).join('');
+
+            productCopyTargetCategory = selectedOptions[0]?.key || '';
+        }
+
+        function setCopyProductTargetCategories(categoryKeys = []) {
+            const validKeys = new Set((copyProductTargetCategoryOptions.length ? copyProductTargetCategoryOptions : getCopyProductTargetCategoryOptions()).map(option => option.key));
+            selectedCopyProductTargetCategoryKeys = new Set((categoryKeys || [])
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(categoryKey => validKeys.has(categoryKey)));
+            renderCopyProductTargetCategorySelector();
+        }
+
+        function toggleCopyProductTargetCategorySelector(forceOpen = null) {
+            if (typeof forceOpen === 'boolean') {
+                isCopyProductTargetCategorySelectorOpen = forceOpen;
+            } else {
+                isCopyProductTargetCategorySelectorOpen = !isCopyProductTargetCategorySelectorOpen;
+            }
+            renderCopyProductTargetCategorySelector();
+        }
+
+        function toggleCopyProductTargetCategorySelection(categoryKey, checked) {
+            const normalizedKey = String(categoryKey || '').trim();
+            if (!normalizedKey) return;
+            if (checked) selectedCopyProductTargetCategoryKeys.add(normalizedKey);
+            else selectedCopyProductTargetCategoryKeys.delete(normalizedKey);
+            renderCopyProductTargetCategorySelector();
+        }
+
+        function renderCopyProductTargetCategoryOptions(selectedCategories = []) {
+            const categories = Object.keys(productsData || {});
+            if (!categories.length) {
+                copyProductTargetCategoryOptions = [];
+                selectedCopyProductTargetCategoryKeys = new Set();
+                productCopyTargetCategory = '';
+                renderCopyProductTargetCategorySelector();
+                return;
+            }
+
+            const normalized = Array.from(new Set((Array.isArray(selectedCategories) ? selectedCategories : [selectedCategories])
+                .map(categoryName => String(categoryName || '').trim())
+                .filter(categoryName => categories.includes(categoryName))));
+
+            const fallback = normalized.length
+                ? normalized
+                : (categories.includes(productCopyTargetCategory) ? [productCopyTargetCategory] : [categories[0]]);
+
+            setCopyProductTargetCategories(fallback);
         }
 
         function applyCopyProductTargetCategory(categoryName) {
-            renderCopyProductTargetCategoryOptions(categoryName);
+            const nextSelected = new Set(getSelectedCopyProductTargetCategories());
+            const normalized = String(categoryName || '').trim();
+            if (normalized) nextSelected.add(normalized);
+            renderCopyProductTargetCategoryOptions(Array.from(nextSelected));
         }
 
         function renderCopyProductTemplateOptions(preferredCategory = '', selectedKey = '') {
@@ -7557,18 +7891,21 @@
                 return;
             }
 
-            renderCopyProductTargetCategoryOptions(preselectedCategory);
+            isCopyProductTargetCategorySelectorOpen = false;
+            renderCopyProductTargetCategoryOptions(preselectedCategory ? [preselectedCategory] : getSelectedCopyProductTargetCategories());
             renderCopyProductTemplateOptions(preselectedCategory, entries[0]?.key || '');
             document.getElementById('copyProductModal').classList.add('active');
         }
 
         function closeCopyProductModal() {
+            isCopyProductTargetCategorySelectorOpen = false;
+            renderCopyProductTargetCategorySelector();
             document.getElementById('copyProductModal').classList.remove('active');
         }
 
         function startCopyProduct() {
-            const targetCategory = document.getElementById('copyProductTargetCategory').value;
-            if (!targetCategory) {
+            const targetCategories = getSelectedCopyProductTargetCategories();
+            if (!targetCategories.length) {
                 showToast('请选择目标分类', 'error');
                 return;
             }
@@ -7580,14 +7917,17 @@
             }
 
             closeCopyProductModal();
-            openProductModal(targetCategory, null, '', selected.product, selected.categoryName);
+            openProductModal(targetCategories[0], null, '', selected.product, selected.categoryName, targetCategories);
         }
 
-        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '') {
+        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '', copyTargetCategories = []) {
             const modal = document.getElementById('productModal');
             const isEdit = !!productToEdit;
             const isCopy = !isEdit && !!copySourceProduct;
-            const fallbackCategoryKey = String(preselectedCategory || sourceCategory || productCopyTargetCategory || '').trim();
+            const normalizedCopyTargetCategories = Array.from(new Set((copyTargetCategories || [])
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(Boolean)));
+            const fallbackCategoryKey = String(preselectedCategory || sourceCategory || normalizedCopyTargetCategories[0] || productCopyTargetCategory || '').trim();
 
             generateLangInputs('productLangInputs', 'product');
             document.getElementById('productModalTitle').textContent = isEdit ? '编辑商品' : '复制商品';
@@ -7609,9 +7949,9 @@
                 editingProductCategory = '';
                 productCopySource = isCopy ? cloneProductValue(copySourceProduct) : null;
                 productCopySourceCategory = isCopy ? copySourceCategory : '';
-                productCopyTargetCategory = isCopy ? fallbackCategoryKey : '';
+                productCopyTargetCategory = isCopy ? (normalizedCopyTargetCategories[0] || fallbackCategoryKey) : '';
                 populateProductModalFields(isCopy ? copySourceProduct : null);
-                setProductModalSelectedCategories(fallbackCategoryKey ? [fallbackCategoryKey] : []);
+                setProductModalSelectedCategories(normalizedCopyTargetCategories.length ? normalizedCopyTargetCategories : (fallbackCategoryKey ? [fallbackCategoryKey] : []));
             }
 
             renderProductModalCategorySelector();
@@ -7956,6 +8296,7 @@
             }
 
             updateHeaderActionVisibility();
+            renderMenuSharedContext();
             if (isSettings) {
                 renderMenuBasicSettingsForm();
             } else if (isManage) {
@@ -8012,6 +8353,7 @@
                 btn.style.display = tab === 'menu' ? '' : 'none';
             });
             updateHeaderActionVisibility();
+            renderMenuSharedContext();
         }
 
         function switchTab(event, tab) {
@@ -8061,11 +8403,15 @@
         document.addEventListener('click', function(e) {
             const sidebarWrap = document.getElementById('headerDeviceSearchWrap');
             const overviewWrap = document.getElementById('overviewHeaderDeviceFilter');
+            const copyTargetCategorySelector = document.getElementById('copyProductTargetCategorySelector');
             if (sidebarWrap && !sidebarWrap.contains(e.target)) {
                 hideDeviceDropdown();
             }
             if (overviewWrap && !overviewWrap.contains(e.target)) {
                 closeOverviewDeviceFilterDropdown();
+            }
+            if (copyTargetCategorySelector && !copyTargetCategorySelector.contains(e.target)) {
+                toggleCopyProductTargetCategorySelector(false);
             }
         });
 
