@@ -4108,7 +4108,7 @@
                     <div class="menu-topbar">
                         <div class="device-search-wrap header-device-search" id="headerDeviceSearchWrap">
                             <span class="header-device-search-icon">🔍</span>
-                            <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="changeDeviceByInput()" onkeydown="handleDeviceInputEnter(event)">
+                            <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="搜索设备编号或点位名称..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="changeDeviceByInput()" onkeydown="handleDeviceInputEnter(event)">
                             <div id="deviceDropdown" class="device-dropdown"></div>
                         </div>
                     </div>
@@ -4606,12 +4606,31 @@
             if (!Array.isArray(device.langs) || !device.langs.length) {
                 device.langs = DEFAULT_DEVICE_LANGUAGE_CODES.slice();
             }
+
             if (!device.langNames || typeof device.langNames !== 'object') {
-                device.langNames = { ...DEFAULT_DEVICE_LANGUAGE_NAMES };
+                device.langNames = {};
             }
+            DEFAULT_DEVICE_LANGUAGE_CODES.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang];
+                }
+            });
+            device.langs.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang] || lang;
+                }
+            });
+
             if (!Array.isArray(device.hiddenLangs)) {
                 device.hiddenLangs = [];
             }
+            device.hiddenLangs = device.hiddenLangs.filter(lang => device.langs.includes(lang));
+
+            if (typeof device.defaultOrderPreviewLang !== 'string') {
+                const visibleLangs = device.langs.filter(lang => !device.hiddenLangs.includes(lang));
+                device.defaultOrderPreviewLang = visibleLangs[0] || device.langs[0] || DEFAULT_DEVICE_LANGUAGE_CODES[0];
+            }
+
             return device;
         }
 
@@ -4725,6 +4744,8 @@
         let selectedCopyProductTargetCategoryKeys = new Set();
         let isCopyProductTargetCategorySelectorOpen = false;
         let allDeviceOptions = [];
+        let deviceSearchOptions = [];
+        let deviceSearchLocationMap = {};
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
@@ -4931,7 +4952,8 @@
                 if (innerTab === 'manage' || innerTab === 'settings' || innerTab === 'batch') {
                     currentMenuInnerTab = innerTab;
                 }
-                if (device && deviceConfig[device]) {
+                if (device && hasKnownDeviceSearchOption(device)) {
+                    ensureDeviceLanguageConfig(device);
                     currentDevice = device;
                 }
             } catch (e) {
@@ -4984,7 +5006,8 @@
             if (!state) return;
 
             const nextDevice = String(state.device || '').trim();
-            if (nextDevice && deviceConfig[nextDevice]) {
+            if (nextDevice && hasKnownDeviceSearchOption(nextDevice)) {
+                ensureDeviceLanguageConfig(nextDevice);
                 currentDevice = nextDevice;
             }
 
@@ -5967,13 +5990,120 @@
             return result;
         }
 
+        function parseStoredDeviceSearchArray(storageKey) {
+            try {
+                const raw = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                return Array.isArray(raw) ? raw : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function normalizeDeviceSearchId(value = '') {
+            return String(value || '').trim().toUpperCase();
+        }
+
+        function normalizeDeviceSearchText(value = '') {
+            return String(value || '').trim();
+        }
+
+        function buildRuntimeLocationMap() {
+            const locationMap = {};
+            parseStoredDeviceSearchArray('locationsData').forEach(item => {
+                const code = normalizeDeviceSearchText(item?.code);
+                const name = normalizeDeviceSearchText(item?.name);
+                if (code && name) {
+                    locationMap[code] = name;
+                }
+            });
+            return locationMap;
+        }
+
+        function resolveDeviceLocationName(device, runtimeLocationMap) {
+            if (!device || typeof device !== 'object') return '';
+            const entryInfo = device.entryInfo || {};
+            const fromEntry = normalizeDeviceSearchText(entryInfo.locationName) || normalizeDeviceSearchText(device.locationName);
+            if (fromEntry) return fromEntry;
+            const locationCode = normalizeDeviceSearchText(device.location);
+            if (!locationCode) return '';
+            return runtimeLocationMap[locationCode] || '';
+        }
+
+        function loadDeviceSearchOptions() {
+            const storedDevices = parseStoredDeviceSearchArray('devicesData');
+            if (!storedDevices.length) {
+                return ['RCK111', 'RCK112', 'RCK113'].map(id => ({ id, locationName: '' }));
+            }
+
+            const runtimeLocationMap = buildRuntimeLocationMap();
+            const optionMap = {};
+            storedDevices.forEach(device => {
+                const id = normalizeDeviceSearchId(device?.id);
+                if (!id) return;
+                const locationName = resolveDeviceLocationName(device, runtimeLocationMap);
+                if (!optionMap[id]) {
+                    optionMap[id] = { id, locationName: '' };
+                }
+                if (locationName) {
+                    optionMap[id].locationName = locationName;
+                }
+            });
+
+            const options = Object.values(optionMap);
+            return options.length ? options : ['RCK111', 'RCK112', 'RCK113'].map(id => ({ id, locationName: '' }));
+        }
+
+        function hasKnownDeviceSearchOption(deviceId) {
+            const normalizedDeviceId = normalizeDeviceSearchId(deviceId);
+            if (!normalizedDeviceId) return false;
+            return loadDeviceSearchOptions().some(option => option.id === normalizedDeviceId);
+        }
+
+        function rebuildDeviceSearchData() {
+            deviceSearchOptions = loadDeviceSearchOptions();
+            allDeviceOptions = deviceSearchOptions.map(item => item.id);
+            deviceSearchLocationMap = {};
+            deviceSearchOptions.forEach(item => {
+                deviceSearchLocationMap[item.id] = item.locationName || '';
+            });
+        }
+
+        function formatDeviceSearchLabel(option) {
+            const deviceId = typeof option === 'string' ? normalizeDeviceSearchId(option) : normalizeDeviceSearchId(option?.id);
+            const locationName = typeof option === 'string'
+                ? normalizeDeviceSearchText(deviceSearchLocationMap[deviceId])
+                : normalizeDeviceSearchText(option?.locationName);
+            if (!deviceId) return '';
+            return locationName ? `${locationName} · ${deviceId}` : deviceId;
+        }
+
+        function getDeviceSearchDisplayLabel(deviceId) {
+            return formatDeviceSearchLabel({
+                id: deviceId,
+                locationName: deviceSearchLocationMap[normalizeDeviceSearchId(deviceId)] || ''
+            });
+        }
+
+        function getDeviceSearchCandidates(keyword = '') {
+            const normalizedKeyword = normalizeDeviceSearchText(keyword).toLowerCase();
+            if (!normalizedKeyword) return deviceSearchOptions;
+            return deviceSearchOptions.filter(option => {
+                const candidates = [option.id, option.locationName, formatDeviceSearchLabel(option)];
+                return candidates.some(value => String(value || '').toLowerCase().includes(normalizedKeyword));
+            });
+        }
+
         function initDeviceSearch() {
-            allDeviceOptions = ['RCK111', 'RCK112', 'RCK113'];
-            document.getElementById('deviceSearchInput').value = currentDevice;
+            rebuildDeviceSearchData();
+            if (!allDeviceOptions.includes(currentDevice)) {
+                currentDevice = allDeviceOptions[0] || currentDevice;
+            }
+            ensureDeviceLanguageConfig(currentDevice);
+            document.getElementById('deviceSearchInput').value = getDeviceSearchDisplayLabel(currentDevice);
         }
 
         function initOverviewDeviceFilter() {
-            overviewAllDevices = ['RCK111', 'RCK112', 'RCK113'];
+            overviewAllDevices = allDeviceOptions.slice();
             overviewSelectedDevices = new Set(overviewAllDevices);
             document.getElementById('overviewDeviceFilterSearch').value = '';
             renderOverviewDeviceFilterOptions();
@@ -5989,23 +6119,25 @@
         }
 
         function matchDeviceByInput(raw) {
-            const keyword = raw.trim().toLowerCase();
+            const keyword = normalizeDeviceSearchText(raw).toLowerCase();
             if (!keyword) return null;
-            const exact = allDeviceOptions.find(item => item.toLowerCase() === keyword);
-            if (exact) return exact;
-            const fuzzy = allDeviceOptions.filter(item => item.toLowerCase().includes(keyword));
-            return fuzzy.length === 1 ? fuzzy[0] : null;
+            const exact = deviceSearchOptions.find(option => {
+                const candidates = [option.id, option.locationName, formatDeviceSearchLabel(option)];
+                return candidates.some(value => String(value || '').toLowerCase() === keyword);
+            });
+            if (exact) return exact.id;
+            const fuzzy = getDeviceSearchCandidates(raw);
+            return fuzzy.length === 1 ? fuzzy[0].id : null;
         }
 
         function renderDeviceDropdown(keyword = '') {
             const dropdown = document.getElementById('deviceDropdown');
-            const k = keyword.trim().toLowerCase();
-            const list = !k ? allDeviceOptions : allDeviceOptions.filter(item => item.toLowerCase().includes(k));
+            const list = getDeviceSearchCandidates(keyword);
             if (!list.length) {
                 dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
                 return;
             }
-            dropdown.innerHTML = list.map(item => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${item}')">${item}</div>`).join('');
+            dropdown.innerHTML = list.map(item => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${item.id}')">${formatDeviceSearchLabel(item)}</div>`).join('');
         }
 
         function showDeviceDropdown() {
@@ -6024,7 +6156,7 @@
 
         function selectDeviceFromDropdown(deviceId) {
             const input = document.getElementById('deviceSearchInput');
-            input.value = deviceId;
+            input.value = getDeviceSearchDisplayLabel(deviceId);
             changeDeviceByInput();
             input.dataset.skipChange = '1';
             hideDeviceDropdown();
@@ -6822,7 +6954,7 @@
         }
 
         function findExistingLanguageCodeByName(name, deviceId = currentDevice) {
-            const device = deviceConfig[deviceId];
+            const device = ensureDeviceLanguageConfig(deviceId);
             const normalizedName = normalizeLanguageName(name);
             if (!device || !normalizedName || !device.langNames) return '';
 
@@ -8489,12 +8621,12 @@
             const matched = matchDeviceByInput(input.value);
             if (!matched) {
                 showToast('设备不存在，请输入完整设备编号', 'error');
-                input.value = currentDevice;
+                input.value = getDeviceSearchDisplayLabel(currentDevice);
                 return;
             }
             currentDevice = matched;
             ensureDeviceLanguageConfig(currentDevice);
-            input.value = matched;
+            input.value = getDeviceSearchDisplayLabel(matched);
             updateCurrentDeviceTag();
             
             syncCurrentLangWithPlatform();

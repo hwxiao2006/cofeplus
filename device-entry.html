@@ -667,7 +667,7 @@
                                 <div class="label">选择设备</div>
                                 <div class="value">
                                     <div class="device-search-wrap">
-                                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="输入设备编号..." onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
+                                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="搜索设备编号或点位名称" onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
                                         <div id="deviceDropdown" class="device-dropdown"></div>
                                     </div>
                                 </div>
@@ -913,6 +913,7 @@
         let customersData = [];
         let selectedDevice = null;
         let unenteredDeviceOptions = [];
+        let deviceSearchLocationMap = {};
 
         function initPage() {
             devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
@@ -932,19 +933,94 @@
             });
         }
 
-        function renderDeviceOptions() {
+        function normalizeDeviceSearchId(value) {
+            return String(value || '').trim();
+        }
+
+        function normalizeDeviceSearchText(value) {
+            return String(value || '').trim();
+        }
+
+        function buildRuntimeLocationMap() {
+            const locationMap = {};
+            locationsData.forEach(location => {
+                const code = normalizeDeviceSearchText(location?.code || location?.id);
+                const name = normalizeDeviceSearchText(location?.name || location?.address);
+                if (code && name) {
+                    locationMap[code] = name;
+                }
+            });
+            return locationMap;
+        }
+
+        function resolveDeviceLocationName(device, runtimeLocationMap) {
+            if (!device || typeof device !== 'object') return '';
+            const entryInfo = device.entryInfo || {};
+            const fromEntry = normalizeDeviceSearchText(entryInfo.locationName) || normalizeDeviceSearchText(device.locationName);
+            if (fromEntry) return fromEntry;
+            const locationCode = normalizeDeviceSearchText(device.location || device.locationCode);
+            if (!locationCode) return '';
+            return runtimeLocationMap[locationCode] || '';
+        }
+
+        function rebuildDeviceSearchData() {
+            const runtimeLocationMap = buildRuntimeLocationMap();
+            deviceSearchLocationMap = {};
             unenteredDeviceOptions = devicesData
-                .filter(d => d.entered === false || !d.location)
-                .map(d => ({ value: d.id, label: d.id }));
+                .filter(device => device.entered === false || !device.location)
+                .map(device => {
+                    const value = normalizeDeviceSearchId(device?.id);
+                    if (!value) return null;
+                    const locationName = resolveDeviceLocationName(device, runtimeLocationMap);
+                    deviceSearchLocationMap[value] = locationName;
+                    return {
+                        value,
+                        locationName,
+                        label: formatDeviceSearchLabel({ id: value, locationName })
+                    };
+                })
+                .filter(Boolean);
+        }
+
+        function formatDeviceSearchLabel(option) {
+            const deviceId = typeof option === 'string' ? normalizeDeviceSearchId(option) : normalizeDeviceSearchId(option?.id || option?.value);
+            const locationName = typeof option === 'string'
+                ? normalizeDeviceSearchText(deviceSearchLocationMap[deviceId])
+                : normalizeDeviceSearchText(option?.locationName);
+            if (!deviceId) return '';
+            return locationName ? `${locationName} · ${deviceId}` : deviceId;
+        }
+
+        function getDeviceSearchDisplayLabel(deviceId) {
+            return formatDeviceSearchLabel({
+                id: deviceId,
+                locationName: deviceSearchLocationMap[normalizeDeviceSearchId(deviceId)] || ''
+            });
+        }
+
+        function getDeviceSearchCandidates(keyword = '') {
+            const normalizedKeyword = normalizeDeviceSearchText(keyword).toLowerCase();
+            if (!normalizedKeyword) return unenteredDeviceOptions;
+            return unenteredDeviceOptions.filter(option => {
+                const candidates = [option.value, option.locationName, formatDeviceSearchLabel(option)];
+                return candidates.some(value => String(value || '').toLowerCase().includes(normalizedKeyword));
+            });
+        }
+
+        function renderDeviceOptions() {
+            rebuildDeviceSearchData();
             renderDeviceDropdown('');
         }
 
         function matchDeviceByInput(raw) {
-            const keyword = raw.trim().toLowerCase();
+            const keyword = normalizeDeviceSearchText(raw).toLowerCase();
             if (!keyword) return null;
-            const exact = unenteredDeviceOptions.find(option => option.value.toLowerCase() === keyword);
+            const exact = unenteredDeviceOptions.find(option => {
+                const candidates = [option.value, option.locationName, formatDeviceSearchLabel(option)];
+                return candidates.some(value => String(value || '').toLowerCase() === keyword);
+            });
             if (exact) return exact.value;
-            const fuzzy = unenteredDeviceOptions.filter(option => option.value.toLowerCase().includes(keyword));
+            const fuzzy = getDeviceSearchCandidates(raw);
             return fuzzy.length === 1 ? fuzzy[0].value : null;
         }
 
@@ -1096,13 +1172,12 @@
 
         function renderDeviceDropdown(keyword = '') {
             const dropdown = document.getElementById('deviceDropdown');
-            const k = keyword.trim().toLowerCase();
-            const list = !k ? unenteredDeviceOptions : unenteredDeviceOptions.filter(option => option.value.toLowerCase().includes(k) || option.label.toLowerCase().includes(k));
+            const list = getDeviceSearchCandidates(keyword);
             if (!list.length) {
                 dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
                 return;
             }
-            dropdown.innerHTML = list.map(option => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${option.value}')">${option.label}</div>`).join('');
+            dropdown.innerHTML = list.map(option => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${option.value}')">${formatDeviceSearchLabel(option)}</div>`).join('');
         }
 
         function showDeviceDropdown() {
@@ -1122,7 +1197,7 @@
 
         function selectDeviceFromDropdown(deviceId) {
             const input = document.getElementById('deviceSearchInput');
-            input.value = deviceId;
+            input.value = getDeviceSearchDisplayLabel(deviceId);
             onDeviceChangeByInput();
             input.dataset.skipChange = '1';
             hideDeviceDropdown();
@@ -1148,7 +1223,7 @@
                 document.getElementById('merchantName').textContent = '自动带出';
                 return;
             }
-            input.value = id;
+            input.value = getDeviceSearchDisplayLabel(id);
             selectedDevice = devicesData.find(d => d.id === id) || null;
             const merchant = selectedDevice ? (merchantMap[selectedDevice.merchant] || selectedDevice.merchant || '未设置') : '自动带出';
             document.getElementById('merchantName').textContent = merchant;
