@@ -66,6 +66,13 @@ test('返回菜单页应默认定位到菜单管理内层tab', () => {
   assert.ok(/menu-management\.html\?tab=menu&innerTab=manage/.test(html));
 });
 
+test('返回菜单页时应优先复用商品管理返回上下文', () => {
+  assert.ok(/MENU_MANAGEMENT_RETURN_STATE_KEY/.test(html));
+  assert.ok(/function\s+buildMenuManagementReturnUrl\s*\(/.test(html));
+  assert.ok(/sessionStorage\.getItem\(MENU_MANAGEMENT_RETURN_STATE_KEY\)/.test(html));
+  assert.ok(/window\.location\.href = buildMenuManagementReturnUrl\(\)/.test(html));
+});
+
 test('详情页应支持通过 payloadKey 从会话存储读取数据', () => {
   assert.ok(/const\s+payloadKey\s*=\s*params\.get\('payloadKey'\)/.test(html));
   assert.ok(/sessionStorage\.getItem\(`productDetailPayload:\$\{payloadKey\}`\)/.test(html));

@@ -2002,6 +2002,7 @@
             { specKey: 'latteArt', title: '拉花', listId: 'latteArtOptions', optionTitle: 'LATTE-ART' }
         ];
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
+        const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
@@ -3825,8 +3826,37 @@
             }, 2000);
         }
 
+        function buildMenuManagementReturnUrl() {
+            const fallbackUrl = currentDevice
+                ? `menu-management.html?tab=menu&innerTab=manage&device=${encodeURIComponent(currentDevice)}`
+                : 'menu-management.html?tab=menu&innerTab=manage';
+
+            try {
+                const rawState = sessionStorage.getItem(MENU_MANAGEMENT_RETURN_STATE_KEY);
+                if (!rawState) return fallbackUrl;
+
+                const returnState = JSON.parse(rawState);
+                if (!returnState || typeof returnState !== 'object') return fallbackUrl;
+
+                const params = new URLSearchParams();
+                params.set('tab', returnState.tab === 'overview' ? 'overview' : 'menu');
+                params.set('innerTab', returnState.innerTab === 'batch' || returnState.innerTab === 'settings' || returnState.innerTab === 'manage'
+                    ? returnState.innerTab
+                    : 'manage');
+
+                const returnDevice = String(returnState.device || currentDevice || '').trim();
+                if (returnDevice) {
+                    params.set('device', returnDevice);
+                }
+
+                return `menu-management.html?${params.toString()}`;
+            } catch (e) {
+                return fallbackUrl;
+            }
+        }
+
         function goBack() {
-            window.location.href = 'menu-management.html?tab=menu&innerTab=manage';
+            window.location.href = buildMenuManagementReturnUrl();
         }
 
         function goTo(url) {

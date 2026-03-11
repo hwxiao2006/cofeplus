@@ -4323,15 +4323,10 @@
 
                 <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
                     <label class="form-label" style="color: var(--primary);">添加新语言</label>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">语言代码 <span class="required">*</span></label>
-                            <input type="text" class="form-input" id="newLangCode" placeholder="如：fr, de, es">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">语言名称 <span class="required">*</span></label>
-                            <input type="text" class="form-input" id="newLangName" placeholder="如：Français">
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">语言名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="newLangName" placeholder="如：Français">
+                        <div style="margin-top: 6px; font-size: 12px; color: var(--text-secondary);">系统将根据语言名称自动生成编码</div>
                     </div>
                     <button class="btn btn-primary" style="width: 100%;" onclick="addLanguage()">添加语言</button>
                 </div>
@@ -4679,10 +4674,12 @@
         let productModalCategoryOptions = [];
         let selectedProductModalCategoryKeys = new Set();
         let isProductModalCategorySelectorOpen = false;
+        let pendingMenuManagementRestoreScrollY = null;
         const BATCH_FIXED_PRICE_MOCK_FAILURE_MESSAGE = '模拟失败，请再次提交';
         const PLATFORM_LANG_STORAGE_KEY = 'platformLang';
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
+        const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const DEFAULT_TAX_RATE = 0.13;
         const SUPPORTED_CURRENCIES = {
             CNY: { decimals: 2 },
@@ -4824,6 +4821,7 @@
             applySavedProductCategoryAssignments();
             applySavedProductEdits();
             applyInitialViewFromUrl();
+            applyMenuManagementReturnState();
             initDeviceSearch();
             initOverviewDeviceFilter();
             loadPlatformLang();
@@ -4838,6 +4836,7 @@
             initIconPicker();
             setViewByTab(currentTab);
             switchMenuInnerTab(currentMenuInnerTab);
+            restoreMenuManagementScrollPosition();
         }
 
         function applyInitialViewFromUrl() {
@@ -4845,6 +4844,7 @@
                 const params = new URLSearchParams(window.location.search || '');
                 const tab = params.get('tab');
                 const innerTab = params.get('innerTab');
+                const device = params.get('device');
 
                 if (tab === 'overview' || tab === 'menu') {
                     currentTab = tab;
@@ -4852,9 +4852,95 @@
                 if (innerTab === 'manage' || innerTab === 'settings' || innerTab === 'batch') {
                     currentMenuInnerTab = innerTab;
                 }
+                if (device && deviceConfig[device]) {
+                    currentDevice = device;
+                }
             } catch (e) {
                 // ignore invalid URL params
             }
+        }
+
+        function buildMenuManagementReturnState() {
+            return {
+                device: currentDevice,
+                tab: currentTab === 'overview' ? 'overview' : 'menu',
+                innerTab: currentMenuInnerTab,
+                categoryFilter: String(menuSharedCategoryFilter || '').trim(),
+                activeCategory: String(menuManageActiveCategory || '').trim(),
+                productKeyword: String(menuManageProductKeyword || ''),
+                productScope: menuManageProductScope === 'all' ? 'all' : 'current',
+                scrollY: Math.max(0, Number(window.scrollY) || 0)
+            };
+        }
+
+        function persistMenuManagementReturnState() {
+            try {
+                sessionStorage.setItem(MENU_MANAGEMENT_RETURN_STATE_KEY, JSON.stringify(buildMenuManagementReturnState()));
+            } catch (e) {
+                // ignore sessionStorage write failures and fall back to URL-only return
+            }
+        }
+
+        function readMenuManagementReturnState() {
+            try {
+                const raw = sessionStorage.getItem(MENU_MANAGEMENT_RETURN_STATE_KEY);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function clearMenuManagementReturnState() {
+            try {
+                sessionStorage.removeItem(MENU_MANAGEMENT_RETURN_STATE_KEY);
+            } catch (e) {
+                // ignore sessionStorage remove failures
+            }
+        }
+
+        function applyMenuManagementReturnState() {
+            const state = readMenuManagementReturnState();
+            if (!state) return;
+
+            const nextDevice = String(state.device || '').trim();
+            if (nextDevice && deviceConfig[nextDevice]) {
+                currentDevice = nextDevice;
+            }
+
+            if (state.tab === 'overview' || state.tab === 'menu') {
+                currentTab = state.tab;
+            }
+            if (state.innerTab === 'manage' || state.innerTab === 'settings' || state.innerTab === 'batch') {
+                currentMenuInnerTab = state.innerTab;
+            }
+
+            if (typeof state.categoryFilter === 'string') {
+                menuSharedCategoryFilter = state.categoryFilter.trim();
+            }
+            if (typeof state.activeCategory === 'string') {
+                menuManageActiveCategory = state.activeCategory.trim();
+            }
+            if (typeof state.productKeyword === 'string') {
+                menuManageProductKeyword = state.productKeyword;
+                batchFixedPriceKeyword = state.productKeyword;
+            }
+            if (state.productScope === 'all' || state.productScope === 'current') {
+                menuManageProductScope = state.productScope;
+            }
+
+            const nextScrollY = Number(state.scrollY);
+            pendingMenuManagementRestoreScrollY = Number.isFinite(nextScrollY) ? Math.max(0, nextScrollY) : null;
+            clearMenuManagementReturnState();
+        }
+
+        function restoreMenuManagementScrollPosition() {
+            if (pendingMenuManagementRestoreScrollY == null) return;
+            if (window && typeof window.scrollTo === 'function') {
+                window.scrollTo({ top: pendingMenuManagementRestoreScrollY, behavior: 'auto' });
+            }
+            pendingMenuManagementRestoreScrollY = null;
         }
 
         function loadPlatformLang() {
@@ -6631,11 +6717,72 @@
         }
 
         // ==================== 语言管理 ====================
+        const LANGUAGE_CODE_PRESETS = {
+            zh: ['zh', 'chinese', '中文', '汉语', '漢語', '华语', '華語', '简体中文', '簡體中文', '繁体中文', '繁體中文'],
+            en: ['en', 'english', '英文', '英语', '英語'],
+            jp: ['jp', 'ja', 'japanese', '日本语', '日本語', '日语', '日語', '日文'],
+            ko: ['ko', 'kr', 'korean', '한국어', '韩语', '韓語', '朝鲜语', '朝鮮語'],
+            th: ['th', 'thai', 'ไทย', '泰语', '泰語', '泰文'],
+            fr: ['fr', 'french', 'francais', 'français', '法语', '法語', '法文'],
+            de: ['de', 'german', 'deutsch', '德语', '德語', '德文'],
+            es: ['es', 'spanish', 'espanol', 'español', '西班牙语', '西班牙語', '西语', '西語', '西文'],
+            it: ['it', 'italian', 'italiano', '意大利语', '意大利語', '意大利文'],
+            pt: ['pt', 'portuguese', 'portugues', 'português', '葡萄牙语', '葡萄牙語', '葡语', '葡語'],
+            ru: ['ru', 'russian', 'русский', '俄语', '俄語', '俄文'],
+            ar: ['ar', 'arabic', 'العربية', '阿拉伯语', '阿拉伯語', '阿拉伯文'],
+            vi: ['vi', 'vietnamese', 'tiengviet', 'tiếngviệt', '越南语', '越南語']
+        };
+
+        function normalizeLanguageName(value = '') {
+            const raw = String(value || '').trim().toLowerCase();
+            if (!raw) return '';
+            const normalized = typeof raw.normalize === 'function' ? raw.normalize('NFKD') : raw;
+            return normalized.replace(/[\u0300-\u036f]/g, '').replace(/[\s_-]+/g, '');
+        }
+
+        function findExistingLanguageCodeByName(name, deviceId = currentDevice) {
+            const device = deviceConfig[deviceId];
+            const normalizedName = normalizeLanguageName(name);
+            if (!device || !normalizedName || !device.langNames) return '';
+
+            const matched = Object.entries(device.langNames).find(([, langName]) => normalizeLanguageName(langName) === normalizedName);
+            return matched ? matched[0] : '';
+        }
+
+        function generateLanguageCode(name, existingCodes = []) {
+            const normalizedName = normalizeLanguageName(name);
+            if (!normalizedName) return '';
+
+            const preset = Object.entries(LANGUAGE_CODE_PRESETS).find(([, aliases]) => aliases.includes(normalizedName));
+            if (preset) {
+                return preset[0];
+            }
+
+            const normalizedCodes = new Set((existingCodes || [])
+                .map(code => String(code || '').trim().toLowerCase())
+                .filter(Boolean));
+
+            let baseCode = normalizedName.replace(/[^a-z0-9]/g, '').slice(0, 4);
+            if (!baseCode) baseCode = 'lang';
+            if (/^\d/.test(baseCode)) {
+                baseCode = `lang${baseCode}`.slice(0, 6);
+            }
+
+            if (!normalizedCodes.has(baseCode)) {
+                return baseCode;
+            }
+
+            let index = 2;
+            while (normalizedCodes.has(`${baseCode}${index}`)) {
+                index += 1;
+            }
+            return `${baseCode}${index}`;
+        }
+
         function openLangModal() {
             document.getElementById('langManageDevice').textContent = currentDevice;
             renderLangList();
             document.getElementById('langModal').classList.add('active');
-            document.getElementById('newLangCode').value = '';
             document.getElementById('newLangName').value = '';
         }
 
@@ -6713,13 +6860,7 @@
         }
 
         function addLanguage() {
-            const code = document.getElementById('newLangCode').value.trim().toLowerCase();
             const name = document.getElementById('newLangName').value.trim();
-
-            if (!code) {
-                showToast('请输入语言代码', 'error');
-                return;
-            }
 
             if (!name) {
                 showToast('请输入语言名称', 'error');
@@ -6727,13 +6868,20 @@
             }
 
             const device = deviceConfig[currentDevice];
+            const allLangs = Array.isArray(device.langs) ? device.langs : (device.langs = []);
+            const existingCode = findExistingLanguageCodeByName(name);
+            const code = existingCode || generateLanguageCode(name, allLangs);
+            if (!code) {
+                showToast('无法生成语言编码', 'error');
+                return;
+            }
+
             const langs = getDeviceLangs();
             if (langs.includes(code)) {
                 showToast('该语言已存在', 'error');
                 return;
             }
 
-            const allLangs = Array.isArray(device.langs) ? device.langs : (device.langs = []);
             const hiddenLangs = getHiddenDeviceLangs();
             const alreadyExists = allLangs.includes(code);
             if (!alreadyExists) {
@@ -6746,7 +6894,6 @@
             ensureOrderPreviewDefaultLang();
 
             // 清空输入
-            document.getElementById('newLangCode').value = '';
             document.getElementById('newLangName').value = '';
 
             // 刷新显示
@@ -8222,6 +8369,7 @@
                 catalog: catalogPayload
             };
             const payloadKey = `${id}-${Date.now()}`;
+            persistMenuManagementReturnState();
 
             try {
                 sessionStorage.setItem(`productDetailPayload:${payloadKey}`, JSON.stringify(payload));

@@ -17,6 +17,13 @@ function loadMenuContext() {
     .replace("let currentDevice = 'RCK111';", "globalThis.currentDevice = 'RCK111';")
     .replace("let currentLang = 'zh';", "globalThis.currentLang = 'zh';")
     .replace("let platformLang = 'zh';", "globalThis.platformLang = 'zh';")
+    .replace("let currentMenuInnerTab = 'settings';", "globalThis.currentMenuInnerTab = 'settings';")
+    .replace("let batchFixedPriceKeyword = '';", "globalThis.batchFixedPriceKeyword = '';")
+    .replace("let menuSharedCategoryFilter = '';", "globalThis.menuSharedCategoryFilter = '';")
+    .replace("let menuManageActiveCategory = '';", "globalThis.menuManageActiveCategory = '';")
+    .replace("let menuManageCategoryKeyword = '';", "globalThis.menuManageCategoryKeyword = '';")
+    .replace("let menuManageProductKeyword = '';", "globalThis.menuManageProductKeyword = '';")
+    .replace("let menuManageProductScope = 'current';", "globalThis.menuManageProductScope = 'current';")
     .replace(/let nextProductId = (\d+);/, (_, id) => `globalThis.nextProductId = ${id};`)
     .replace("let selectedCategoryIcon = '☕';", "globalThis.selectedCategoryIcon = '☕';")
     .replace('let editingProductId = null;', 'globalThis.editingProductId = null;')
@@ -119,7 +126,18 @@ function loadMenuContext() {
     window: {
       location: { pathname: '/menu-management.html', search: '', href: '' },
       history: { replaceState() {} },
-      addEventListener() {}
+      addEventListener() {},
+      scrollY: 0,
+      innerWidth: 1280,
+      scrollTo(arg1, arg2) {
+        if (typeof arg1 === 'object') {
+          this.__lastScrollTo = { ...arg1 };
+          this.scrollY = Number(arg1.top) || 0;
+          return;
+        }
+        this.__lastScrollTo = { left: Number(arg1) || 0, top: Number(arg2) || 0 };
+        this.scrollY = this.__lastScrollTo.top;
+      }
     },
     localStorage,
     sessionStorage,
@@ -398,6 +416,45 @@ test('语言管理：恢复隐藏语言后应重新出现在设备语言与点�
   ctx.openOrderPreviewModal();
   const optionsHtml = ctx.document.getElementById('orderPreviewLangSelect').innerHTML;
   assert.ok(optionsHtml.includes('value="jp"'));
+});
+
+test('语言管理：新增语言表单不再提供手动编码输入', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+
+  assert.ok(!html.includes('id="newLangCode"'));
+  assert.ok(!html.includes('placeholder="如：fr, de, es"'));
+});
+
+test('语言管理：新增语言时应根据语言名称自动生成编码', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK111';
+  let toastMessage = '';
+  ctx.showToast = message => {
+    toastMessage = message;
+  };
+  ctx.document.getElementById('newLangName').value = 'Français';
+
+  ctx.addLanguage();
+
+  assert.deepStrictEqual(Array.from(ctx.deviceConfig.RCK111.langs), ['zh', 'en', 'fr']);
+  assert.strictEqual(ctx.deviceConfig.RCK111.langNames.fr, 'Français');
+  assert.strictEqual(ctx.document.getElementById('newLangName').value, '');
+  assert.ok(toastMessage.includes('已添加语言'));
+});
+
+test('语言管理：自动生成的编码若已存在应阻止重复新增', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK111';
+  let toastMessage = '';
+  ctx.showToast = (message, type) => {
+    toastMessage = `${type}:${message}`;
+  };
+  ctx.document.getElementById('newLangName').value = 'English';
+
+  ctx.addLanguage();
+
+  assert.deepStrictEqual(Array.from(ctx.deviceConfig.RCK111.langs), ['zh', 'en']);
+  assert.strictEqual(toastMessage, 'error:该语言已存在');
 });
 
 test('点单屏预览：左侧分类不显示在售商品合计', () => {
@@ -1178,6 +1235,31 @@ test('跳转商品详情应使用短链接并将详情数据写入会话存储',
   assert.ok(payload.categoryOptions.length > 0);
 });
 
+test('跳转商品详情时应保存当前商品管理筛选条件与滚动位置', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK112';
+  ctx.currentMenuInnerTab = 'manage';
+  ctx.menuSharedCategoryFilter = '奶咖系列';
+  ctx.menuManageActiveCategory = '奶咖系列';
+  ctx.menuManageProductKeyword = '拿铁';
+  ctx.menuManageProductScope = 'all';
+  ctx.window.scrollY = 480;
+
+  ctx.goToDetail(2);
+
+  const raw = ctx.sessionStorage.getItem('menuManagementReturnState');
+  assert.ok(raw, '会话存储中缺少返回列表上下文');
+  const state = JSON.parse(raw);
+  assert.strictEqual(state.device, 'RCK112');
+  assert.strictEqual(state.tab, 'menu');
+  assert.strictEqual(state.innerTab, 'manage');
+  assert.strictEqual(state.categoryFilter, '奶咖系列');
+  assert.strictEqual(state.activeCategory, '奶咖系列');
+  assert.strictEqual(state.productKeyword, '拿铁');
+  assert.strictEqual(state.productScope, 'all');
+  assert.strictEqual(state.scrollY, 480);
+});
+
 test('跳转商品详情：会话存储异常时应降级到 window.name 传输', () => {
   const ctx = loadMenuContext();
 
@@ -1204,6 +1286,35 @@ test('跳转商品详情：会话存储异常时应降级到 window.name 传输'
   assert.ok(wrapped.payloadKey);
   assert.ok(!ctx.window.location.href.includes('product='));
   assert.ok(!ctx.window.location.href.includes('category='));
+});
+
+test('菜单管理页初始化时应恢复详情返回前的筛选条件与滚动位置', () => {
+  const ctx = loadMenuContext();
+  ctx.window.location.search = '?tab=menu&innerTab=manage';
+  ctx.sessionStorage.setItem('menuManagementReturnState', JSON.stringify({
+    device: 'RCK112',
+    tab: 'menu',
+    innerTab: 'manage',
+    categoryFilter: '奶咖系列',
+    activeCategory: '奶咖系列',
+    productKeyword: '拿铁',
+    productScope: 'all',
+    scrollY: 480
+  }));
+
+  ctx.init();
+
+  assert.strictEqual(ctx.currentDevice, 'RCK112');
+  assert.strictEqual(ctx.currentTab, 'menu');
+  assert.strictEqual(ctx.currentMenuInnerTab, 'manage');
+  assert.strictEqual(ctx.menuSharedCategoryFilter, '奶咖系列');
+  assert.strictEqual(ctx.menuManageActiveCategory, '奶咖系列');
+  assert.strictEqual(ctx.menuManageProductKeyword, '拿铁');
+  assert.strictEqual(ctx.menuManageProductScope, 'all');
+  assert.strictEqual(ctx.batchFixedPriceKeyword, '拿铁');
+  assert.strictEqual(ctx.document.getElementById('menuManageProductKeyword').value, '拿铁');
+  assert.deepStrictEqual(ctx.window.__lastScrollTo, { top: 480, behavior: 'auto' });
+  assert.strictEqual(ctx.sessionStorage.getItem('menuManagementReturnState'), null);
 });
 
 test('菜单管理：应根据本地商品分类归属将同一商品挂载到多个分类', () => {
