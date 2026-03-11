@@ -2004,8 +2004,8 @@
 
         .product-footer {
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: stretch;
             gap: 10px;
             padding-top: 12px;
             border-top: 1px solid var(--border);
@@ -2030,6 +2030,7 @@
             color: var(--danger);
             font-weight: 700;
             line-height: 1.2;
+            white-space: nowrap;
         }
 
         .product-price-line {
@@ -2079,9 +2080,10 @@
         }
 
         .product-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            width: 100%;
         }
 
         .product-action-btn {
@@ -2090,15 +2092,46 @@
             color: var(--text-secondary);
             border-radius: 999px;
             font-size: 12px;
-            padding: 5px 10px;
+            min-height: 36px;
+            padding: 0 12px;
             cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
 
         .product-action-btn:hover {
             border-color: var(--primary);
             color: var(--primary);
             background: var(--primary-light);
+        }
+
+        .product-action-btn-sale-on {
+            color: #15803d;
+            background: #dcfce7;
+            border-color: rgba(21, 128, 61, 0.24);
+            font-weight: 600;
+        }
+
+        .product-action-btn-sale-on:hover {
+            border-color: #15803d;
+            background: #bbf7d0;
+            color: #166534;
+        }
+
+        .product-action-btn-sale-off {
+            color: #c2410c;
+            background: #ffedd5;
+            border-color: rgba(194, 65, 12, 0.24);
+            font-weight: 600;
+        }
+
+        .product-action-btn-sale-off:hover {
+            border-color: #c2410c;
+            background: #fed7aa;
+            color: #9a3412;
         }
 
         .modal-overlay {
@@ -3380,7 +3413,9 @@
 
             .product-card.product-row .product-footer {
                 display: flex;
-                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
                 padding-top: 10px;
             }
 
@@ -3396,9 +3431,15 @@
                 font-size: 11px;
             }
 
+            .product-card.product-row .product-actions {
+                width: 100%;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .product-card.product-row .product-action-btn {
                 font-size: 11px;
-                padding: 4px 8px;
+                min-height: 30px;
+                padding: 0 10px;
             }
 
             .product-card.add-product-card {
@@ -7423,6 +7464,10 @@
         function renderMenuManageProductCard(product, options = {}) {
             const categoryKey = options.categoryKey || menuManageActiveCategory;
             const productName = getMenuManageProductName(product);
+            const isOnSale = isProductOnSale(product);
+            const saleActionLabel = isOnSale ? '下架' : '上架';
+            const saleStatusLabel = isOnSale ? '在售' : '已下架';
+            const saleActionClass = isOnSale ? 'product-action-btn-sale-off' : 'product-action-btn-sale-on';
 
             return `
                 <div class="product-card product-row" onclick="goToDetail(${product.id})">
@@ -7444,12 +7489,13 @@
                         <div class="product-footer">
                             <div class="product-meta">
                                 ${renderProductPriceHtml(product)}
-                                <div class="product-status ${isProductOnSale(product) ? '' : 'off'}">
+                                <div class="product-status ${isOnSale ? '' : 'off'}">
                                     <span class="status-dot"></span>
-                                    <span>${isProductOnSale(product) ? '在售' : '不在售'}</span>
+                                    <span>${saleStatusLabel}</span>
                                 </div>
                             </div>
                             <div class="product-actions">
+                                <button class="product-action-btn ${saleActionClass}" onclick="event.stopPropagation(); toggleProductSale('${escapePreviewText(categoryKey)}', ${product.id})">${saleActionLabel}</button>
                                 <button class="product-action-btn" onclick="event.stopPropagation(); editProduct('${escapePreviewText(categoryKey)}', ${product.id})">编辑</button>
                             </div>
                         </div>
