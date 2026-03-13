@@ -2059,7 +2059,9 @@ test('菜单管理商品卡片：应统一提供上下架与编辑双按钮', ()
   assert.ok(onSaleHtml.includes('>下架<'));
   assert.ok(onSaleHtml.includes('>编辑<'));
   assert.ok(onSaleHtml.includes("event.stopPropagation(); toggleProductSale('奶咖系列', 2)"));
-  assert.ok(onSaleHtml.includes("event.stopPropagation(); editProduct('奶咖系列', 2)"));
+  assert.ok(onSaleHtml.includes('class="product-card product-row"'));
+  assert.ok(!onSaleHtml.includes('onclick="goToDetail(2)"'));
+  assert.ok(onSaleHtml.includes("event.stopPropagation(); goToDetail(2)"));
   assert.ok(offSaleHtml.includes('>上架<'));
 });
 
