@@ -54,5 +54,11 @@ test('正式订单页应提供独立移动端订单流布局', () => {
   assert.ok(/mobile-order-meta-grid/.test(html), 'missing mobile meta grid');
   assert.ok(/@media\s*\(max-width:\s*1024px\)/.test(html), 'missing mobile media query');
   assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.mobile-order-meta-grid\s*\{[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/.test(html), 'mobile meta grid should be compact two-column');
-  assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.mobile-order-actions\s*\{[\s\S]*display:\s*grid;[\s\S]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/.test(html), 'mobile actions should use compact three-column grid');
+  assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.mobile-order-actions\s*\{[\s\S]*display:\s*grid;[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/.test(html), 'mobile actions should use compact two-column grid');
+});
+
+test('正式订单页桌面与移动端取单码应通过统一显示规则输出', () => {
+  assert.ok(/function\s+getOrderPickupCodeDisplay\s*\(order\)/.test(html), 'missing pickup code display helper');
+  assert.ok(/<span class="pickup-code">\$\{escapeHtml\(getOrderPickupCodeDisplay\(order\)\)\}<\/span>/.test(html), 'desktop pickup code should use display helper');
+  assert.ok(/<strong>取货码<\/strong>[\s\S]*<span>\$\{escapeHtml\(getOrderPickupCodeDisplay\(order\)\)\}<\/span>/.test(html), 'mobile pickup code should use display helper');
 });
