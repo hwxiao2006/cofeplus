@@ -9881,7 +9881,7 @@
             const saleActionClass = isOnSale ? 'product-action-btn-sale-off' : 'product-action-btn-sale-on';
 
             return `
-                <div class="product-card product-row" onclick="goToDetail(${product.id})">
+                <div class="product-card product-row">
                     <div class="product-image-wrapper">
                         ${product.image
                             ? `<img class="product-image" src="${product.image}" alt="${escapePreviewText(productName)}" loading="lazy">`
@@ -9907,7 +9907,7 @@
                             </div>
                             <div class="product-actions">
                                 <button class="product-action-btn ${saleActionClass}" onclick="event.stopPropagation(); toggleProductSale('${escapePreviewText(categoryKey)}', ${product.id})">${saleActionLabel}</button>
-                                <button class="product-action-btn" onclick="event.stopPropagation(); editProduct('${escapePreviewText(categoryKey)}', ${product.id})">编辑</button>
+                                <button class="product-action-btn" onclick="event.stopPropagation(); goToDetail(${product.id})">编辑</button>
                             </div>
                         </div>
                     </div>
@@ -11209,7 +11209,11 @@
             }
 
             const productName = selected.product.names?.[currentLang] || selected.product.names?.zh || selected.product.names?.en || `商品 ${selected.product.id}`;
-            const desc = getProductDescription(selected.product, currentLang) || '标签和配方结构将按模板商品完整复制';
+            const desc = selected.product.descs?.[currentLang]
+                || selected.product.descs?.zh
+                || selected.product.descs?.en
+                || getProductDescription(selected.product, currentLang)
+                || '标签和配方结构将按模板商品完整复制';
             preview.classList.remove('empty');
             preview.innerHTML = `
                 <div class="copy-product-preview-name">${productName}</div>
@@ -11642,14 +11646,6 @@
             if (failedCount > 0) {
                 showToast(`复制完成：成功 ${successCount} 台，失败 ${failedCount} 台`, failedCount === copyResults.length ? 'error' : 'info');
             }
-        }
-
-        function editProduct(categoryName, productId) {
-            const category = productsData[categoryName];
-            if (!category) return;
-            const product = category.items.find(item => item.id === productId);
-            if (!product) return;
-            openProductModal(categoryName, product, categoryName);
         }
 
         function toggleProductSale(categoryName, productId) {
