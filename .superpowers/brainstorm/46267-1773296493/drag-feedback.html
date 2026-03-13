@@ -1,0 +1,49 @@
+<h2>拖拽时的视觉反馈</h2>
+<p class="subtitle">用户拖动分类时，界面应该如何响应？</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>简单半透明 + 占位符</h3>
+      <p>被拖动的分类变为半透明（opacity: 0.6），原位置显示虚线占位框，其他分类实时上下移动让位。</p>
+      <div class="mockup" style="padding: 20px; background: #f8f9fa;">
+        <div style="border: 2px dashed #0ba699; background: #eaf7f4; padding: 12px; border-radius: 14px; margin-bottom: 10px;">
+          <span style="color: #999;">拖拽起始位置（虚线占位）</span>
+        </div>
+        <div style="opacity: 0.6; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(14, 35, 52, 0.12); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <span>⠿</span> <span>☕ 美式咖啡</span> <span style="float: right;">5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>阴影提升 + 插入指示线</h3>
+      <p>被拖动的分类保持不透明，增加大阴影表示"浮起"，目标插入位置显示绿色粗线。</p>
+      <div class="mockup" style="padding: 20px; background: #f8f9fa;">
+        <div style="padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(14, 35, 52, 0.12); background: #fff; margin-bottom: 10px;">
+          <span>⠿</span> <span>🥤 冷萃咖啡</span> <span style="float: right;">3</span>
+        </div>
+        <div style="height: 3px; background: #0ba699; margin: 5px 0; border-radius: 2px;"></div>
+        <div style="padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(14, 35, 52, 0.12); background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transform: scale(1.02);">
+          <span>⠿</span> <span>☕ 美式咖啡</span> <span style="float: right;">5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>最小反馈</h3>
+      <p>仅改变鼠标光标为 grabbing 状态，分类项跟随鼠标移动，其他分类静态不动，松手时才重新排列。</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>优点</h4><ul><li>性能最优</li><li>实现简单</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>缺少实时预览</li><li>用户不确定最终位置</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

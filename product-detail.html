@@ -102,10 +102,20 @@
             letter-spacing: -0.3px;
         }
 
+        .sidebar-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            min-width: 0;
+        }
+
         .brand-version {
             font-size: 12px;
+            line-height: 1;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            white-space: nowrap;
         }
 
 
@@ -144,6 +154,48 @@
             content: '·';
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
+        }
+        .sidebar-admin-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            color: rgba(219, 234, 254, 0.62);
+            font-size: 11px;
+            line-height: 1;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .sidebar-admin-lang::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.32);
+            margin-right: 2px;
+        }
+
+        .sidebar-admin-lang-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.78;
+        }
+
+        .sidebar-admin-lang-btn:hover {
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .sidebar-admin-lang-btn.active {
+            color: #ffffff;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .sidebar-admin-lang-sep {
+            opacity: 0.34;
         }
 
         .sidebar-nav {
@@ -1005,6 +1057,56 @@
             gap: 12px;
         }
 
+        .recipe-group-heading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .recipe-group-drag-handle {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            color: #9aa4b2;
+            font-size: 14px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .recipe-group-drag-handle:hover {
+            border-color: rgba(11, 166, 153, 0.45);
+            color: #0ba699;
+            background: #effaf8;
+        }
+
+        .recipe-group-drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .recipe-group-card.dragging {
+            opacity: 0.5;
+            transform: rotate(1deg);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.16);
+        }
+
+        .recipe-group-drop-placeholder {
+            border: 2px dashed #0ba699;
+            border-radius: 12px;
+            background: rgba(11, 166, 153, 0.05);
+            min-height: 72px;
+            pointer-events: none;
+        }
+
         .recipe-group-title {
             font-size: 14px;
             font-weight: 700;
@@ -1501,6 +1603,16 @@
                 align-items: flex-start;
             }
 
+            .recipe-group-heading {
+                width: 100%;
+            }
+
+            .recipe-group-drag-handle {
+                width: 28px;
+                height: 28px;
+                font-size: 15px;
+            }
+
             .recipe-group-controls {
                 width: 100%;
                 justify-content: flex-start;
@@ -1564,13 +1676,20 @@
                     <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
                     <div class="brand-title">运营控制台</div>
                 </div>
-                <div class="brand-version">Prototype v0</div>
-
+                <div class="sidebar-meta-row">
+                    <div class="brand-version">Prototype v0</div>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                        <span class="sidebar-admin-lang-sep">|</span>
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 <div class="sidebar-login">
                     <div class="sidebar-login-name" id="sidebarLoginName">-</div>
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
                 </div>
             </div>
+            
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
@@ -1925,6 +2044,172 @@
             phone: '13800138000'
         };
 
+        const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
+        const ADMIN_SIDEBAR_TRANSLATIONS = {
+            zh: {
+                brand_console: '运营控制台',
+                section_operations: '运营管理',
+                section_foundation: '基础信息管理',
+                nav_overview: '总览',
+                nav_devices: '设备',
+                nav_menu_management: '商品管理',
+                nav_materials: '物料',
+                nav_orders: '订单',
+                nav_faults: '故障列表',
+                nav_staff: '人员管理',
+                nav_customers: '客户管理',
+                nav_locations: '点位管理',
+                page_overview: '总览',
+                page_devices: '设备',
+                page_menu_management: '商品管理',
+                page_materials: '物料管理',
+                page_orders: '订单',
+                page_faults: '故障管理',
+                page_customers: '客户管理',
+                page_locations: '点位管理',
+                page_staff_management: '人员管理',
+                page_product_detail: '商品详情'
+            },
+            en: {
+                brand_console: 'Operations Console',
+                section_operations: 'Operations',
+                section_foundation: 'Basic Info',
+                nav_overview: 'Overview',
+                nav_devices: 'Devices',
+                nav_menu_management: 'Catalog',
+                nav_materials: 'Materials',
+                nav_orders: 'Orders',
+                nav_faults: 'Faults',
+                nav_staff: 'Staff',
+                nav_customers: 'Customers',
+                nav_locations: 'Locations',
+                page_overview: 'Overview',
+                page_devices: 'Devices',
+                page_menu_management: 'Catalog',
+                page_materials: 'Materials',
+                page_orders: 'Orders',
+                page_faults: 'Faults',
+                page_customers: 'Customers',
+                page_locations: 'Locations',
+                page_staff_management: 'Staff',
+                page_product_detail: 'Product Detail'
+            }
+        };
+        const ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH = {
+            'overview.html': 'page_overview',
+            'devices.html': 'page_devices',
+            'menu-management.html': 'page_menu_management',
+            'materials.html': 'page_materials',
+            'orders.html': 'page_orders',
+            'faults.html': 'page_faults',
+            'customers.html': 'page_customers',
+            'locations.html': 'page_locations',
+            'staff-management.html': 'page_staff_management',
+            'product-detail.html': 'page_product_detail'
+        };
+        let adminSidebarLang = 'zh';
+
+        function getAdminSidebarLang() {
+            try {
+                const savedLang = localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY);
+                return savedLang === 'en' ? 'en' : 'zh';
+            } catch (e) {
+                return 'zh';
+            }
+        }
+
+        function translateAdminSidebar(key) {
+            const dictionary = ADMIN_SIDEBAR_TRANSLATIONS[adminSidebarLang] || ADMIN_SIDEBAR_TRANSLATIONS.zh;
+            return dictionary[key] || ADMIN_SIDEBAR_TRANSLATIONS.zh[key] || '';
+        }
+
+        function getAdminSidebarCurrentPage() {
+            if (!window || !window.location) return '';
+            const pathname = String(window.location.pathname || '');
+            return pathname.split('/').pop();
+        }
+
+        function getAdminSidebarNavKey(item) {
+            if (!item) return '';
+            const tab = item.dataset ? item.dataset.tab : '';
+            if (tab === 'overview') return 'nav_overview';
+            if (tab === 'menu') return 'nav_menu_management';
+
+            const href = item.getAttribute ? item.getAttribute('href') : '';
+            switch (href) {
+                case 'overview.html': return 'nav_overview';
+                case 'devices.html': return 'nav_devices';
+                case 'menu-management.html': return 'nav_menu_management';
+                case 'materials.html': return 'nav_materials';
+                case 'orders.html': return 'nav_orders';
+                case 'faults.html': return 'nav_faults';
+                case 'staff-management.html': return 'nav_staff';
+                case 'customers.html': return 'nav_customers';
+                case 'locations.html': return 'nav_locations';
+                default: return '';
+            }
+        }
+
+        function getAdminSidebarMobileTitleKey() {
+            const currentPage = getAdminSidebarCurrentPage();
+            if (currentPage === 'menu.html') {
+                if (typeof currentTab === 'string' && currentTab === 'menu') {
+                    return 'page_menu_management';
+                }
+                return 'page_overview';
+            }
+            return ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH[currentPage] || '';
+        }
+
+        function renderAdminSidebarTranslations() {
+            adminSidebarLang = getAdminSidebarLang();
+
+            const brandTitle = document.querySelector('.brand-title');
+            if (brandTitle) {
+                brandTitle.textContent = translateAdminSidebar('brand_console');
+            }
+
+            const sectionTitles = document.querySelectorAll('.nav-section-title');
+            if (sectionTitles[0]) {
+                sectionTitles[0].textContent = translateAdminSidebar('section_operations');
+            }
+            if (sectionTitles[1]) {
+                sectionTitles[1].textContent = translateAdminSidebar('section_foundation');
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                const labelNode = item.querySelector('span:last-child');
+                const key = getAdminSidebarNavKey(item);
+                if (labelNode && key) {
+                    labelNode.textContent = translateAdminSidebar(key);
+                }
+            });
+
+            const mobileHeaderTitle = document.querySelector('.mobile-header strong, .mobile-header span[style], .mobile-header .mobile-header-title');
+            const mobileTitleKey = getAdminSidebarMobileTitleKey();
+            if (mobileHeaderTitle && mobileTitleKey) {
+                mobileHeaderTitle.textContent = translateAdminSidebar(mobileTitleKey);
+            }
+
+            document.querySelectorAll('[data-admin-lang-option]').forEach(button => {
+                const active = button.getAttribute('data-admin-lang-option') === adminSidebarLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function setAdminSidebarLang(lang) {
+            if (lang !== 'zh' && lang !== 'en') return;
+            adminSidebarLang = lang;
+            try {
+                localStorage.setItem(ADMIN_SIDEBAR_LANG_KEY, lang);
+            } catch (e) {
+                // ignore localStorage write failures
+            }
+            renderAdminSidebarTranslations();
+        }
+
+
         function getSidebarLoginProfile() {
             try {
                 const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
@@ -1950,6 +2235,7 @@
                 phoneNode.textContent = profile.phone;
             }
             fitSidebarLoginInline();
+            renderAdminSidebarTranslations();
         }
 
         function fitSidebarLoginInline() {
@@ -1987,6 +2273,11 @@
         let currentProductDetailTab = 'basic';
         let activeRecipeSpecKey = 'beans';
         let recipeEditorState = null;
+        let recipeGroupDraggedKey = '';
+        let recipeGroupDraggedElement = null;
+        let recipeGroupDropPlaceholder = null;
+        let recipeGroupTouchDragState = null;
+        let recipeGroupTouchListenersBound = false;
         let recipeImpactState = null;
         let tagSyncState = null;
         let drawerActiveSpecKey = 'beans';
@@ -2147,6 +2438,34 @@
             if (!target) return;
             list.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
             target.classList.add('selected');
+        }
+
+        function sortOptionListByPreferred(listId, preferredValue = '') {
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            const items = Array.from(list.querySelectorAll('.option-item'));
+            if (!items.length) return;
+
+            items.forEach((item, index) => {
+                if (!item.dataset.tagKey) item.dataset.tagKey = item.dataset.value;
+                if (!item.dataset.baseOrder) item.dataset.baseOrder = String(index);
+            });
+
+            const normalizedPreferred = String(preferredValue || '').trim();
+            items.sort((a, b) => {
+                const aKey = a.dataset.tagKey || a.dataset.value || '';
+                const bKey = b.dataset.tagKey || b.dataset.value || '';
+
+                if (normalizedPreferred) {
+                    if (aKey === normalizedPreferred && bKey !== normalizedPreferred) return -1;
+                    if (bKey === normalizedPreferred && aKey !== normalizedPreferred) return 1;
+                }
+
+                return Number(a.dataset.baseOrder || 0) - Number(b.dataset.baseOrder || 0);
+            });
+
+            items.forEach(item => list.appendChild(item));
         }
 
         function updateOnSaleLabel() {
@@ -2952,6 +3271,7 @@
         function closeRecipeEditor() {
             const modal = document.getElementById('recipeEditorModal');
             if (modal) modal.classList.remove('active');
+            resetRecipeGroupDragState();
             recipeEditorState = null;
         }
 
@@ -2965,19 +3285,20 @@
             const specTitle = cfg ? cfg.title : recipeEditorState.specKey;
             subtitle.textContent = `${specTitle} · ${recipeEditorState.tagLabel}`;
 
-            body.innerHTML = recipeEditorState.recipe.groupOrder.map((groupKey, index) => {
+            body.innerHTML = recipeEditorState.recipe.groupOrder.map((groupKey) => {
                 const groupCfg = getRecipeGroupConfig(groupKey);
                 if (!groupCfg) return '';
                 const groupData = recipeEditorState.recipe.groups[groupKey] || { names: [], percent: 100 };
                 const recipeNames = formatRecipeGroupNames(groupData.names, groupCfg.multi);
 
                 return `
-                    <div class="recipe-group-card">
+                    <div class="recipe-group-card" data-group-key="${groupKey}" draggable="true">
                         <div class="recipe-group-top">
-                            <div class="recipe-group-title">${groupCfg.title}</div>
+                            <div class="recipe-group-heading">
+                                <button type="button" class="recipe-group-drag-handle" aria-label="拖拽排序">⠿</button>
+                                <div class="recipe-group-title">${groupCfg.title}</div>
+                            </div>
                             <div class="recipe-group-controls">
-                                <button type="button" class="recipe-control-btn" onclick="moveRecipeGroup('${groupKey}', -1)" ${index === 0 ? 'disabled' : ''}>上移</button>
-                                <button type="button" class="recipe-control-btn" onclick="moveRecipeGroup('${groupKey}', 1)" ${index === recipeEditorState.recipe.groupOrder.length - 1 ? 'disabled' : ''}>下移</button>
                                 <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', -10)">-10%</button>
                                 <span class="recipe-group-percent">${normalizeRecipePercent(groupData.percent)}%</span>
                                 <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', 10)">+10%</button>
@@ -2991,6 +3312,205 @@
                     </div>
                 `;
             }).join('');
+
+            if (typeof body.querySelectorAll === 'function') {
+                const cards = body.querySelectorAll('.recipe-group-card[data-group-key]');
+                cards.forEach(card => {
+                    card.addEventListener('dragstart', startRecipeGroupDrag);
+                    card.addEventListener('dragover', handleRecipeGroupDragOver);
+                    card.addEventListener('dragend', endRecipeGroupDrag);
+                });
+
+                ensureRecipeGroupTouchListeners();
+                const handles = body.querySelectorAll('.recipe-group-drag-handle');
+                handles.forEach(handle => {
+                    handle.addEventListener('touchstart', startRecipeGroupTouchDrag, { passive: false });
+                });
+            }
+        }
+
+        function createRecipeGroupDropPlaceholder(height = 72) {
+            if (!recipeGroupDropPlaceholder || !recipeGroupDropPlaceholder.classList) {
+                recipeGroupDropPlaceholder = document.createElement('div');
+                recipeGroupDropPlaceholder.className = 'recipe-group-drop-placeholder';
+            }
+            recipeGroupDropPlaceholder.style.height = `${Math.max(64, Number(height) || 72)}px`;
+            return recipeGroupDropPlaceholder;
+        }
+
+        function resetRecipeGroupDragState() {
+            if (recipeGroupDropPlaceholder && recipeGroupDropPlaceholder.parentNode) {
+                recipeGroupDropPlaceholder.parentNode.removeChild(recipeGroupDropPlaceholder);
+            }
+            recipeGroupDropPlaceholder = null;
+
+            if (recipeGroupDraggedElement) {
+                recipeGroupDraggedElement.classList.remove('dragging');
+                recipeGroupDraggedElement.style.display = '';
+            }
+            recipeGroupDraggedElement = null;
+            recipeGroupDraggedKey = '';
+            recipeGroupTouchDragState = null;
+        }
+
+        function syncRecipeGroupOrderFromDom() {
+            if (!recipeEditorState) return;
+            const body = document.getElementById('recipeEditorBody');
+            if (!body || typeof body.querySelectorAll !== 'function') return;
+            const visibleOrder = Array.from(body.querySelectorAll('.recipe-group-card[data-group-key]'))
+                .map(element => String(element.dataset.groupKey || '').trim())
+                .filter(Boolean);
+            if (!visibleOrder.length) return;
+
+            const currentOrder = Array.isArray(recipeEditorState.recipe.groupOrder)
+                ? recipeEditorState.recipe.groupOrder
+                : [];
+            const currentSet = new Set(currentOrder);
+            const nextOrder = visibleOrder.filter(key => currentSet.has(key));
+            const missing = currentOrder.filter(key => !nextOrder.includes(key));
+            recipeEditorState.recipe.groupOrder = [...nextOrder, ...missing];
+        }
+
+        function commitRecipeGroupDrag() {
+            if (recipeGroupDraggedElement && recipeGroupDropPlaceholder && recipeGroupDropPlaceholder.parentNode) {
+                recipeGroupDropPlaceholder.parentNode.insertBefore(recipeGroupDraggedElement, recipeGroupDropPlaceholder);
+            }
+            syncRecipeGroupOrderFromDom();
+            resetRecipeGroupDragState();
+            renderRecipeEditor();
+        }
+
+        function ensureRecipeGroupTouchListeners() {
+            if (recipeGroupTouchListenersBound || !document || typeof document.addEventListener !== 'function') return;
+            document.addEventListener('touchmove', handleRecipeGroupTouchMove, { passive: false });
+            document.addEventListener('touchend', endRecipeGroupTouchDrag);
+            document.addEventListener('touchcancel', endRecipeGroupTouchDrag);
+            recipeGroupTouchListenersBound = true;
+        }
+
+        function getRecipeGroupTouchByIdentifier(touchList, identifier) {
+            if (!touchList || typeof touchList.length !== 'number') return null;
+            for (let index = 0; index < touchList.length; index += 1) {
+                const touch = touchList[index];
+                if (!touch) continue;
+                if (Number(touch.identifier) === Number(identifier)) return touch;
+            }
+            return null;
+        }
+
+        function startRecipeGroupDrag(event) {
+            const card = event.currentTarget;
+            if (!card || !card.dataset) return;
+
+            const groupKey = String(card.dataset.groupKey || '').trim();
+            if (!groupKey) return;
+            recipeGroupDraggedKey = groupKey;
+            recipeGroupDraggedElement = card;
+            card.classList.add('dragging');
+            setTimeout(() => {
+                if (recipeGroupDraggedElement === card) {
+                    card.style.display = 'none';
+                }
+            }, 0);
+
+            const placeholder = createRecipeGroupDropPlaceholder(card.offsetHeight);
+            if (card.parentNode) {
+                card.parentNode.insertBefore(placeholder, card.nextSibling);
+            }
+
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.dropEffect = 'move';
+                try {
+                    event.dataTransfer.setData('text/plain', groupKey);
+                } catch (e) {
+                    // ignore
+                }
+            }
+        }
+
+        function handleRecipeGroupDragOver(event) {
+            if (!recipeGroupDraggedElement || !recipeGroupDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+
+            const target = event.currentTarget;
+            const body = document.getElementById('recipeEditorBody');
+            if (!target || !body || target === recipeGroupDraggedElement || target.parentNode !== body) return;
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (event.clientY < midpoint) {
+                body.insertBefore(recipeGroupDropPlaceholder, target);
+            } else {
+                body.insertBefore(recipeGroupDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function endRecipeGroupDrag() {
+            if (!recipeGroupDraggedElement) return;
+            commitRecipeGroupDrag();
+        }
+
+        function startRecipeGroupTouchDrag(event) {
+            if (!event || !event.currentTarget || !event.changedTouches || !event.changedTouches.length) return;
+            const handle = event.currentTarget;
+            const card = typeof handle.closest === 'function'
+                ? handle.closest('.recipe-group-card[data-group-key]')
+                : null;
+            if (!card || !card.dataset) return;
+
+            const groupKey = String(card.dataset.groupKey || '').trim();
+            if (!groupKey) return;
+            const touch = event.changedTouches[0];
+            event.preventDefault();
+            if (typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+
+            recipeGroupTouchDragState = { identifier: Number(touch.identifier) };
+            recipeGroupDraggedKey = groupKey;
+            recipeGroupDraggedElement = card;
+            card.classList.add('dragging');
+            card.style.display = 'none';
+
+            const placeholder = createRecipeGroupDropPlaceholder(card.offsetHeight);
+            if (card.parentNode) {
+                card.parentNode.insertBefore(placeholder, card.nextSibling);
+            }
+        }
+
+        function handleRecipeGroupTouchMove(event) {
+            if (!recipeGroupTouchDragState || !recipeGroupDraggedElement || !recipeGroupDropPlaceholder) return;
+            const touch = getRecipeGroupTouchByIdentifier(event.touches, recipeGroupTouchDragState.identifier);
+            if (!touch) return;
+            event.preventDefault();
+
+            const body = document.getElementById('recipeEditorBody');
+            if (!body || typeof document.elementFromPoint !== 'function') return;
+            const source = document.elementFromPoint(touch.clientX, touch.clientY);
+            const target = source && typeof source.closest === 'function'
+                ? source.closest('.recipe-group-card[data-group-key]')
+                : null;
+            if (!target || target === recipeGroupDraggedElement || target.parentNode !== body) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (touch.clientY < midpoint) {
+                body.insertBefore(recipeGroupDropPlaceholder, target);
+            } else {
+                body.insertBefore(recipeGroupDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function endRecipeGroupTouchDrag(event) {
+            if (!recipeGroupTouchDragState) return;
+            const touch = getRecipeGroupTouchByIdentifier(event.changedTouches, recipeGroupTouchDragState.identifier);
+            if (!touch && event.type !== 'touchcancel') return;
+            if (!recipeGroupDraggedElement) return;
+            event.preventDefault();
+            commitRecipeGroupDrag();
         }
 
         function moveRecipeGroup(groupKey, delta) {
@@ -3482,6 +4002,7 @@
                     syncSelectedOption(meta.listId, preferred);
                     setSpec(currentLang, { [meta.specKey]: preferred });
                 }
+                sortOptionListByPreferred(meta.listId, preferred || '');
             });
         }
 
@@ -3651,6 +4172,7 @@
                 syncSelectedOption(cfg.listId, effectiveKey);
                 setSpec(currentLang, { [cfg.specKey]: effectiveKey });
             }
+            sortOptionListByPreferred(cfg.listId, getDefaultOption(cfg.specKey) || '');
         }
 
         function selectDrawerTag(tagKey) {

@@ -102,10 +102,20 @@
             letter-spacing: -0.3px;
         }
 
+        .sidebar-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            min-width: 0;
+        }
+
         .brand-version {
             font-size: 12px;
+            line-height: 1;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            white-space: nowrap;
         }
 
 
@@ -144,6 +154,48 @@
             content: '·';
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
+        }
+        .sidebar-admin-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            color: rgba(219, 234, 254, 0.62);
+            font-size: 11px;
+            line-height: 1;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .sidebar-admin-lang::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.32);
+            margin-right: 2px;
+        }
+
+        .sidebar-admin-lang-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.78;
+        }
+
+        .sidebar-admin-lang-btn:hover {
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .sidebar-admin-lang-btn.active {
+            color: #ffffff;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .sidebar-admin-lang-sep {
+            opacity: 0.34;
         }
 
         .sidebar-selectors {
@@ -1904,8 +1956,14 @@
                     <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
                     <div class="brand-title">运营控制台</div>
                 </div>
-                <div class="brand-version">Prototype v0</div>
-
+                <div class="sidebar-meta-row">
+                    <div class="brand-version">Prototype v0</div>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                        <span class="sidebar-admin-lang-sep">|</span>
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 <div class="sidebar-login">
                     <div class="sidebar-login-name" id="sidebarLoginName">-</div>
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
@@ -2223,6 +2281,172 @@
             phone: '13800138000'
         };
 
+        const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
+        const ADMIN_SIDEBAR_TRANSLATIONS = {
+            zh: {
+                brand_console: '运营控制台',
+                section_operations: '运营管理',
+                section_foundation: '基础信息管理',
+                nav_overview: '总览',
+                nav_devices: '设备',
+                nav_menu_management: '商品管理',
+                nav_materials: '物料',
+                nav_orders: '订单',
+                nav_faults: '故障列表',
+                nav_staff: '人员管理',
+                nav_customers: '客户管理',
+                nav_locations: '点位管理',
+                page_overview: '总览',
+                page_devices: '设备',
+                page_menu_management: '商品管理',
+                page_materials: '物料管理',
+                page_orders: '订单',
+                page_faults: '故障管理',
+                page_customers: '客户管理',
+                page_locations: '点位管理',
+                page_staff_management: '人员管理',
+                page_product_detail: '商品详情'
+            },
+            en: {
+                brand_console: 'Operations Console',
+                section_operations: 'Operations',
+                section_foundation: 'Basic Info',
+                nav_overview: 'Overview',
+                nav_devices: 'Devices',
+                nav_menu_management: 'Catalog',
+                nav_materials: 'Materials',
+                nav_orders: 'Orders',
+                nav_faults: 'Faults',
+                nav_staff: 'Staff',
+                nav_customers: 'Customers',
+                nav_locations: 'Locations',
+                page_overview: 'Overview',
+                page_devices: 'Devices',
+                page_menu_management: 'Catalog',
+                page_materials: 'Materials',
+                page_orders: 'Orders',
+                page_faults: 'Faults',
+                page_customers: 'Customers',
+                page_locations: 'Locations',
+                page_staff_management: 'Staff',
+                page_product_detail: 'Product Detail'
+            }
+        };
+        const ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH = {
+            'overview.html': 'page_overview',
+            'devices.html': 'page_devices',
+            'menu-management.html': 'page_menu_management',
+            'materials.html': 'page_materials',
+            'orders.html': 'page_orders',
+            'faults.html': 'page_faults',
+            'customers.html': 'page_customers',
+            'locations.html': 'page_locations',
+            'staff-management.html': 'page_staff_management',
+            'product-detail.html': 'page_product_detail'
+        };
+        let adminSidebarLang = 'zh';
+
+        function getAdminSidebarLang() {
+            try {
+                const savedLang = localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY);
+                return savedLang === 'en' ? 'en' : 'zh';
+            } catch (e) {
+                return 'zh';
+            }
+        }
+
+        function translateAdminSidebar(key) {
+            const dictionary = ADMIN_SIDEBAR_TRANSLATIONS[adminSidebarLang] || ADMIN_SIDEBAR_TRANSLATIONS.zh;
+            return dictionary[key] || ADMIN_SIDEBAR_TRANSLATIONS.zh[key] || '';
+        }
+
+        function getAdminSidebarCurrentPage() {
+            if (!window || !window.location) return '';
+            const pathname = String(window.location.pathname || '');
+            return pathname.split('/').pop();
+        }
+
+        function getAdminSidebarNavKey(item) {
+            if (!item) return '';
+            const tab = item.dataset ? item.dataset.tab : '';
+            if (tab === 'overview') return 'nav_overview';
+            if (tab === 'menu') return 'nav_menu_management';
+
+            const href = item.getAttribute ? item.getAttribute('href') : '';
+            switch (href) {
+                case 'overview.html': return 'nav_overview';
+                case 'devices.html': return 'nav_devices';
+                case 'menu-management.html': return 'nav_menu_management';
+                case 'materials.html': return 'nav_materials';
+                case 'orders.html': return 'nav_orders';
+                case 'faults.html': return 'nav_faults';
+                case 'staff-management.html': return 'nav_staff';
+                case 'customers.html': return 'nav_customers';
+                case 'locations.html': return 'nav_locations';
+                default: return '';
+            }
+        }
+
+        function getAdminSidebarMobileTitleKey() {
+            const currentPage = getAdminSidebarCurrentPage();
+            if (currentPage === 'menu.html') {
+                if (typeof currentTab === 'string' && currentTab === 'menu') {
+                    return 'page_menu_management';
+                }
+                return 'page_overview';
+            }
+            return ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH[currentPage] || '';
+        }
+
+        function renderAdminSidebarTranslations() {
+            adminSidebarLang = getAdminSidebarLang();
+
+            const brandTitle = document.querySelector('.brand-title');
+            if (brandTitle) {
+                brandTitle.textContent = translateAdminSidebar('brand_console');
+            }
+
+            const sectionTitles = document.querySelectorAll('.nav-section-title');
+            if (sectionTitles[0]) {
+                sectionTitles[0].textContent = translateAdminSidebar('section_operations');
+            }
+            if (sectionTitles[1]) {
+                sectionTitles[1].textContent = translateAdminSidebar('section_foundation');
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                const labelNode = item.querySelector('span:last-child');
+                const key = getAdminSidebarNavKey(item);
+                if (labelNode && key) {
+                    labelNode.textContent = translateAdminSidebar(key);
+                }
+            });
+
+            const mobileHeaderTitle = document.querySelector('.mobile-header strong, .mobile-header span[style], .mobile-header .mobile-header-title');
+            const mobileTitleKey = getAdminSidebarMobileTitleKey();
+            if (mobileHeaderTitle && mobileTitleKey) {
+                mobileHeaderTitle.textContent = translateAdminSidebar(mobileTitleKey);
+            }
+
+            document.querySelectorAll('[data-admin-lang-option]').forEach(button => {
+                const active = button.getAttribute('data-admin-lang-option') === adminSidebarLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function setAdminSidebarLang(lang) {
+            if (lang !== 'zh' && lang !== 'en') return;
+            adminSidebarLang = lang;
+            try {
+                localStorage.setItem(ADMIN_SIDEBAR_LANG_KEY, lang);
+            } catch (e) {
+                // ignore localStorage write failures
+            }
+            renderAdminSidebarTranslations();
+        }
+
+
         function getSidebarLoginProfile() {
             try {
                 const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
@@ -2248,6 +2472,7 @@
                 phoneNode.textContent = profile.phone;
             }
             fitSidebarLoginInline();
+            renderAdminSidebarTranslations();
         }
 
         function fitSidebarLoginInline() {
@@ -2280,6 +2505,50 @@
                 langNames: { 'zh': '中文', 'en': 'English', 'ko': '한국어', 'th': 'ไทย' }
             }
         };
+        const DEFAULT_DEVICE_LANGUAGE_CODES = ['zh', 'en'];
+        const DEFAULT_DEVICE_LANGUAGE_NAMES = {
+            zh: '中文',
+            en: 'English'
+        };
+
+        function createDefaultDeviceLanguageConfig() {
+            return {
+                langs: DEFAULT_DEVICE_LANGUAGE_CODES.slice(),
+                langNames: { ...DEFAULT_DEVICE_LANGUAGE_NAMES }
+            };
+        }
+
+        function ensureDeviceLanguageConfig(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) return null;
+
+            let device = deviceConfig[normalizedDeviceId];
+            if (!device || typeof device !== 'object') {
+                device = createDefaultDeviceLanguageConfig();
+                deviceConfig[normalizedDeviceId] = device;
+                return device;
+            }
+
+            if (!Array.isArray(device.langs) || !device.langs.length) {
+                device.langs = DEFAULT_DEVICE_LANGUAGE_CODES.slice();
+            }
+
+            if (!device.langNames || typeof device.langNames !== 'object') {
+                device.langNames = {};
+            }
+            DEFAULT_DEVICE_LANGUAGE_CODES.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang];
+                }
+            });
+            device.langs.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang] || lang;
+                }
+            });
+
+            return device;
+        }
 
         // ==================== 商品数据（多语言结构） ====================
         let productsData = {
@@ -2382,6 +2651,193 @@
                 { name: '新·澳白*', sales: 432 },
                 { name: '橘皮拿铁', sales: 389 }
             ]
+        };
+        const generatedSalesHistoryByDevice = {};
+        const generatedYoyReferenceByDevice = {};
+        const generatedProductStructureByDevice = {};
+
+        function clampNumber(value, min, max) {
+            return Math.min(max, Math.max(min, Number(value)));
+        }
+
+        function getStableDeviceSeed(deviceId = '') {
+            const normalizedId = normalizeDeviceSearchId(deviceId);
+            if (!normalizedId) return 0;
+            let seed = 0;
+            for (let index = 0; index < normalizedId.length; index += 1) {
+                seed = (seed * 31 + normalizedId.charCodeAt(index)) % 1000003;
+            }
+            return seed;
+        }
+
+        function shiftHourlySeries(hourly, shift, scale) {
+            const source = Array.isArray(hourly) ? hourly : [];
+            if (!source.length) return new Array(24).fill(0);
+            return new Array(24).fill(0).map((_, hour) => {
+                const sourceIndex = clampNumber(hour - shift, 0, source.length - 1);
+                const baseValue = Number(source[sourceIndex]) || 0;
+                return Math.max(0, Math.round(baseValue * scale));
+            });
+        }
+
+        function normalizeShareItems(items, minValue = 8) {
+            const normalized = items.map(item => ({
+                label: item.label,
+                value: Math.max(minValue, Math.round(Number(item.value) || minValue))
+            }));
+            const total = normalized.reduce((sum, item) => sum + item.value, 0) || 1;
+            normalized.forEach(item => {
+                item.value = Math.max(minValue, Math.round((item.value / total) * 100));
+            });
+
+            let diff = 100 - normalized.reduce((sum, item) => sum + item.value, 0);
+            let cursor = 0;
+            while (diff !== 0 && normalized.length) {
+                const direction = diff > 0 ? 1 : -1;
+                const nextValue = normalized[cursor].value + direction;
+                if (nextValue >= minValue) {
+                    normalized[cursor].value = nextValue;
+                    diff -= direction;
+                }
+                cursor = (cursor + 1) % normalized.length;
+            }
+            return normalized;
+        }
+
+        function getSalesHistoryForDevice(deviceId = currentDevice) {
+            const normalizedId = normalizeDeviceSearchId(deviceId);
+            if (!normalizedId) return salesHistoryData;
+            if (salesHistoryByDevice[normalizedId]) return salesHistoryByDevice[normalizedId];
+            if (generatedSalesHistoryByDevice[normalizedId]) return generatedSalesHistoryByDevice[normalizedId];
+
+            const seed = getStableDeviceSeed(normalizedId);
+            const volumeScale = 0.82 + (seed % 27) / 100;
+            const netRate = 0.92 + ((seed >> 3) % 5) / 100;
+            const orderScale = 0.9 + ((seed >> 5) % 7) / 100;
+            const cupScale = 0.93 + ((seed >> 7) % 6) / 100;
+            const peakShift = ((seed >> 9) % 5) - 2;
+
+            const generated = salesHistoryData.map((day, index) => {
+                const dayWave = 0.97 + (((seed + index * 17) % 7) - 3) * 0.015;
+                const gross = Math.max(1200, Math.round(day.gross * volumeScale * dayWave));
+                const net = Math.min(gross, Math.max(1000, Math.round(gross * netRate)));
+                const orders = Math.max(80, Math.round(day.orders * volumeScale * orderScale * dayWave));
+                const cups = Math.max(120, Math.round(day.cups * volumeScale * cupScale * dayWave));
+                const hourlyScale = volumeScale * (0.9 + ((seed + index * 13) % 6) * 0.02);
+
+                return {
+                    date: day.date,
+                    gross,
+                    net,
+                    orders,
+                    cups,
+                    hourly: shiftHourlySeries(day.hourly, peakShift, hourlyScale)
+                };
+            });
+
+            generatedSalesHistoryByDevice[normalizedId] = generated;
+            return generated;
+        }
+
+        function getYoyReferenceForDevice(deviceId = currentDevice) {
+            const normalizedId = normalizeDeviceSearchId(deviceId);
+            if (!normalizedId) return yoyReference.gross;
+            if (Object.prototype.hasOwnProperty.call(yoyReferenceByDevice, normalizedId)) {
+                return yoyReferenceByDevice[normalizedId];
+            }
+            if (generatedYoyReferenceByDevice[normalizedId]) {
+                return generatedYoyReferenceByDevice[normalizedId];
+            }
+
+            const seed = getStableDeviceSeed(normalizedId);
+            const history = getSalesHistoryForDevice(normalizedId);
+            const latestGross = history[history.length - 1]?.gross || yoyReference.gross;
+            const yoyScale = 0.82 + ((seed >> 11) % 10) / 100;
+            const generated = Math.max(1000, Math.round(latestGross * yoyScale));
+            generatedYoyReferenceByDevice[normalizedId] = generated;
+            return generated;
+        }
+
+        function getProductStructureForDevice(deviceId = currentDevice) {
+            const normalizedId = normalizeDeviceSearchId(deviceId);
+            if (!normalizedId) return productStructure;
+            if (salesHistoryByDevice[normalizedId]) return productStructure;
+            if (generatedProductStructureByDevice[normalizedId]) {
+                return generatedProductStructureByDevice[normalizedId];
+            }
+
+            const seed = getStableDeviceSeed(normalizedId);
+            const hotRatio = clampNumber(productStructure.temperatureShare[0].value + ((seed % 9) - 4), 48, 74);
+            const largeCupRatio = clampNumber(productStructure.sizeShare[0].value + (((seed >> 2) % 9) - 4), 46, 70);
+            const typeShare = normalizeShareItems(productStructure.typeShare.map((item, index) => ({
+                label: item.label,
+                value: item.value + (((seed >> (index * 3 + 1)) % 7) - 3)
+            })), 14);
+            const addonRate = productStructure.addonRate.map((item, index) => ({
+                label: item.label,
+                value: clampNumber(item.value + (((seed >> (index * 4 + 3)) % 11) - 5), 10, 68)
+            }));
+            const salesScale = 0.82 + ((seed >> 5) % 28) / 100;
+            const top5 = productStructure.top5.map((item, index) => ({
+                name: item.name,
+                sales: Math.max(120, Math.round(item.sales * salesScale * (1 - index * 0.04 + (((seed >> (index + 4)) % 5) - 2) * 0.01)))
+            })).sort((a, b) => b.sales - a.sales);
+
+            const generated = {
+                typeShare,
+                temperatureShare: [
+                    { label: '热饮', value: hotRatio },
+                    { label: '冷饮', value: 100 - hotRatio }
+                ],
+                sizeShare: [
+                    { label: '大杯', value: largeCupRatio },
+                    { label: '中杯', value: 100 - largeCupRatio }
+                ],
+                addonRate,
+                top5
+            };
+
+            generatedProductStructureByDevice[normalizedId] = generated;
+            return generated;
+        }
+
+        function getSelectedOverviewDeviceIds() {
+            return overviewAllDevices.filter(deviceId => overviewSelectedDevices.has(deviceId));
+        }
+
+        function getProductStructureForSelection(deviceIds = getSelectedOverviewDeviceIds()) {
+            const selected = Array.isArray(deviceIds) && deviceIds.length ? deviceIds : [currentDevice];
+            if (selected.length === 1) {
+                return getProductStructureForDevice(selected[0]);
+            }
+
+            const structures = selected.map(deviceId => getProductStructureForDevice(deviceId));
+            const averageByIndex = key => structures[0][key].map((item, index) => ({
+                label: item.label,
+                value: Math.round(structures.reduce((sum, structure) => sum + (structure[key][index]?.value || 0), 0) / structures.length)
+            }));
+            const hotRatio = clampNumber(Math.round(structures.reduce((sum, structure) => sum + (structure.temperatureShare[0]?.value || 0), 0) / structures.length), 48, 74);
+            const largeCupRatio = clampNumber(Math.round(structures.reduce((sum, structure) => sum + (structure.sizeShare[0]?.value || 0), 0) / structures.length), 46, 70);
+
+            return {
+                typeShare: normalizeShareItems(averageByIndex('typeShare'), 14),
+                temperatureShare: [
+                    { label: '热饮', value: hotRatio },
+                    { label: '冷饮', value: 100 - hotRatio }
+                ],
+                sizeShare: [
+                    { label: '大杯', value: largeCupRatio },
+                    { label: '中杯', value: 100 - largeCupRatio }
+                ],
+                addonRate: averageByIndex('addonRate').map(item => ({
+                    label: item.label,
+                    value: clampNumber(item.value, 10, 68)
+                })),
+                top5: structures[0].top5.map((item, index) => ({
+                    name: item.name,
+                    sales: structures.reduce((sum, structure) => sum + (structure.top5[index]?.sales || 0), 0)
+                })).sort((a, b) => b.sales - a.sales)
+            };
         };
 
         // ==================== 初始化 ====================
@@ -2662,11 +3118,14 @@
         }
 
         function getDeviceLangs() {
-            return deviceConfig[currentDevice].langs;
+            const device = ensureDeviceLanguageConfig(currentDevice);
+            return device && Array.isArray(device.langs) ? device.langs : [];
         }
 
         function getLangName(lang) {
-            return deviceConfig[currentDevice].langNames[lang] || lang;
+            const device = ensureDeviceLanguageConfig(currentDevice);
+            if (!device || !device.langNames) return lang;
+            return device.langNames[lang] || lang;
         }
 
         function isProductOnSale(product) {
@@ -2826,9 +3285,9 @@
         }
 
         function aggregateSalesForOverview() {
-            const selected = overviewAllDevices.filter(deviceId => overviewSelectedDevices.has(deviceId));
+            const selected = getSelectedOverviewDeviceIds();
             if (!selected.length) return { history: [], yoy: 0 };
-            const first = salesHistoryByDevice[selected[0]] || [];
+            const first = getSalesHistoryForDevice(selected[0]);
             const history = first.map((baseDay, index) => {
                 const day = {
                     date: baseDay.date,
@@ -2839,7 +3298,7 @@
                     hourly: new Array(24).fill(0)
                 };
                 selected.forEach(deviceId => {
-                    const deviceDay = salesHistoryByDevice[deviceId]?.[index];
+                    const deviceDay = getSalesHistoryForDevice(deviceId)[index];
                     if (!deviceDay) return;
                     day.gross += deviceDay.gross || 0;
                     day.net += deviceDay.net || 0;
@@ -2849,7 +3308,7 @@
                 });
                 return day;
             });
-            const yoy = selected.reduce((sum, deviceId) => sum + (yoyReferenceByDevice[deviceId] || 0), 0);
+            const yoy = selected.reduce((sum, deviceId) => sum + getYoyReferenceForDevice(deviceId), 0);
             return { history, yoy };
         }
 
@@ -2904,11 +3363,12 @@
                 `;
             }).join('');
 
+            const currentProductStructure = getProductStructureForSelection(getSelectedOverviewDeviceIds());
             const structureItems = [
-                ...productStructure.typeShare,
-                ...productStructure.temperatureShare,
-                ...productStructure.sizeShare,
-                ...productStructure.addonRate
+                ...currentProductStructure.typeShare,
+                ...currentProductStructure.temperatureShare,
+                ...currentProductStructure.sizeShare,
+                ...currentProductStructure.addonRate
             ];
             document.getElementById('structureList').innerHTML = structureItems.map(item => `
                 <div class="ratio-item">
@@ -2918,7 +3378,7 @@
                 </div>
             `).join('');
 
-            document.getElementById('top5List').innerHTML = productStructure.top5.map((item, idx) => `
+            document.getElementById('top5List').innerHTML = currentProductStructure.top5.map((item, idx) => `
                 <div class="top5-item">
                     <span class="top5-rank">${idx + 1}</span>
                     <span>${item.name}</span>
@@ -3441,6 +3901,7 @@
             menuActions.forEach(btn => {
                 btn.style.display = tab === 'menu' ? '' : 'none';
             });
+            renderAdminSidebarTranslations();
         }
 
         function switchTab(event, tab) {

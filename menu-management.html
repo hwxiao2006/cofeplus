@@ -102,10 +102,20 @@
             letter-spacing: -0.3px;
         }
 
+        .sidebar-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            min-width: 0;
+        }
+
         .brand-version {
             font-size: 12px;
+            line-height: 1;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            white-space: nowrap;
         }
 
 
@@ -144,6 +154,48 @@
             content: '·';
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
+        }
+        .sidebar-admin-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            color: rgba(219, 234, 254, 0.62);
+            font-size: 11px;
+            line-height: 1;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .sidebar-admin-lang::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.32);
+            margin-right: 2px;
+        }
+
+        .sidebar-admin-lang-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.78;
+        }
+
+        .sidebar-admin-lang-btn:hover {
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .sidebar-admin-lang-btn.active {
+            color: #ffffff;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .sidebar-admin-lang-sep {
+            opacity: 0.34;
         }
 
         .sidebar-selectors {
@@ -715,7 +767,7 @@
 
         .menu-shared-context-head {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 12px;
             margin-bottom: 12px;
@@ -754,6 +806,266 @@
         .menu-shared-context-actions .btn {
             min-height: 48px;
             white-space: nowrap;
+        }
+
+        .menu-shared-category-mobile-trigger {
+            display: none;
+            width: 100%;
+            min-height: 48px;
+            padding: 0 16px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fbfd 100%);
+            color: var(--text-primary);
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .menu-shared-category-mobile-trigger:hover {
+            border-color: rgba(11, 166, 153, 0.4);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .menu-shared-category-mobile-trigger-text {
+            min-width: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .menu-shared-category-mobile-trigger-arrow {
+            flex-shrink: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .menu-shared-mobile-sheet {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1350;
+        }
+
+        .menu-shared-mobile-sheet.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .menu-shared-mobile-sheet-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(2px);
+        }
+
+        .menu-shared-mobile-sheet-panel {
+            position: relative;
+            width: 100%;
+            max-height: min(82vh, 720px);
+            border-radius: 22px 22px 0 0;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+            box-shadow: 0 -14px 36px rgba(15, 23, 42, 0.18);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-shared-mobile-sheet-header {
+            padding: 16px 16px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid rgba(14, 35, 52, 0.08);
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .menu-shared-mobile-sheet-title {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .menu-shared-mobile-sheet-subtitle {
+            margin: 4px 0 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .menu-shared-mobile-sheet-mode-btn {
+            flex-shrink: 0;
+            min-height: 34px;
+            padding: 0 14px;
+            border: 1px solid rgba(11, 166, 153, 0.24);
+            border-radius: 999px;
+            background: #effaf8;
+            color: #0b8f84;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .menu-shared-mobile-sheet-body {
+            padding: 12px 16px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-shared-mobile-category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-shared-mobile-category-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .menu-shared-mobile-category-item {
+            width: 100%;
+            border: 1px solid rgba(14, 35, 52, 0.1);
+            border-radius: 16px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .menu-shared-mobile-category-item.is-selected {
+            border-color: rgba(11, 166, 153, 0.34);
+            background: linear-gradient(180deg, #eefaf8 0%, #e7f7f4 100%);
+            box-shadow: 0 10px 20px rgba(11, 166, 153, 0.12);
+        }
+
+        .menu-shared-mobile-category-item-label {
+            flex: 1;
+            min-width: 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .menu-shared-mobile-category-item-meta {
+            flex-shrink: 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .menu-shared-mobile-category-item-mark {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            background: #fff;
+        }
+
+        .menu-shared-mobile-category-item.is-selected .menu-shared-mobile-category-item-mark {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .menu-shared-mobile-category-edit-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: 1px solid rgba(14, 35, 52, 0.1);
+            background: #fff;
+            color: #4b5563;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .menu-shared-mobile-category-edit-btn:hover {
+            border-color: rgba(11, 166, 153, 0.34);
+            background: #ecfbf9;
+            color: #0b8f84;
+        }
+
+        .menu-shared-mobile-category-item-sort {
+            cursor: default;
+            justify-content: flex-start;
+        }
+
+        .menu-shared-mobile-category-item-sort.dragging {
+            opacity: 0.55;
+            transform: rotate(1deg);
+            box-shadow: 0 12px 20px rgba(15, 23, 42, 0.14);
+        }
+
+        .menu-shared-mobile-drag-handle {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            border-radius: 10px;
+            background: #fff;
+            color: #98a2b3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            line-height: 1;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            flex-shrink: 0;
+        }
+
+        .menu-shared-mobile-drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .menu-shared-mobile-sort-placeholder {
+            border: 2px dashed rgba(11, 166, 153, 0.5);
+            background: rgba(11, 166, 153, 0.06);
+            border-radius: 16px;
+            min-height: 56px;
+            pointer-events: none;
+        }
+
+        .menu-shared-mobile-sheet-footer {
+            display: none;
+            gap: 10px;
+            padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+            border-top: 1px solid rgba(14, 35, 52, 0.08);
+            background: rgba(255, 255, 255, 0.94);
+        }
+
+        .menu-shared-mobile-sheet-footer.active {
+            display: flex;
+        }
+
+        .menu-shared-mobile-sheet-footer .btn {
+            flex: 1;
+            min-height: 44px;
+            justify-content: center;
         }
 
         .menu-inner-tab-btn {
@@ -804,7 +1116,7 @@
 
         .settings-card-head {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             gap: 12px;
             margin-bottom: 8px;
@@ -844,7 +1156,7 @@
         .settings-device-lang-panel {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             gap: 4px;
         }
 
@@ -1267,6 +1579,52 @@
             text-align: left;
         }
 
+        .menu-manage-category-item-select {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            background: transparent;
+            padding: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: left;
+            cursor: pointer;
+            color: inherit;
+            font: inherit;
+        }
+
+        .menu-manage-category-item-left {
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .menu-manage-category-item-actions {
+            display: inline-flex;
+            align-items: flex-start;
+            gap: 0;
+            flex-shrink: 0;
+        }
+
+        .drag-handle {
+            flex-shrink: 0;
+            margin-top: 0;
+            color: #c8cfd6;
+            font-size: 16px;
+            line-height: 1;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: color 0.2s ease;
+        }
+
+        .menu-manage-category-item:hover .drag-handle {
+            color: #0ba699;
+        }
+
         .menu-manage-category-item:hover,
         .menu-manage-category-item.active {
             border-color: rgba(11, 166, 153, 0.28);
@@ -1274,44 +1632,74 @@
             box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
         }
 
+        .menu-manage-category-item.dragging {
+            opacity: 0.5;
+            transform: rotate(1deg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            cursor: grabbing;
+        }
+
+        .menu-manage-category-item.dragging .drag-handle {
+            color: #0ba699;
+            cursor: grabbing;
+        }
+
+        .category-drop-placeholder {
+            border: 2px dashed #0ba699;
+            background: rgba(11, 166, 153, 0.05);
+            border-radius: 14px;
+            height: 56px;
+            margin-bottom: 10px;
+            pointer-events: none;
+        }
+
         .menu-manage-category-item-main {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 10px;
             min-width: 0;
         }
 
         .menu-manage-category-item-text {
             min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            flex: 1;
         }
 
         .menu-manage-category-item-name {
+            display: block;
             font-size: 15px;
             font-weight: 700;
             color: var(--text-primary);
+            line-height: 1.3;
+            white-space: normal;
+            word-break: break-word;
         }
 
-        .menu-manage-category-item-meta {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .menu-manage-category-item-count {
-            flex-shrink: 0;
-            min-width: 56px;
-            height: 28px;
-            padding: 0 10px;
-            border-radius: 999px;
-            background: #f3f4f6;
+        .category-edit-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid rgba(14, 35, 52, 0.1);
+            background: #fff;
+            color: #4b5563;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-secondary);
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .category-edit-btn:hover {
+            border-color: rgba(11, 166, 153, 0.34);
+            background: #ecfbf9;
+            color: #0b8f84;
+            box-shadow: 0 8px 16px rgba(11, 166, 153, 0.12);
+        }
+
+        .category-edit-btn:active {
+            transform: translateY(1px);
         }
 
         .menu-manage-mobile-bar {
@@ -2388,6 +2776,87 @@
             line-height: 1.5;
         }
 
+        .product-image-compare {
+            display: none;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #f8fafc;
+            padding: 10px 12px;
+        }
+
+        .product-image-compare-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-image-compare-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .product-image-compare-status {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .product-image-compare-status.replaced {
+            color: var(--primary-dark);
+        }
+
+        .product-image-compare-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .product-image-compare-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            padding: 8px;
+        }
+
+        .product-image-compare-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .product-image-compare-thumb-wrap {
+            position: relative;
+            width: 100%;
+            height: 104px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-compare-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .product-image-compare-empty {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .form-select {
             cursor: pointer;
             appearance: none;
@@ -2470,21 +2939,254 @@
             color: var(--text-secondary);
         }
 
+        .copy-product-step {
+            display: none;
+        }
+
+        .copy-product-step.active {
+            display: block;
+        }
+
+        .copy-product-scope-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .copy-product-scope-btn {
+            min-height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-product-scope-btn.active {
+            border-color: rgba(78, 205, 196, 0.45);
+            background: rgba(78, 205, 196, 0.12);
+            color: var(--primary-dark);
+        }
+
+        .copy-product-target-device-row {
+            display: none;
+        }
+
+        .copy-product-target-device-row.show {
+            display: block;
+        }
+
+        .copy-product-target-device-panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            padding: 12px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .copy-product-device-toolbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .copy-product-device-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .copy-product-device-summary {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .copy-product-device-list {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f8fafc;
+            max-height: 220px;
+            overflow: auto;
+            padding: 6px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .copy-product-device-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            border-radius: 8px;
+            padding: 0 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .copy-product-device-option:hover {
+            background: rgba(78, 205, 196, 0.08);
+        }
+
+        .copy-product-device-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .copy-product-device-empty {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 16px 8px;
+        }
+
+        .copy-product-target-meta {
+            margin: -2px 0 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         .copy-product-target-row {
+            display: grid;
+            gap: 8px;
+        }
+
+        .copy-product-target-controls {
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 12px;
-            align-items: end;
+            align-items: center;
         }
 
-        .copy-product-target-row .form-group {
-            margin-bottom: 0;
+        .copy-product-target-row .product-modal-category-chips {
+            margin-top: 0;
         }
 
         .copy-product-target-action {
             min-width: 104px;
             height: 46px;
             padding: 0 18px;
+        }
+
+        .copy-product-back-btn {
+            display: none;
+        }
+
+        .copy-product-confirm-modal {
+            max-width: 420px;
+        }
+
+        .copy-product-confirm-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .copy-product-sync-mode-group {
+            margin-top: 12px;
+        }
+
+        .copy-product-sync-mode {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            padding: 10px 12px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .copy-product-sync-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .copy-product-sync-option input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .copy-product-result-modal {
+            max-width: 560px;
+        }
+
+        .copy-product-result-summary {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .copy-product-result-list {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .copy-product-result-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .copy-product-result-row:last-child {
+            border-bottom: none;
+        }
+
+        .copy-product-result-row .status-success {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .copy-product-result-row .status-failed {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .copy-product-result-message {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .product-image-compare-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-product-device-toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-product-device-actions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .copy-product-target-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-product-target-action {
+                width: 100%;
+            }
         }
 
         .copy-product-preview {
@@ -3060,6 +3762,72 @@
             color: #6b7280;
         }
 
+        .order-preview-recipe-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .order-preview-recipe-card {
+            border: 1px solid #d8efec;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #f7fffd 0%, #eefaf8 100%);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .order-preview-recipe-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .order-preview-recipe-card-spec {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f766e;
+        }
+
+        .order-preview-recipe-card-option {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .order-preview-recipe-group-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .order-preview-recipe-group-row {
+            display: grid;
+            grid-template-columns: 112px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .order-preview-recipe-group-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4b5563;
+        }
+
+        .order-preview-recipe-group-names {
+            font-size: 13px;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .order-preview-recipe-group-percent {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f766e;
+            white-space: nowrap;
+        }
+
         .order-preview-detail-bean-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3167,6 +3935,60 @@
             padding: 16px;
             border-radius: 8px;
             margin-bottom: 16px;
+        }
+
+        .category-modal-danger {
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(215, 69, 69, 0.16);
+            background: linear-gradient(180deg, #fff8f8 0%, #fff1f1 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-modal-danger-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #b42318;
+        }
+
+        .category-modal-danger-desc {
+            font-size: 12px;
+            line-height: 1.55;
+            color: #7a271a;
+        }
+
+        .category-modal-danger .btn {
+            align-self: flex-start;
+        }
+
+        .category-delete-summary {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .category-delete-summary strong {
+            color: var(--text-primary);
+        }
+
+        .category-delete-note {
+            font-size: 12px;
+            line-height: 1.55;
+            color: var(--text-secondary);
+        }
+
+        .category-delete-empty {
+            color: #b42318;
+            font-weight: 600;
         }
 
         .lang-section-header {
@@ -3583,6 +4405,27 @@
                 justify-content: center;
             }
 
+            .menu-shared-context .form-input,
+            .menu-shared-context .form-select {
+                font-size: 16px;
+                min-height: 50px;
+            }
+
+            .menu-shared-context .form-select {
+                display: none;
+            }
+
+            .menu-shared-category-mobile-trigger {
+                display: flex;
+                min-height: 52px;
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .menu-shared-category-mobile-trigger-text {
+                font-size: 16px;
+            }
+
             .menu-inner-tabs {
                 width: 100%;
                 display: grid;
@@ -3863,6 +4706,15 @@
                 grid-template-columns: 1fr;
             }
 
+            .order-preview-recipe-group-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .order-preview-recipe-group-percent {
+                justify-self: start;
+            }
+
             .order-preview-detail-intro {
                 font-size: 13px;
             }
@@ -3976,8 +4828,14 @@
                     <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
                     <div class="brand-title">运营控制台</div>
                 </div>
-                <div class="brand-version">Prototype v0</div>
-
+                <div class="sidebar-meta-row">
+                    <div class="brand-version">Prototype v0</div>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                        <span class="sidebar-admin-lang-sep">|</span>
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 <div class="sidebar-login">
                     <div class="sidebar-login-name" id="sidebarLoginName">-</div>
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
@@ -4210,6 +5068,10 @@
                                     <div class="form-group">
                                         <label class="form-label" for="menuManageCategorySelect">当前分类</label>
                                         <select class="form-select" id="menuManageCategorySelect" onchange="setMenuSharedCategoryFilter(this.value)"></select>
+                                        <button type="button" class="menu-shared-category-mobile-trigger" id="menuManageCategoryMobileTrigger" onclick="openMenuSharedMobileCategoryDrawer()">
+                                            <span class="menu-shared-category-mobile-trigger-text" id="menuManageCategoryMobileTriggerText">请选择分类</span>
+                                            <span class="menu-shared-category-mobile-trigger-arrow" aria-hidden="true">▼</span>
+                                        </button>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
@@ -4253,6 +5115,21 @@
                                     <!-- 动态渲染 -->
                                 </div>
                             </section>
+                        </div>
+                    </div>
+
+                    <div class="menu-shared-mobile-sheet" id="menuSharedMobileCategorySheet">
+                        <div class="menu-shared-mobile-sheet-backdrop" onclick="closeMenuSharedMobileCategoryDrawer()"></div>
+                        <div class="menu-shared-mobile-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="menuSharedMobileCategorySheetTitle">
+                            <div class="menu-shared-mobile-sheet-header">
+                                <div>
+                                    <h3 class="menu-shared-mobile-sheet-title" id="menuSharedMobileCategorySheetTitle">选择分类</h3>
+                                    <p class="menu-shared-mobile-sheet-subtitle" id="menuSharedMobileCategorySheetSubtitle">点击分类立即切换当前范围</p>
+                                </div>
+                                <button type="button" class="menu-shared-mobile-sheet-mode-btn" id="menuSharedMobileCategoryModeBtn" onclick="toggleMenuSharedMobileCategoryMode()">调整顺序</button>
+                            </div>
+                            <div class="menu-shared-mobile-sheet-body" id="menuSharedMobileCategorySheetBody"></div>
+                            <div class="menu-shared-mobile-sheet-footer" id="menuSharedMobileCategorySheetFooter"></div>
                         </div>
                     </div>
 
@@ -4382,7 +5259,7 @@
     <div class="modal-overlay" id="categoryModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">新增分类</h3>
+                <h3 class="modal-title" id="categoryModalTitle">新增分类</h3>
                 <button class="modal-close" onclick="closeCategoryModal()">×</button>
             </div>
             <div class="modal-body">
@@ -4402,10 +5279,36 @@
                         <div class="icon-option" data-icon="🍰">🍰</div>
                     </div>
                 </div>
+                <div class="category-modal-danger" id="categoryModalDangerZone" style="display:none;">
+                    <div class="category-modal-danger-title">危险操作</div>
+                    <div class="category-modal-danger-desc">删除分类不会删除商品，但若存在仅属于该分类的商品，必须先指定承接分类。</div>
+                    <button type="button" class="btn btn-default" id="categoryDeleteActionBtn" onclick="openCategoryDeleteModal()">删除分类</button>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" onclick="closeCategoryModal()">取消</button>
-                <button class="btn btn-primary" onclick="addCategory()">确认添加</button>
+                <button class="btn btn-primary" id="categoryModalSubmitBtn" onclick="saveCategory()">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="categoryDeleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="categoryDeleteModalTitle">删除分类</h3>
+                <button class="modal-close" onclick="closeCategoryDeleteModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="category-delete-summary" id="categoryDeleteSummary"></div>
+                <div class="form-group" id="categoryDeleteTransferGroup" style="display:none;">
+                    <label class="form-label" for="categoryDeleteTransferSelect">承接分类</label>
+                    <select class="form-select" id="categoryDeleteTransferSelect" onchange="updateCategoryDeleteConfirmState()"></select>
+                    <div class="category-delete-note" id="categoryDeleteTransferHint">仅属于当前分类的商品会迁移到这里。</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeCategoryDeleteModal()">取消</button>
+                <button class="btn btn-primary" id="categoryDeleteConfirmBtn" onclick="confirmCategoryDelete()">确认删除</button>
             </div>
         </div>
     </div>
@@ -4418,32 +5321,106 @@
                 <button class="modal-close" onclick="closeCopyProductModal()">×</button>
             </div>
             <div class="modal-body">
-                <div class="copy-product-hint">先选择当前设备下的一个商品作为模板，下一步可继续修改分类、名称、价格与图片，标签和配方结构将沿用模板商品。</div>
-                <div class="copy-product-target-row">
+                <div class="copy-product-step active" id="copyProductRangeStep">
+                    <div class="copy-product-hint">先选择复制范围，再进入商品模板与目标分类配置。</div>
                     <div class="form-group">
-                        <label class="form-label">目标分类 <span class="required">*</span></label>
-                        <div class="product-modal-category-selector" id="copyProductTargetCategorySelector">
-                            <button type="button" class="product-modal-category-summary" id="copyProductTargetCategorySummary" onclick="toggleCopyProductTargetCategorySelector(); event.stopPropagation();">
-                                <span class="product-modal-category-summary-text" id="copyProductTargetCategorySummaryText">请选择目标分类</span>
-                                <span class="product-modal-category-summary-arrow">▼</span>
-                            </button>
-                            <div class="product-modal-category-chips" id="copyProductTargetCategoryChips"></div>
-                            <div class="product-modal-category-options" id="copyProductTargetCategoryOptions"></div>
+                        <label class="form-label">复制范围 <span class="required">*</span></label>
+                        <div class="copy-product-scope-toggle" role="group" aria-label="复制范围">
+                            <button type="button" class="copy-product-scope-btn active" id="copyProductScopeCurrent" onclick="setCopyProductScope('current')">本设备</button>
+                            <button type="button" class="copy-product-scope-btn" id="copyProductScopeOther" onclick="setCopyProductScope('other')">其他设备</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default copy-product-target-action" onclick="openCategoryModal('copyTargetCategory')">新增分类</button>
+                    <div class="form-group copy-product-target-device-row" id="copyProductTargetDeviceRow">
+                        <label class="form-label">目标设备 <span class="required">*</span></label>
+                        <div class="copy-product-target-device-panel">
+                            <div class="copy-product-device-toolbar">
+                                <input type="text" class="form-input" id="copyProductTargetDeviceSearch" placeholder="搜索设备编号或点位名称" oninput="setCopyProductTargetDeviceKeyword(this.value)">
+                                <div class="copy-product-device-actions">
+                                    <button type="button" class="btn btn-default" onclick="selectAllFilteredCopyProductDevices()">全选当前筛选</button>
+                                    <button type="button" class="btn btn-default" onclick="clearCopyProductTargetDevices()">清空已选</button>
+                                </div>
+                            </div>
+                            <div class="copy-product-device-summary" id="copyProductTargetDeviceSummary">已选 0 台设备</div>
+                            <div class="copy-product-device-list" id="copyProductTargetDeviceOptions"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">模板商品 <span class="required">*</span></label>
-                    <select class="form-select" id="copyProductSourceProduct" onchange="updateCopyProductSourceProduct()">
-                        <option value="">请选择商品</option>
-                    </select>
+
+                <div class="copy-product-step" id="copyProductConfigStep">
+                    <div class="copy-product-hint">先选择当前设备下的一个商品作为模板，下一步可继续修改分类、名称、价格与图片，标签和配方结构将沿用模板商品。</div>
+                    <div class="copy-product-target-meta" id="copyProductTargetMeta"></div>
+                    <div class="copy-product-target-row">
+                        <label class="form-label">目标分类 <span class="required">*</span></label>
+                        <div class="copy-product-target-controls">
+                            <div class="product-modal-category-selector" id="copyProductTargetCategorySelector">
+                                <button type="button" class="product-modal-category-summary" id="copyProductTargetCategorySummary" onclick="toggleCopyProductTargetCategorySelector(); event.stopPropagation();">
+                                    <span class="product-modal-category-summary-text" id="copyProductTargetCategorySummaryText">请选择目标分类</span>
+                                    <span class="product-modal-category-summary-arrow">▼</span>
+                                </button>
+                                <div class="product-modal-category-options" id="copyProductTargetCategoryOptions"></div>
+                            </div>
+                            <button type="button" class="btn btn-default copy-product-target-action" onclick="openCategoryModal('copyTargetCategory')">新增分类</button>
+                        </div>
+                        <div class="product-modal-category-chips copy-product-target-chips" id="copyProductTargetCategoryChips"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">模板商品 <span class="required">*</span></label>
+                        <select class="form-select" id="copyProductSourceProduct" onchange="updateCopyProductSourceProduct()">
+                            <option value="">请选择商品</option>
+                        </select>
+                    </div>
+                    <div class="form-group copy-product-sync-mode-group" id="copyProductSyncModeGroup">
+                        <label class="form-label">缺失分类处理</label>
+                        <div class="copy-product-sync-mode" id="copyProductCategorySyncMode">
+                            <label class="copy-product-sync-option">
+                                <input type="radio" id="copyCategorySyncExistingOnly" name="copyProductCategorySyncMode" value="existing_only" onchange="setCopyProductCategorySyncMode(this.value)" checked>
+                                <span>仅使用目标设备已有同名分类（默认）</span>
+                            </label>
+                            <label class="copy-product-sync-option">
+                                <input type="radio" id="copyCategorySyncAutoCreate" name="copyProductCategorySyncMode" value="auto_create" onchange="setCopyProductCategorySyncMode(this.value)">
+                                <span>缺失分类自动创建</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="copy-product-preview empty" id="copyProductSourcePreview">请选择要复制的模板商品</div>
                 </div>
-                <div class="copy-product-preview empty" id="copyProductSourcePreview">请选择要复制的模板商品</div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" onclick="closeCopyProductModal()">取消</button>
-                <button class="btn btn-primary" onclick="startCopyProduct()">下一步</button>
+                <button class="btn btn-default copy-product-back-btn" id="copyProductBackBtn" onclick="goCopyProductPrevStep()">上一步</button>
+                <button class="btn btn-primary" id="copyProductNextBtn" onclick="startCopyProduct()">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="copyProductBackConfirmModal" onclick="if(event.target === this) closeCopyProductBackConfirmModal()">
+        <div class="modal copy-product-confirm-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">返回复制范围</h3>
+                <button class="modal-close" onclick="closeCopyProductBackConfirmModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="copy-product-confirm-text">返回后将回到“复制范围”步骤，当前已选择的模板商品和目标分类将保留。确认返回吗？</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeCopyProductBackConfirmModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmCopyProductPrevStep()">确认返回</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="copyProductBatchResultModal" onclick="if(event.target === this) closeCopyProductBatchResultModal()">
+        <div class="modal copy-product-result-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">复制结果</h3>
+                <button class="modal-close" onclick="closeCopyProductBatchResultModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="copy-product-result-summary" id="copyProductBatchResultSummary"></div>
+                <div class="copy-product-result-list" id="copyProductBatchResultList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeCopyProductBatchResultModal()">知道了</button>
             </div>
         </div>
     </div>
@@ -4468,16 +5445,38 @@
                     </div>
                     <div class="product-modal-category-hint">一个商品可同时出现在多个分类中；保存后会同步更新所有同 ID 商品。</div>
                 </div>
-                
+
                 <div id="productLangInputs">
                     <!-- 动态生成多语言输入 -->
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">商品图片</label>
-                    <input type="text" class="form-input" id="productImage" placeholder="请输入图片URL（可选）">
+                    <input type="text" class="form-input" id="productImage" placeholder="请输入图片URL（可选）" oninput="renderProductImageComparePreview()">
                     <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">支持 JPG、PNG 格式图片链接，或上传本地图片</div>
                     <input type="file" class="form-input" id="productImageFile" accept="image/*" onchange="handleProductImageFileChange(event)" style="margin-top:8px;padding:9px 12px;">
+                    <div class="product-image-compare" id="productImageCompare">
+                        <div class="product-image-compare-head">
+                            <span class="product-image-compare-title">图片对比</span>
+                            <span class="product-image-compare-status" id="productImageCompareStatus">未替换图片</span>
+                        </div>
+                        <div class="product-image-compare-grid">
+                            <div class="product-image-compare-card">
+                                <div class="product-image-compare-label">模板旧图</div>
+                                <div class="product-image-compare-thumb-wrap">
+                                    <img class="product-image-compare-thumb" id="productImageBeforePreview" alt="模板图片">
+                                    <div class="product-image-compare-empty" id="productImageBeforeEmpty">无图</div>
+                                </div>
+                            </div>
+                            <div class="product-image-compare-card">
+                                <div class="product-image-compare-label">当前新图</div>
+                                <div class="product-image-compare-thumb-wrap">
+                                    <img class="product-image-compare-thumb" id="productImageAfterPreview" alt="当前图片">
+                                    <div class="product-image-compare-empty" id="productImageAfterEmpty">无图</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-row">
@@ -4516,6 +5515,172 @@
             phone: '13800138000'
         };
 
+        const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
+        const ADMIN_SIDEBAR_TRANSLATIONS = {
+            zh: {
+                brand_console: '运营控制台',
+                section_operations: '运营管理',
+                section_foundation: '基础信息管理',
+                nav_overview: '总览',
+                nav_devices: '设备',
+                nav_menu_management: '商品管理',
+                nav_materials: '物料',
+                nav_orders: '订单',
+                nav_faults: '故障列表',
+                nav_staff: '人员管理',
+                nav_customers: '客户管理',
+                nav_locations: '点位管理',
+                page_overview: '总览',
+                page_devices: '设备',
+                page_menu_management: '商品管理',
+                page_materials: '物料管理',
+                page_orders: '订单',
+                page_faults: '故障管理',
+                page_customers: '客户管理',
+                page_locations: '点位管理',
+                page_staff_management: '人员管理',
+                page_product_detail: '商品详情'
+            },
+            en: {
+                brand_console: 'Operations Console',
+                section_operations: 'Operations',
+                section_foundation: 'Basic Info',
+                nav_overview: 'Overview',
+                nav_devices: 'Devices',
+                nav_menu_management: 'Catalog',
+                nav_materials: 'Materials',
+                nav_orders: 'Orders',
+                nav_faults: 'Faults',
+                nav_staff: 'Staff',
+                nav_customers: 'Customers',
+                nav_locations: 'Locations',
+                page_overview: 'Overview',
+                page_devices: 'Devices',
+                page_menu_management: 'Catalog',
+                page_materials: 'Materials',
+                page_orders: 'Orders',
+                page_faults: 'Faults',
+                page_customers: 'Customers',
+                page_locations: 'Locations',
+                page_staff_management: 'Staff',
+                page_product_detail: 'Product Detail'
+            }
+        };
+        const ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH = {
+            'overview.html': 'page_overview',
+            'devices.html': 'page_devices',
+            'menu-management.html': 'page_menu_management',
+            'materials.html': 'page_materials',
+            'orders.html': 'page_orders',
+            'faults.html': 'page_faults',
+            'customers.html': 'page_customers',
+            'locations.html': 'page_locations',
+            'staff-management.html': 'page_staff_management',
+            'product-detail.html': 'page_product_detail'
+        };
+        let adminSidebarLang = 'zh';
+
+        function getAdminSidebarLang() {
+            try {
+                const savedLang = localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY);
+                return savedLang === 'en' ? 'en' : 'zh';
+            } catch (e) {
+                return 'zh';
+            }
+        }
+
+        function translateAdminSidebar(key) {
+            const dictionary = ADMIN_SIDEBAR_TRANSLATIONS[adminSidebarLang] || ADMIN_SIDEBAR_TRANSLATIONS.zh;
+            return dictionary[key] || ADMIN_SIDEBAR_TRANSLATIONS.zh[key] || '';
+        }
+
+        function getAdminSidebarCurrentPage() {
+            if (!window || !window.location) return '';
+            const pathname = String(window.location.pathname || '');
+            return pathname.split('/').pop();
+        }
+
+        function getAdminSidebarNavKey(item) {
+            if (!item) return '';
+            const tab = item.dataset ? item.dataset.tab : '';
+            if (tab === 'overview') return 'nav_overview';
+            if (tab === 'menu') return 'nav_menu_management';
+
+            const href = item.getAttribute ? item.getAttribute('href') : '';
+            switch (href) {
+                case 'overview.html': return 'nav_overview';
+                case 'devices.html': return 'nav_devices';
+                case 'menu-management.html': return 'nav_menu_management';
+                case 'materials.html': return 'nav_materials';
+                case 'orders.html': return 'nav_orders';
+                case 'faults.html': return 'nav_faults';
+                case 'staff-management.html': return 'nav_staff';
+                case 'customers.html': return 'nav_customers';
+                case 'locations.html': return 'nav_locations';
+                default: return '';
+            }
+        }
+
+        function getAdminSidebarMobileTitleKey() {
+            const currentPage = getAdminSidebarCurrentPage();
+            if (currentPage === 'menu.html') {
+                if (typeof currentTab === 'string' && currentTab === 'menu') {
+                    return 'page_menu_management';
+                }
+                return 'page_overview';
+            }
+            return ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH[currentPage] || '';
+        }
+
+        function renderAdminSidebarTranslations() {
+            adminSidebarLang = getAdminSidebarLang();
+
+            const brandTitle = document.querySelector('.brand-title');
+            if (brandTitle) {
+                brandTitle.textContent = translateAdminSidebar('brand_console');
+            }
+
+            const sectionTitles = document.querySelectorAll('.nav-section-title');
+            if (sectionTitles[0]) {
+                sectionTitles[0].textContent = translateAdminSidebar('section_operations');
+            }
+            if (sectionTitles[1]) {
+                sectionTitles[1].textContent = translateAdminSidebar('section_foundation');
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                const labelNode = item.querySelector('span:last-child');
+                const key = getAdminSidebarNavKey(item);
+                if (labelNode && key) {
+                    labelNode.textContent = translateAdminSidebar(key);
+                }
+            });
+
+            const mobileHeaderTitle = document.querySelector('.mobile-header strong, .mobile-header span[style], .mobile-header .mobile-header-title');
+            const mobileTitleKey = getAdminSidebarMobileTitleKey();
+            if (mobileHeaderTitle && mobileTitleKey) {
+                mobileHeaderTitle.textContent = translateAdminSidebar(mobileTitleKey);
+            }
+
+            document.querySelectorAll('[data-admin-lang-option]').forEach(button => {
+                const active = button.getAttribute('data-admin-lang-option') === adminSidebarLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function setAdminSidebarLang(lang) {
+            if (lang !== 'zh' && lang !== 'en') return;
+            adminSidebarLang = lang;
+            try {
+                localStorage.setItem(ADMIN_SIDEBAR_LANG_KEY, lang);
+            } catch (e) {
+                // ignore localStorage write failures
+            }
+            renderAdminSidebarTranslations();
+        }
+
+
         function getSidebarLoginProfile() {
             try {
                 const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
@@ -4541,6 +5706,7 @@
                 phoneNode.textContent = profile.phone;
             }
             fitSidebarLoginInline();
+            renderAdminSidebarTranslations();
         }
 
         function fitSidebarLoginInline() {
@@ -4734,12 +5900,23 @@
         let platformLang = 'zh';
         let nextProductId = 32;
         let selectedCategoryIcon = '☕';
+        let categoryModalMode = 'create';
+        let editingCategoryKey = '';
+        let pendingDeleteCategoryKey = '';
         let editingProductId = null;
         let editingProductCategory = '';
         let categoryModalContext = 'default';
         let productCopySource = null;
         let productCopySourceCategory = '';
         let productCopyTargetCategory = '';
+        let productCopyBatchContext = null;
+        let copyProductModalStep = 1;
+        let copyProductScope = 'current';
+        let copyProductTargetDeviceIds = new Set();
+        let copyProductTargetDeviceKeyword = '';
+        let copyProductPreselectedCategory = '';
+        let copyProductCategorySyncMode = 'existing_only';
+        let copyProductBatchLastResults = [];
         let copyProductTargetCategoryOptions = [];
         let selectedCopyProductTargetCategoryKeys = new Set();
         let isCopyProductTargetCategorySelectorOpen = false;
@@ -4774,11 +5951,28 @@
         let productModalCategoryOptions = [];
         let selectedProductModalCategoryKeys = new Set();
         let isProductModalCategorySelectorOpen = false;
+        let productModalShowSpecFields = true;
+        let menuManageDraggedCategoryKey = '';
+        let menuManageDraggedElement = null;
+        let menuManageDropPlaceholder = null;
+        let menuManageTouchDragState = null;
+        let menuManageTouchListenersBound = false;
+        let menuManageIgnoreCategoryClickUntil = 0;
+        let menuSharedMobileCategoryDrawerOpen = false;
+        let menuSharedMobileCategoryMode = 'select';
+        let menuSharedMobileCategoryDraftOrder = [];
+        let menuSharedMobileSortDraggedElement = null;
+        let menuSharedMobileSortDropPlaceholder = null;
+        let menuSharedMobileSortTouchDragState = null;
+        let menuSharedMobileSortTouchListenersBound = false;
         let pendingMenuManagementRestoreScrollY = null;
         const BATCH_FIXED_PRICE_MOCK_FAILURE_MESSAGE = '模拟失败，请再次提交';
         const PLATFORM_LANG_STORAGE_KEY = 'platformLang';
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
+        const MENU_MANAGE_CATEGORY_ORDER_KEY = 'categoryOrder';
+        const COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY = 'menuCopyDeviceCategoryCatalog';
+        const COPY_PRODUCT_DEVICE_QUEUE_KEY = 'menuCopyProductQueue';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const DEFAULT_TAX_RATE = 0.13;
         const SUPPORTED_CURRENCIES = {
@@ -4860,6 +6054,36 @@
             lid: 'LID',
             latteArt: 'LATTE-ART'
         };
+        const ORDER_PREVIEW_DETAIL_SECTION_CONFIG = [
+            { specKey: 'beans', titleKey: 'chooseBeans', variant: 'bean' },
+            { specKey: 'syrup', titleKey: 'chooseSyrup', variant: 'default' },
+            { specKey: 'sweetness', titleKey: 'chooseSweetness', variant: 'default' },
+            { specKey: 'temperature', titleKey: 'chooseTemperature', variant: 'default' },
+            { specKey: 'strength', titleKey: 'chooseStrength', variant: 'default' },
+            { specKey: 'cupsize', titleKey: 'chooseCupsize', variant: 'default' },
+            { specKey: 'lid', titleKey: 'chooseLid', variant: 'default' },
+            { specKey: 'latteArt', titleKey: 'chooseLatteArt', variant: 'default' }
+        ];
+        const ORDER_PREVIEW_RECIPE_GROUP_CONFIGS = [
+            { key: 'baseCoffeeLiquid', labels: { zh: '基底咖啡液', en: 'Base Coffee' } },
+            { key: 'syrup', labels: { zh: '糖浆', en: 'Syrup' } },
+            { key: 'milk', labels: { zh: '奶量', en: 'Milk' } },
+            { key: 'water', labels: { zh: '水量', en: 'Water' } },
+            { key: 'ice', labels: { zh: '冰量', en: 'Ice' } },
+            { key: 'powders', labels: { zh: '浓缩粉名称', en: 'Powder' } },
+            { key: 'concentrates', labels: { zh: '浓缩液', en: 'Concentrate' } },
+            { key: 'decorToppings', labels: { zh: '装饰颗粒名称', en: 'Topping' } }
+        ];
+        const ORDER_PREVIEW_SPEC_LABELS = {
+            beans: { zh: '咖啡豆', en: 'Beans' },
+            syrup: { zh: '糖浆', en: 'Syrup' },
+            sweetness: { zh: '甜度', en: 'Sweetness' },
+            temperature: { zh: '温度', en: 'Temperature' },
+            strength: { zh: '浓度', en: 'Strength' },
+            cupsize: { zh: '杯型', en: 'Cup Size' },
+            lid: { zh: '杯盖', en: 'Lid' },
+            latteArt: { zh: '拉花', en: 'Latte Art' }
+        };
         const ORDER_PREVIEW_OPTION_LIBRARY = {
             beans: [
                 {
@@ -4904,9 +6128,13 @@
         };
         const ORDER_PREVIEW_COPY = {
             chooseBeans: { zh: '选咖啡豆', en: 'Choose Beans' },
+            chooseSyrup: { zh: '选择糖浆', en: 'Choose Syrup' },
             chooseSweetness: { zh: '选择糖量', en: 'Choose Sweetness' },
             chooseTemperature: { zh: '选择温度', en: 'Choose Temperature' },
             chooseStrength: { zh: '选择浓度', en: 'Choose Strength' },
+            chooseCupsize: { zh: '选择杯型', en: 'Choose Cup Size' },
+            chooseLid: { zh: '选择杯盖', en: 'Choose Lid' },
+            chooseLatteArt: { zh: '选择拉花', en: 'Choose Latte Art' },
             customAction: { zh: '选择定制', en: 'Custom' },
             customHint: { zh: '更多个性化定制专属于您的口味', en: 'More customization for your taste' },
             cupCount: { zh: '杯数', en: 'Qty' },
@@ -4921,6 +6149,7 @@
             applySavedProductCategoryAssignments();
             applySavedProductEdits();
             applyInitialViewFromUrl();
+            applyQueuedCopiedProductsForDevice(currentDevice);
             applyMenuManagementReturnState();
             initDeviceSearch();
             initOverviewDeviceFilter();
@@ -5319,6 +6548,75 @@
             }
 
             return normalizeKeys(fallbackKeys);
+        }
+
+        function getMenuManagedCatalogSnapshot() {
+            const categoryKeys = getMenuManageCategoryKeys();
+            if (!categoryKeys.length) return [];
+
+            const validCategoryKeys = new Set(categoryKeys);
+            const editsMap = getSavedProductEditsMap();
+            const assignments = getSavedProductCategoryAssignments();
+            const fallbackAssignments = {};
+            const productSnapshots = new Map();
+
+            const categories = categoryKeys.map(categoryKey => {
+                const sourceCategory = productsData[categoryKey] || {};
+                return {
+                    key: categoryKey,
+                    category: {
+                        ...cloneMenuProductRecord(sourceCategory),
+                        items: []
+                    }
+                };
+            });
+            const categoryMap = categories.reduce((acc, entry) => {
+                acc[entry.key] = entry.category;
+                return acc;
+            }, {});
+
+            categoryKeys.forEach(categoryKey => {
+                const items = Array.isArray(productsData[categoryKey]?.items) ? productsData[categoryKey].items : [];
+                items.forEach(item => {
+                    const numericId = Number(item?.id);
+                    if (!Number.isFinite(numericId)) return;
+
+                    if (!productSnapshots.has(numericId)) {
+                        productSnapshots.set(numericId, cloneMenuProductRecord(item));
+                    }
+
+                    if (!Array.isArray(fallbackAssignments[numericId])) {
+                        fallbackAssignments[numericId] = [];
+                    }
+                    if (!fallbackAssignments[numericId].includes(categoryKey)) {
+                        fallbackAssignments[numericId].push(categoryKey);
+                    }
+                });
+            });
+
+            Object.entries(editsMap).forEach(([productId, editedProduct]) => {
+                const numericId = Number(productId);
+                if (!Number.isFinite(numericId) || !editedProduct || typeof editedProduct !== 'object') return;
+                const baseSnapshot = productSnapshots.get(numericId) || {};
+                productSnapshots.set(numericId, cloneMenuProductRecord({
+                    ...baseSnapshot,
+                    ...editedProduct
+                }));
+            });
+
+            productSnapshots.forEach((product, productId) => {
+                const assignedCategories = Array.from(new Set(((assignments[productId] || fallbackAssignments[productId] || []))
+                    .map(categoryKey => String(categoryKey || '').trim())
+                    .filter(categoryKey => validCategoryKeys.has(categoryKey))));
+
+                assignedCategories.forEach(categoryKey => {
+                    const category = categoryMap[categoryKey];
+                    if (!category || !Array.isArray(category.items)) return;
+                    category.items.push(cloneMenuProductRecord(product));
+                });
+            });
+
+            return categories;
         }
 
         function getSelectedProductModalCategories() {
@@ -6406,14 +7704,17 @@
             const targetId = Number(productId);
             if (!Number.isFinite(targetId)) return null;
 
-            if (categoryKey && productsData[categoryKey]) {
-                const hit = (productsData[categoryKey].items || []).find(item => item.id === targetId);
+            const catalogSnapshot = getMenuManagedCatalogSnapshot();
+
+            if (categoryKey) {
+                const categoryEntry = catalogSnapshot.find(entry => entry.key === categoryKey);
+                const hit = (categoryEntry?.category?.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
                 if (hit) return { categoryKey, product: hit };
             }
 
-            for (const [catKey, catData] of Object.entries(productsData)) {
-                const hit = (catData.items || []).find(item => item.id === targetId);
-                if (hit) return { categoryKey: catKey, product: hit };
+            for (const entry of catalogSnapshot) {
+                const hit = (entry.category?.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
+                if (hit) return { categoryKey: entry.key, product: hit };
             }
             return null;
         }
@@ -6456,6 +7757,55 @@
             return libraryItem.desc[lang] || libraryItem.desc.zh || libraryItem.desc.en || '';
         }
 
+        function getOrderPreviewSpecLabel(specKey, lang) {
+            const pack = ORDER_PREVIEW_SPEC_LABELS[specKey] || {};
+            return pack[lang] || pack.zh || specKey;
+        }
+
+        function getOrderPreviewRecipeGroupLabel(groupKey, lang) {
+            const matched = ORDER_PREVIEW_RECIPE_GROUP_CONFIGS.find(item => item.key === groupKey);
+            if (!matched) return groupKey;
+            return matched.labels?.[lang] || matched.labels?.zh || groupKey;
+        }
+
+        function normalizeOrderPreviewRecipePercent(value) {
+            const number = Number(value);
+            if (!Number.isFinite(number)) return null;
+            return Math.max(0, Math.min(100, Math.round(number * 100) / 100));
+        }
+
+        function normalizeOrderPreviewRecipeData(rawRecipe) {
+            if (!rawRecipe || typeof rawRecipe !== 'object') return null;
+            const recipe = rawRecipe;
+            const validGroupKeys = ORDER_PREVIEW_RECIPE_GROUP_CONFIGS.map(item => item.key);
+            const inputOrder = Array.isArray(recipe.groupOrder)
+                ? recipe.groupOrder.map(key => String(key || '').trim()).filter(key => validGroupKeys.includes(key))
+                : [];
+            const dedupedOrder = [];
+            inputOrder.forEach(key => {
+                if (!dedupedOrder.includes(key)) dedupedOrder.push(key);
+            });
+
+            const groups = {};
+            ORDER_PREVIEW_RECIPE_GROUP_CONFIGS.forEach(cfg => {
+                const groupedSource = recipe.groups && typeof recipe.groups === 'object' ? recipe.groups[cfg.key] : null;
+                const legacySource = recipe[cfg.key] && typeof recipe[cfg.key] === 'object' ? recipe[cfg.key] : null;
+                const rawGroup = groupedSource || legacySource;
+                const names = Array.isArray(rawGroup?.names)
+                    ? rawGroup.names.map(item => String(item || '').trim()).filter(Boolean)
+                    : [];
+                const percent = normalizeOrderPreviewRecipePercent(rawGroup?.percent);
+                groups[cfg.key] = { names, percent };
+                if (names.length && !dedupedOrder.includes(cfg.key)) {
+                    dedupedOrder.push(cfg.key);
+                }
+            });
+
+            const visibleOrder = dedupedOrder.filter(groupKey => groups[groupKey]?.names?.length);
+            if (!visibleOrder.length) return null;
+            return { groupOrder: visibleOrder, groups };
+        }
+
         function resolveOrderPreviewOptionKey(product, specKey, rawValue, lang) {
             if (!rawValue) return '';
             const normalized = String(rawValue).trim();
@@ -6485,7 +7835,11 @@
         function getOrderPreviewOptionItems(product, specKey, lang) {
             const libraryList = ORDER_PREVIEW_OPTION_LIBRARY[specKey] || [];
             const keys = new Set(Object.keys(product?.tagI18n?.[specKey] || {}));
+            Object.keys(product?.tagExtraPrices?.[specKey] || {}).forEach(key => keys.add(key));
+            Object.keys(product?.optionRecipes?.[specKey] || {}).forEach(key => keys.add(key));
+            Object.keys(product?.optionRecipeLinks?.[specKey] || {}).forEach(key => keys.add(key));
 
+            const preferredKey = getOrderPreviewPreferredOptionCandidate(product, specKey, lang);
             const optionTitle = ORDER_PREVIEW_OPTION_TITLE_MAP[specKey];
             const candidates = [
                 product?.defaultOptions?.[specKey],
@@ -6511,6 +7865,14 @@
             });
             orderedKeys.push(...Array.from(keys));
 
+            if (preferredKey) {
+                const preferredIndex = orderedKeys.indexOf(preferredKey);
+                if (preferredIndex > 0) {
+                    orderedKeys.splice(preferredIndex, 1);
+                    orderedKeys.unshift(preferredKey);
+                }
+            }
+
             return orderedKeys.map(key => {
                 return {
                     key,
@@ -6521,16 +7883,31 @@
             });
         }
 
-        function getOrderPreviewSelectedExtraPrice(product) {
-            if (!product || !orderPreviewDetailState.selected || typeof orderPreviewDetailState.selected !== 'object') {
-                return 0;
-            }
-            return Object.entries(orderPreviewDetailState.selected).reduce((sum, [specKey, key]) => {
-                return sum + getOrderPreviewOptionExtraPrice(product, specKey, key);
-            }, 0);
+        function getOrderPreviewActiveRecipeEntries(product, lang) {
+            if (!product || !product.optionRecipes || typeof product.optionRecipes !== 'object') return [];
+            const selectedMap = orderPreviewDetailState.selected && typeof orderPreviewDetailState.selected === 'object'
+                ? orderPreviewDetailState.selected
+                : {};
+
+            return ORDER_PREVIEW_DETAIL_SECTION_CONFIG.map(section => {
+                const specKey = section.specKey;
+                const selectedKey = selectedMap[specKey] || getOrderPreviewPreferredOptionKey(product, specKey, lang);
+                if (!selectedKey) return null;
+                const bySpec = product.optionRecipes?.[specKey];
+                if (!bySpec || typeof bySpec !== 'object') return null;
+                const recipe = normalizeOrderPreviewRecipeData(bySpec[selectedKey]);
+                if (!recipe) return null;
+
+                return {
+                    specKey,
+                    specLabel: getOrderPreviewSpecLabel(specKey, lang),
+                    optionLabel: getOrderPreviewOptionLabel(product, specKey, selectedKey, lang),
+                    recipe
+                };
+            }).filter(Boolean);
         }
 
-        function getOrderPreviewPreferredOptionKey(product, specKey, lang) {
+        function getOrderPreviewPreferredOptionCandidate(product, specKey, lang) {
             const optionTitle = ORDER_PREVIEW_OPTION_TITLE_MAP[specKey];
             const candidates = [
                 product?.defaultOptions?.[specKey],
@@ -6544,14 +7921,29 @@
                 if (resolved) return resolved;
             }
 
+            return '';
+        }
+
+        function getOrderPreviewSelectedExtraPrice(product) {
+            if (!product || !orderPreviewDetailState.selected || typeof orderPreviewDetailState.selected !== 'object') {
+                return 0;
+            }
+            return Object.entries(orderPreviewDetailState.selected).reduce((sum, [specKey, key]) => {
+                return sum + getOrderPreviewOptionExtraPrice(product, specKey, key);
+            }, 0);
+        }
+
+        function getOrderPreviewPreferredOptionKey(product, specKey, lang) {
+            const preferred = getOrderPreviewPreferredOptionCandidate(product, specKey, lang);
+            if (preferred) return preferred;
+
             const list = getOrderPreviewOptionItems(product, specKey, lang);
             return list[0] ? list[0].key : '';
         }
 
         function getOrderPreviewDefaultSelectionMap(product, lang) {
-            const keys = ['beans', 'sweetness', 'temperature', 'strength', 'cupsize'];
             const selected = {};
-            keys.forEach(specKey => {
+            ORDER_PREVIEW_DETAIL_SECTION_CONFIG.forEach(({ specKey }) => {
                 const preferred = getOrderPreviewPreferredOptionKey(product, specKey, lang);
                 if (preferred) selected[specKey] = preferred;
             });
@@ -6625,6 +8017,15 @@
             `;
         }
 
+        function renderOrderPreviewDetailSections(product, lang) {
+            return ORDER_PREVIEW_DETAIL_SECTION_CONFIG.map(section => {
+                if (section.variant === 'bean') {
+                    return renderOrderPreviewBeanSection(product, lang);
+                }
+                return renderOrderPreviewOptionSection(product, section.specKey, section.titleKey, lang);
+            }).filter(Boolean).join('');
+        }
+
         function renderOrderPreviewDetail() {
             const overlay = document.getElementById('orderPreviewDetailOverlay');
             if (!overlay) return;
@@ -6686,10 +8087,7 @@
                         <div class="order-preview-detail-intro">${escapePreviewText(detailDesc)}</div>
                     </section>
 
-                    ${renderOrderPreviewBeanSection(product, previewLang)}
-                    ${renderOrderPreviewOptionSection(product, 'sweetness', 'chooseSweetness', previewLang)}
-                    ${renderOrderPreviewOptionSection(product, 'temperature', 'chooseTemperature', previewLang)}
-                    ${renderOrderPreviewOptionSection(product, 'strength', 'chooseStrength', previewLang)}
+                    ${renderOrderPreviewDetailSections(product, previewLang)}
 
                     <div class="order-preview-detail-custom-row">
                         <button type="button" class="order-preview-detail-custom-btn ${orderPreviewDetailState.customSelected ? 'active' : ''}" onclick="toggleOrderPreviewCustomMode()">${escapePreviewText(getOrderPreviewCopy('customAction', previewLang))}</button>
@@ -6785,7 +8183,7 @@
 
         function getOrderPreviewCategoryEntries() {
             const previewLang = getOrderPreviewLang();
-            return Object.entries(productsData).map(([categoryKey, categoryData]) => {
+            return getMenuManagedCatalogSnapshot().map(({ key: categoryKey, category: categoryData }) => {
                 const items = Array.isArray(categoryData.items) ? categoryData.items.filter(isProductOnSale) : [];
                 return {
                     key: categoryKey,
@@ -7353,8 +8751,250 @@
             return String(raw || '').trim().toLowerCase();
         }
 
+        function loadMenuManageCategoryOrder() {
+            try {
+                const raw = localStorage.getItem(MENU_MANAGE_CATEGORY_ORDER_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed)
+                    ? parsed.map(key => String(key || '').trim()).filter(Boolean)
+                    : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveMenuManageCategoryOrder(order = []) {
+            const normalized = Array.from(new Set((order || [])
+                .map(key => String(key || '').trim())
+                .filter(Boolean)));
+            try {
+                localStorage.setItem(MENU_MANAGE_CATEGORY_ORDER_KEY, JSON.stringify(normalized));
+            } catch (e) {
+                // ignore storage failures
+            }
+        }
+
+        function buildMenuManageCategoryOrderFromVisible(visibleOrder = []) {
+            const visibleKeys = Array.from(new Set((visibleOrder || [])
+                .map(key => String(key || '').trim())
+                .filter(Boolean)));
+            const fullOrder = getMenuManageCategoryKeys();
+            const visibleSet = new Set(visibleKeys);
+            const queue = [...visibleKeys];
+            return fullOrder.map(categoryKey => (visibleSet.has(categoryKey) ? (queue.shift() || categoryKey) : categoryKey));
+        }
+
         function getMenuManageCategoryKeys() {
-            return Object.keys(productsData || {});
+            const allKeys = Object.keys(productsData || {});
+            if (!allKeys.length) return [];
+
+            const savedOrder = loadMenuManageCategoryOrder();
+            if (!savedOrder.length) return allKeys;
+
+            const allKeySet = new Set(allKeys);
+            const orderedKeys = savedOrder.filter(key => allKeySet.has(key));
+            const seen = new Set(orderedKeys);
+            const newKeys = allKeys.filter(key => !seen.has(key));
+            const mergedKeys = [...orderedKeys, ...newKeys];
+
+            const orderChanged = mergedKeys.length !== savedOrder.length
+                || mergedKeys.some((key, index) => key !== savedOrder[index]);
+            if (orderChanged) {
+                saveMenuManageCategoryOrder(mergedKeys);
+            }
+
+            return mergedKeys;
+        }
+
+        function createMenuManageDropPlaceholder(height = 56) {
+            if (!menuManageDropPlaceholder || !menuManageDropPlaceholder.classList) {
+                menuManageDropPlaceholder = document.createElement('div');
+                menuManageDropPlaceholder.className = 'category-drop-placeholder';
+            }
+            menuManageDropPlaceholder.style.height = `${Math.max(44, Number(height) || 56)}px`;
+            return menuManageDropPlaceholder;
+        }
+
+        function saveMenuManageCategoryOrderByDom() {
+            const categoryList = document.getElementById('menuManageCategoryList');
+            if (!categoryList || typeof categoryList.querySelectorAll !== 'function') return;
+            const visibleOrder = Array.from(categoryList.querySelectorAll('.menu-manage-category-item[data-category-key]'))
+                .map(element => String(element.dataset.categoryKey || '').trim())
+                .filter(Boolean);
+            if (!visibleOrder.length) return;
+
+            const fullOrder = getMenuManageCategoryKeys();
+            const nextOrder = visibleOrder.length === fullOrder.length
+                ? visibleOrder
+                : buildMenuManageCategoryOrderFromVisible(visibleOrder);
+            saveMenuManageCategoryOrder(nextOrder);
+        }
+
+        function resetMenuManageCategoryDragState() {
+            if (menuManageDropPlaceholder && menuManageDropPlaceholder.parentNode) {
+                menuManageDropPlaceholder.parentNode.removeChild(menuManageDropPlaceholder);
+            }
+            menuManageDropPlaceholder = null;
+
+            if (menuManageDraggedElement) {
+                menuManageDraggedElement.classList.remove('dragging');
+                menuManageDraggedElement.style.display = '';
+            }
+            menuManageDraggedElement = null;
+            menuManageDraggedCategoryKey = '';
+            menuManageTouchDragState = null;
+        }
+
+        function ensureMenuManageCategoryTouchListeners() {
+            if (menuManageTouchListenersBound || !document || typeof document.addEventListener !== 'function') return;
+            document.addEventListener('touchmove', handleMenuManageCategoryTouchMove, { passive: false });
+            document.addEventListener('touchend', handleMenuManageCategoryTouchEnd);
+            document.addEventListener('touchcancel', handleMenuManageCategoryTouchEnd);
+            menuManageTouchListenersBound = true;
+        }
+
+        function getMenuManageTouchByIdentifier(touchList, identifier) {
+            if (!touchList || typeof touchList.length !== 'number') return null;
+            for (let index = 0; index < touchList.length; index += 1) {
+                const touch = touchList[index];
+                if (!touch) continue;
+                if (Number(touch.identifier) === Number(identifier)) return touch;
+            }
+            return null;
+        }
+
+        function commitMenuManageCategoryDrag() {
+            if (menuManageDraggedElement && menuManageDropPlaceholder && menuManageDropPlaceholder.parentNode) {
+                menuManageDropPlaceholder.parentNode.insertBefore(menuManageDraggedElement, menuManageDropPlaceholder);
+            }
+            saveMenuManageCategoryOrderByDom();
+            resetMenuManageCategoryDragState();
+            renderMenuManageCategoryNavigation();
+            renderMenuSharedContext();
+        }
+
+        function handleMenuManageCategoryDragStart(event) {
+            const target = event.currentTarget;
+            if (!target || !target.dataset) return;
+            const categoryKey = String(target.dataset.categoryKey || '').trim();
+            if (!categoryKey) return;
+
+            menuManageDraggedCategoryKey = categoryKey;
+            menuManageDraggedElement = target;
+            target.classList.add('dragging');
+            setTimeout(() => {
+                if (menuManageDraggedElement === target) {
+                    target.style.display = 'none';
+                }
+            }, 0);
+
+            const placeholder = createMenuManageDropPlaceholder(target.offsetHeight);
+            if (target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.dropEffect = 'move';
+                try {
+                    event.dataTransfer.setData('text/plain', categoryKey);
+                } catch (e) {
+                    // ignore unsupported dataTransfer implementations
+                }
+            }
+        }
+
+        function handleMenuManageCategoryDragOver(event) {
+            if (!menuManageDraggedElement || !menuManageDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+
+            const target = event.currentTarget;
+            if (!target || target === menuManageDraggedElement || target === menuManageDropPlaceholder) return;
+            const list = document.getElementById('menuManageCategoryList');
+            if (!list || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (event.clientY < midpoint) {
+                list.insertBefore(menuManageDropPlaceholder, target);
+            } else {
+                list.insertBefore(menuManageDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function handleMenuManageCategoryDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        function handleMenuManageCategoryDragEnd() {
+            commitMenuManageCategoryDrag();
+        }
+
+        function handleMenuManageCategoryTouchStart(event) {
+            if (!event || !event.currentTarget) return;
+            const handle = event.currentTarget;
+            const target = typeof handle.closest === 'function'
+                ? handle.closest('.menu-manage-category-item[data-category-key]')
+                : null;
+            if (!target || !target.dataset || !event.changedTouches || !event.changedTouches.length) return;
+
+            const categoryKey = String(target.dataset.categoryKey || '').trim();
+            if (!categoryKey) return;
+            const touch = event.changedTouches[0];
+
+            event.preventDefault();
+            if (typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+
+            menuManageIgnoreCategoryClickUntil = Date.now() + 500;
+            menuManageTouchDragState = { identifier: Number(touch.identifier) };
+            menuManageDraggedCategoryKey = categoryKey;
+            menuManageDraggedElement = target;
+            target.classList.add('dragging');
+            target.style.display = 'none';
+
+            const placeholder = createMenuManageDropPlaceholder(target.offsetHeight);
+            if (target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+        }
+
+        function handleMenuManageCategoryTouchMove(event) {
+            if (!menuManageTouchDragState || !menuManageDraggedElement || !menuManageDropPlaceholder) return;
+            const touch = getMenuManageTouchByIdentifier(event.touches, menuManageTouchDragState.identifier);
+            if (!touch) return;
+            event.preventDefault();
+
+            const list = document.getElementById('menuManageCategoryList');
+            if (!list || typeof document.elementFromPoint !== 'function') return;
+            const source = document.elementFromPoint(touch.clientX, touch.clientY);
+            const target = source && typeof source.closest === 'function'
+                ? source.closest('.menu-manage-category-item[data-category-key]')
+                : null;
+            if (!target || target === menuManageDraggedElement || target === menuManageDropPlaceholder || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (touch.clientY < midpoint) {
+                list.insertBefore(menuManageDropPlaceholder, target);
+            } else {
+                list.insertBefore(menuManageDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function handleMenuManageCategoryTouchEnd(event) {
+            if (!menuManageTouchDragState) return;
+            const touch = getMenuManageTouchByIdentifier(event.changedTouches, menuManageTouchDragState.identifier);
+            if (!touch && event.type !== 'touchcancel') return;
+            event.preventDefault();
+            menuManageIgnoreCategoryClickUntil = Date.now() + 500;
+            commitMenuManageCategoryDrag();
         }
 
         function ensureMenuManageActiveCategory(preferredCategory = '') {
@@ -7430,9 +9070,380 @@
             return Array.isArray(category?.items) ? category.items.length : 0;
         }
 
+        function isMenuSharedMobileViewport() {
+            return !!window && Number(window.innerWidth) <= 768;
+        }
+
+        function getMenuSharedCategoryLabel(categoryKey = '') {
+            const normalized = String(categoryKey || '').trim();
+            if (normalized === '__ALL__') {
+                return `全部分类（${getMenuSharedCategoryCount('__ALL__')}个商品）`;
+            }
+
+            const categoryKeys = getMenuManageCategoryKeys();
+            const fallback = categoryKeys[0] || '';
+            const resolved = normalized && categoryKeys.includes(normalized) ? normalized : fallback;
+            if (!resolved) return '暂无分类';
+            return `${getCategoryName(resolved)}（${getMenuSharedCategoryCount(resolved)}个商品）`;
+        }
+
+        function getMenuSharedMobileCategoryLabel(categoryKey = '') {
+            const normalized = String(categoryKey || '').trim();
+            if (normalized === '__ALL__') {
+                return '全部分类';
+            }
+
+            const categoryKeys = getMenuManageCategoryKeys();
+            const fallback = categoryKeys[0] || '';
+            const resolved = normalized && categoryKeys.includes(normalized) ? normalized : fallback;
+            if (!resolved) return '暂无分类';
+            return getCategoryName(resolved);
+        }
+
+        function normalizeMenuSharedMobileCategoryOrder(order = []) {
+            const categoryKeys = getMenuManageCategoryKeys();
+            const keySet = new Set(categoryKeys);
+            const orderedKeys = Array.from(new Set((order || [])
+                .map(key => String(key || '').trim())
+                .filter(key => keySet.has(key))));
+            const missingKeys = categoryKeys.filter(key => !orderedKeys.includes(key));
+            return [...orderedKeys, ...missingKeys];
+        }
+
+        function createMenuSharedMobileSortPlaceholder(height = 56) {
+            if (!document || typeof document.createElement !== 'function') return null;
+            if (!menuSharedMobileSortDropPlaceholder || !menuSharedMobileSortDropPlaceholder.classList) {
+                menuSharedMobileSortDropPlaceholder = document.createElement('div');
+                menuSharedMobileSortDropPlaceholder.className = 'menu-shared-mobile-sort-placeholder';
+            }
+            menuSharedMobileSortDropPlaceholder.style.height = `${Math.max(54, Number(height) || 56)}px`;
+            return menuSharedMobileSortDropPlaceholder;
+        }
+
+        function resetMenuSharedMobileCategorySortState() {
+            if (menuSharedMobileSortDropPlaceholder && menuSharedMobileSortDropPlaceholder.parentNode) {
+                menuSharedMobileSortDropPlaceholder.parentNode.removeChild(menuSharedMobileSortDropPlaceholder);
+            }
+            menuSharedMobileSortDropPlaceholder = null;
+
+            if (menuSharedMobileSortDraggedElement) {
+                menuSharedMobileSortDraggedElement.classList.remove('dragging');
+                menuSharedMobileSortDraggedElement.style.display = '';
+            }
+            menuSharedMobileSortDraggedElement = null;
+            menuSharedMobileSortTouchDragState = null;
+        }
+
+        function ensureMenuSharedMobileCategorySortTouchListeners() {
+            if (menuSharedMobileSortTouchListenersBound || !document || typeof document.addEventListener !== 'function') return;
+            document.addEventListener('touchmove', handleMenuSharedMobileCategorySortTouchMove, { passive: false });
+            document.addEventListener('touchend', endMenuSharedMobileCategorySortTouch);
+            document.addEventListener('touchcancel', endMenuSharedMobileCategorySortTouch);
+            menuSharedMobileSortTouchListenersBound = true;
+        }
+
+        function getMenuSharedMobileSortTouchByIdentifier(touchList, identifier) {
+            if (!touchList || typeof touchList.length !== 'number') return null;
+            for (let index = 0; index < touchList.length; index += 1) {
+                const touch = touchList[index];
+                if (!touch) continue;
+                if (Number(touch.identifier) === Number(identifier)) return touch;
+            }
+            return null;
+        }
+
+        function syncMenuSharedMobileCategoryDraftOrderFromDom() {
+            const list = document.getElementById('menuSharedMobileCategorySortList');
+            if (!list || typeof list.querySelectorAll !== 'function') return;
+            const nextOrder = Array.from(list.querySelectorAll('.menu-shared-mobile-category-item-sort[data-category-key]'))
+                .map(element => String(element.dataset.categoryKey || '').trim())
+                .filter(Boolean);
+            if (!nextOrder.length) return;
+            menuSharedMobileCategoryDraftOrder = normalizeMenuSharedMobileCategoryOrder(nextOrder);
+        }
+
+        function commitMenuSharedMobileCategorySort() {
+            if (menuSharedMobileSortDraggedElement && menuSharedMobileSortDropPlaceholder && menuSharedMobileSortDropPlaceholder.parentNode) {
+                menuSharedMobileSortDropPlaceholder.parentNode.insertBefore(menuSharedMobileSortDraggedElement, menuSharedMobileSortDropPlaceholder);
+            }
+            syncMenuSharedMobileCategoryDraftOrderFromDom();
+            resetMenuSharedMobileCategorySortState();
+            renderMenuSharedMobileCategoryDrawer();
+        }
+
+        function startMenuSharedMobileCategorySortDrag(event) {
+            const target = event.currentTarget;
+            if (!target || !target.dataset) return;
+
+            menuSharedMobileSortDraggedElement = target;
+            target.classList.add('dragging');
+            setTimeout(() => {
+                if (menuSharedMobileSortDraggedElement === target) {
+                    target.style.display = 'none';
+                }
+            }, 0);
+
+            const placeholder = createMenuSharedMobileSortPlaceholder(target.offsetHeight);
+            if (placeholder && target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.dropEffect = 'move';
+            }
+        }
+
+        function handleMenuSharedMobileCategorySortDragOver(event) {
+            if (!menuSharedMobileSortDraggedElement || !menuSharedMobileSortDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+
+            const list = document.getElementById('menuSharedMobileCategorySortList');
+            const target = event.currentTarget;
+            if (!list || !target || target === menuSharedMobileSortDraggedElement || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (event.clientY < midpoint) {
+                list.insertBefore(menuSharedMobileSortDropPlaceholder, target);
+            } else {
+                list.insertBefore(menuSharedMobileSortDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function endMenuSharedMobileCategorySortDrag() {
+            if (!menuSharedMobileSortDraggedElement) return;
+            commitMenuSharedMobileCategorySort();
+        }
+
+        function startMenuSharedMobileCategorySortTouch(event) {
+            if (!event || !event.currentTarget || !event.changedTouches || !event.changedTouches.length) return;
+            const handle = event.currentTarget;
+            const target = typeof handle.closest === 'function'
+                ? handle.closest('.menu-shared-mobile-category-item-sort[data-category-key]')
+                : null;
+            if (!target || !target.dataset) return;
+
+            event.preventDefault();
+            if (typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+
+            const touch = event.changedTouches[0];
+            menuSharedMobileSortTouchDragState = { identifier: Number(touch.identifier) };
+            menuSharedMobileSortDraggedElement = target;
+            target.classList.add('dragging');
+            target.style.display = 'none';
+
+            const placeholder = createMenuSharedMobileSortPlaceholder(target.offsetHeight);
+            if (placeholder && target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+        }
+
+        function handleMenuSharedMobileCategorySortTouchMove(event) {
+            if (!menuSharedMobileSortTouchDragState || !menuSharedMobileSortDraggedElement || !menuSharedMobileSortDropPlaceholder) return;
+            const touch = getMenuSharedMobileSortTouchByIdentifier(event.touches, menuSharedMobileSortTouchDragState.identifier);
+            if (!touch) return;
+            event.preventDefault();
+
+            const list = document.getElementById('menuSharedMobileCategorySortList');
+            if (!list || typeof document.elementFromPoint !== 'function') return;
+            const source = document.elementFromPoint(touch.clientX, touch.clientY);
+            const target = source && typeof source.closest === 'function'
+                ? source.closest('.menu-shared-mobile-category-item-sort[data-category-key]')
+                : null;
+            if (!target || target === menuSharedMobileSortDraggedElement || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (touch.clientY < midpoint) {
+                list.insertBefore(menuSharedMobileSortDropPlaceholder, target);
+            } else {
+                list.insertBefore(menuSharedMobileSortDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function endMenuSharedMobileCategorySortTouch(event) {
+            if (!menuSharedMobileSortTouchDragState) return;
+            const touch = getMenuSharedMobileSortTouchByIdentifier(event.changedTouches, menuSharedMobileSortTouchDragState.identifier);
+            if (!touch && event.type !== 'touchcancel') return;
+            if (!menuSharedMobileSortDraggedElement) return;
+            event.preventDefault();
+            commitMenuSharedMobileCategorySort();
+        }
+
+        function openMenuSharedMobileCategoryDrawer() {
+            if (!isMenuSharedMobileViewport()) return;
+            const sheet = document.getElementById('menuSharedMobileCategorySheet');
+            if (!sheet) return;
+
+            ensureMenuManageActiveCategory();
+            ensureMenuSharedCategoryFilter();
+
+            menuSharedMobileCategoryDrawerOpen = true;
+            menuSharedMobileCategoryMode = 'select';
+            menuSharedMobileCategoryDraftOrder = normalizeMenuSharedMobileCategoryOrder(getMenuManageCategoryKeys());
+            renderMenuSharedMobileCategoryDrawer();
+            sheet.classList.add('active');
+        }
+
+        function closeMenuSharedMobileCategoryDrawer() {
+            const sheet = document.getElementById('menuSharedMobileCategorySheet');
+            if (sheet && sheet.classList) {
+                sheet.classList.remove('active');
+            }
+            menuSharedMobileCategoryDrawerOpen = false;
+            menuSharedMobileCategoryMode = 'select';
+            menuSharedMobileCategoryDraftOrder = [];
+            resetMenuSharedMobileCategorySortState();
+        }
+
+        function toggleMenuSharedMobileCategoryMode() {
+            setMenuSharedMobileCategoryMode(menuSharedMobileCategoryMode === 'sort' ? 'select' : 'sort');
+        }
+
+        function setMenuSharedMobileCategoryMode(mode = 'select') {
+            menuSharedMobileCategoryMode = mode === 'sort' ? 'sort' : 'select';
+            if (menuSharedMobileCategoryMode === 'sort') {
+                menuSharedMobileCategoryDraftOrder = normalizeMenuSharedMobileCategoryOrder(
+                    menuSharedMobileCategoryDraftOrder.length ? menuSharedMobileCategoryDraftOrder : getMenuManageCategoryKeys()
+                );
+                resetMenuSharedMobileCategorySortState();
+            }
+            renderMenuSharedMobileCategoryDrawer();
+        }
+
+        function selectMenuSharedMobileCategory(categoryKey = '') {
+            closeMenuSharedMobileCategoryDrawer();
+            setMenuSharedCategoryFilter(categoryKey);
+        }
+
+        function saveMenuSharedMobileCategoryOrder() {
+            menuSharedMobileCategoryDraftOrder = normalizeMenuSharedMobileCategoryOrder(menuSharedMobileCategoryDraftOrder);
+            if (!menuSharedMobileCategoryDraftOrder.length) {
+                closeMenuSharedMobileCategoryDrawer();
+                return;
+            }
+
+            saveMenuManageCategoryOrder(menuSharedMobileCategoryDraftOrder);
+            closeMenuSharedMobileCategoryDrawer();
+            renderMenuSharedContext();
+
+            if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            } else {
+                renderMenu();
+            }
+            showToast('分类顺序已更新');
+        }
+
+        function renderMenuSharedMobileCategoryDrawer() {
+            const sheet = document.getElementById('menuSharedMobileCategorySheet');
+            const title = document.getElementById('menuSharedMobileCategorySheetTitle');
+            const subtitle = document.getElementById('menuSharedMobileCategorySheetSubtitle');
+            const modeBtn = document.getElementById('menuSharedMobileCategoryModeBtn');
+            const body = document.getElementById('menuSharedMobileCategorySheetBody');
+            const footer = document.getElementById('menuSharedMobileCategorySheetFooter');
+            if (!sheet || !title || !subtitle || !modeBtn || !body || !footer) return;
+
+            if (!menuSharedMobileCategoryDrawerOpen) {
+                sheet.classList.remove('active');
+                footer.classList.remove('active');
+                body.innerHTML = '';
+                footer.innerHTML = '';
+                return;
+            }
+
+            const isSortMode = menuSharedMobileCategoryMode === 'sort';
+            title.textContent = isSortMode ? '调整分类顺序' : '选择分类';
+            subtitle.textContent = isSortMode
+                ? '拖动左侧手柄调整顺序，保存后同步到分类导航。'
+                : '点击分类立即切换当前范围。';
+            modeBtn.textContent = isSortMode ? '返回选择' : '调整顺序';
+
+            if (!isSortMode) {
+                const currentFilter = menuSharedCategoryFilter || getMenuSharedDefaultCategory();
+                const entries = [
+                    { key: '__ALL__', label: getMenuSharedMobileCategoryLabel('__ALL__') },
+                    ...normalizeMenuSharedMobileCategoryOrder(getMenuManageCategoryKeys()).map(categoryKey => ({
+                        key: categoryKey,
+                        label: getMenuSharedMobileCategoryLabel(categoryKey)
+                    }))
+                ];
+
+                body.innerHTML = `
+                    <div class="menu-shared-mobile-category-list">
+                        ${entries.map(entry => `
+                            <div class="menu-shared-mobile-category-row">
+                                <button
+                                    type="button"
+                                    class="menu-shared-mobile-category-item ${entry.key === currentFilter ? 'is-selected' : ''}"
+                                    onclick="selectMenuSharedMobileCategory('${escapePreviewText(entry.key)}')"
+                                >
+                                    <span class="menu-shared-mobile-category-item-mark">✓</span>
+                                    <span class="menu-shared-mobile-category-item-label">${escapePreviewText(entry.label)}</span>
+                                </button>
+                                ${entry.key === '__ALL__' ? '' : `
+                                    <button
+                                        type="button"
+                                        class="menu-shared-mobile-category-edit-btn"
+                                        aria-label="编辑分类"
+                                        onclick="event.stopPropagation(); closeMenuSharedMobileCategoryDrawer(); handleCategoryEditAction('${escapePreviewText(entry.key)}')"
+                                    >✎</button>
+                                `}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                footer.innerHTML = '';
+                footer.classList.remove('active');
+            } else {
+                menuSharedMobileCategoryDraftOrder = normalizeMenuSharedMobileCategoryOrder(menuSharedMobileCategoryDraftOrder);
+                body.innerHTML = `
+                    <div class="menu-shared-mobile-category-list" id="menuSharedMobileCategorySortList">
+                        ${menuSharedMobileCategoryDraftOrder.map(categoryKey => `
+                            <div class="menu-shared-mobile-category-item menu-shared-mobile-category-item-sort" data-category-key="${escapePreviewText(categoryKey)}" draggable="true">
+                                <span class="menu-shared-mobile-drag-handle" aria-hidden="true">⠿</span>
+                                <span class="menu-shared-mobile-category-item-label">${escapePreviewText(getMenuSharedMobileCategoryLabel(categoryKey))}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                footer.innerHTML = `
+                    <button type="button" class="btn btn-default" onclick="closeMenuSharedMobileCategoryDrawer()">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveMenuSharedMobileCategoryOrder()">保存顺序</button>
+                `;
+                footer.classList.add('active');
+
+                if (typeof body.querySelectorAll === 'function') {
+                    const items = body.querySelectorAll('.menu-shared-mobile-category-item-sort[data-category-key]');
+                    items.forEach(item => {
+                        item.addEventListener('dragstart', startMenuSharedMobileCategorySortDrag);
+                        item.addEventListener('dragover', handleMenuSharedMobileCategorySortDragOver);
+                        item.addEventListener('dragend', endMenuSharedMobileCategorySortDrag);
+                    });
+
+                    ensureMenuSharedMobileCategorySortTouchListeners();
+                    const dragHandles = body.querySelectorAll('.menu-shared-mobile-drag-handle');
+                    dragHandles.forEach(handle => {
+                        handle.addEventListener('touchstart', startMenuSharedMobileCategorySortTouch, { passive: false });
+                    });
+                }
+            }
+
+            sheet.classList.add('active');
+        }
+
         function renderMenuSharedContext() {
             const wrap = document.getElementById('menuSharedContext');
             const categorySelect = document.getElementById('menuManageCategorySelect');
+            const mobileTrigger = document.getElementById('menuManageCategoryMobileTrigger');
+            const mobileTriggerText = document.getElementById('menuManageCategoryMobileTriggerText');
             const productKeywordInput = document.getElementById('menuManageProductKeyword');
             if (!wrap || !categorySelect || !productKeywordInput) return;
 
@@ -7446,7 +9457,12 @@
             }
 
             wrap.style.display = isVisible ? '' : 'none';
-            if (!isVisible) return;
+            if (!isVisible) {
+                if (menuSharedMobileCategoryDrawerOpen) {
+                    closeMenuSharedMobileCategoryDrawer();
+                }
+                return;
+            }
 
             ensureMenuManageActiveCategory();
             ensureMenuSharedCategoryFilter();
@@ -7465,7 +9481,21 @@
                 categorySelect.value = menuSharedCategoryFilter || getMenuSharedDefaultCategory();
             }
 
+            if (mobileTrigger) {
+                mobileTrigger.disabled = !categoryKeys.length;
+            }
+            if (mobileTriggerText) {
+                mobileTriggerText.textContent = categoryKeys.length
+                    ? getMenuSharedMobileCategoryLabel(menuSharedCategoryFilter || getMenuSharedDefaultCategory())
+                    : '暂无分类';
+            }
             productKeywordInput.value = menuManageProductKeyword;
+
+            if ((!isMenuSharedMobileViewport() || !categoryKeys.length) && menuSharedMobileCategoryDrawerOpen) {
+                closeMenuSharedMobileCategoryDrawer();
+            } else if (menuSharedMobileCategoryDrawerOpen) {
+                renderMenuSharedMobileCategoryDrawer();
+            }
         }
 
         function setMenuSharedCategoryFilter(categoryKey = '') {
@@ -7602,20 +9632,40 @@
                 } else {
                     categoryList.innerHTML = visibleKeys.map(categoryKey => {
                         const category = productsData[categoryKey] || {};
-                        const count = Array.isArray(category.items) ? category.items.length : 0;
                         return `
-                            <button type="button" class="menu-manage-category-item ${categoryKey === menuManageActiveCategory ? 'active' : ''}" onclick="setMenuManageActiveCategory('${escapePreviewText(categoryKey)}')">
-                                <span class="menu-manage-category-item-main">
-                                    <span class="category-icon">${escapePreviewText(category.icon || '☕')}</span>
-                                    <span class="menu-manage-category-item-text">
-                                        <span class="menu-manage-category-item-name">${escapePreviewText(getCategoryName(categoryKey))}</span>
-                                        <span class="menu-manage-category-item-meta">${count} 个商品</span>
-                                    </span>
+                            <div class="menu-manage-category-item ${categoryKey === menuManageActiveCategory ? 'active' : ''}" data-category-key="${escapePreviewText(categoryKey)}" draggable="true">
+                                <button type="button" class="menu-manage-category-item-select" onclick="setMenuManageActiveCategory('${escapePreviewText(categoryKey)}')">
+                                    <span class="menu-manage-category-item-left">
+                                        <span class="drag-handle" aria-hidden="true">⠿</span>
+                                            <span class="menu-manage-category-item-main">
+                                                <span class="category-icon">${escapePreviewText(category.icon || '☕')}</span>
+                                                <span class="menu-manage-category-item-text">
+                                                    <span class="menu-manage-category-item-name">${escapePreviewText(getCategoryName(categoryKey))}</span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                </button>
+                                <span class="menu-manage-category-item-actions">
+                                    <button type="button" class="category-edit-btn" aria-label="编辑分类" onclick="event.stopPropagation(); handleCategoryEditAction('${escapePreviewText(categoryKey)}')">✎</button>
                                 </span>
-                                <span class="menu-manage-category-item-count">${count}</span>
-                            </button>
+                            </div>
                         `;
                     }).join('');
+
+                    if (typeof categoryList.querySelectorAll === 'function') {
+                        const categoryButtons = categoryList.querySelectorAll('.menu-manage-category-item[data-category-key]');
+                        categoryButtons.forEach(button => {
+                            button.addEventListener('dragstart', handleMenuManageCategoryDragStart);
+                            button.addEventListener('dragover', handleMenuManageCategoryDragOver);
+                            button.addEventListener('drop', handleMenuManageCategoryDrop);
+                            button.addEventListener('dragend', handleMenuManageCategoryDragEnd);
+                        });
+                        ensureMenuManageCategoryTouchListeners();
+                        const dragHandles = categoryList.querySelectorAll('.menu-manage-category-item .drag-handle');
+                        dragHandles.forEach(handle => {
+                            handle.addEventListener('touchstart', handleMenuManageCategoryTouchStart, { passive: false });
+                        });
+                    }
                 }
             }
 
@@ -7710,6 +9760,13 @@
                 summary = `${globalEntries.length} 个去重结果`;
                 contentHtml = globalEntries.length
                     ? `
+                        <div class="product-table-head">
+                            <span>缩略图</span>
+                            <span>商品信息</span>
+                            <span>售价</span>
+                            <span>状态</span>
+                            <span>操作</span>
+                        </div>
                         <div class="product-grid">
                             ${globalEntries.map(entry => renderMenuManageProductCard(entry.product, {
                                 categoryKey: getBatchFixedPriceEntryCategoryKeys(entry)[0] || menuManageActiveCategory
@@ -7721,6 +9778,13 @@
                 const categoryName = menuManageActiveCategory;
                 contentHtml = currentItems.length
                     ? `
+                        <div class="product-table-head">
+                            <span>缩略图</span>
+                            <span>商品信息</span>
+                            <span>售价</span>
+                            <span>状态</span>
+                            <span>操作</span>
+                        </div>
                         <div class="product-grid">
                             ${currentItems.map(product => renderMenuManageProductCard(product, { categoryKey: menuManageActiveCategory })).join('')}
                             <div class="product-card add-product-card" onclick="openCopyProductModal('${categoryName}')">
@@ -7751,6 +9815,7 @@
         }
 
         function setMenuManageActiveCategory(categoryKey) {
+            if (Date.now() < menuManageIgnoreCategoryClickUntil) return;
             setMenuSharedCategoryFilter(String(categoryKey || '').trim());
         }
 
@@ -7800,9 +9865,10 @@
         }
 
         // ==================== 分类管理 ====================
-        function generateLangInputs(containerId, type) {
+        function generateLangInputs(containerId, type, options = {}) {
             const container = document.getElementById(containerId);
             const langs = getDeviceLangs();
+            const showProductSpecFields = type === 'product' ? options.showProductSpecFields !== false : false;
             
             container.innerHTML = langs.map(lang => `
                 <div class="lang-section">
@@ -7814,7 +9880,7 @@
                         <label class="form-label">${type === 'category' ? '名称' : '商品名称'} ${lang === langs[0] ? '<span class="required">*</span>' : ''}</label>
                         <input type="text" class="form-input ${type}-name-${lang}" placeholder="请输入${getLangName(lang)}名称">
                     </div>
-                    ${type === 'product' ? `
+                    ${type === 'product' && showProductSpecFields ? `
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">咖啡豆描述</label>
@@ -7844,9 +9910,212 @@
             `).join('');
         }
 
+        function setSelectedCategoryIcon(icon = '☕') {
+            selectedCategoryIcon = icon || '☕';
+            if (typeof document.querySelectorAll !== 'function') return;
+            document.querySelectorAll('.icon-option').forEach(option => {
+                option.classList.toggle('selected', option.dataset.icon === selectedCategoryIcon);
+            });
+        }
+
+        function collectCategoryFormNames() {
+            const names = {};
+            getDeviceLangs().forEach(lang => {
+                const input = document.querySelector('.category-name-' + lang);
+                const value = input && typeof input.value === 'string' ? input.value.trim() : '';
+                if (value) names[lang] = value;
+            });
+            return names;
+        }
+
+        function getCategoryPrimaryInputValue() {
+            const firstLang = getDeviceLangs()[0];
+            const input = document.querySelector('.category-name-' + firstLang);
+            return input && typeof input.value === 'string' ? input.value.trim() : '';
+        }
+
+        function replaceCategoryKeyInArray(values = [], fromKey = '', toKey = '') {
+            const normalizedFrom = String(fromKey || '').trim();
+            const normalizedTo = String(toKey || '').trim();
+            return Array.from(new Set((values || []).map(value => {
+                const normalizedValue = String(value || '').trim();
+                if (!normalizedValue) return '';
+                return normalizedValue === normalizedFrom ? normalizedTo : normalizedValue;
+            }).filter(Boolean)));
+        }
+
+        function replaceCategoryKeyInSavedAssignments(fromKey = '', toKey = '') {
+            const normalizedFrom = String(fromKey || '').trim();
+            const normalizedTo = String(toKey || '').trim();
+            if (!normalizedFrom) return;
+
+            const assignments = getSavedProductCategoryAssignments();
+            Object.keys(assignments).forEach(productId => {
+                assignments[productId] = replaceCategoryKeyInArray(assignments[productId], normalizedFrom, normalizedTo);
+            });
+            localStorage.setItem(PRODUCT_CATEGORY_ASSIGNMENTS_KEY, JSON.stringify(assignments));
+        }
+
+        function replaceCategoryKeyInCopyCatalog(fromKey = '', toKey = '') {
+            const normalizedFrom = String(fromKey || '').trim();
+            if (!normalizedFrom) return;
+            const catalog = getCopyProductDeviceCategoryCatalog();
+            Object.keys(catalog).forEach(deviceId => {
+                catalog[deviceId] = replaceCategoryKeyInArray(catalog[deviceId], normalizedFrom, toKey);
+            });
+            persistCopyProductDeviceCategoryCatalog(catalog);
+        }
+
+        function replaceCategoryKeyInState(fromKey = '', toKey = '') {
+            const normalizedFrom = String(fromKey || '').trim();
+            const normalizedTo = String(toKey || '').trim();
+            if (!normalizedFrom || normalizedFrom === normalizedTo) return;
+
+            if (menuManageActiveCategory === normalizedFrom) menuManageActiveCategory = normalizedTo;
+            if (menuSharedCategoryFilter === normalizedFrom) menuSharedCategoryFilter = normalizedTo;
+            if (batchFixedPriceActiveCategory === normalizedFrom) batchFixedPriceActiveCategory = normalizedTo;
+            if (copyProductPreselectedCategory === normalizedFrom) copyProductPreselectedCategory = normalizedTo;
+            if (productCopyTargetCategory === normalizedFrom) productCopyTargetCategory = normalizedTo;
+            if (productCopySourceCategory === normalizedFrom) productCopySourceCategory = normalizedTo;
+            if (editingProductCategory === normalizedFrom) editingProductCategory = normalizedTo;
+
+            selectedProductModalCategoryKeys = new Set(replaceCategoryKeyInArray(Array.from(selectedProductModalCategoryKeys), normalizedFrom, normalizedTo));
+            selectedCopyProductTargetCategoryKeys = new Set(replaceCategoryKeyInArray(Array.from(selectedCopyProductTargetCategoryKeys), normalizedFrom, normalizedTo));
+            menuSharedMobileCategoryDraftOrder = replaceCategoryKeyInArray(menuSharedMobileCategoryDraftOrder, normalizedFrom, normalizedTo);
+        }
+
+        function getCategoryProductIds(categoryKey = '') {
+            const category = productsData[categoryKey];
+            if (!category || !Array.isArray(category.items)) return [];
+            return Array.from(new Set(category.items
+                .map(item => Number(item && item.id))
+                .filter(Number.isFinite)));
+        }
+
+        function getCategoryDeleteImpact(categoryKey = '') {
+            const normalizedKey = String(categoryKey || '').trim();
+            const category = productsData[normalizedKey];
+            if (!category) {
+                return {
+                    totalProducts: 0,
+                    orphanProductIds: [],
+                    orphanProductsCount: 0,
+                    requiresTransfer: false,
+                    transferCategoryKeys: [],
+                    canDelete: false
+                };
+            }
+
+            const productIds = getCategoryProductIds(normalizedKey);
+            const orphanProductIds = productIds.filter(productId => {
+                const assigned = getAssignedCategoriesForProduct(productId, [normalizedKey]);
+                return assigned.length <= 1;
+            });
+            const transferCategoryKeys = Object.keys(productsData || {}).filter(key => key !== normalizedKey);
+            return {
+                totalProducts: productIds.length,
+                orphanProductIds,
+                orphanProductsCount: orphanProductIds.length,
+                requiresTransfer: orphanProductIds.length > 0,
+                transferCategoryKeys,
+                canDelete: orphanProductIds.length === 0 || transferCategoryKeys.length > 0
+            };
+        }
+
+        function applyCategoryChanges(currentKey = '', nextKey = '', categoryNames = {}, icon = '☕') {
+            const normalizedCurrentKey = String(currentKey || '').trim();
+            const normalizedNextKey = String(nextKey || '').trim();
+            if (!normalizedCurrentKey || !productsData[normalizedCurrentKey]) return false;
+            if (!normalizedNextKey) return false;
+            if (normalizedCurrentKey !== normalizedNextKey && Object.prototype.hasOwnProperty.call(productsData, normalizedNextKey)) {
+                return false;
+            }
+
+            const currentCategory = productsData[normalizedCurrentKey];
+            const nextCategory = {
+                ...currentCategory,
+                icon: icon || currentCategory.icon || '☕',
+                names: { ...categoryNames }
+            };
+
+            if (normalizedCurrentKey === normalizedNextKey) {
+                productsData[normalizedCurrentKey] = nextCategory;
+                return true;
+            }
+
+            delete productsData[normalizedCurrentKey];
+            productsData[normalizedNextKey] = nextCategory;
+
+            const savedOrder = loadMenuManageCategoryOrder();
+            if (savedOrder.length) {
+                saveMenuManageCategoryOrder(replaceCategoryKeyInArray(savedOrder, normalizedCurrentKey, normalizedNextKey));
+            }
+            replaceCategoryKeyInSavedAssignments(normalizedCurrentKey, normalizedNextKey);
+            replaceCategoryKeyInCopyCatalog(normalizedCurrentKey, normalizedNextKey);
+            replaceCategoryKeyInState(normalizedCurrentKey, normalizedNextKey);
+            return true;
+        }
+
+        function deleteCategoryWithTransfer(categoryKey = '', transferCategoryKey = '') {
+            const normalizedKey = String(categoryKey || '').trim();
+            if (!normalizedKey || !productsData[normalizedKey]) return false;
+
+            const impact = getCategoryDeleteImpact(normalizedKey);
+            const normalizedTransferKey = String(transferCategoryKey || '').trim();
+            if (impact.requiresTransfer) {
+                if (!normalizedTransferKey || normalizedTransferKey === normalizedKey || !impact.transferCategoryKeys.includes(normalizedTransferKey)) {
+                    return false;
+                }
+            }
+
+            const productIds = getCategoryProductIds(normalizedKey);
+            productIds.forEach(productId => {
+                const assigned = getAssignedCategoriesForProduct(productId, [normalizedKey]);
+                let nextAssigned = assigned.filter(key => key !== normalizedKey);
+                if (!nextAssigned.length && normalizedTransferKey) {
+                    nextAssigned = [normalizedTransferKey];
+                }
+                persistProductCategoryAssignments(productId, nextAssigned);
+            });
+
+            applySavedProductCategoryAssignments();
+            delete productsData[normalizedKey];
+            replaceCategoryKeyInSavedAssignments(normalizedKey, '');
+            replaceCategoryKeyInCopyCatalog(normalizedKey, '');
+
+            const savedOrder = loadMenuManageCategoryOrder();
+            if (savedOrder.length) {
+                saveMenuManageCategoryOrder(savedOrder.filter(key => key !== normalizedKey));
+            }
+
+            const replacementKey = normalizedTransferKey || getMenuManageCategoryKeys()[0] || '';
+            replaceCategoryKeyInState(normalizedKey, replacementKey);
+            return true;
+        }
+
+        function renderCategoryModalMeta(categoryKey = '') {
+            const dangerZone = document.getElementById('categoryModalDangerZone');
+            if (!dangerZone) return;
+
+            if (categoryModalMode !== 'edit' || !categoryKey || !productsData[categoryKey]) {
+                dangerZone.style.display = 'none';
+                return;
+            }
+
+            dangerZone.style.display = '';
+        }
+
         function openCategoryModal(context = 'default') {
             categoryModalContext = context || 'default';
+            categoryModalMode = 'create';
+            editingCategoryKey = '';
             generateLangInputs('categoryLangInputs', 'category');
+            setSelectedCategoryIcon('☕');
+            const title = document.getElementById('categoryModalTitle');
+            const submitBtn = document.getElementById('categoryModalSubmitBtn');
+            if (title) title.textContent = '新增分类';
+            if (submitBtn) submitBtn.textContent = '确认添加';
+            renderCategoryModalMeta('');
             const modal = document.getElementById('categoryModal');
             if (modal) {
                 modal.style.zIndex = categoryModalContext === 'copyTargetCategory' ? '1100' : '';
@@ -7863,25 +10132,78 @@
                 modal.style.zIndex = '';
             }
             categoryModalContext = 'default';
+            categoryModalMode = 'create';
+            editingCategoryKey = '';
         }
 
         function initIconPicker() {
             document.querySelectorAll('.icon-option').forEach(option => {
                 option.addEventListener('click', function() {
-                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedCategoryIcon = this.dataset.icon;
+                    setSelectedCategoryIcon(this.dataset.icon);
                 });
             });
         }
 
-        function addCategory() {
+        function openEditCategoryModal(categoryKey = '') {
+            const normalizedKey = String(categoryKey || '').trim();
+            const category = productsData[normalizedKey];
+            if (!normalizedKey || !category) return;
+
+            categoryModalContext = 'default';
+            categoryModalMode = 'edit';
+            editingCategoryKey = normalizedKey;
+            generateLangInputs('categoryLangInputs', 'category');
+
+            const langs = getDeviceLangs();
+            langs.forEach(lang => {
+                const input = document.querySelector('.category-name-' + lang);
+                if (input) {
+                    input.value = category.names?.[lang] || (lang === langs[0] ? normalizedKey : '');
+                }
+            });
+
+            setSelectedCategoryIcon(category.icon || '☕');
+            const title = document.getElementById('categoryModalTitle');
+            const submitBtn = document.getElementById('categoryModalSubmitBtn');
+            if (title) title.textContent = `编辑分类：${getCategoryName(normalizedKey)}`;
+            if (submitBtn) submitBtn.textContent = '保存修改';
+            renderCategoryModalMeta(normalizedKey);
+
+            const modal = document.getElementById('categoryModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function saveCategory() {
             const langs = getDeviceLangs();
             const firstLang = langs[0];
-            const firstName = document.querySelector('.category-name-' + firstLang).value.trim();
-            
+            const firstName = getCategoryPrimaryInputValue();
+
             if (!firstName) {
                 showToast(`请输入${getLangName(firstLang)}分类名称`, 'error');
+                return;
+            }
+
+            const categoryNames = collectCategoryFormNames();
+            if (!categoryNames[firstLang]) {
+                categoryNames[firstLang] = firstName;
+            }
+
+            if (categoryModalMode === 'edit') {
+                const currentKey = editingCategoryKey;
+                if (!currentKey || !productsData[currentKey]) return;
+                if (firstName !== currentKey && Object.prototype.hasOwnProperty.call(productsData, firstName)) {
+                    showToast('分类名称已存在', 'error');
+                    return;
+                }
+                const updated = applyCategoryChanges(currentKey, firstName, categoryNames, selectedCategoryIcon);
+                if (!updated) {
+                    showToast('分类保存失败', 'error');
+                    return;
+                }
+                closeCategoryModal();
+                renderMenu();
+                updateStats();
+                showToast('分类修改成功');
                 return;
             }
 
@@ -7889,12 +10211,6 @@
                 showToast('分类名称已存在', 'error');
                 return;
             }
-
-            const categoryNames = {};
-            langs.forEach(lang => {
-                const name = document.querySelector('.category-name-' + lang).value.trim();
-                if (name) categoryNames[lang] = name;
-            });
 
             productsData[firstName] = {
                 icon: selectedCategoryIcon,
@@ -7912,6 +10228,10 @@
             showToast('分类添加成功');
         }
 
+        function addCategory() {
+            saveCategory();
+        }
+
         function editCategory(categoryName) {
             const newName = prompt('修改分类名称（主语言）：', categoryName);
             if (newName && newName.trim() && newName !== categoryName) {
@@ -7920,21 +10240,132 @@
                     showToast('分类名称已存在', 'error');
                     return;
                 }
-                const data = productsData[categoryName];
-                delete productsData[categoryName];
-                productsData[normalizedName] = data;
+                const data = productsData[categoryName] || {};
+                const names = {
+                    ...(data.names || {}),
+                    [getDeviceLangs()[0]]: normalizedName
+                };
+                if (!applyCategoryChanges(categoryName, normalizedName, names, data.icon || '☕')) {
+                    showToast('分类修改失败', 'error');
+                    return;
+                }
                 renderMenu();
+                updateStats();
                 showToast('分类修改成功');
             }
         }
 
-        function deleteCategory(categoryName) {
-            if (confirm(`确定要删除分类 "${getCategoryName(categoryName)}" 吗？该分类下的所有商品也将被删除。`)) {
-                delete productsData[categoryName];
-                renderMenu();
-                updateStats();
-                showToast('分类已删除');
+        function openCategoryDeleteModal(categoryKey = editingCategoryKey) {
+            const normalizedKey = String(categoryKey || '').trim();
+            const category = productsData[normalizedKey];
+            if (!normalizedKey || !category) return;
+
+            pendingDeleteCategoryKey = normalizedKey;
+            const impact = getCategoryDeleteImpact(normalizedKey);
+            const title = document.getElementById('categoryDeleteModalTitle');
+            const summary = document.getElementById('categoryDeleteSummary');
+            const transferGroup = document.getElementById('categoryDeleteTransferGroup');
+            const transferSelect = document.getElementById('categoryDeleteTransferSelect');
+            const hint = document.getElementById('categoryDeleteTransferHint');
+            const modal = document.getElementById('categoryDeleteModal');
+
+            if (title) title.textContent = `删除分类：${getCategoryName(normalizedKey)}`;
+            if (summary) {
+                if (!impact.totalProducts) {
+                    summary.innerHTML = '<div>当前分类下没有商品，可直接删除。</div>';
+                } else if (!impact.requiresTransfer) {
+                    summary.innerHTML = `
+                        <div>当前分类商品：<strong>${impact.totalProducts} 个</strong></div>
+                        <div>仅属于该分类的商品：<strong>0 个</strong></div>
+                        <div class="category-delete-note">删除后不会影响商品可见性，可直接删除。</div>
+                    `;
+                } else if (!impact.transferCategoryKeys.length) {
+                    summary.innerHTML = `
+                        <div>当前分类商品：<strong>${impact.totalProducts} 个</strong></div>
+                        <div>仅属于该分类的商品：<strong>${impact.orphanProductsCount} 个</strong></div>
+                        <div class="category-delete-empty">暂无其他分类可承接，请先新增其他分类，再删除当前分类。</div>
+                    `;
+                } else {
+                    summary.innerHTML = `
+                        <div>当前分类商品：<strong>${impact.totalProducts} 个</strong></div>
+                        <div>仅属于该分类的商品：<strong>${impact.orphanProductsCount} 个</strong></div>
+                        <div class="category-delete-note">这些商品需要先迁移到其他分类，才能删除当前分类。</div>
+                    `;
+                }
             }
+
+            if (transferGroup && transferSelect) {
+                const showTransfer = impact.requiresTransfer && impact.transferCategoryKeys.length > 0;
+                transferGroup.style.display = showTransfer ? '' : 'none';
+                if (showTransfer) {
+                    transferSelect.innerHTML = `
+                        <option value="">请选择分类</option>
+                        ${impact.transferCategoryKeys.map(key => `<option value="${escapePreviewText(key)}">${escapePreviewText(getCategoryName(key))}</option>`).join('')}
+                    `;
+                    transferSelect.value = '';
+                    if (hint) {
+                        hint.textContent = '仅属于当前分类的商品会迁移到这里。';
+                    }
+                } else {
+                    transferSelect.innerHTML = '';
+                }
+            }
+
+            if (modal) modal.classList.add('active');
+            updateCategoryDeleteConfirmState();
+        }
+
+        function closeCategoryDeleteModal() {
+            const modal = document.getElementById('categoryDeleteModal');
+            if (modal) modal.classList.remove('active');
+            pendingDeleteCategoryKey = '';
+        }
+
+        function updateCategoryDeleteConfirmState() {
+            const confirmBtn = document.getElementById('categoryDeleteConfirmBtn');
+            const transferSelect = document.getElementById('categoryDeleteTransferSelect');
+            if (!confirmBtn) return;
+            const impact = getCategoryDeleteImpact(pendingDeleteCategoryKey);
+            confirmBtn.disabled = !pendingDeleteCategoryKey
+                || !impact.canDelete
+                || (impact.requiresTransfer && (!transferSelect || !String(transferSelect.value || '').trim()));
+        }
+
+        function confirmCategoryDelete() {
+            const categoryKey = pendingDeleteCategoryKey;
+            if (!categoryKey) return;
+            const impact = getCategoryDeleteImpact(categoryKey);
+            const transferSelect = document.getElementById('categoryDeleteTransferSelect');
+            const transferKey = transferSelect ? String(transferSelect.value || '').trim() : '';
+
+            if (!impact.canDelete) {
+                showToast('请先新增其他分类，再删除当前分类', 'error');
+                return;
+            }
+            if (impact.requiresTransfer && !transferKey) {
+                showToast('请选择承接分类', 'error');
+                return;
+            }
+
+            const deleted = deleteCategoryWithTransfer(categoryKey, transferKey);
+            if (!deleted) {
+                showToast('分类删除失败', 'error');
+                return;
+            }
+
+            closeCategoryDeleteModal();
+            closeCategoryModal();
+            renderMenu();
+            updateStats();
+            showToast('分类已删除');
+        }
+
+        function deleteCategory(categoryName) {
+            openCategoryDeleteModal(categoryName);
+        }
+
+        function handleCategoryEditAction(categoryKey) {
+            openEditCategoryModal(categoryKey);
         }
 
         // ==================== 商品管理 ====================
@@ -7968,6 +10399,7 @@
                 if (imageInput) {
                     imageInput.value = result;
                 }
+                renderProductImageComparePreview();
                 showToast('本地图片已加载');
                 input.value = '';
             };
@@ -7976,6 +10408,52 @@
                 input.value = '';
             };
             reader.readAsDataURL(file);
+        }
+
+        function setProductImagePreviewElement(imageEl, emptyEl, imageUrl = '') {
+            if (!imageEl || !emptyEl) return;
+            const normalized = String(imageUrl || '').trim();
+            if (normalized) {
+                imageEl.src = normalized;
+                imageEl.style.display = 'block';
+                emptyEl.style.display = 'none';
+                return;
+            }
+            if (typeof imageEl.removeAttribute === 'function') imageEl.removeAttribute('src');
+            else imageEl.src = '';
+            imageEl.style.display = 'none';
+            emptyEl.style.display = 'flex';
+        }
+
+        function renderProductImageComparePreview() {
+            const compareWrap = document.getElementById('productImageCompare');
+            const statusEl = document.getElementById('productImageCompareStatus');
+            const beforeImageEl = document.getElementById('productImageBeforePreview');
+            const beforeEmptyEl = document.getElementById('productImageBeforeEmpty');
+            const afterImageEl = document.getElementById('productImageAfterPreview');
+            const afterEmptyEl = document.getElementById('productImageAfterEmpty');
+            if (!compareWrap || !statusEl || !beforeImageEl || !beforeEmptyEl || !afterImageEl || !afterEmptyEl) return;
+
+            const isCopyMode = editingProductId === null && !!productCopySource;
+            if (!isCopyMode) {
+                compareWrap.style.display = 'none';
+                setProductImagePreviewElement(beforeImageEl, beforeEmptyEl, '');
+                setProductImagePreviewElement(afterImageEl, afterEmptyEl, '');
+                statusEl.textContent = '未替换图片';
+                statusEl.classList.remove('replaced');
+                return;
+            }
+
+            const oldImage = String(productCopySource?.image || '').trim();
+            const imageInput = document.getElementById('productImage');
+            const newImage = String(imageInput?.value || '').trim();
+            const isReplaced = newImage !== oldImage;
+
+            compareWrap.style.display = 'block';
+            setProductImagePreviewElement(beforeImageEl, beforeEmptyEl, oldImage);
+            setProductImagePreviewElement(afterImageEl, afterEmptyEl, newImage);
+            statusEl.textContent = isReplaced ? '已替换图片' : '未替换图片';
+            statusEl.classList.toggle('replaced', isReplaced);
         }
 
         function cloneProductValue(value) {
@@ -8058,6 +10536,316 @@
                 if (strengthEl) strengthEl.value = spec.strength || '';
                 if (noteEl) noteEl.value = spec.note || '';
             });
+            renderProductImageComparePreview();
+        }
+
+        function getCopyProductDestinationDeviceIds() {
+            if (copyProductScope !== 'other') return [currentDevice];
+            const validTargetIds = new Set(getCopyProductTargetDeviceOptions().map(option => option.id));
+            return Array.from(copyProductTargetDeviceIds).filter(deviceId => validTargetIds.has(deviceId));
+        }
+
+        function getCopyProductDestinationDeviceId() {
+            return getCopyProductDestinationDeviceIds()[0] || '';
+        }
+
+        function getCopyProductDestinationDeviceLabel() {
+            const targetDeviceIds = getCopyProductDestinationDeviceIds();
+            if (!targetDeviceIds.length) return '';
+            if (targetDeviceIds.length === 1) {
+                const single = targetDeviceIds[0];
+                return getDeviceSearchDisplayLabel(single) || single;
+            }
+            if (targetDeviceIds.length <= 3) {
+                return targetDeviceIds.map(deviceId => getDeviceSearchDisplayLabel(deviceId) || deviceId).join('、');
+            }
+            return `已选 ${targetDeviceIds.length} 台设备`;
+        }
+
+        function getCopyProductTargetDeviceOptions() {
+            const options = deviceSearchOptions.length
+                ? deviceSearchOptions
+                : allDeviceOptions.map(id => ({ id, locationName: '' }));
+            return options.filter(option => option.id !== currentDevice);
+        }
+
+        function getFilteredCopyProductTargetDeviceOptions() {
+            const options = getCopyProductTargetDeviceOptions();
+            const keyword = String(copyProductTargetDeviceKeyword || '').trim().toLowerCase();
+            if (!keyword) return options;
+            return options.filter(option => {
+                const displayLabel = formatDeviceSearchLabel(option) || option.id;
+                return `${option.id} ${displayLabel}`.toLowerCase().includes(keyword);
+            });
+        }
+
+        function setCopyProductTargetDeviceKeyword(keyword = '') {
+            copyProductTargetDeviceKeyword = String(keyword || '').trim();
+            renderCopyProductTargetDeviceOptions();
+        }
+
+        function toggleCopyProductTargetDeviceSelection(deviceId = '', checked = false) {
+            const normalized = String(deviceId || '').trim();
+            if (!normalized) return;
+            if (checked) copyProductTargetDeviceIds.add(normalized);
+            else copyProductTargetDeviceIds.delete(normalized);
+            renderCopyProductTargetDeviceOptions();
+        }
+
+        function selectAllFilteredCopyProductDevices() {
+            getFilteredCopyProductTargetDeviceOptions().forEach(option => {
+                copyProductTargetDeviceIds.add(option.id);
+            });
+            renderCopyProductTargetDeviceOptions();
+        }
+
+        function clearCopyProductTargetDevices() {
+            copyProductTargetDeviceIds = new Set();
+            renderCopyProductTargetDeviceOptions();
+        }
+
+        function renderCopyProductTargetDeviceOptions() {
+            const searchInput = document.getElementById('copyProductTargetDeviceSearch');
+            const summary = document.getElementById('copyProductTargetDeviceSummary');
+            const list = document.getElementById('copyProductTargetDeviceOptions');
+            if (!searchInput || !summary || !list) return;
+
+            if (searchInput.value !== copyProductTargetDeviceKeyword) {
+                searchInput.value = copyProductTargetDeviceKeyword;
+            }
+
+            const allOptions = getCopyProductTargetDeviceOptions();
+            const validTargetIds = new Set(allOptions.map(option => option.id));
+            copyProductTargetDeviceIds = new Set(Array.from(copyProductTargetDeviceIds).filter(deviceId => validTargetIds.has(deviceId)));
+
+            const filteredOptions = getFilteredCopyProductTargetDeviceOptions();
+            summary.textContent = `已选 ${copyProductTargetDeviceIds.size} 台设备`;
+
+            if (!allOptions.length) {
+                list.innerHTML = '<div class="copy-product-device-empty">暂无可选设备</div>';
+                return;
+            }
+
+            if (!filteredOptions.length) {
+                list.innerHTML = '<div class="copy-product-device-empty">无匹配设备</div>';
+                return;
+            }
+
+            list.innerHTML = filteredOptions.map(option => {
+                const label = formatDeviceSearchLabel(option) || option.id;
+                const checked = copyProductTargetDeviceIds.has(option.id);
+                return `
+                    <label class="copy-product-device-option">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCopyProductTargetDeviceSelection('${escapePreviewText(option.id)}', this.checked)">
+                        <span>${escapePreviewText(label)}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function setCopyProductScope(scope = 'current') {
+            copyProductScope = scope === 'other' ? 'other' : 'current';
+            if (copyProductScope === 'current') {
+                copyProductTargetDeviceIds = new Set();
+                copyProductTargetDeviceKeyword = '';
+            }
+            renderCopyProductRangeStep();
+        }
+
+        function renderCopyProductCategorySyncMode() {
+            const existingOnly = document.getElementById('copyCategorySyncExistingOnly');
+            const autoCreate = document.getElementById('copyCategorySyncAutoCreate');
+            const group = document.getElementById('copyProductSyncModeGroup');
+            if (existingOnly) existingOnly.checked = copyProductCategorySyncMode !== 'auto_create';
+            if (autoCreate) autoCreate.checked = copyProductCategorySyncMode === 'auto_create';
+            if (group) group.style.display = copyProductScope === 'other' ? '' : 'none';
+        }
+
+        function setCopyProductCategorySyncMode(mode = 'existing_only') {
+            copyProductCategorySyncMode = mode === 'auto_create' ? 'auto_create' : 'existing_only';
+            renderCopyProductCategorySyncMode();
+        }
+
+        function renderCopyProductRangeStep() {
+            const currentBtn = document.getElementById('copyProductScopeCurrent');
+            const otherBtn = document.getElementById('copyProductScopeOther');
+            const targetDeviceRow = document.getElementById('copyProductTargetDeviceRow');
+
+            if (currentBtn) currentBtn.classList.toggle('active', copyProductScope === 'current');
+            if (otherBtn) otherBtn.classList.toggle('active', copyProductScope === 'other');
+            if (targetDeviceRow) targetDeviceRow.classList.toggle('show', copyProductScope === 'other');
+
+            renderCopyProductTargetDeviceOptions();
+            renderCopyProductCategorySyncMode();
+        }
+
+        function renderCopyProductTargetMeta() {
+            const meta = document.getElementById('copyProductTargetMeta');
+            if (!meta) return;
+            const label = getCopyProductDestinationDeviceLabel();
+            meta.textContent = label ? `复制到：${label}` : '';
+        }
+
+        function renderCopyProductModalStep() {
+            const rangeStep = document.getElementById('copyProductRangeStep');
+            const configStep = document.getElementById('copyProductConfigStep');
+            const backBtn = document.getElementById('copyProductBackBtn');
+            const nextBtn = document.getElementById('copyProductNextBtn');
+            const isRangeStep = copyProductModalStep === 1;
+
+            if (rangeStep) rangeStep.classList.toggle('active', isRangeStep);
+            if (configStep) configStep.classList.toggle('active', !isRangeStep);
+            if (backBtn) backBtn.style.display = isRangeStep ? 'none' : 'inline-flex';
+            if (nextBtn) nextBtn.textContent = '下一步';
+            if (!isRangeStep) {
+                renderCopyProductTargetMeta();
+            }
+        }
+
+        function openCopyProductBackConfirmModal() {
+            const modal = document.getElementById('copyProductBackConfirmModal');
+            if (!modal) return;
+            modal.classList.add('active');
+        }
+
+        function closeCopyProductBackConfirmModal() {
+            const modal = document.getElementById('copyProductBackConfirmModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+        }
+
+        function confirmCopyProductPrevStep() {
+            closeCopyProductBackConfirmModal();
+            copyProductModalStep = 1;
+            renderCopyProductModalStep();
+            renderCopyProductRangeStep();
+        }
+
+        function goCopyProductPrevStep() {
+            if (copyProductModalStep <= 1) return;
+            openCopyProductBackConfirmModal();
+        }
+
+        function openCopyProductBatchResultModal(results = []) {
+            const modal = document.getElementById('copyProductBatchResultModal');
+            const summary = document.getElementById('copyProductBatchResultSummary');
+            const list = document.getElementById('copyProductBatchResultList');
+            if (!modal || !summary || !list) return;
+
+            copyProductBatchLastResults = Array.isArray(results) ? results : [];
+            const successCount = copyProductBatchLastResults.filter(item => item.status === 'success').length;
+            const failedCount = copyProductBatchLastResults.length - successCount;
+
+            summary.textContent = `已处理 ${copyProductBatchLastResults.length} 台设备，成功 ${successCount}，失败 ${failedCount}`;
+            if (!copyProductBatchLastResults.length) {
+                list.innerHTML = '<div class="copy-product-result-row"><span>暂无结果</span><span></span><span class="copy-product-result-message"></span></div>';
+            } else {
+                list.innerHTML = copyProductBatchLastResults.map(item => {
+                    const statusClass = item.status === 'success' ? 'status-success' : 'status-failed';
+                    const statusText = item.status === 'success' ? '成功' : '失败';
+                    const message = item.message || '-';
+                    const deviceLabel = item.deviceLabel || item.deviceId || '-';
+                    return `
+                        <div class="copy-product-result-row">
+                            <span>${escapePreviewText(deviceLabel)}</span>
+                            <span class="${statusClass}">${statusText}</span>
+                            <span class="copy-product-result-message">${escapePreviewText(message)}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+            modal.classList.add('active');
+        }
+
+        function closeCopyProductBatchResultModal() {
+            const modal = document.getElementById('copyProductBatchResultModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+            copyProductBatchLastResults = [];
+        }
+
+        function getCopyProductDeviceCategoryCatalog() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function persistCopyProductDeviceCategoryCatalog(catalog = {}) {
+            localStorage.setItem(COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY, JSON.stringify(catalog || {}));
+        }
+
+        function getCopyProductDeviceCategorySet(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim() || currentDevice;
+            const catalog = getCopyProductDeviceCategoryCatalog();
+            const availableCategoryKeys = Object.keys(productsData || {});
+            const storedCategories = Array.isArray(catalog[normalizedDeviceId])
+                ? catalog[normalizedDeviceId]
+                : availableCategoryKeys;
+            const normalizedCategories = storedCategories
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(categoryKey => availableCategoryKeys.includes(categoryKey));
+            return new Set(normalizedCategories);
+        }
+
+        function persistCopyProductDeviceCategorySet(deviceId = currentDevice, categorySet = new Set()) {
+            const normalizedDeviceId = String(deviceId || '').trim() || currentDevice;
+            const availableCategoryKeys = new Set(Object.keys(productsData || {}));
+            const normalizedCategories = Array.from(new Set(Array.from(categorySet || [])
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(categoryKey => availableCategoryKeys.has(categoryKey))));
+            const catalog = getCopyProductDeviceCategoryCatalog();
+            catalog[normalizedDeviceId] = normalizedCategories;
+            persistCopyProductDeviceCategoryCatalog(catalog);
+        }
+
+        function getCopyProductQueueMap() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(COPY_PRODUCT_DEVICE_QUEUE_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function persistCopyProductQueueMap(queueMap = {}) {
+            localStorage.setItem(COPY_PRODUCT_DEVICE_QUEUE_KEY, JSON.stringify(queueMap || {}));
+        }
+
+        function enqueueCopiedProductForDevice(deviceId, product, categoryKeys = []) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId || !product || typeof product !== 'object') return;
+            const queueMap = getCopyProductQueueMap();
+            const queue = Array.isArray(queueMap[normalizedDeviceId]) ? queueMap[normalizedDeviceId] : [];
+            queue.push({
+                product: cloneProductValue(product),
+                categoryKeys: Array.from(new Set((categoryKeys || [])
+                    .map(categoryKey => String(categoryKey || '').trim())
+                    .filter(Boolean)))
+            });
+            queueMap[normalizedDeviceId] = queue;
+            persistCopyProductQueueMap(queueMap);
+        }
+
+        function applyQueuedCopiedProductsForDevice(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim() || currentDevice;
+            const queueMap = getCopyProductQueueMap();
+            const queue = Array.isArray(queueMap[normalizedDeviceId]) ? queueMap[normalizedDeviceId] : [];
+            if (!queue.length) return 0;
+
+            queue.forEach(entry => {
+                if (!entry || !entry.product) return;
+                persistSingleProductEdit(entry.product);
+                persistProductCategoryAssignments(entry.product.id, entry.categoryKeys || []);
+            });
+
+            delete queueMap[normalizedDeviceId];
+            persistCopyProductQueueMap(queueMap);
+            applySavedProductCategoryAssignments();
+            applySavedProductEdits();
+            return queue.length;
         }
 
         function getCopyableProductCategories() {
@@ -8250,6 +11038,15 @@
             renderCopyProductSourcePreview();
         }
 
+        function prepareCopyProductConfigStep(preselectedCategory = '') {
+            const entries = getCopyProductTemplateEntries();
+            const preferredCategory = String(preselectedCategory || '').trim();
+            isCopyProductTargetCategorySelectorOpen = false;
+            renderCopyProductTargetCategoryOptions(preferredCategory ? [preferredCategory] : getSelectedCopyProductTargetCategories());
+            renderCopyProductTemplateOptions(preferredCategory, entries[0]?.key || '');
+            renderCopyProductTargetMeta();
+        }
+
         function openCopyProductModal(preselectedCategory = '') {
             const entries = getCopyProductTemplateEntries();
             if (!entries.length) {
@@ -8257,19 +11054,50 @@
                 return;
             }
 
+            copyProductModalStep = 1;
+            copyProductScope = 'current';
+            copyProductTargetDeviceIds = new Set();
+            copyProductTargetDeviceKeyword = '';
+            copyProductPreselectedCategory = String(preselectedCategory || '').trim();
+            copyProductCategorySyncMode = 'existing_only';
             isCopyProductTargetCategorySelectorOpen = false;
-            renderCopyProductTargetCategoryOptions(preselectedCategory ? [preselectedCategory] : getSelectedCopyProductTargetCategories());
-            renderCopyProductTemplateOptions(preselectedCategory, entries[0]?.key || '');
+            closeCopyProductBatchResultModal();
+            renderCopyProductRangeStep();
+            renderCopyProductModalStep();
             document.getElementById('copyProductModal').classList.add('active');
         }
 
         function closeCopyProductModal() {
+            copyProductModalStep = 1;
+            copyProductScope = 'current';
+            copyProductTargetDeviceIds = new Set();
+            copyProductTargetDeviceKeyword = '';
+            copyProductPreselectedCategory = '';
+            copyProductCategorySyncMode = 'existing_only';
             isCopyProductTargetCategorySelectorOpen = false;
+            closeCopyProductBackConfirmModal();
             renderCopyProductTargetCategorySelector();
+            renderCopyProductRangeStep();
+            renderCopyProductModalStep();
             document.getElementById('copyProductModal').classList.remove('active');
         }
 
         function startCopyProduct() {
+            if (copyProductModalStep === 1) {
+                if (copyProductScope === 'other') {
+                    const targetDeviceIds = getCopyProductDestinationDeviceIds();
+                    if (!targetDeviceIds.length) {
+                        showToast('请至少选择一个目标设备', 'error');
+                        return;
+                    }
+                }
+
+                copyProductModalStep = 2;
+                prepareCopyProductConfigStep(copyProductPreselectedCategory);
+                renderCopyProductModalStep();
+                return;
+            }
+
             const targetCategories = getSelectedCopyProductTargetCategories();
             if (!targetCategories.length) {
                 showToast('请选择目标分类', 'error');
@@ -8282,11 +11110,16 @@
                 return;
             }
 
+            const copyBatchContext = {
+                scope: copyProductScope,
+                targetDeviceIds: getCopyProductDestinationDeviceIds(),
+                categorySyncMode: copyProductCategorySyncMode
+            };
             closeCopyProductModal();
-            openProductModal(targetCategories[0], null, '', selected.product, selected.categoryName, targetCategories);
+            openProductModal(targetCategories[0], null, '', selected.product, selected.categoryName, targetCategories, copyBatchContext);
         }
 
-        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '', copyTargetCategories = []) {
+        function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '', copyTargetCategories = [], copyBatchContext = null) {
             const modal = document.getElementById('productModal');
             const isEdit = !!productToEdit;
             const isCopy = !isEdit && !!copySourceProduct;
@@ -8295,7 +11128,8 @@
                 .filter(Boolean)));
             const fallbackCategoryKey = String(preselectedCategory || sourceCategory || normalizedCopyTargetCategories[0] || productCopyTargetCategory || '').trim();
 
-            generateLangInputs('productLangInputs', 'product');
+            productModalShowSpecFields = isEdit;
+            generateLangInputs('productLangInputs', 'product', { showProductSpecFields: productModalShowSpecFields });
             document.getElementById('productModalTitle').textContent = isEdit ? '编辑商品' : '复制商品';
             document.getElementById('productSubmitBtn').textContent = isEdit ? '保存修改' : '确认复制';
             updateProductPricingRuleHint();
@@ -8308,6 +11142,7 @@
                 productCopySource = null;
                 productCopySourceCategory = '';
                 productCopyTargetCategory = '';
+                productCopyBatchContext = null;
                 populateProductModalFields(productToEdit);
                 setProductModalSelectedCategories(getAssignedCategoriesForProduct(productToEdit.id, [editingProductCategory]));
             } else {
@@ -8316,6 +11151,7 @@
                 productCopySource = isCopy ? cloneProductValue(copySourceProduct) : null;
                 productCopySourceCategory = isCopy ? copySourceCategory : '';
                 productCopyTargetCategory = isCopy ? (normalizedCopyTargetCategories[0] || fallbackCategoryKey) : '';
+                productCopyBatchContext = isCopy ? cloneProductValue(copyBatchContext || null) : null;
                 populateProductModalFields(isCopy ? copySourceProduct : null);
                 setProductModalSelectedCategories(normalizedCopyTargetCategories.length ? normalizedCopyTargetCategories : (fallbackCategoryKey ? [fallbackCategoryKey] : []));
             }
@@ -8337,6 +11173,9 @@
             productCopySource = null;
             productCopySourceCategory = '';
             productCopyTargetCategory = '';
+            productCopyBatchContext = null;
+            productModalShowSpecFields = true;
+            renderProductImageComparePreview();
             productModalCategoryOptions = [];
             selectedProductModalCategoryKeys = new Set();
             isProductModalCategorySelectorOpen = false;
@@ -8345,20 +11184,23 @@
             if (fileInput) fileInput.value = '';
         }
 
-        function mergeLocalizedProductFields(baseNames, baseDescs, baseSpecs, nextNames, nextDescs, nextSpecs, langs) {
+        function mergeLocalizedProductFields(baseNames, baseDescs, baseSpecs, nextNames, nextDescs, nextSpecs, langs, options = {}) {
+            const removeMissingNames = options.removeMissingNames !== false;
+            const removeMissingDescs = options.removeMissingDescs !== false;
+            const removeMissingSpecs = options.removeMissingSpecs !== false;
             const mergedNames = { ...(baseNames || {}) };
             const mergedDescs = { ...(baseDescs || {}) };
             const mergedSpecs = { ...(baseSpecs || {}) };
 
             langs.forEach(lang => {
                 if (Object.prototype.hasOwnProperty.call(nextNames, lang)) mergedNames[lang] = nextNames[lang];
-                else delete mergedNames[lang];
+                else if (removeMissingNames) delete mergedNames[lang];
 
                 if (Object.prototype.hasOwnProperty.call(nextDescs, lang)) mergedDescs[lang] = nextDescs[lang];
-                else delete mergedDescs[lang];
+                else if (removeMissingDescs) delete mergedDescs[lang];
 
                 if (Object.prototype.hasOwnProperty.call(nextSpecs, lang)) mergedSpecs[lang] = nextSpecs[lang];
-                else delete mergedSpecs[lang];
+                else if (removeMissingSpecs) delete mergedSpecs[lang];
             });
 
             return {
@@ -8439,29 +11281,30 @@
             
             langs.forEach(lang => {
                 const nameEl = document.querySelector('.product-name-' + lang);
-                const descEl = document.querySelector('.product-desc-' + lang);
-                const beansEl = document.querySelector('.product-beans-' + lang);
-                const temperatureEl = document.querySelector('.product-temperature-' + lang);
-                const strengthEl = document.querySelector('.product-strength-' + lang);
-                const noteEl = document.querySelector('.product-note-' + lang);
+                const shouldCaptureSpecFields = Boolean(productModalShowSpecFields);
+                const descEl = shouldCaptureSpecFields ? document.querySelector('.product-desc-' + lang) : null;
+                const beansEl = shouldCaptureSpecFields ? document.querySelector('.product-beans-' + lang) : null;
+                const temperatureEl = shouldCaptureSpecFields ? document.querySelector('.product-temperature-' + lang) : null;
+                const strengthEl = shouldCaptureSpecFields ? document.querySelector('.product-strength-' + lang) : null;
+                const noteEl = shouldCaptureSpecFields ? document.querySelector('.product-note-' + lang) : null;
 
                 const beans = beansEl ? beansEl.value.trim() : '';
                 const temperature = temperatureEl ? temperatureEl.value.trim() : '';
                 const strength = strengthEl ? strengthEl.value.trim() : '';
                 const note = noteEl ? noteEl.value.trim() : '';
-                const autoDesc = [beans, temperature, strength, note].filter(Boolean).join('、');
+                const autoDesc = shouldCaptureSpecFields ? [beans, temperature, strength, note].filter(Boolean).join('、') : '';
                 
                 if (nameEl && nameEl.value.trim()) {
                     names[lang] = nameEl.value.trim();
                 }
 
-                if (beans || temperature || strength || note) {
+                if (shouldCaptureSpecFields && (beans || temperature || strength || note)) {
                     specs[lang] = { beans, temperature, strength, note };
                 }
 
-                if (descEl && descEl.value.trim()) {
+                if (shouldCaptureSpecFields && descEl && descEl.value.trim()) {
                     descs[lang] = descEl.value.trim();
-                } else if (autoDesc) {
+                } else if (shouldCaptureSpecFields && autoDesc) {
                     descs[lang] = autoDesc;
                 }
             });
@@ -8472,7 +11315,11 @@
                     return;
                 }
 
-                const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs);
+                const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs, {
+                    removeMissingNames: true,
+                    removeMissingDescs: true,
+                    removeMissingSpecs: true
+                });
                 const updatedProduct = {
                     ...editingSnapshot,
                     ...mergedLocalizedFields,
@@ -8505,30 +11352,108 @@
                 return;
             }
 
-            const copiedTemplate = cloneProductForCopy(productCopySource);
-            const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs);
-            const newProduct = {
-                ...copiedTemplate,
-                ...mergedLocalizedFields,
-                price: price,
-                originalPrice: originalPrice,
-                currency: currency,
-                taxEnabled: taxEnabled,
-                taxRate: taxEnabled ? taxRate : 0,
-                featured: featured,
-                image: image || null,
-                onSale: true
-            };
+            const mergedLocalizedFields = mergeLocalizedProductFields(existingNames, existingDescs, existingSpecs, names, descs, specs, langs, {
+                removeMissingNames: true,
+                removeMissingDescs: productModalShowSpecFields,
+                removeMissingSpecs: productModalShowSpecFields
+            });
+            const copyContext = productCopyBatchContext && typeof productCopyBatchContext === 'object'
+                ? productCopyBatchContext
+                : {};
+            const rawTargetDeviceIds = Array.isArray(copyContext.targetDeviceIds)
+                ? copyContext.targetDeviceIds
+                : [currentDevice];
+            let targetDeviceIds = Array.from(new Set(rawTargetDeviceIds
+                .map(deviceId => String(deviceId || '').trim())
+                .filter(Boolean)));
+            if (!targetDeviceIds.length) {
+                targetDeviceIds = [currentDevice];
+            }
+            const categorySyncMode = copyContext.categorySyncMode === 'auto_create' ? 'auto_create' : 'existing_only';
+            const copyResults = [];
+            let copiedOnCurrentDevice = false;
 
-            persistSingleProductEdit(newProduct);
-            persistProductCategoryAssignments(newProduct.id, selectedCategories);
-            applySavedProductCategoryAssignments();
-            applySavedProductEdits();
+            targetDeviceIds.forEach(deviceId => {
+                const deviceLabel = getDeviceSearchDisplayLabel(deviceId) || deviceId;
+                const deviceCategorySet = getCopyProductDeviceCategorySet(deviceId);
+                const missingCategories = selectedCategories.filter(categoryKey => !deviceCategorySet.has(categoryKey));
+
+                if (missingCategories.length && categorySyncMode !== 'auto_create') {
+                    const missingLabels = missingCategories.map(categoryKey => getCategoryName(categoryKey));
+                    copyResults.push({
+                        deviceId,
+                        deviceLabel,
+                        status: 'failed',
+                        message: `缺少分类：${missingLabels.join('、')}`
+                    });
+                    return;
+                }
+
+                if (missingCategories.length && categorySyncMode === 'auto_create') {
+                    missingCategories.forEach(categoryKey => deviceCategorySet.add(categoryKey));
+                    persistCopyProductDeviceCategorySet(deviceId, deviceCategorySet);
+                }
+
+                const copiedTemplate = cloneProductForCopy(productCopySource);
+                const copiedProduct = {
+                    ...copiedTemplate,
+                    ...cloneProductValue(mergedLocalizedFields),
+                    price: price,
+                    originalPrice: originalPrice,
+                    currency: currency,
+                    taxEnabled: taxEnabled,
+                    taxRate: taxEnabled ? taxRate : 0,
+                    featured: featured,
+                    image: image || null,
+                    onSale: true
+                };
+
+                try {
+                    if (deviceId === currentDevice) {
+                        persistSingleProductEdit(copiedProduct);
+                        persistProductCategoryAssignments(copiedProduct.id, selectedCategories);
+                        copiedOnCurrentDevice = true;
+                    } else {
+                        enqueueCopiedProductForDevice(deviceId, copiedProduct, selectedCategories);
+                    }
+                    copyResults.push({
+                        deviceId,
+                        deviceLabel,
+                        status: 'success',
+                        message: `商品ID ${copiedProduct.id}`
+                    });
+                } catch (error) {
+                    copyResults.push({
+                        deviceId,
+                        deviceLabel,
+                        status: 'failed',
+                        message: error?.message || '复制失败'
+                    });
+                }
+            });
 
             closeProductModal();
-            renderMenu();
-            updateStats();
-            showToast('商品复制成功');
+            if (copiedOnCurrentDevice) {
+                applySavedProductCategoryAssignments();
+                applySavedProductEdits();
+                renderMenu();
+                updateStats();
+            }
+
+            const successCount = copyResults.filter(item => item.status === 'success').length;
+            const failedCount = copyResults.length - successCount;
+            const shouldShowDetail = copyResults.length > 1 || targetDeviceIds.some(deviceId => deviceId !== currentDevice);
+            if (shouldShowDetail) {
+                openCopyProductBatchResultModal(copyResults);
+            } else if (successCount > 0) {
+                showToast('商品复制成功');
+            } else {
+                showToast(copyResults[0]?.message || '商品复制失败', 'error');
+            }
+
+            if (failedCount > 0) {
+                showToast(`复制完成：成功 ${successCount} 台，失败 ${failedCount} 台`, failedCount === copyResults.length ? 'error' : 'info');
+            }
         }
 
         function editProduct(categoryName, productId) {
@@ -8626,6 +11551,7 @@
             }
             currentDevice = matched;
             ensureDeviceLanguageConfig(currentDevice);
+            const queuedCopyCount = applyQueuedCopiedProductsForDevice(currentDevice);
             input.value = getDeviceSearchDisplayLabel(matched);
             updateCurrentDeviceTag();
             
@@ -8633,8 +11559,13 @@
             updateDeviceLangs();
             renderLangSelector();
             renderMenu();
+            updateStats();
             
-            showToast(`已切换到设备 ${currentDevice}，支持 ${getDeviceLangs().length} 种语言`);
+            if (queuedCopyCount > 0) {
+                showToast(`已切换到设备 ${currentDevice}，并同步 ${queuedCopyCount} 个待复制商品`);
+            } else {
+                showToast(`已切换到设备 ${currentDevice}，支持 ${getDeviceLangs().length} 种语言`);
+            }
         }
 
         function switchMenuInnerTab(tab) {

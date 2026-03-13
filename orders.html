@@ -16,7 +16,7 @@
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-tertiary: #94a3b8;
-            --bg-body: #eef2ff;
+            --bg-body: #f8f9fa;
             --bg-card: rgba(255, 255, 255, 0.9);
             --bg-sidebar: #0b132b;
             --border: rgba(15, 23, 42, 0.12);
@@ -36,10 +36,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background:
-                radial-gradient(circle at 12% 18%, rgba(46, 196, 182, 0.22) 0, rgba(46, 196, 182, 0) 40%),
-                radial-gradient(circle at 88% 0%, rgba(255, 89, 94, 0.16) 0, rgba(255, 89, 94, 0) 34%),
-                linear-gradient(160deg, #eef2ff 0%, #f8fafc 42%, #e2e8f0 100%);
+            background-color: var(--bg-body);
             min-height: 100vh;
             font-size: 14px;
             color: var(--text-primary);
@@ -47,14 +44,7 @@
         }
 
         body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background-image: radial-gradient(rgba(15, 23, 42, 0.06) 0.7px, transparent 0.7px);
-            background-size: 4px 4px;
-            opacity: 0.25;
-            z-index: -1;
+            display: none;
         }
 
         .layout {
@@ -115,10 +105,20 @@
             color: #f8fafc;
         }
 
+        .sidebar-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            min-width: 0;
+        }
+
         .brand-version {
             font-size: 12px;
+            line-height: 1;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            white-space: nowrap;
         }
 
 
@@ -157,6 +157,48 @@
             content: '·';
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
+        }
+        .sidebar-admin-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            color: rgba(219, 234, 254, 0.62);
+            font-size: 11px;
+            line-height: 1;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .sidebar-admin-lang::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.32);
+            margin-right: 2px;
+        }
+
+        .sidebar-admin-lang-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.78;
+        }
+
+        .sidebar-admin-lang-btn:hover {
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .sidebar-admin-lang-btn.active {
+            color: #ffffff;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .sidebar-admin-lang-sep {
+            opacity: 0.34;
         }
 
         .sidebar-selectors {
@@ -318,9 +360,6 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 50;
         }
 
         .header-left {
@@ -1986,6 +2025,1306 @@
             }
         }
 
+        .header {
+            padding: 28px 32px 10px;
+            align-items: flex-start;
+            gap: 12px;
+            background: transparent;
+            border-bottom: none;
+            box-shadow: none;
+        }
+
+        .header-right {
+            display: none;
+        }
+
+        .orders-hero-copy {
+            gap: 10px;
+        }
+
+        .orders-hero-kicker {
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .header-title-row {
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 38px;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        .header-desc {
+            font-size: 15px;
+            color: #475569;
+        }
+
+        .orders-scope-chip {
+            padding: 7px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f766e;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .content {
+            max-width: 1540px;
+            padding: 6px 32px 32px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .metric-card {
+            padding: 18px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .metric-note {
+            font-size: 12px;
+            color: #0f766e;
+            font-weight: 700;
+        }
+
+        .mobile-filter-bar {
+            display: none;
+        }
+
+        .orders-control-panel {
+            padding: 14px 16px;
+            border-radius: 22px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
+            margin-bottom: 16px;
+        }
+
+        .control-panel-primary,
+        .control-panel-secondary {
+            display: grid;
+            gap: 10px;
+        }
+
+        .control-panel-secondary {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .orders-control-panel.collapsed .control-panel-secondary {
+            display: none;
+        }
+
+        .control-search-group,
+        .control-field {
+            min-width: 0;
+        }
+
+        .control-field-wide {
+            grid-column: span 2;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .orders-search-input,
+        .filter-select,
+        .multi-device-trigger,
+        .date-input,
+        .btn-clear,
+        .advanced-filter-btn,
+        .mobile-filter-chip {
+            height: 40px;
+            border-radius: 14px;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            background: #f8fafc;
+            color: #0f172a;
+            box-shadow: none;
+        }
+
+        .orders-search-input,
+        .filter-select,
+        .date-input {
+            padding-left: 14px;
+            padding-right: 14px;
+        }
+
+        .orders-search-input::placeholder,
+        .date-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .orders-search-input:focus,
+        .filter-select:focus,
+        .date-input:focus,
+        .multi-device-trigger:focus,
+        .advanced-filter-btn:focus,
+        .btn-clear:focus {
+            border-color: rgba(13, 148, 136, 0.5);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+            outline: none;
+        }
+
+        .advanced-filter-btn {
+            align-self: end;
+            background: #0f172a;
+            color: #f8fafc;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+        }
+
+        .btn-clear {
+            min-width: 108px;
+            background: #ffffff;
+            font-weight: 700;
+        }
+
+        .multi-device-filter {
+            min-width: 0;
+        }
+
+        .multi-device-trigger {
+            text-align: left;
+            background: #f8fafc;
+            font-weight: 700;
+        }
+
+        .multi-device-dropdown {
+            top: calc(100% + 10px);
+            width: min(320px, 100%);
+            border-radius: 18px;
+            border-color: rgba(226, 232, 240, 0.95);
+            box-shadow: 0 22px 48px rgba(15, 23, 42, 0.16);
+        }
+
+        .order-list-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .order-toolbar-summary,
+        .order-toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .toolbar-summary-sep {
+            width: 1px;
+            height: 18px;
+            background: rgba(203, 213, 225, 0.9);
+        }
+
+        .toolbar-total {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .toolbar-total strong {
+            color: #0f172a;
+            font-size: 16px;
+            margin-left: 6px;
+        }
+
+        .toolbar-sort-label {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .toolbar-sort-select {
+            min-width: 136px;
+            background-color: #ffffff;
+        }
+
+        .toolbar-pagination {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-pagination .page-info {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .toolbar-pagination .page-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toolbar-pagination .page-btn {
+            min-width: 96px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(203, 213, 225, 0.95);
+            background: #ffffff;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .toolbar-pagination .page-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .order-workspace {
+            padding: 22px;
+            border-radius: 26px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 22px 54px rgba(15, 23, 42, 0.08);
+        }
+
+        .order-card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .order-workspace-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 248px;
+            gap: 20px;
+            padding: 20px 22px;
+            border-radius: 22px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .order-workspace-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(148, 163, 184, 0.4);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+        }
+
+        .order-workspace-main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .order-id {
+            font-size: 24px;
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #0f172a;
+        }
+
+        .order-card-time {
+            white-space: nowrap;
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .order-card-context {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-context-pill {
+            padding: 8px 11px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .product-info {
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .product-arrow {
+            color: #94a3b8;
+            font-weight: 800;
+            min-width: 22px;
+        }
+
+        .product-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .product-specs {
+            margin-top: 2px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .order-card-overflow-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            align-self: flex-start;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.08);
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .order-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .order-card-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .order-workspace-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 18px;
+            padding-left: 20px;
+            border-left: 1px solid rgba(226, 232, 240, 0.95);
+        }
+
+        .order-status-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .status-tag {
+            padding: 9px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            box-shadow: none;
+        }
+
+        .payment-status {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .order-card-amount {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .order-card-amount-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .order-amount {
+            font-size: 32px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .order-card-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .order-card-action {
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(203, 213, 225, 0.95);
+            background: #ffffff;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .order-card-action.primary {
+            background: #0f766e;
+            border-color: #0f766e;
+            color: #ffffff;
+        }
+
+        .order-card-action.secondary {
+            background: #ecfeff;
+            border-color: rgba(15, 118, 110, 0.16);
+            color: #0f766e;
+        }
+
+        .order-table-shell {
+            --orders-sticky-status-width: 136px;
+            --orders-sticky-amount-width: 176px;
+            --orders-sticky-actions-width: 216px;
+            border-radius: 24px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: #ffffff;
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+        }
+
+        .order-table-scroll {
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .orders-desktop-table {
+            width: 100%;
+            min-width: 1420px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .orders-desktop-table th,
+        .orders-desktop-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .orders-desktop-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #f7fafc;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .orders-desktop-table tbody tr:hover td {
+            background: rgba(248, 250, 252, 0.9);
+        }
+
+        .orders-desktop-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-desktop-table .sticky-col {
+            position: sticky;
+            background: #ffffff;
+            background-clip: padding-box;
+            z-index: 4;
+        }
+
+        .orders-desktop-table thead .sticky-col {
+            background: #f7fafc;
+            background-clip: padding-box;
+            z-index: 3;
+        }
+
+        .orders-desktop-table tbody tr:hover .sticky-col {
+            background: rgba(248, 250, 252, 0.9);
+        }
+
+        .orders-desktop-table .sticky-status {
+            width: var(--orders-sticky-status-width);
+            min-width: var(--orders-sticky-status-width);
+            max-width: var(--orders-sticky-status-width);
+            right: calc(var(--orders-sticky-amount-width) + var(--orders-sticky-actions-width));
+            border-left: 1px solid rgba(226, 232, 240, 0.92);
+        }
+
+        .orders-desktop-table .sticky-amount {
+            width: var(--orders-sticky-amount-width);
+            min-width: var(--orders-sticky-amount-width);
+            max-width: var(--orders-sticky-amount-width);
+            right: var(--orders-sticky-actions-width);
+            border-left: 1px solid rgba(226, 232, 240, 0.92);
+            z-index: 5;
+        }
+
+        .orders-desktop-table .sticky-actions {
+            width: var(--orders-sticky-actions-width);
+            min-width: var(--orders-sticky-actions-width);
+            max-width: var(--orders-sticky-actions-width);
+            right: 0;
+            border-left: 1px solid rgba(226, 232, 240, 0.92);
+            z-index: 6;
+        }
+
+        .orders-desktop-table thead .sticky-status {
+            z-index: 7;
+        }
+
+        .orders-desktop-table thead .sticky-amount {
+            z-index: 8;
+        }
+
+        .orders-desktop-table thead .sticky-actions {
+            z-index: 9;
+        }
+
+        .order-cell-strong {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .order-id-compact {
+            display: block;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+        }
+
+        .order-cell-muted {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .order-product-cell {
+            min-width: 320px;
+            max-width: 360px;
+        }
+
+        .order-product-main-line {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .order-product-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .order-product-options {
+            margin-top: 6px;
+            max-width: 340px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #64748b;
+        }
+
+        .order-product-more-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .order-product-more-btn:hover {
+            text-decoration: underline;
+        }
+
+        .order-amount-stack {
+            text-align: right;
+        }
+
+        .order-amount-stack .order-amount {
+            font-size: 22px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            font-weight: 900;
+            color: #0f172a;
+        }
+
+        .order-amount-note {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .order-table-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .order-products-popover {
+            position: fixed;
+            z-index: 2200;
+            width: 360px;
+            max-width: calc(100vw - 24px);
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.98);
+            border-radius: 18px;
+            box-shadow: 0 22px 48px rgba(15, 23, 42, 0.16);
+            overflow: hidden;
+        }
+
+        .order-products-popover[hidden] {
+            display: none;
+        }
+
+        .order-popover-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .order-popover-kicker {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .order-popover-title {
+            font-size: 17px;
+            line-height: 1.3;
+            color: #0f172a;
+            word-break: break-all;
+        }
+
+        .order-popover-close {
+            border: 1px solid rgba(203, 213, 225, 0.92);
+            background: #ffffff;
+            color: #64748b;
+            border-radius: 10px;
+            height: 34px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .order-popover-list {
+            display: grid;
+            gap: 8px;
+            padding: 12px;
+            max-height: 360px;
+            overflow: auto;
+        }
+
+        .order-popover-item {
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: #f8fafc;
+        }
+
+        .order-popover-item-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .order-popover-item-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .order-popover-item-qty {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .order-popover-item-specs {
+            font-size: 12px;
+            line-height: 1.55;
+            color: #64748b;
+            white-space: normal;
+        }
+
+        .order-stream-list {
+            display: none;
+        }
+
+        .mobile-filter-sheet {
+            width: min(560px, 100%);
+            max-height: min(88vh, 860px);
+            border-radius: 26px;
+            background: #ffffff;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.24);
+        }
+
+        .mobile-filter-sheet-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+        }
+
+        .mobile-filter-sheet-title {
+            font-size: 24px;
+            line-height: 1.05;
+            color: #0f172a;
+        }
+
+        .mobile-filter-sheet-subtitle {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .mobile-filter-sheet-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow: auto;
+        }
+
+        .mobile-filter-sheet-footer {
+            display: flex;
+            gap: 10px;
+            padding: 14px 18px 18px;
+            border-top: 1px solid rgba(226, 232, 240, 0.95);
+        }
+
+        .mobile-device-panel {
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: #f8fafc;
+            padding: 10px;
+        }
+
+        .mobile-device-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 8px;
+            max-height: 220px;
+            overflow: auto;
+        }
+
+        .mobile-search-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .mobile-order-stream-card {
+            padding: 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .mobile-card-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .mobile-card-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .mobile-card-amount {
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .mobile-card-context {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .mobile-order-first-product {
+            margin-bottom: 8px;
+            padding: 9px 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: #f8fafc;
+        }
+
+        .mobile-first-product-line {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .mobile-first-product-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .mobile-first-product-more {
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .mobile-first-product-options {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #64748b;
+        }
+
+        .mobile-order-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .mobile-order-meta-card {
+            padding: 7px 9px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: #ffffff;
+        }
+
+        .mobile-order-meta-card strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .mobile-order-meta-card span {
+            display: block;
+            font-size: 12px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: #0f172a;
+            word-break: break-word;
+        }
+
+        @media (min-width: 1025px) {
+            .metrics-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .control-panel-primary {
+                grid-template-columns: minmax(0, 1.8fr) minmax(180px, 0.7fr) minmax(200px, 0.8fr) auto;
+                align-items: end;
+            }
+
+            .control-panel-secondary {
+                grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr) auto;
+                align-items: end;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                padding: 18px 16px 8px;
+            }
+
+            .content {
+                padding: 6px 14px 104px;
+            }
+
+            .metrics-grid {
+                display: flex;
+                gap: 12px;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+            }
+
+            .metric-card {
+                flex: 0 0 100%;
+                min-width: 100%;
+                max-width: 100%;
+                scroll-snap-align: start;
+            }
+
+            .mobile-filter-bar {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .mobile-filter-chip {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0 10px;
+                font-size: 13px;
+                font-weight: 700;
+                color: #0f172a;
+                background: rgba(255, 255, 255, 0.94);
+                border: 1px solid rgba(203, 213, 225, 0.9);
+                cursor: pointer;
+            }
+
+            .mobile-filter-chip.primary {
+                background: #0f172a;
+                color: #ffffff;
+                border-color: #0f172a;
+            }
+
+            .orders-control-panel {
+                display: none;
+            }
+
+            .order-list-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+            .order-toolbar-summary,
+            .order-toolbar-actions {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .toolbar-summary-sep {
+                display: none;
+            }
+
+            .toolbar-total {
+                width: 100%;
+            }
+
+            .toolbar-pagination {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .toolbar-pagination .page-buttons {
+                flex: 1;
+                justify-content: flex-end;
+            }
+
+            .order-workspace {
+                padding: 0;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .order-card-list {
+                display: none;
+            }
+
+            .order-stream-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .mobile-filter-sheet {
+                width: 100%;
+                max-height: 90vh;
+                border-radius: 22px 22px 0 0;
+                align-self: flex-end;
+            }
+
+            .mobile-order-meta-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .mobile-order-meta-card:last-child {
+                grid-column: 1 / -1;
+            }
+
+            .mobile-order-actions {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .mobile-order-actions .action-btn {
+                min-width: 0;
+                width: 100%;
+                height: 38px;
+                padding: 0 6px;
+                font-size: 13px;
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .content {
+                padding: 6px 10px 96px;
+            }
+
+            .order-products-popover {
+                width: calc(100vw - 20px);
+                max-width: calc(100vw - 20px);
+                border-radius: 16px;
+            }
+
+            .order-popover-header {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .order-popover-title {
+                font-size: 15px;
+                line-height: 1.25;
+            }
+
+            .order-popover-close {
+                height: 32px;
+                padding: 0 10px;
+            }
+
+            .order-popover-list {
+                padding: 10px;
+                max-height: min(52vh, 320px);
+            }
+
+            .order-popover-item {
+                padding: 10px;
+            }
+
+            .order-popover-item-head {
+                align-items: flex-start;
+            }
+
+            .order-popover-item-name {
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+            .metrics-grid {
+                gap: 10px;
+            }
+
+            .metric-card {
+                padding: 16px;
+            }
+
+            .metric-value {
+                font-size: 28px;
+            }
+
+            .mobile-filter-bar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+            }
+
+            .mobile-filter-chip {
+                min-height: 38px;
+                padding: 0 8px;
+                font-size: 12px;
+            }
+
+            .mobile-order-stream-card {
+                padding: 12px;
+                border-radius: 16px;
+            }
+
+            .mobile-card-top {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .mobile-card-status {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .mobile-card-amount {
+                font-size: 22px;
+            }
+
+            .mobile-order-id {
+                font-size: 13px;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                word-break: break-all;
+            }
+
+            .mobile-order-time {
+                font-size: 12px;
+            }
+
+            .mobile-order-first-product {
+                padding: 8px 9px;
+            }
+
+            .mobile-first-product-line {
+                align-items: flex-start;
+            }
+
+            .mobile-first-product-name {
+                white-space: normal;
+                line-height: 1.35;
+            }
+
+            .mobile-first-product-options,
+            .mobile-order-meta-card span {
+                overflow-wrap: anywhere;
+            }
+
+            .mobile-order-meta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-order-meta-card:last-child {
+                grid-column: auto;
+            }
+
+            .mobile-order-actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .mobile-order-actions .action-btn:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
         @media (min-width: 769px) {
             .mobile-header, .overlay {
                 display: none !important;
@@ -2004,8 +3343,14 @@
                     <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
                     <div class="brand-title">运营控制台</div>
                 </div>
-                <div class="brand-version">Prototype v0</div>
-
+                <div class="sidebar-meta-row">
+                    <div class="brand-version">Prototype v0</div>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                        <span class="sidebar-admin-lang-sep">|</span>
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 <div class="sidebar-login">
                     <div class="sidebar-login-name" id="sidebarLoginName">-</div>
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
@@ -2058,141 +3403,253 @@
         <!-- 主内容 -->
         <main class="main">
             <header class="header">
-                <div class="header-left">
+                <div class="header-left orders-hero-copy">
+                    <div class="orders-hero-kicker">Operations Workspace</div>
                     <div class="header-title-row">
-                        <h1 class="header-title">订单</h1>
-                        <span class="device-tag" id="currentDevice">RCK111</span>
+                        <h1 class="header-title">订单管理</h1>
                     </div>
-                    <span class="header-desc">查看订单与商品明细。</span>
-                </div>
-                <div class="header-right">
-                    <button class="lang-btn">只读</button>
+                    <span class="header-desc">今日销售动态与订单处理</span>
                 </div>
             </header>
 
             <div class="content">
-                <!-- 筛选区域 -->
-                <div class="filter-section">
-                    <div class="filter-row">
-                        <div class="order-search-panel">
-                            <div class="order-search-select-row">
-                                <label class="order-search-label" for="orderSearchFieldDesktop">搜索维度</label>
-                                <select class="filter-select order-search-select" id="orderSearchFieldDesktop" onchange="handleOrderSearchFieldSelectChange(this.value)">
-                                    <option value="orderId" selected>订单号</option>
-                                    <option value="nickname">昵称</option>
-                                    <option value="phone">手机号</option>
-                                    <option value="productName">商品名称</option>
-                                    <option value="transactionId">交易单号</option>
-                                    <option value="deviceId">设备编号</option>
-                                </select>
-                            </div>
-                            <div class="order-search-fields">
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="orderId" checked onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>订单号</span>
-                                </label>
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="nickname" onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>昵称</span>
-                                </label>
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="phone" onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>手机号</span>
-                                </label>
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="productName" onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>商品名称</span>
-                                </label>
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="transactionId" onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>交易单号</span>
-                                </label>
-                                <label class="order-search-option">
-                                    <input type="radio" name="orderSearchField" value="deviceId" onchange="handleOrderSearchFieldRadioChange(this.value)">
-                                    <span>设备编号</span>
-                                </label>
-                            </div>
-                            <input type="text" class="filter-input" id="orderSearch" placeholder="请输入查询关键字" oninput="filterOrders()">
+                <section class="metrics-grid">
+                    <article class="metric-card">
+                        <span class="metric-label">今日支付金额</span>
+                        <strong class="metric-value" id="metricPaidAmount">CNY 0.00</strong>
+                        <span class="metric-note" id="metricPaidDelta">支付成功订单</span>
+                    </article>
+                    <article class="metric-card">
+                        <span class="metric-label">今日完成订单</span>
+                        <strong class="metric-value" id="metricCompletedOrders">0</strong>
+                        <span class="metric-note" id="metricCompletedDelta">当前范围内订单</span>
+                    </article>
+                    <article class="metric-card">
+                        <span class="metric-label">客单价</span>
+                        <strong class="metric-value" id="metricAverageTicket">CNY 0.00</strong>
+                        <span class="metric-note" id="metricAverageDelta">支付成功订单均值</span>
+                    </article>
+                </section>
+
+                <div class="mobile-filter-bar">
+                    <button type="button" class="mobile-filter-chip" onclick="openMobileFilterSheet('search')">搜索</button>
+                    <button type="button" class="mobile-filter-chip" onclick="openMobileFilterSheet('status')"><span id="mobileQuickStatusLabel">已完成</span></button>
+                    <button type="button" class="mobile-filter-chip" onclick="openMobileFilterSheet('device')"><span id="mobileQuickDeviceLabel">全部设备</span></button>
+                    <button type="button" class="mobile-filter-chip primary" onclick="openMobileFilterSheet()">筛选</button>
+                </div>
+
+                <section class="orders-control-panel collapsed">
+                    <div class="control-panel-primary">
+                        <div class="control-search-group">
+                            <label class="control-label" for="orderSearch">搜索关键词</label>
+                            <input type="text" class="filter-input orders-search-input" id="orderSearch" placeholder="搜索订单号、手机号、商品名称" oninput="handleOrderSearchInput(this.value, 'desktop')">
                         </div>
 
-                        <div class="multi-device-filter" id="deviceFilterWrap">
-                            <button type="button" class="multi-device-trigger" id="deviceFilterTrigger" onclick="toggleDeviceFilterDropdown()">
-                                设备：全部
-                            </button>
-                            <div class="multi-device-dropdown" id="deviceFilterDropdown">
-                                <input type="text" class="multi-device-search" id="deviceFilterSearch" placeholder="搜索设备编号..." oninput="renderDeviceFilterOptions()">
-                                <label class="multi-device-option all-option">
-                                    <input type="checkbox" id="selectAllDevices" onchange="toggleSelectAllDevices(this.checked)">
-                                    <span>全选设备</span>
-                                </label>
-                                <div id="deviceFilterOptions"></div>
+                        <div class="control-field">
+                            <label class="control-label" for="statusFilter">状态</label>
+                            <select class="filter-select" id="statusFilter" onchange="handleStatusFilterChange(this.value, 'desktop')">
+                                <option value="realtime">已完成订单</option>
+                                <option value="pending">处理中</option>
+                                <option value="cancelled">已取消</option>
+                                <option value="all">全部订单</option>
+                            </select>
+                        </div>
+
+                        <div class="control-field">
+                            <label class="control-label" for="deviceFilterTrigger">设备</label>
+                            <div class="multi-device-filter" id="deviceFilterWrap">
+                                <button type="button" class="multi-device-trigger" id="deviceFilterTrigger" onclick="toggleDeviceFilterDropdown()">
+                                    设备：全部
+                                </button>
+                                <div class="multi-device-dropdown" id="deviceFilterDropdown">
+                                    <input type="text" class="multi-device-search" id="deviceFilterSearch" placeholder="搜索设备编号..." oninput="renderDeviceFilterOptions()">
+                                    <label class="multi-device-option all-option">
+                                        <input type="checkbox" id="selectAllDevices" onchange="toggleSelectAllDevices(this.checked)">
+                                        <span>全选设备</span>
+                                    </label>
+                                    <div id="deviceFilterOptions"></div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <select class="filter-select" id="statusFilter" onchange="filterOrders()">
-                            <option value="realtime">✓ 已完成订单</option>
-                            <option value="pending">处理中</option>
-                            <option value="cancelled">已取消</option>
-                            <option value="all">全部订单</option>
-                        </select>
 
-                        <div class="date-range">
-                            <input type="text" class="date-input" id="startDate" placeholder="年 / 月 /日 --:--" onfocus="(this.type='datetime-local')">
-                            <span class="date-separator">→</span>
-                            <input type="text" class="date-input" id="endDate" placeholder="年 / 月 /日 --:--" onfocus="(this.type='datetime-local')">
+                        <button type="button" class="advanced-filter-btn" id="advancedFilterBtn" onclick="toggleAdvancedFilters()">高级筛选</button>
+                    </div>
+
+                    <div class="control-panel-secondary" id="advancedFilters">
+                        <div class="control-field">
+                            <label class="control-label" for="orderSearchFieldDesktop">搜索维度</label>
+                            <select class="filter-select order-search-select" id="orderSearchFieldDesktop" onchange="handleOrderSearchFieldSelectChange(this.value)">
+                                <option value="orderId" selected>订单号</option>
+                                <option value="nickname">昵称</option>
+                                <option value="phone">手机号</option>
+                                <option value="productName">商品名称</option>
+                                <option value="transactionId">交易单号</option>
+                                <option value="deviceId">设备编号</option>
+                            </select>
+                        </div>
+
+                        <div class="control-field control-field-wide">
+                            <label class="control-label">时间范围</label>
+                            <div class="date-range">
+                                <input type="text" class="date-input" id="startDate" placeholder="开始时间" onfocus="(this.type='datetime-local')" oninput="syncDateField('desktop')">
+                                <span class="date-separator">→</span>
+                                <input type="text" class="date-input" id="endDate" placeholder="结束时间" onfocus="(this.type='datetime-local')" oninput="syncDateField('desktop')">
+                            </div>
                         </div>
 
                         <div class="filter-actions">
-                            <span class="results-count">共 <span id="resultsCount">24</span> 条</span>
-                            <button class="btn-clear" onclick="clearFilters()">清除</button>
+                            <button class="btn-clear" type="button" onclick="clearFilters()">清空</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="order-list-toolbar">
+                    <div class="order-toolbar-summary">
+                        <span class="results-count">共 <span id="resultsCount">24</span> 条</span>
+                        <span class="toolbar-summary-sep"></span>
+                        <span class="toolbar-total">支付成功金额 <strong id="totalAmount">CNY 0.00</strong></span>
+                    </div>
+                    <div class="order-toolbar-actions">
+                        <label class="toolbar-sort-label" for="orderSort">排序</label>
+                        <select class="filter-select toolbar-sort-select" id="orderSort" onchange="handleOrderSortChange(this.value)">
+                            <option value="latest" selected>最新下单</option>
+                            <option value="oldest">最早下单</option>
+                            <option value="amountDesc">金额从高到低</option>
+                            <option value="amountAsc">金额从低到高</option>
+                        </select>
+                        <div class="toolbar-pagination">
+                            <span class="page-info">第 <span id="currentPage">1</span> 页</span>
+                            <div class="page-buttons">
+                                <button class="page-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
+                                <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 统计栏 -->
-                <div class="stats-bar">
-                    <div class="stat-item">
-                        <span class="stat-label">订单数量</span>
-                        <span class="stat-value" id="totalOrders">0</span>
+                <section class="order-workspace">
+                    <div class="order-card-list">
+                        <div class="order-table-shell">
+                            <div class="order-table-scroll">
+                                <table class="orders-desktop-table">
+                                    <thead>
+                                        <tr>
+                                            <th>点位</th>
+                                            <th>商品</th>
+                                            <th>时间</th>
+                                            <th>设备</th>
+                                            <th>取货码</th>
+                                            <th>订单号</th>
+                                            <th class="sticky-col sticky-status">状态</th>
+                                            <th class="sticky-col sticky-amount" style="text-align: right;">金额</th>
+                                            <th class="sticky-col sticky-actions" style="text-align: right;">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-label">订单金额合计</span>
-                        <span class="stat-value stat-amount" id="totalAmount">CNY 0.00</span>
-                    </div>
-                </div>
-
-                <!-- 分页栏 -->
-                <div class="pagination-bar">
-                    <span class="page-info">第 <span id="currentPage">1</span> 页</span>
-                    <div class="page-buttons">
-                        <button class="page-btn" id="prevBtn" onclick="changePage(-1)">返回</button>
-                        <button class="page-btn" id="nextBtn" onclick="changePage(1)">下一页</button>
-                    </div>
-                </div>
-
-                <!-- 订单列表 -->
-                <div class="order-table-container">
-                    <table class="order-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 200px; min-width: 200px;">订单号</th>
-                                <th style="width: 220px; min-width: 220px;">设备/商户/点位</th>
-                                <th>商品</th>
-                                <th style="width: 90px; min-width: 90px;">状态</th>
-                                <th style="width: 120px; min-width: 120px;">支付信息</th>
-                                <th style="width: 180px; min-width: 180px;">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orderTableBody">
-                            <!-- 动态渲染 -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mobile-order-list" id="orderMobileList"></div>
+                    <div class="order-stream-list mobile-order-list" id="orderMobileList"></div>
+                </section>
             </div>
         </main>
+    </div>
+
+    <div class="order-products-popover" id="orderProductsPopover" data-order-products-popover hidden>
+        <div class="order-popover-header">
+            <div>
+                <span class="order-popover-kicker">订单号</span>
+                <div class="order-popover-title" data-order-popover-title>-</div>
+            </div>
+            <button type="button" class="order-popover-close" data-order-popover-close>关闭</button>
+        </div>
+        <div class="order-popover-list" data-order-popover-list></div>
+    </div>
+
+    <div class="modal-overlay" id="mobileFilterSheet">
+        <div class="mobile-filter-sheet">
+            <div class="mobile-filter-sheet-header">
+                <div>
+                    <h3 class="mobile-filter-sheet-title">筛选条件</h3>
+                    <p class="mobile-filter-sheet-subtitle">筛选订单范围与搜索维度</p>
+                </div>
+                <button type="button" class="refund-modal-close" onclick="closeMobileFilterSheet()" aria-label="关闭筛选弹层">×</button>
+            </div>
+
+            <div class="mobile-filter-sheet-body">
+                <label class="refund-field">
+                    <span>搜索维度</span>
+                    <div class="order-search-fields mobile-search-fields">
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="orderId" checked onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>订单号</span>
+                        </label>
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="nickname" onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>昵称</span>
+                        </label>
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="phone" onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>手机号</span>
+                        </label>
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="productName" onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>商品名称</span>
+                        </label>
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="transactionId" onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>交易单号</span>
+                        </label>
+                        <label class="order-search-option">
+                            <input type="radio" name="orderSearchField" value="deviceId" onchange="handleMobileOrderSearchFieldChange(this.value)">
+                            <span>设备编号</span>
+                        </label>
+                    </div>
+                </label>
+
+                <label class="refund-field">
+                    <span>搜索关键词</span>
+                    <input type="text" class="filter-input" id="mobileOrderSearch" placeholder="请输入查询关键字" oninput="handleOrderSearchInput(this.value, 'mobile')">
+                </label>
+
+                <label class="refund-field">
+                    <span>状态</span>
+                    <select class="filter-select" id="mobileStatusFilter" onchange="handleStatusFilterChange(this.value, 'mobile')">
+                        <option value="realtime">已完成订单</option>
+                        <option value="pending">处理中</option>
+                        <option value="cancelled">已取消</option>
+                        <option value="all">全部订单</option>
+                    </select>
+                </label>
+
+                <div class="refund-field">
+                    <span>设备</span>
+                    <input type="text" class="multi-device-search" id="mobileDeviceFilterSearch" placeholder="搜索设备编号..." oninput="renderDeviceFilterOptions()">
+                    <div class="mobile-device-panel">
+                        <label class="multi-device-option all-option">
+                            <input type="checkbox" id="mobileSelectAllDevices" onchange="toggleSelectAllDevices(this.checked)">
+                            <span>全选设备</span>
+                        </label>
+                        <div class="mobile-device-options" id="mobileDeviceFilterOptions"></div>
+                    </div>
+                </div>
+
+                <div class="refund-field">
+                    <span>时间范围</span>
+                    <div class="date-range">
+                        <input type="text" class="date-input" id="mobileStartDate" placeholder="开始时间" onfocus="(this.type='datetime-local')" oninput="syncDateField('mobile')">
+                        <span class="date-separator">→</span>
+                        <input type="text" class="date-input" id="mobileEndDate" placeholder="结束时间" onfocus="(this.type='datetime-local')" oninput="syncDateField('mobile')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mobile-filter-sheet-footer">
+                <button type="button" class="refund-footer-btn" onclick="clearFilters()">清空</button>
+                <button type="button" class="refund-footer-btn primary" onclick="applyMobileFilters()">应用筛选</button>
+            </div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="refundModal">
@@ -2267,6 +3724,172 @@
             phone: '13800138000'
         };
 
+        const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
+        const ADMIN_SIDEBAR_TRANSLATIONS = {
+            zh: {
+                brand_console: '运营控制台',
+                section_operations: '运营管理',
+                section_foundation: '基础信息管理',
+                nav_overview: '总览',
+                nav_devices: '设备',
+                nav_menu_management: '商品管理',
+                nav_materials: '物料',
+                nav_orders: '订单',
+                nav_faults: '故障列表',
+                nav_staff: '人员管理',
+                nav_customers: '客户管理',
+                nav_locations: '点位管理',
+                page_overview: '总览',
+                page_devices: '设备',
+                page_menu_management: '商品管理',
+                page_materials: '物料管理',
+                page_orders: '订单',
+                page_faults: '故障管理',
+                page_customers: '客户管理',
+                page_locations: '点位管理',
+                page_staff_management: '人员管理',
+                page_product_detail: '商品详情'
+            },
+            en: {
+                brand_console: 'Operations Console',
+                section_operations: 'Operations',
+                section_foundation: 'Basic Info',
+                nav_overview: 'Overview',
+                nav_devices: 'Devices',
+                nav_menu_management: 'Catalog',
+                nav_materials: 'Materials',
+                nav_orders: 'Orders',
+                nav_faults: 'Faults',
+                nav_staff: 'Staff',
+                nav_customers: 'Customers',
+                nav_locations: 'Locations',
+                page_overview: 'Overview',
+                page_devices: 'Devices',
+                page_menu_management: 'Catalog',
+                page_materials: 'Materials',
+                page_orders: 'Orders',
+                page_faults: 'Faults',
+                page_customers: 'Customers',
+                page_locations: 'Locations',
+                page_staff_management: 'Staff',
+                page_product_detail: 'Product Detail'
+            }
+        };
+        const ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH = {
+            'overview.html': 'page_overview',
+            'devices.html': 'page_devices',
+            'menu-management.html': 'page_menu_management',
+            'materials.html': 'page_materials',
+            'orders.html': 'page_orders',
+            'faults.html': 'page_faults',
+            'customers.html': 'page_customers',
+            'locations.html': 'page_locations',
+            'staff-management.html': 'page_staff_management',
+            'product-detail.html': 'page_product_detail'
+        };
+        let adminSidebarLang = 'zh';
+
+        function getAdminSidebarLang() {
+            try {
+                const savedLang = localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY);
+                return savedLang === 'en' ? 'en' : 'zh';
+            } catch (e) {
+                return 'zh';
+            }
+        }
+
+        function translateAdminSidebar(key) {
+            const dictionary = ADMIN_SIDEBAR_TRANSLATIONS[adminSidebarLang] || ADMIN_SIDEBAR_TRANSLATIONS.zh;
+            return dictionary[key] || ADMIN_SIDEBAR_TRANSLATIONS.zh[key] || '';
+        }
+
+        function getAdminSidebarCurrentPage() {
+            if (!window || !window.location) return '';
+            const pathname = String(window.location.pathname || '');
+            return pathname.split('/').pop();
+        }
+
+        function getAdminSidebarNavKey(item) {
+            if (!item) return '';
+            const tab = item.dataset ? item.dataset.tab : '';
+            if (tab === 'overview') return 'nav_overview';
+            if (tab === 'menu') return 'nav_menu_management';
+
+            const href = item.getAttribute ? item.getAttribute('href') : '';
+            switch (href) {
+                case 'overview.html': return 'nav_overview';
+                case 'devices.html': return 'nav_devices';
+                case 'menu-management.html': return 'nav_menu_management';
+                case 'materials.html': return 'nav_materials';
+                case 'orders.html': return 'nav_orders';
+                case 'faults.html': return 'nav_faults';
+                case 'staff-management.html': return 'nav_staff';
+                case 'customers.html': return 'nav_customers';
+                case 'locations.html': return 'nav_locations';
+                default: return '';
+            }
+        }
+
+        function getAdminSidebarMobileTitleKey() {
+            const currentPage = getAdminSidebarCurrentPage();
+            if (currentPage === 'menu.html') {
+                if (typeof currentTab === 'string' && currentTab === 'menu') {
+                    return 'page_menu_management';
+                }
+                return 'page_overview';
+            }
+            return ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH[currentPage] || '';
+        }
+
+        function renderAdminSidebarTranslations() {
+            adminSidebarLang = getAdminSidebarLang();
+
+            const brandTitle = document.querySelector('.brand-title');
+            if (brandTitle) {
+                brandTitle.textContent = translateAdminSidebar('brand_console');
+            }
+
+            const sectionTitles = document.querySelectorAll('.nav-section-title');
+            if (sectionTitles[0]) {
+                sectionTitles[0].textContent = translateAdminSidebar('section_operations');
+            }
+            if (sectionTitles[1]) {
+                sectionTitles[1].textContent = translateAdminSidebar('section_foundation');
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                const labelNode = item.querySelector('span:last-child');
+                const key = getAdminSidebarNavKey(item);
+                if (labelNode && key) {
+                    labelNode.textContent = translateAdminSidebar(key);
+                }
+            });
+
+            const mobileHeaderTitle = document.querySelector('.mobile-header strong, .mobile-header span[style], .mobile-header .mobile-header-title');
+            const mobileTitleKey = getAdminSidebarMobileTitleKey();
+            if (mobileHeaderTitle && mobileTitleKey) {
+                mobileHeaderTitle.textContent = translateAdminSidebar(mobileTitleKey);
+            }
+
+            document.querySelectorAll('[data-admin-lang-option]').forEach(button => {
+                const active = button.getAttribute('data-admin-lang-option') === adminSidebarLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function setAdminSidebarLang(lang) {
+            if (lang !== 'zh' && lang !== 'en') return;
+            adminSidebarLang = lang;
+            try {
+                localStorage.setItem(ADMIN_SIDEBAR_LANG_KEY, lang);
+            } catch (e) {
+                // ignore localStorage write failures
+            }
+            renderAdminSidebarTranslations();
+        }
+
+
         function getSidebarLoginProfile() {
             try {
                 const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
@@ -2292,6 +3915,7 @@
                 phoneNode.textContent = profile.phone;
             }
             fitSidebarLoginInline();
+            renderAdminSidebarTranslations();
         }
 
         function fitSidebarLoginInline() {
@@ -2463,6 +4087,7 @@
         let filteredData = [...ordersData];
         let allDeviceOptions = [];
         let selectedDevices = new Set();
+        let currentSort = 'latest';
         let refundState = {
             orderId: '',
             lineItems: [],
@@ -2524,6 +4149,8 @@
             renderSidebarLoginProfile();
             loadOrderDefaultCurrency();
             initDeviceFilter();
+            syncDesktopFiltersToMobile();
+            filteredData = sortOrders(filteredData);
             renderTable();
             updatePagination();
         }
@@ -2532,6 +4159,8 @@
             allDeviceOptions = [...new Set(ordersData.map(order => order.deviceId))];
             selectedDevices = new Set(allDeviceOptions);
             document.getElementById('deviceFilterSearch').value = '';
+            const mobileDeviceSearch = document.getElementById('mobileDeviceFilterSearch');
+            if (mobileDeviceSearch) mobileDeviceSearch.value = '';
             renderDeviceFilterOptions();
             updateDeviceFilterTrigger();
         }
@@ -2551,26 +4180,41 @@
         function renderDeviceFilterOptions() {
             const dropdownList = document.getElementById('deviceFilterOptions');
             const searchInput = document.getElementById('deviceFilterSearch');
-            const keyword = searchInput.value || '';
+            const mobileSearchInput = document.getElementById('mobileDeviceFilterSearch');
+            const desktopKeyword = searchInput?.value || '';
+            const mobileKeyword = mobileSearchInput?.value || '';
+            const keyword = window.matchMedia('(max-width: 1024px)').matches ? mobileKeyword : desktopKeyword;
             const k = keyword.trim().toLowerCase();
             const list = !k ? allDeviceOptions : allDeviceOptions.filter(item => item.toLowerCase().includes(k));
 
             const selectAllBox = document.getElementById('selectAllDevices');
+            const mobileSelectAllBox = document.getElementById('mobileSelectAllDevices');
             const selectedCount = allDeviceOptions.filter(item => selectedDevices.has(item)).length;
-            selectAllBox.checked = selectedCount === allDeviceOptions.length;
-            selectAllBox.indeterminate = selectedCount > 0 && selectedCount < allDeviceOptions.length;
+            if (selectAllBox) {
+                selectAllBox.checked = selectedCount === allDeviceOptions.length;
+                selectAllBox.indeterminate = selectedCount > 0 && selectedCount < allDeviceOptions.length;
+            }
+            if (mobileSelectAllBox) {
+                mobileSelectAllBox.checked = selectedCount === allDeviceOptions.length;
+                mobileSelectAllBox.indeterminate = selectedCount > 0 && selectedCount < allDeviceOptions.length;
+            }
 
             if (!list.length) {
-                dropdownList.innerHTML = '<div class="multi-device-empty">无匹配设备</div>';
+                if (dropdownList) dropdownList.innerHTML = '<div class="multi-device-empty">无匹配设备</div>';
+                const mobileDropdownList = document.getElementById('mobileDeviceFilterOptions');
+                if (mobileDropdownList) mobileDropdownList.innerHTML = '<div class="multi-device-empty">无匹配设备</div>';
                 return;
             }
 
-            dropdownList.innerHTML = list.map(item => `
+            const optionsHtml = list.map(item => `
                 <label class="multi-device-option">
                     <input type="checkbox" ${selectedDevices.has(item) ? 'checked' : ''} onchange="toggleDeviceSelection('${item}', this.checked)">
                     <span>${item}</span>
                 </label>
             `).join('');
+            if (dropdownList) dropdownList.innerHTML = optionsHtml;
+            const mobileDropdownList = document.getElementById('mobileDeviceFilterOptions');
+            if (mobileDropdownList) mobileDropdownList.innerHTML = optionsHtml;
         }
 
         function toggleSelectAllDevices(checked) {
@@ -2597,30 +4241,221 @@
 
         function updateDeviceFilterTrigger() {
             const trigger = document.getElementById('deviceFilterTrigger');
+            const mobileQuickDeviceLabel = document.getElementById('mobileQuickDeviceLabel');
+            const currentDeviceChip = document.getElementById('currentDevice');
             const selected = allDeviceOptions.filter(item => selectedDevices.has(item));
             if (selected.length === allDeviceOptions.length) {
-                trigger.textContent = '设备：全部';
-                document.getElementById('currentDevice').textContent = '全部设备';
+                if (trigger) trigger.textContent = '设备：全部';
+                if (mobileQuickDeviceLabel) mobileQuickDeviceLabel.textContent = '全部设备';
+                if (currentDeviceChip) currentDeviceChip.textContent = '全部设备';
                 return;
             }
             if (selected.length === 0) {
-                trigger.textContent = '设备：未选择';
-                document.getElementById('currentDevice').textContent = '未选择设备';
+                if (trigger) trigger.textContent = '设备：未选择';
+                if (mobileQuickDeviceLabel) mobileQuickDeviceLabel.textContent = '未选择';
+                if (currentDeviceChip) currentDeviceChip.textContent = '未选择设备';
                 return;
             }
             if (selected.length <= 2) {
-                trigger.textContent = `设备：${selected.join('、')}`;
+                if (trigger) trigger.textContent = `设备：${selected.join('、')}`;
+                if (mobileQuickDeviceLabel) mobileQuickDeviceLabel.textContent = selected.join('、');
             } else {
-                trigger.textContent = `设备：已选 ${selected.length} 台`;
+                if (trigger) trigger.textContent = `设备：已选 ${selected.length} 台`;
+                if (mobileQuickDeviceLabel) mobileQuickDeviceLabel.textContent = `已选 ${selected.length} 台`;
             }
-            document.getElementById('currentDevice').textContent = selected.length <= 2 ? selected.join('、') : `已选${selected.length}台`;
+            if (currentDeviceChip) currentDeviceChip.textContent = selected.length <= 2 ? selected.join('、') : `已选${selected.length}台`;
         }
 
         function calculateTotal() {
             const totalOrders = filteredData.length;
-            
-            document.getElementById('totalOrders').textContent = totalOrders;
             document.getElementById('totalAmount').textContent = formatOrderTotalsByCurrency(filteredData);
+            const resultsCount = document.getElementById('resultsCount');
+            if (resultsCount) resultsCount.textContent = totalOrders;
+        }
+
+        function parseOrderDateKey(order) {
+            const raw = String(order?.createTime || '');
+            const match = raw.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+            if (!match) return '';
+            const [, year, month, day] = match;
+            return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function buildCurrencyAmountMap(orderList) {
+            const amountByCurrency = {};
+            (Array.isArray(orderList) ? orderList : []).forEach(order => {
+                if (order?.paymentStatus !== 'succeed') return;
+                const currency = getOrderCurrency(order);
+                const amount = roundMoney(order?.amount || 0);
+                amountByCurrency[currency] = roundMoney((amountByCurrency[currency] || 0) + amount);
+            });
+            return amountByCurrency;
+        }
+
+        function formatCurrencyAmountMap(amountByCurrency) {
+            const currencies = Object.keys(amountByCurrency || {});
+            if (!currencies.length) {
+                return formatMoneyByCurrency(0, orderDefaultCurrency);
+            }
+            return currencies
+                .sort((left, right) => left.localeCompare(right))
+                .map(currency => formatMoneyByCurrency(amountByCurrency[currency], currency))
+                .join(' · ');
+        }
+
+        function calculateTodayOrderMetrics(orderList) {
+            const scopedOrders = Array.isArray(orderList) ? orderList : [];
+            const latestDate = scopedOrders
+                .map(parseOrderDateKey)
+                .filter(Boolean)
+                .sort()
+                .pop();
+            const latestOrders = latestDate ? scopedOrders.filter(order => parseOrderDateKey(order) === latestDate) : [];
+            const completedOrders = latestOrders.filter(order => order.status === 'done').length;
+            const paidOrders = latestOrders.filter(order => order.paymentStatus === 'succeed');
+            const paidAmountByCurrency = buildCurrencyAmountMap(paidOrders);
+            const averageTicketByCurrency = {};
+
+            Object.keys(paidAmountByCurrency).forEach(currency => {
+                const paidCount = paidOrders.filter(order => getOrderCurrency(order) === currency).length;
+                averageTicketByCurrency[currency] = paidCount > 0 ? roundMoney(paidAmountByCurrency[currency] / paidCount) : 0;
+            });
+
+            return {
+                dateKey: latestDate,
+                paidAmount: formatCurrencyAmountMap(paidAmountByCurrency),
+                completedOrders,
+                averageTicket: formatCurrencyAmountMap(averageTicketByCurrency)
+            };
+        }
+
+        function renderTodayMetrics() {
+            const metrics = calculateTodayOrderMetrics(filteredData);
+            const scopeLabel = metrics.dateKey ? `${metrics.dateKey} 数据` : '当前范围数据';
+            document.getElementById('metricPaidAmount').textContent = metrics.paidAmount;
+            document.getElementById('metricCompletedOrders').textContent = String(metrics.completedOrders);
+            document.getElementById('metricAverageTicket').textContent = metrics.averageTicket;
+            document.getElementById('metricPaidDelta').textContent = `${scopeLabel} · 支付成功订单`;
+            document.getElementById('metricCompletedDelta').textContent = `${scopeLabel} · 完成订单`;
+            document.getElementById('metricAverageDelta').textContent = `${scopeLabel} · 客单价`;
+        }
+
+        function sortOrders(orderList) {
+            const list = [...orderList];
+            list.sort((left, right) => {
+                if (currentSort === 'amountDesc') return Number(right.amount || 0) - Number(left.amount || 0);
+                if (currentSort === 'amountAsc') return Number(left.amount || 0) - Number(right.amount || 0);
+                const leftTime = new Date(String(left.createTime || '').replace(/年|月/g, '-').replace(/日/g, '')).getTime() || 0;
+                const rightTime = new Date(String(right.createTime || '').replace(/年|月/g, '-').replace(/日/g, '')).getTime() || 0;
+                if (currentSort === 'oldest') return leftTime - rightTime;
+                return rightTime - leftTime;
+            });
+            return list;
+        }
+
+        function handleOrderSortChange(value) {
+            currentSort = value || 'latest';
+            filteredData = sortOrders(filteredData);
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function handleOrderSearchInput(value, source = 'desktop') {
+            const desktopInput = document.getElementById('orderSearch');
+            const mobileInput = document.getElementById('mobileOrderSearch');
+            if (source !== 'desktop' && desktopInput) desktopInput.value = value;
+            if (source !== 'mobile' && mobileInput) mobileInput.value = value;
+            filterOrders();
+        }
+
+        function handleStatusFilterChange(value, source = 'desktop') {
+            const desktopSelect = document.getElementById('statusFilter');
+            const mobileSelect = document.getElementById('mobileStatusFilter');
+            if (source !== 'desktop' && desktopSelect) desktopSelect.value = value;
+            if (source !== 'mobile' && mobileSelect) mobileSelect.value = value;
+            updateMobileQuickLabels();
+            filterOrders();
+        }
+
+        function syncDateField(source = 'desktop') {
+            const desktopStart = document.getElementById('startDate');
+            const desktopEnd = document.getElementById('endDate');
+            const mobileStart = document.getElementById('mobileStartDate');
+            const mobileEnd = document.getElementById('mobileEndDate');
+
+            if (source === 'mobile') {
+                if (desktopStart) desktopStart.value = mobileStart?.value || '';
+                if (desktopEnd) desktopEnd.value = mobileEnd?.value || '';
+            } else {
+                if (mobileStart) mobileStart.value = desktopStart?.value || '';
+                if (mobileEnd) mobileEnd.value = desktopEnd?.value || '';
+            }
+        }
+
+        function syncDesktopFiltersToMobile() {
+            const desktopInput = document.getElementById('orderSearch');
+            const mobileInput = document.getElementById('mobileOrderSearch');
+            const desktopStatus = document.getElementById('statusFilter');
+            const mobileStatus = document.getElementById('mobileStatusFilter');
+            const desktopSelect = document.getElementById('orderSearchFieldDesktop');
+            const mobileRadio = document.querySelector(`input[name="orderSearchField"][value="${desktopSelect?.value || 'orderId'}"]`);
+            if (mobileInput) mobileInput.value = desktopInput?.value || '';
+            if (mobileStatus) mobileStatus.value = desktopStatus?.value || 'realtime';
+            if (mobileRadio) mobileRadio.checked = true;
+            syncDateField('desktop');
+            updateMobileQuickLabels();
+        }
+
+        function updateMobileQuickLabels() {
+            const statusLabel = document.getElementById('mobileQuickStatusLabel');
+            const statusValue = document.getElementById('statusFilter')?.value || 'realtime';
+            const statusTextMap = {
+                realtime: '已完成',
+                pending: '处理中',
+                cancelled: '已取消',
+                all: '全部'
+            };
+            if (statusLabel) statusLabel.textContent = statusTextMap[statusValue] || '状态';
+        }
+
+        function handleMobileOrderSearchFieldChange(value) {
+            const desktopSelect = document.getElementById('orderSearchFieldDesktop');
+            if (desktopSelect) desktopSelect.value = value;
+            filterOrders();
+        }
+
+        function toggleAdvancedFilters() {
+            const panel = document.querySelector('.orders-control-panel');
+            if (!panel) return;
+            panel.classList.toggle('collapsed');
+            const button = document.getElementById('advancedFilterBtn');
+            if (button) {
+                button.textContent = panel.classList.contains('collapsed') ? '高级筛选' : '收起高级筛选';
+            }
+        }
+
+        function openMobileFilterSheet(mode = '') {
+            syncDesktopFiltersToMobile();
+            const sheet = document.getElementById('mobileFilterSheet');
+            if (!sheet) return;
+            sheet.classList.add('active');
+            if (mode === 'search') {
+                document.getElementById('mobileOrderSearch')?.focus();
+            } else if (mode === 'device') {
+                document.getElementById('mobileDeviceFilterSearch')?.focus();
+            } else if (mode === 'status') {
+                document.getElementById('mobileStatusFilter')?.focus();
+            }
+        }
+
+        function closeMobileFilterSheet() {
+            const sheet = document.getElementById('mobileFilterSheet');
+            if (sheet) sheet.classList.remove('active');
+        }
+
+        function applyMobileFilters() {
+            closeMobileFilterSheet();
         }
 
         function escapeHtml(value) {
@@ -2685,6 +4520,8 @@
 
         function renderDesktopOrderProducts(orderItems) {
             const expandedItems = expandOrderItemsByQuantity(orderItems);
+            const visibleItems = expandedItems.slice(0, 2);
+            const overflowCount = Math.max(0, expandedItems.length - visibleItems.length);
             if (!expandedItems.length) {
                 return `
                     <div class="product-info">
@@ -2697,21 +4534,26 @@
                     </div>
                 `;
             }
-            return expandedItems.map((item, index) => `
-                <div class="product-info">
-                    <span class="product-arrow">${index + 1}.</span>
-                    <div class="product-details">
-                        <div class="product-name-row">
-                            <div class="product-name">${escapeHtml(item.name)}</div>
+            return `
+                ${visibleItems.map((item, index) => `
+                    <div class="product-info">
+                        <span class="product-arrow">${index + 1}.</span>
+                        <div class="product-details">
+                            <div class="product-name-row">
+                                <div class="product-name">${escapeHtml(item.name)}</div>
+                            </div>
+                            ${item.specs ? `<div class="product-specs">${escapeHtml(item.specs)}</div>` : ''}
                         </div>
-                        ${item.specs ? `<div class="product-specs">${escapeHtml(item.specs)}</div>` : ''}
                     </div>
-                </div>
-            `).join('');
+                `).join('')}
+                ${overflowCount > 0 ? `<div class="order-card-overflow-toggle">展开 ${overflowCount} 个商品</div>` : ''}
+            `;
         }
 
         function renderMobileOrderProducts(orderItems) {
             const expandedItems = expandOrderItemsByQuantity(orderItems);
+            const visibleItems = expandedItems.slice(0, 2);
+            const overflowCount = Math.max(0, expandedItems.length - visibleItems.length);
             if (!expandedItems.length) {
                 return `
                     <div class="mobile-order-product-item">
@@ -2722,81 +4564,121 @@
                     </div>
                 `;
             }
-            return expandedItems.map((item, index) => `
-                <div class="mobile-order-product-item">
-                    <div class="mobile-order-product-head">
-                        <span class="mobile-order-product-index">${index + 1}.</span>
-                        <div class="mobile-order-product-name">${escapeHtml(item.name)}</div>
+            return `
+                ${visibleItems.map((item, index) => `
+                    <div class="mobile-order-product-item">
+                        <div class="mobile-order-product-head">
+                            <span class="mobile-order-product-index">${index + 1}.</span>
+                            <div class="mobile-order-product-name">${escapeHtml(item.name)}</div>
+                        </div>
+                        ${item.specs ? `<div class="mobile-order-specs">${escapeHtml(item.specs)}</div>` : ''}
                     </div>
-                    ${item.specs ? `<div class="mobile-order-specs">${escapeHtml(item.specs)}</div>` : ''}
+                `).join('')}
+                ${overflowCount > 0 ? `<div class="order-card-overflow-toggle">展开 ${overflowCount} 个商品</div>` : ''}
+            `;
+        }
+
+        function getOrderPrimaryProduct(orderItems) {
+            const expandedItems = expandOrderItemsByQuantity(orderItems);
+            const firstItem = expandedItems[0] || { name: '-', specs: '' };
+            return {
+                firstItem,
+                extraCount: Math.max(0, expandedItems.length - 1),
+                expandedItems
+            };
+        }
+
+        function renderDesktopOrderProductCell(order, orderItems) {
+            const { firstItem, extraCount } = getOrderPrimaryProduct(orderItems);
+            return `
+                <div class="order-product-cell">
+                    <div class="order-product-main-line">
+                        <span class="order-product-name">${escapeHtml(firstItem.name)}</span>
+                        ${extraCount > 0 ? `<button type="button" class="order-product-more-btn" data-order-products-trigger onclick="toggleOrderProductsPopover(event, '${order.id}')">+${extraCount}件</button>` : ''}
+                    </div>
+                    ${firstItem.specs ? `<div class="order-product-options">${escapeHtml(firstItem.specs)}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function renderMobileFirstProduct(order, orderItems) {
+            const { firstItem, extraCount } = getOrderPrimaryProduct(orderItems);
+            return `
+                <div class="mobile-order-first-product">
+                    <div class="mobile-first-product-line">
+                        <span class="mobile-first-product-name">${escapeHtml(firstItem.name)}</span>
+                        ${extraCount > 0 ? `<button type="button" class="order-product-more-btn mobile-first-product-more" data-order-products-trigger onclick="toggleOrderProductsPopover(event, '${order.id}')">+${extraCount}件</button>` : ''}
+                    </div>
+                    ${firstItem.specs ? `<div class="mobile-first-product-options">${escapeHtml(firstItem.specs)}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function renderOrderProductsPopoverList(order) {
+            const orderItems = normalizeOrderItems(order);
+            const expandedItems = expandOrderItemsByQuantity(orderItems);
+            if (!expandedItems.length) {
+                return '<div class="order-popover-item"><div class="order-popover-item-name">-</div></div>';
+            }
+            return expandedItems.map((item, index) => `
+                <div class="order-popover-item">
+                    <div class="order-popover-item-head">
+                        <span class="order-popover-item-name">${index + 1}. ${escapeHtml(item.name)}</span>
+                        <span class="order-popover-item-qty">x1</span>
+                    </div>
+                    ${item.specs ? `<div class="order-popover-item-specs">${escapeHtml(item.specs)}</div>` : ''}
                 </div>
             `).join('');
         }
 
         function renderTable() {
-            const tbody = document.getElementById('orderTableBody');
+            const tableBody = document.getElementById('orderTableBody');
             const mobileList = document.getElementById('orderMobileList');
             const start = (currentPage - 1) * pageSize;
             const end = start + pageSize;
             const pageData = filteredData.slice(start, end);
 
-            // 更新统计
             calculateTotal();
+            renderTodayMetrics();
 
-            tbody.innerHTML = pageData.map(order => {
+            tableBody.innerHTML = pageData.map(order => {
                 const deviceContext = deviceContextMap[order.deviceId] || { merchant: '-', location: '-' };
                 const statusClass = order.status === 'done' ? 'status-done' : 
                                    order.status === 'pending' ? 'status-pending' : 'status-cancelled';
-                const paymentClass = order.paymentStatus === 'succeed' ? 'success' : 'cancelled';
                 
                 const statusText = statusMap[order.status] || order.status;
                 const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
                 const orderItems = normalizeOrderItems(order);
-                const itemCount = resolveOrderItemCount(order, orderItems);
                 
                 return `
                 <tr>
+                    <td class="order-cell-strong">${escapeHtml(deviceContext.location)}</td>
+                    <td>${renderDesktopOrderProductCell(order, orderItems)}</td>
+                    <td class="order-cell-muted">${order.createTime}</td>
+                    <td><span class="order-context-pill">${escapeHtml(order.deviceId)}</span></td>
+                    <td><span class="pickup-code">${order.pickupCode}</span></td>
                     <td>
-                        <div class="order-id">${order.id}</div>
-                        <div class="order-meta">
-                            <div class="meta-row">
-                                <span>取货码: <span class="pickup-code">${order.pickupCode}</span></span>
-                                <span>·</span>
-                                <span>商品数: ${itemCount}</span>
-                            </div>
-                            <span class="meta-time">${order.createTime}</span>
-                        </div>
+                        <span class="order-id-compact" title="${escapeHtml(order.id)}">${escapeHtml(order.id)}</span>
                     </td>
-                    <td>
-                        <div class="order-meta">
-                            <div class="meta-row"><span>设备号: ${order.deviceId}</span></div>
-                            <div class="meta-row"><span>商户: ${deviceContext.merchant}</span></div>
-                            <div class="meta-row"><span>点位: ${deviceContext.location}</span></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="product-list">
-                            ${renderDesktopOrderProducts(orderItems)}
-                        </div>
-                    </td>
-                    <td>
+                    <td class="sticky-col sticky-status">
                         <span class="status-tag ${statusClass}">${statusText}</span>
                     </td>
-                    <td>
-                        <div class="detail-cell">
-                            <div>
-                                <div class="payment-status ${paymentClass}">${paymentText}</div>
-                                <div class="order-amount">${formatMoneyByCurrency(order.amount, getOrderCurrency(order))}</div>
-                            </div>
+                    <td class="sticky-col sticky-amount">
+                        <div class="order-amount-stack">
+                            <div class="order-amount">${formatMoneyByCurrency(order.amount, getOrderCurrency(order))}</div>
+                            <div class="order-amount-note">${paymentText}</div>
                         </div>
                     </td>
-                    <td>
-                        <div class="action-btns">
+                    <td class="sticky-col sticky-actions">
+                        <div class="order-table-actions">
                             ${order.paymentStatus === 'succeed' ? `
-                                <button class="action-btn btn-refund" onclick="refundOrder('${order.id}')">💰 退款</button>
-                                <button class="action-btn btn-coupon" onclick="returnCoupon('${order.id}')">🎫 返券</button>
-                            ` : ''}
-                            <button class="detail-btn" onclick="viewDetail('${order.id}')">←</button>
+                                <button class="order-card-action primary" onclick="refundOrder('${order.id}')">退款</button>
+                                <button class="order-card-action secondary" onclick="returnCoupon('${order.id}')">返券</button>
+                            ` : `
+                                <button class="order-card-action" disabled>退款</button>
+                                <button class="order-card-action" disabled>返券</button>
+                            `}
+                            <button class="order-card-action" onclick="viewDetail('${order.id}')">详情</button>
                         </div>
                     </td>
                 </tr>
@@ -2807,69 +4689,120 @@
                 const deviceContext = deviceContextMap[order.deviceId] || { merchant: '-', location: '-' };
                 const statusClass = order.status === 'done' ? 'status-done' :
                                    order.status === 'pending' ? 'status-pending' : 'status-cancelled';
-                const paymentClass = order.paymentStatus === 'succeed' ? 'success' : 'cancelled';
                 const statusText = statusMap[order.status] || order.status;
-                const paymentText = paymentStatusMap[order.paymentStatus] || order.paymentStatus;
                 const orderItems = normalizeOrderItems(order);
-                const itemCount = resolveOrderItemCount(order, orderItems);
 
                 return `
-                <article class="mobile-order-card">
-                    <div class="mobile-order-top">
+                <article class="mobile-order-card mobile-order-stream-card">
+                    <div class="mobile-card-top">
                         <div class="mobile-order-main">
                             <span class="mobile-order-id">${order.id}</span>
                             <div class="mobile-order-time">${order.createTime}</div>
                         </div>
-                        <div class="mobile-order-top-right">
+                        <div class="mobile-card-status">
                             <span class="status-tag ${statusClass}">${statusText}</span>
-                            <button class="detail-btn" onclick="viewDetail('${order.id}')">←</button>
+                            <div class="mobile-card-amount">${formatMoneyByCurrency(order.amount, getOrderCurrency(order))}</div>
                         </div>
                     </div>
 
-                    <div class="mobile-order-product-list">${renderMobileOrderProducts(orderItems)}</div>
+                    ${renderMobileFirstProduct(order, orderItems)}
 
-                    <div class="mobile-order-meta">
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">支付状态</div>
-                            <div class="mobile-meta-value payment-status ${paymentClass}">${paymentText}</div>
+                    <div class="mobile-order-meta-grid">
+                        <div class="mobile-order-meta-card">
+                            <strong>门店</strong>
+                            <span>${escapeHtml(deviceContext.location)}</span>
                         </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">订单金额</div>
-                            <div class="mobile-meta-value">${formatMoneyByCurrency(order.amount, getOrderCurrency(order))}</div>
+                        <div class="mobile-order-meta-card">
+                            <strong>设备</strong>
+                            <span>${escapeHtml(order.deviceId)}</span>
                         </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">取货码</div>
-                            <div class="mobile-meta-value"><span class="pickup-code">${order.pickupCode}</span></div>
-                        </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">商品数</div>
-                            <div class="mobile-meta-value">${itemCount}</div>
-                        </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">设备</div>
-                            <div class="mobile-meta-value">${order.deviceId}</div>
-                        </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">商户</div>
-                            <div class="mobile-meta-value">${deviceContext.merchant}</div>
-                        </div>
-                        <div class="mobile-meta-item">
-                            <div class="mobile-meta-label">点位</div>
-                            <div class="mobile-meta-value">${deviceContext.location}</div>
+                        <div class="mobile-order-meta-card">
+                            <strong>取货码</strong>
+                            <span>${escapeHtml(order.pickupCode)}</span>
                         </div>
                     </div>
 
                     <div class="mobile-order-actions">
                         ${order.paymentStatus === 'succeed' ? `
-                            <button class="action-btn btn-refund" onclick="refundOrder('${order.id}')">💰 退款</button>
-                            <button class="action-btn btn-coupon" onclick="returnCoupon('${order.id}')">🎫 返券</button>
-                        ` : ''}
+                            <button class="action-btn btn-refund" onclick="refundOrder('${order.id}')">退款</button>
+                            <button class="action-btn btn-coupon" onclick="returnCoupon('${order.id}')">返券</button>
+                        ` : `
+                            <button class="action-btn btn-refund" disabled>退款</button>
+                            <button class="action-btn btn-coupon" disabled>返券</button>
+                        `}
+                        <button class="action-btn" onclick="viewDetail('${order.id}')">详情</button>
                     </div>
                 </article>
                 `;
             }).join('');
+        }
 
-            document.getElementById('resultsCount').textContent = filteredData.length;
+        let activeOrderProductsTrigger = null;
+
+        function positionOrderProductsPopover(trigger, popover) {
+            const rect = trigger.getBoundingClientRect();
+            const width = popover.offsetWidth;
+            const height = popover.offsetHeight;
+            const gap = 12;
+            const isCompactMobile = window.matchMedia('(max-width: 430px)').matches;
+            let left = rect.left;
+            let top = rect.bottom + gap;
+
+            if (isCompactMobile) {
+                left = Math.max(10, (window.innerWidth - width) / 2);
+            }
+
+            if (left + width > window.innerWidth - 12) {
+                left = window.innerWidth - width - 12;
+            }
+            if (left < 12) {
+                left = 12;
+            }
+            if (top + height > window.innerHeight - 12) {
+                top = rect.top - height - gap;
+            }
+            if (top < 12) {
+                top = 12;
+            }
+
+            popover.style.left = `${left}px`;
+            popover.style.top = `${top}px`;
+        }
+
+        function closeOrderProductsPopover() {
+            const popover = document.getElementById('orderProductsPopover');
+            if (!popover) return;
+            popover.hidden = true;
+            popover.style.left = '';
+            popover.style.top = '';
+            activeOrderProductsTrigger = null;
+        }
+
+        function toggleOrderProductsPopover(event, orderId) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            const popover = document.getElementById('orderProductsPopover');
+            const titleEl = document.querySelector('[data-order-popover-title]');
+            const listEl = document.querySelector('[data-order-popover-list]');
+            const trigger = event?.currentTarget || null;
+            const order = ordersData.find(item => item.id === orderId);
+            if (!popover || !titleEl || !listEl || !trigger || !order) return;
+
+            if (!popover.hidden && activeOrderProductsTrigger === trigger) {
+                closeOrderProductsPopover();
+                return;
+            }
+
+            activeOrderProductsTrigger = trigger;
+            titleEl.textContent = order.id;
+            listEl.innerHTML = renderOrderProductsPopoverList(order);
+            popover.hidden = false;
+            popover.style.visibility = 'hidden';
+            positionOrderProductsPopover(trigger, popover);
+            popover.style.visibility = 'visible';
         }
 
         function roundMoney(value) {
@@ -3254,6 +5187,7 @@
                 }
                 return true;
             });
+            filteredData = sortOrders(filteredData);
 
             currentPage = 1;
             renderTable();
@@ -3262,17 +5196,31 @@
 
         function clearFilters() {
             document.getElementById('orderSearch').value = '';
+            const mobileSearch = document.getElementById('mobileOrderSearch');
+            if (mobileSearch) mobileSearch.value = '';
             const desktopSearchField = document.getElementById('orderSearchFieldDesktop');
             if (desktopSearchField) desktopSearchField.value = 'orderId';
             const defaultSearchField = document.querySelector('input[name="orderSearchField"][value="orderId"]');
             if (defaultSearchField) defaultSearchField.checked = true;
             document.getElementById('statusFilter').value = 'realtime';
+            const mobileStatus = document.getElementById('mobileStatusFilter');
+            if (mobileStatus) mobileStatus.value = 'realtime';
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
+            const mobileStart = document.getElementById('mobileStartDate');
+            const mobileEnd = document.getElementById('mobileEndDate');
+            if (mobileStart) mobileStart.value = '';
+            if (mobileEnd) mobileEnd.value = '';
             document.getElementById('deviceFilterSearch').value = '';
+            const mobileDeviceSearch = document.getElementById('mobileDeviceFilterSearch');
+            if (mobileDeviceSearch) mobileDeviceSearch.value = '';
             selectedDevices = new Set(allDeviceOptions);
+            currentSort = 'latest';
+            const sortSelect = document.getElementById('orderSort');
+            if (sortSelect) sortSelect.value = 'latest';
             renderDeviceFilterOptions();
             updateDeviceFilterTrigger();
+            updateMobileQuickLabels();
             filterOrders();
             showToast('筛选条件已清除');
         }
@@ -3289,7 +5237,7 @@
         }
 
         function updatePagination() {
-            const maxPage = Math.ceil(filteredData.length / pageSize);
+            const maxPage = Math.max(1, Math.ceil(filteredData.length / pageSize));
             document.getElementById('currentPage').textContent = currentPage;
             document.getElementById('prevBtn').disabled = currentPage === 1;
             document.getElementById('nextBtn').disabled = currentPage >= maxPage || maxPage === 0;
@@ -3332,6 +5280,10 @@
             if (wrap && !wrap.contains(e.target)) {
                 closeDeviceFilterDropdown();
             }
+            const popover = document.getElementById('orderProductsPopover');
+            if (popover && !popover.hidden && !popover.contains(e.target) && !e.target.closest('[data-order-products-trigger]')) {
+                closeOrderProductsPopover();
+            }
         });
 
         document.getElementById('refundModal').addEventListener('click', function(e) {
@@ -3340,13 +5292,47 @@
             }
         });
 
-        document.addEventListener('keydown', function(e) {
-            const refundModal = document.getElementById('refundModal');
-            if (!refundModal.classList.contains('active')) return;
-            if (e.key === 'Escape') {
-                closeRefundModal();
+        document.getElementById('mobileFilterSheet').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeMobileFilterSheet();
             }
         });
+
+        document.querySelector('[data-order-popover-close]')?.addEventListener('click', function() {
+            closeOrderProductsPopover();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            const refundModal = document.getElementById('refundModal');
+            const mobileFilterSheet = document.getElementById('mobileFilterSheet');
+            if (e.key !== 'Escape') return;
+            const orderPopover = document.getElementById('orderProductsPopover');
+            if (orderPopover && !orderPopover.hidden) {
+                closeOrderProductsPopover();
+                return;
+            }
+            if (refundModal.classList.contains('active')) {
+                closeRefundModal();
+                return;
+            }
+            if (mobileFilterSheet.classList.contains('active')) {
+                closeMobileFilterSheet();
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            const popover = document.getElementById('orderProductsPopover');
+            if (popover && !popover.hidden && activeOrderProductsTrigger) {
+                positionOrderProductsPopover(activeOrderProductsTrigger, popover);
+            }
+        });
+
+        window.addEventListener('scroll', function() {
+            const popover = document.getElementById('orderProductsPopover');
+            if (popover && !popover.hidden) {
+                closeOrderProductsPopover();
+            }
+        }, true);
 
         window.onload = init;
     </script>

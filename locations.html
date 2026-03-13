@@ -103,10 +103,20 @@
             color: #f8fafc;
         }
 
+        .sidebar-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            min-width: 0;
+        }
+
         .brand-version {
             font-size: 12px;
+            line-height: 1;
             color: rgba(219, 234, 254, 0.55);
-            padding-left: calc(var(--sidebar-nav-padding-x) + var(--sidebar-section-title-padding-x) - var(--sidebar-header-padding-x));
+            white-space: nowrap;
         }
 
 
@@ -145,6 +155,48 @@
             content: '·';
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
+        }
+        .sidebar-admin-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            color: rgba(219, 234, 254, 0.62);
+            font-size: 11px;
+            line-height: 1;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .sidebar-admin-lang::before {
+            content: '·';
+            color: rgba(219, 234, 254, 0.32);
+            margin-right: 2px;
+        }
+
+        .sidebar-admin-lang-btn {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.78;
+        }
+
+        .sidebar-admin-lang-btn:hover {
+            color: #ffffff;
+            opacity: 1;
+        }
+
+        .sidebar-admin-lang-btn.active {
+            color: #ffffff;
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .sidebar-admin-lang-sep {
+            opacity: 0.34;
         }
 
         .sidebar-nav {
@@ -805,14 +857,20 @@
                     <div class="brand-icon"><img src="logo.png" alt="COFE+"></div>
                     <div class="brand-title">运营控制台</div>
                 </div>
-                <div class="brand-version">Prototype v0</div>
-
+                <div class="sidebar-meta-row">
+                    <div class="brand-version">Prototype v0</div>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                        <span class="sidebar-admin-lang-sep">|</span>
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 <div class="sidebar-login">
                     <div class="sidebar-login-name" id="sidebarLoginName">-</div>
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
                 </div>
             </div>
-
+            
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
@@ -980,6 +1038,172 @@
             phone: '13800138000'
         };
 
+        const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
+        const ADMIN_SIDEBAR_TRANSLATIONS = {
+            zh: {
+                brand_console: '运营控制台',
+                section_operations: '运营管理',
+                section_foundation: '基础信息管理',
+                nav_overview: '总览',
+                nav_devices: '设备',
+                nav_menu_management: '商品管理',
+                nav_materials: '物料',
+                nav_orders: '订单',
+                nav_faults: '故障列表',
+                nav_staff: '人员管理',
+                nav_customers: '客户管理',
+                nav_locations: '点位管理',
+                page_overview: '总览',
+                page_devices: '设备',
+                page_menu_management: '商品管理',
+                page_materials: '物料管理',
+                page_orders: '订单',
+                page_faults: '故障管理',
+                page_customers: '客户管理',
+                page_locations: '点位管理',
+                page_staff_management: '人员管理',
+                page_product_detail: '商品详情'
+            },
+            en: {
+                brand_console: 'Operations Console',
+                section_operations: 'Operations',
+                section_foundation: 'Basic Info',
+                nav_overview: 'Overview',
+                nav_devices: 'Devices',
+                nav_menu_management: 'Catalog',
+                nav_materials: 'Materials',
+                nav_orders: 'Orders',
+                nav_faults: 'Faults',
+                nav_staff: 'Staff',
+                nav_customers: 'Customers',
+                nav_locations: 'Locations',
+                page_overview: 'Overview',
+                page_devices: 'Devices',
+                page_menu_management: 'Catalog',
+                page_materials: 'Materials',
+                page_orders: 'Orders',
+                page_faults: 'Faults',
+                page_customers: 'Customers',
+                page_locations: 'Locations',
+                page_staff_management: 'Staff',
+                page_product_detail: 'Product Detail'
+            }
+        };
+        const ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH = {
+            'overview.html': 'page_overview',
+            'devices.html': 'page_devices',
+            'menu-management.html': 'page_menu_management',
+            'materials.html': 'page_materials',
+            'orders.html': 'page_orders',
+            'faults.html': 'page_faults',
+            'customers.html': 'page_customers',
+            'locations.html': 'page_locations',
+            'staff-management.html': 'page_staff_management',
+            'product-detail.html': 'page_product_detail'
+        };
+        let adminSidebarLang = 'zh';
+
+        function getAdminSidebarLang() {
+            try {
+                const savedLang = localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY);
+                return savedLang === 'en' ? 'en' : 'zh';
+            } catch (e) {
+                return 'zh';
+            }
+        }
+
+        function translateAdminSidebar(key) {
+            const dictionary = ADMIN_SIDEBAR_TRANSLATIONS[adminSidebarLang] || ADMIN_SIDEBAR_TRANSLATIONS.zh;
+            return dictionary[key] || ADMIN_SIDEBAR_TRANSLATIONS.zh[key] || '';
+        }
+
+        function getAdminSidebarCurrentPage() {
+            if (!window || !window.location) return '';
+            const pathname = String(window.location.pathname || '');
+            return pathname.split('/').pop();
+        }
+
+        function getAdminSidebarNavKey(item) {
+            if (!item) return '';
+            const tab = item.dataset ? item.dataset.tab : '';
+            if (tab === 'overview') return 'nav_overview';
+            if (tab === 'menu') return 'nav_menu_management';
+
+            const href = item.getAttribute ? item.getAttribute('href') : '';
+            switch (href) {
+                case 'overview.html': return 'nav_overview';
+                case 'devices.html': return 'nav_devices';
+                case 'menu-management.html': return 'nav_menu_management';
+                case 'materials.html': return 'nav_materials';
+                case 'orders.html': return 'nav_orders';
+                case 'faults.html': return 'nav_faults';
+                case 'staff-management.html': return 'nav_staff';
+                case 'customers.html': return 'nav_customers';
+                case 'locations.html': return 'nav_locations';
+                default: return '';
+            }
+        }
+
+        function getAdminSidebarMobileTitleKey() {
+            const currentPage = getAdminSidebarCurrentPage();
+            if (currentPage === 'menu.html') {
+                if (typeof currentTab === 'string' && currentTab === 'menu') {
+                    return 'page_menu_management';
+                }
+                return 'page_overview';
+            }
+            return ADMIN_SIDEBAR_PAGE_TITLE_BY_PATH[currentPage] || '';
+        }
+
+        function renderAdminSidebarTranslations() {
+            adminSidebarLang = getAdminSidebarLang();
+
+            const brandTitle = document.querySelector('.brand-title');
+            if (brandTitle) {
+                brandTitle.textContent = translateAdminSidebar('brand_console');
+            }
+
+            const sectionTitles = document.querySelectorAll('.nav-section-title');
+            if (sectionTitles[0]) {
+                sectionTitles[0].textContent = translateAdminSidebar('section_operations');
+            }
+            if (sectionTitles[1]) {
+                sectionTitles[1].textContent = translateAdminSidebar('section_foundation');
+            }
+
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+                const labelNode = item.querySelector('span:last-child');
+                const key = getAdminSidebarNavKey(item);
+                if (labelNode && key) {
+                    labelNode.textContent = translateAdminSidebar(key);
+                }
+            });
+
+            const mobileHeaderTitle = document.querySelector('.mobile-header strong, .mobile-header span[style], .mobile-header .mobile-header-title');
+            const mobileTitleKey = getAdminSidebarMobileTitleKey();
+            if (mobileHeaderTitle && mobileTitleKey) {
+                mobileHeaderTitle.textContent = translateAdminSidebar(mobileTitleKey);
+            }
+
+            document.querySelectorAll('[data-admin-lang-option]').forEach(button => {
+                const active = button.getAttribute('data-admin-lang-option') === adminSidebarLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function setAdminSidebarLang(lang) {
+            if (lang !== 'zh' && lang !== 'en') return;
+            adminSidebarLang = lang;
+            try {
+                localStorage.setItem(ADMIN_SIDEBAR_LANG_KEY, lang);
+            } catch (e) {
+                // ignore localStorage write failures
+            }
+            renderAdminSidebarTranslations();
+        }
+
+
         function getSidebarLoginProfile() {
             try {
                 const raw = localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY);
@@ -1005,6 +1229,7 @@
                 phoneNode.textContent = profile.phone;
             }
             fitSidebarLoginInline();
+            renderAdminSidebarTranslations();
         }
 
         function fitSidebarLoginInline() {
