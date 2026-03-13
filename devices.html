@@ -3634,7 +3634,7 @@
             const chipHtml = snapshot.orgStatus.map(part => `
                 <span class="detail-fault-chip ${escapeHtml(part.status)}">${escapeHtml(`${part.label} ${part.name}`)}</span>
             `).join('');
-            const summary = snapshot.hasFault ? '检测到故障项，建议尽快远程排查或派单处理。' : '当前机构状态正常，可通过下方按钮进行远程维护。';
+            const summary = snapshot.hasFault ? '检测到故障项，建议尽快远程排查或派单处理。' : '当前机构状态正常，可在右侧设备操作区执行维护。';
             return renderDetailCard('故障处理', `
                 <div class="detail-fault-summary">${escapeHtml(summary)}</div>
                 <div class="detail-fault-grid">${rowHtml}</div>
@@ -3642,7 +3642,6 @@
                     <div class="detail-fault-org-title">机构状态</div>
                     <div class="detail-fault-chip-list">${chipHtml}</div>
                 </div>
-                ${renderFaultActionButtons(snapshot)}
             `, 'detail-card-fault-control');
         }
 
@@ -4779,12 +4778,12 @@
                             </div>
                         </section>
                         <section class="detail-side-card">
-                            <div class="detail-side-title">快捷操作</div>
+                            <div class="detail-side-title">设备操作</div>
                             <div class="detail-side-action-list">
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
-                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
+                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
                             </div>
                         </section>
                     </div>
