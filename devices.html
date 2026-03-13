@@ -2753,6 +2753,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-mock-data.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2971,12 +2972,12 @@
         });
 
         // 映射数据
-        const locationMap = {
-            'k8298': '上海市中心店',
-            'k8667': '北京朝阳门店',
-            'k9001': '广州天河店',
-            'k9002': '深圳南山店'
-        };
+        const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
+        const cloneSharedDeviceData = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
+            ? sharedAdminMockData.helpers.clone
+            : function(value) { return JSON.parse(JSON.stringify(value)); };
+
+        const locationMap = cloneSharedDeviceData((sharedAdminMockData.maps && sharedAdminMockData.maps.locationMap) || {});
 
         const locationPointCategoryMap = {
             'k8298': 'operation',
@@ -2998,12 +2999,7 @@
             'disabled': '已停卖'
         };
 
-        const merchantMap = {
-            'mer001': '星巴克咖啡',
-            'mer002': '瑞幸咖啡',
-            'mer003': '太平洋咖啡',
-            'mer004': 'Costa咖啡'
-        };
+        const merchantMap = cloneSharedDeviceData((sharedAdminMockData.maps && sharedAdminMockData.maps.merchantMap) || {});
 
         const categoryMap = {
             self: '自营',
@@ -3017,26 +3013,7 @@
         };
 
         // 默认设备数据
-        const defaultDevicesData = [
-            { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK384', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK410', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK406', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK405', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月9日 11:13' },
-            { id: 'RCK408', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 09:54' },
-            { id: 'RCK407', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月7日 16:39' },
-            { id: 'RCK409', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月6日 10:42' },
-            { id: 'RCK404', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月5日 19:32' },
-            { id: 'RCB036', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月4日 16:38' },
-            { id: 'RCK403', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月10日 10:44' },
-            { id: 'RCK402', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'disabled', heartbeat: '2026年2月10日 09:30' },
-            { id: 'RCK401', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'disabled', heartbeat: '2026年2月9日 08:15' },
-            { id: 'RCK400', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 14:22' },
-            { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-            { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-            { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
-        ];
+        const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
 
         // 设备数据
         let devicesData = [];
