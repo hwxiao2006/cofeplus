@@ -1,5 +1,38 @@
 (function initSharedMockData(root) {
     const globalRoot = root || (typeof globalThis !== 'undefined' ? globalThis : {});
+    const SHARED_PRODUCT_DEFAULT_OPTIONS = {
+        beans: '金奖黑咖-浓香意式',
+        temperature: '热',
+        strength: '标准',
+        syrup: '甘蔗冰糖糖浆',
+        sweetness: '无糖',
+        cupsize: '355ml',
+        lid: '倡导环保 不使用杯盖',
+        latteArt: '无'
+    };
+
+    function normalizeMockProduct(product) {
+        return {
+            ...product,
+            defaultOptions: {
+                ...SHARED_PRODUCT_DEFAULT_OPTIONS,
+                ...(product && product.defaultOptions ? product.defaultOptions : {})
+            }
+        };
+    }
+
+    function normalizeMockCategories(categories) {
+        return Object.keys(categories || {}).reduce((acc, categoryKey) => {
+            const category = categories[categoryKey] || {};
+            acc[categoryKey] = {
+                ...category,
+                items: Array.isArray(category.items)
+                    ? category.items.map(item => normalizeMockProduct(item))
+                    : []
+            };
+            return acc;
+        }, {});
+    }
 
     const COFE_SHARED_MOCK_DATA = {
         maps: {
@@ -36,7 +69,7 @@
             { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
             { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
         ],
-        defaultProducts: {
+        defaultProducts: normalizeMockCategories({
             '3D拉花': {
                 icon: '🎨',
                 names: { zh: '3D拉花', en: '3D Latte Art', jp: '3Dラテアート' },
@@ -128,7 +161,7 @@
                     { id: 31, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1464306076886-da185f6a9d05?w=400&h=300&fit=crop', names: { zh: '南瓜香料奶咖', en: 'Pumpkin Spice Latte' }, descs: { zh: '南瓜香料、牛奶、浓缩咖啡', en: 'Pumpkin spice, milk, espresso' } }
                 ]
             }
-        },
+        }),
         helpers: {
             clone(value) {
                 return JSON.parse(JSON.stringify(value));

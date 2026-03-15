@@ -5976,6 +5976,8 @@
         const MENU_MANAGE_CATEGORY_ORDER_KEY = 'categoryOrder';
         const COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY = 'menuCopyDeviceCategoryCatalog';
         const COPY_PRODUCT_DEVICE_QUEUE_KEY = 'menuCopyProductQueue';
+        const COPY_PRODUCT_PENDING_RESULTS_KEY = 'menuCopyProductPendingResults';
+        const NEXT_PRODUCT_ID_STORAGE_KEY = 'menuNextProductId';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const ORDERS_PREVIEW_RECORDS_KEY = 'ordersPreviewRecords';
         const DEFAULT_TAX_RATE = 0.13;
@@ -6157,6 +6159,7 @@
 
         // ==================== 初始化 ====================
         function init() {
+            syncNextProductIdFromStorage();
             renderSidebarLoginProfile();
             applySavedProductCategoryAssignments();
             applySavedProductEdits();
@@ -6178,6 +6181,42 @@
             setViewByTab(currentTab);
             switchMenuInnerTab(currentMenuInnerTab);
             restoreMenuManagementScrollPosition();
+            consumePendingCopyResults();
+        }
+
+        function syncNextProductIdFromStorage() {
+            try {
+                const storedNextProductId = Number(localStorage.getItem(NEXT_PRODUCT_ID_STORAGE_KEY));
+                if (Number.isFinite(storedNextProductId) && storedNextProductId > nextProductId) {
+                    nextProductId = storedNextProductId;
+                }
+            } catch (e) {
+                // ignore invalid localStorage value
+            }
+        }
+
+        function consumePendingCopyResults() {
+            let pendingResults = [];
+            try {
+                const raw = localStorage.getItem(COPY_PRODUCT_PENDING_RESULTS_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    pendingResults = parsed;
+                }
+            } catch (e) {
+                pendingResults = [];
+            } finally {
+                try {
+                    localStorage.removeItem(COPY_PRODUCT_PENDING_RESULTS_KEY);
+                } catch (clearError) {
+                    // ignore localStorage remove failures
+                }
+            }
+
+            if (pendingResults.length) {
+                openCopyProductBatchResultModal(pendingResults);
+            }
         }
 
         function applyInitialViewFromUrl() {
@@ -11274,6 +11313,91 @@
             document.getElementById('copyProductModal').classList.remove('active');
         }
 
+        function buildProductDetailPayload(product, categoryKey, extraPayload = {}) {
+            const normalizedCategoryKey = String(categoryKey || '').trim();
+            const categoryPayload = normalizedCategoryKey && productsData[normalizedCategoryKey]
+                ? (productsData[normalizedCategoryKey].names || {})
+                : {};
+            const categoryOptionsPayload = Object.entries(productsData).map(([catName, catData]) => ({
+                key: catName,
+                names: catData?.names || {}
+            }));
+            const catalogPayload = Object.entries(productsData).flatMap(([catName, catData]) => {
+                const categoryNamesPayload = catData?.names || {};
+                return (catData?.items || []).map(item => ({
+                    id: item.id,
+                    categoryKey: catName,
+                    category: categoryNamesPayload,
+                    product: item
+                }));
+            });
+
+            return {
+                product,
+                categoryKey: normalizedCategoryKey,
+                category: categoryPayload,
+                categoryOptions: categoryOptionsPayload,
+                catalog: catalogPayload,
+                ...cloneProductValue(extraPayload || {})
+            };
+        }
+
+        function openProductDetailPage(payload, productId, options = {}) {
+            const normalizedProductId = Number(productId);
+            if (!normalizedProductId || !payload) return false;
+            const payloadKey = `${normalizedProductId}-${Date.now()}`;
+            const params = new URLSearchParams();
+            params.set('id', String(normalizedProductId));
+            params.set('payloadKey', payloadKey);
+            params.set('device', currentDevice);
+            if (options.mode) params.set('mode', String(options.mode));
+
+            persistMenuManagementReturnState();
+
+            try {
+                sessionStorage.setItem(`productDetailPayload:${payloadKey}`, JSON.stringify(payload));
+                window.location.href = `product-detail.html?${params.toString()}`;
+                return true;
+            } catch (e) {
+                try {
+                    window.name = JSON.stringify({
+                        __type: 'productDetailPayload',
+                        payloadKey,
+                        payload
+                    });
+                    params.set('payloadStore', 'windowName');
+                    window.location.href = `product-detail.html?${params.toString()}`;
+                    return true;
+                } catch (fallbackError) {
+                    showToast('图片数据过大，无法打开详情页，请压缩图片后重试', 'error');
+                    return false;
+                }
+            }
+        }
+
+        function openCopyProductDetail(sourceProduct, sourceCategoryKey, targetCategories = [], copyBatchContext = null) {
+            if (!sourceProduct) return;
+            const normalizedTargetCategories = Array.from(new Set((targetCategories || [])
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(Boolean)));
+            const copyWorkflow = {
+                mode: 'copy',
+                sourceCategoryKey: String(sourceCategoryKey || '').trim(),
+                targetCategories: normalizedTargetCategories,
+                targetDeviceIds: Array.isArray(copyBatchContext?.targetDeviceIds)
+                    ? copyBatchContext.targetDeviceIds.map(deviceId => String(deviceId || '').trim()).filter(Boolean)
+                    : [currentDevice],
+                categorySyncMode: copyBatchContext?.categorySyncMode === 'auto_create' ? 'auto_create' : 'existing_only'
+            };
+            const primaryCategory = normalizedTargetCategories[0] || copyWorkflow.sourceCategoryKey;
+            const payload = buildProductDetailPayload(sourceProduct, primaryCategory, {
+                copyWorkflow,
+                copySourceProduct: cloneProductValue(sourceProduct),
+                copySourceCategoryKey: copyWorkflow.sourceCategoryKey
+            });
+            openProductDetailPage(payload, sourceProduct.id, { mode: 'copy' });
+        }
+
         function startCopyProduct() {
             if (copyProductModalStep === 1) {
                 if (copyProductScope === 'other') {
@@ -11308,7 +11432,7 @@
                 categorySyncMode: copyProductCategorySyncMode
             };
             closeCopyProductModal();
-            openProductModal(targetCategories[0], null, '', selected.product, selected.categoryName, targetCategories, copyBatchContext);
+            openCopyProductDetail(selected.product, selected.categoryName, targetCategories, copyBatchContext);
         }
 
         function openProductModal(preselectedCategory = '', productToEdit = null, sourceCategory = '', copySourceProduct = null, copySourceCategory = '', copyTargetCategories = [], copyBatchContext = null) {
@@ -11675,49 +11799,8 @@
             
             if (!product) return;
 
-            const categoryPayload = productsData[category].names || {};
-            const categoryOptionsPayload = Object.entries(productsData).map(([catName, catData]) => ({
-                key: catName,
-                names: catData?.names || {}
-            }));
-            const catalogPayload = Object.entries(productsData).flatMap(([catName, catData]) => {
-                const categoryNamesPayload = catData?.names || {};
-                return (catData?.items || []).map(item => ({
-                    id: item.id,
-                    categoryKey: catName,
-                    category: categoryNamesPayload,
-                    product: item
-                }));
-            });
-            const payload = {
-                product,
-                categoryKey: category,
-                category: categoryPayload,
-                categoryOptions: categoryOptionsPayload,
-                catalog: catalogPayload
-            };
-            const payloadKey = `${id}-${Date.now()}`;
-            persistMenuManagementReturnState();
-
-            try {
-                sessionStorage.setItem(`productDetailPayload:${payloadKey}`, JSON.stringify(payload));
-                window.location.href = `product-detail.html?id=${id}&payloadKey=${encodeURIComponent(payloadKey)}&device=${encodeURIComponent(currentDevice)}`;
-                return;
-            } catch (e) {
-                // sessionStorage 配额不足时，改用 window.name 传输，避免超长 URL 与容量限制问题
-                try {
-                    window.name = JSON.stringify({
-                        __type: 'productDetailPayload',
-                        payloadKey,
-                        payload
-                    });
-                    window.location.href = `product-detail.html?id=${id}&payloadKey=${encodeURIComponent(payloadKey)}&payloadStore=windowName&device=${encodeURIComponent(currentDevice)}`;
-                    return;
-                } catch (fallbackError) {
-                    showToast('图片数据过大，无法打开详情页，请压缩图片后重试', 'error');
-                    return;
-                }
-            }
+            const payload = buildProductDetailPayload(product, category);
+            openProductDetailPage(payload, id);
         }
 
         // ==================== 设备切换 ====================

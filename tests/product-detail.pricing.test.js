@@ -108,6 +108,54 @@ test('详情页应将基本信息与配方配置拆分为分页签', () => {
   assert.ok(/switchProductDetailTab\('basic'\)/.test(html));
 });
 
+test('详情页应支持复制模式，并提供确认复制步骤', () => {
+  assert.ok(/const\s+copyMode\s*=\s*params\.get\('mode'\)/.test(html));
+  assert.ok(/copyMode === 'copy'/.test(html));
+  assert.ok(html.includes('id="productCopyFlowSteps"'));
+  assert.ok(html.includes('id="productCopyStepBasic"'));
+  assert.ok(html.includes('id="productCopyStepRecipe"'));
+  assert.ok(html.includes('id="productCopyStepConfirm"'));
+  assert.ok(html.includes('id="productDetailConfirmPanel"'));
+});
+
+test('复制模式应提供确认页渲染与最终确认处理函数', () => {
+  assert.ok(/function\s+renderCopyConfirmPanel\s*\(/.test(html));
+  assert.ok(/function\s+buildCopyConfirmData\s*\(/.test(html));
+  assert.ok(/function\s+confirmCopyProduct\s*\(/.test(html));
+  assert.ok(/function\s+goToCopyWorkflowStep\s*\(/.test(html));
+  assert.ok(/function\s+updateCopyWorkflowActions\s*\(/.test(html));
+});
+
+test('复制模式顶部步骤条应为只读进度，不应与上下步按钮重复导航', () => {
+  assert.ok(/id="productCopyStepBasic"(?![^>]*onclick)/.test(html));
+  assert.ok(/id="productCopyStepRecipe"(?![^>]*onclick)/.test(html));
+  assert.ok(/id="productCopyStepConfirm"(?![^>]*onclick)/.test(html));
+  assert.ok(!/<button[^>]*id="productCopyStepBasic"/.test(html));
+  assert.ok(!/<button[^>]*id="productCopyStepRecipe"/.test(html));
+  assert.ok(!/<button[^>]*id="productCopyStepConfirm"/.test(html));
+  assert.ok(/id="copyWorkflowEditBasicBtn"[^>]*onclick="goToCopyWorkflowStep\('basic'\)"/.test(html));
+  assert.ok(/id="copyWorkflowEditRecipeBtn"[^>]*onclick="goToCopyWorkflowStep\('recipe'\)"/.test(html));
+});
+
+test('复制模式确认页在图片未变化时应隐藏图片对比区块', () => {
+  assert.ok(html.includes('id="copyConfirmImageSection"'));
+  assert.ok(/const\s+shouldShowImageCompare\s*=\s*beforeSrc\s*!==\s*afterSrc;/.test(html));
+  assert.ok(/imageSection\.style\.display\s*=\s*shouldShowImageCompare\s*\?\s*''\s*:\s*'none'/.test(html));
+});
+
+test('复制模式保存标签文案时应只更新当前复制商品，不弹批量同步弹窗', () => {
+  assert.ok(/function\s+saveTagConfigDrawer\s*\([\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?closeTagConfigDrawer\(\);[\s\S]*?showToast\('标签配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
+});
+
+test('复制模式保存配方时应只更新当前复制商品，不弹关联商品确认', () => {
+  assert.ok(/function\s+saveRecipeEditor\s*\([\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?setOptionRecipeLinkId\([\s\S]*?productData[\s\S]*?\);[\s\S]*?setOptionRecipe\([\s\S]*?productData[\s\S]*?\);[\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?closeRecipeEditor\(\);[\s\S]*?showToast\('配方配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
+});
+
+test('复制模式导入或恢复配方时不应提示进入关联饮品确认', () => {
+  assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'已恢复为出厂配方'\s*:\s*'已恢复为出厂配方，正在进入关联饮品确认'\)/.test(html));
+  assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'基底咖啡配方已导入'\s*:\s*'基底咖啡配方已导入，正在进入关联饮品确认'\)/.test(html));
+});
+
 test('详情页应支持按选项修改配方，并可调整分组顺序和百分比', () => {
   const editBtnCount = (html.match(/>修改配方</g) || []).length;
   assert.strictEqual(editBtnCount, 1);
@@ -153,7 +201,7 @@ test('配方调整应支持上传基底咖啡配方文件并下载样例', () =>
   assert.ok(/function\s+extractBaseRecipePayloadFromSheetText\s*\(/.test(html));
   assert.ok(html.includes("base-coffee-recipe-template.xls"));
   assert.ok(!html.includes("base-coffee-recipe-template.json"));
-  assert.ok(/showToast\('基底咖啡配方已导入，正在进入关联饮品确认'\)/.test(html));
+  assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'基底咖啡配方已导入'\s*:\s*'基底咖啡配方已导入，正在进入关联饮品确认'\)/.test(html));
   assert.ok(/saveRecipeEditor\(\);/.test(html));
 });
 
@@ -162,7 +210,7 @@ test('配方调整应支持恢复出厂设置', () => {
   assert.ok(/function\s+resetRecipeToFactoryDefaults\s*\(/.test(html));
   assert.ok(/confirm\('确认恢复出厂设置/.test(html));
   assert.ok(/getDefaultRecipeData\(recipeEditorState\.tagLabel\)/.test(html));
-  assert.ok(/showToast\('已恢复为出厂配方，正在进入关联饮品确认'\)/.test(html));
+  assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'已恢复为出厂配方'\s*:\s*'已恢复为出厂配方，正在进入关联饮品确认'\)/.test(html));
   assert.ok(/saveRecipeEditor\(\);/.test(html));
 });
 
