@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 function test(name, fn) {
   try {
@@ -38,4 +39,28 @@ test('设备页和商品管理页应显式引用共享 mock 数据源', () => {
   assert.ok(/<script src="shared\/admin-mock-data\.js"><\/script>/.test(menuHtml));
   assert.ok(/COFE_SHARED_MOCK_DATA/.test(devicesHtml));
   assert.ok(/COFE_SHARED_MOCK_DATA/.test(menuHtml));
+});
+
+test('共享 mock 商品应预设原默认选中项', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  const products = data && data.defaultProducts ? data.defaultProducts : {};
+  const requiredSpecKeys = ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'];
+
+  Object.values(products).forEach(category => {
+    (category.items || []).forEach(product => {
+      assert.ok(product.defaultOptions, `product ${product.id} should define defaultOptions`);
+      requiredSpecKeys.forEach(specKey => {
+        assert.ok(
+          product.defaultOptions[specKey],
+          `product ${product.id} should define defaultOptions.${specKey}`
+        );
+      });
+    });
+  });
 });

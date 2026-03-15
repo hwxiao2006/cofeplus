@@ -376,6 +376,58 @@
             display: block;
         }
 
+        .product-copy-flow-steps {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .product-copy-flow-steps.active {
+            display: inline-flex;
+        }
+
+        .product-copy-step-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-secondary);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: default;
+            user-select: none;
+        }
+
+        .product-copy-step-btn.active {
+            color: #fff;
+            background: linear-gradient(130deg, var(--primary), #38bdf8);
+            border-color: transparent;
+            box-shadow: 0 6px 14px rgba(46, 196, 182, 0.24);
+        }
+
+        .product-copy-step-btn.done {
+            color: var(--primary-dark);
+            background: rgba(78, 205, 196, 0.12);
+            border-color: rgba(78, 205, 196, 0.24);
+        }
+
+        .copy-flow-summary {
+            display: none;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(78, 205, 196, 0.18);
+            background: linear-gradient(180deg, #fcffff 0%, #f7fbfb 100%);
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .copy-flow-summary.active {
+            display: block;
+        }
+
         .form-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -406,6 +458,178 @@
 
         .form-group-original-price {
             max-width: 420px;
+        }
+
+        .copy-confirm-block {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .copy-confirm-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .copy-confirm-block-head {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            background: #fbfcfd;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .copy-confirm-block-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .copy-confirm-block-meta {
+            margin-top: 2px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .copy-confirm-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .copy-confirm-table th,
+        .copy-confirm-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .copy-confirm-table th {
+            background: #f8f9fa;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .copy-confirm-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .copy-confirm-table td:first-child {
+            width: 128px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .copy-confirm-before {
+            background: #fbfcfd;
+            color: var(--text-secondary);
+        }
+
+        .copy-confirm-after {
+            background: #f2fbf8;
+            color: #165f54;
+            font-weight: 600;
+        }
+
+        .copy-confirm-summary-table td:nth-child(1),
+        .copy-confirm-summary-table td:nth-child(3) {
+            width: 92px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: #fbfcfd;
+        }
+
+        .copy-confirm-summary-table td:nth-child(2),
+        .copy-confirm-summary-table td:nth-child(4) {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .copy-confirm-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .copy-confirm-column {
+            display: grid;
+            gap: 16px;
+            align-content: start;
+        }
+
+        .copy-confirm-image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            padding: 12px;
+        }
+
+        .copy-confirm-image-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .copy-confirm-image-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .copy-confirm-image-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #eef2f7;
+            display: block;
+        }
+
+        .copy-confirm-image-empty {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 8px;
+            background: #f3f6f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .copy-confirm-note {
+            padding: 0 12px 12px;
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .copy-workflow-actions {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .copy-workflow-actions.active {
+            display: flex;
+        }
+
+        .copy-workflow-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .form-label {
@@ -1510,6 +1734,12 @@
                 width: 100%;
             }
 
+            .product-copy-flow-steps.active {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                width: 100%;
+            }
+
             .form-card {
                 padding: 20px;
             }
@@ -1521,6 +1751,22 @@
 
             .form-group-original-price {
                 max-width: none;
+            }
+
+            .copy-confirm-grid,
+            .copy-confirm-image-grid,
+            .copy-workflow-actions.active {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-workflow-actions.active {
+                display: grid;
+            }
+
+            .copy-workflow-actions-right {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
             }
 
             .lang-section {
@@ -1748,13 +1994,20 @@
                     <span class="header-title" id="productId">--</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-default" onclick="goBack()">取消</button>
-                    <button class="btn btn-primary" onclick="saveProduct()">保存</button>
+                    <button class="btn btn-default" id="headerCancelBtn" onclick="goBack()">取消</button>
+                    <button class="btn btn-primary" id="headerSaveBtn" onclick="saveProduct()">保存</button>
                 </div>
             </header>
 
             <!-- 内容区 -->
             <div class="content">
+                <div class="product-copy-flow-steps" id="productCopyFlowSteps">
+                    <div class="product-copy-step-btn active" id="productCopyStepBasic">2 基本信息</div>
+                    <div class="product-copy-step-btn" id="productCopyStepRecipe">3 配方配置</div>
+                    <div class="product-copy-step-btn" id="productCopyStepConfirm">4 确认复制</div>
+                </div>
+                <div class="copy-flow-summary" id="copyFlowSummary"></div>
+
                 <div class="product-detail-tabs" role="tablist" aria-label="商品详情分组">
                     <button type="button" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" onclick="switchProductDetailTab('basic')">基本信息</button>
                     <button type="button" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" onclick="switchProductDetailTab('recipe')">配方配置</button>
@@ -1910,6 +2163,95 @@
                         </div>
                     </div>
                 </section>
+
+                <section class="product-detail-tab-panel" id="productDetailConfirmPanel">
+                    <div class="copy-confirm-block" id="copyConfirmImageSection">
+                        <div class="copy-confirm-block-head">
+                            <div>
+                                <div class="copy-confirm-block-title">复制摘要</div>
+                                <div class="copy-confirm-block-meta">确认来源、目标设备和目标分类</div>
+                            </div>
+                        </div>
+                        <table class="copy-confirm-table copy-confirm-summary-table" id="copyConfirmSummaryTable"></table>
+                    </div>
+
+                    <div class="copy-confirm-block">
+                        <div class="copy-confirm-block-head">
+                            <div>
+                                <div class="copy-confirm-block-title">图片对比</div>
+                                <div class="copy-confirm-block-meta">模板原图与复制后图片</div>
+                            </div>
+                        </div>
+                        <div class="copy-confirm-image-grid">
+                            <div class="copy-confirm-image-card">
+                                <div class="copy-confirm-image-label">原图（模板商品）</div>
+                                <img class="copy-confirm-image-thumb" id="copyConfirmBeforeImage" alt="模板图片">
+                                <div class="copy-confirm-image-empty" id="copyConfirmBeforeImageEmpty">无图</div>
+                            </div>
+                            <div class="copy-confirm-image-card">
+                                <div class="copy-confirm-image-label">新图（复制后商品）</div>
+                                <img class="copy-confirm-image-thumb" id="copyConfirmAfterImage" alt="复制后图片">
+                                <div class="copy-confirm-image-empty" id="copyConfirmAfterImageEmpty">无图</div>
+                            </div>
+                        </div>
+                        <div class="copy-confirm-note" id="copyConfirmImageNote"></div>
+                    </div>
+
+                    <div class="copy-confirm-grid">
+                        <div class="copy-confirm-column">
+                            <div class="copy-confirm-block">
+                            <div class="copy-confirm-block-head">
+                                <div>
+                                    <div class="copy-confirm-block-title">基本信息</div>
+                                    <div class="copy-confirm-block-meta" id="copyConfirmBasicMeta">-</div>
+                                </div>
+                            </div>
+                                <div id="copyConfirmBasicTable"></div>
+                            </div>
+
+                            <div class="copy-confirm-block">
+                                <div class="copy-confirm-block-head">
+                                    <div>
+                                        <div class="copy-confirm-block-title">多语言文本</div>
+                                        <div class="copy-confirm-block-meta">名称与描述对比</div>
+                                    </div>
+                                </div>
+                                <div id="copyConfirmLangContent"></div>
+                            </div>
+                        </div>
+
+                        <div class="copy-confirm-column">
+                            <div class="copy-confirm-block">
+                                <div class="copy-confirm-block-head">
+                                    <div>
+                                        <div class="copy-confirm-block-title">标签文案</div>
+                                        <div class="copy-confirm-block-meta">标签组与默认选项文案</div>
+                                    </div>
+                                </div>
+                                <div id="copyConfirmTagContent"></div>
+                            </div>
+
+                            <div class="copy-confirm-block">
+                                <div class="copy-confirm-block-head">
+                                    <div>
+                                        <div class="copy-confirm-block-title">配方配置</div>
+                                        <div class="copy-confirm-block-meta" id="copyConfirmRecipeMeta">-</div>
+                                    </div>
+                                </div>
+                                <div id="copyConfirmRecipeContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="copy-workflow-actions" id="copyWorkflowActions">
+                    <button class="btn btn-default" id="copyWorkflowBackBtn" type="button" onclick="handleCopyWorkflowBack()">上一步</button>
+                    <div class="copy-workflow-actions-right">
+                        <button class="btn btn-default" id="copyWorkflowEditBasicBtn" type="button" onclick="goToCopyWorkflowStep('basic')">编辑基本信息</button>
+                        <button class="btn btn-default" id="copyWorkflowEditRecipeBtn" type="button" onclick="goToCopyWorkflowStep('recipe')">编辑配方配置</button>
+                        <button class="btn btn-primary" id="copyWorkflowPrimaryBtn" type="button" onclick="handleCopyWorkflowPrimaryAction()">下一步</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -2271,6 +2613,7 @@
         let currentDevice = 'RCK111';
         let currentLang = 'zh';
         let currentProductDetailTab = 'basic';
+        let copyWorkflowState = null;
         let activeRecipeSpecKey = 'beans';
         let recipeEditorState = null;
         let recipeGroupDraggedKey = '';
@@ -2294,6 +2637,10 @@
         ];
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
+        const COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY = 'menuCopyDeviceCategoryCatalog';
+        const COPY_PRODUCT_DEVICE_QUEUE_KEY = 'menuCopyProductQueue';
+        const COPY_PRODUCT_PENDING_RESULTS_KEY = 'menuCopyProductPendingResults';
+        const NEXT_PRODUCT_ID_STORAGE_KEY = 'menuNextProductId';
         const RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
@@ -2305,6 +2652,40 @@
             { key: 'decorToppings', title: '装饰颗粒名称', multi: true, defaultNames: [] }
         ];
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
+
+        function cloneProductValue(value) {
+            if (value === null || value === undefined) return value;
+            if (Array.isArray(value)) {
+                return value.map(item => cloneProductValue(item));
+            }
+            if (typeof value === 'object') {
+                return Object.keys(value).reduce((acc, key) => {
+                    acc[key] = cloneProductValue(value[key]);
+                    return acc;
+                }, {});
+            }
+            return value;
+        }
+
+        function isCopyWorkflowActive() {
+            return !!(copyWorkflowState && copyWorkflowState.mode === 'copy');
+        }
+
+        function normalizeCopyWorkflowState(rawState = {}) {
+            const state = rawState && typeof rawState === 'object' ? rawState : {};
+            return {
+                mode: 'copy',
+                sourceProduct: cloneProductValue(state.sourceProduct || null),
+                sourceCategoryKey: String(state.sourceCategoryKey || '').trim(),
+                targetCategories: Array.from(new Set((state.targetCategories || [])
+                    .map(categoryKey => String(categoryKey || '').trim())
+                    .filter(Boolean))),
+                targetDeviceIds: Array.from(new Set((state.targetDeviceIds || [])
+                    .map(deviceId => String(deviceId || '').trim())
+                    .filter(Boolean))),
+                categorySyncMode: state.categorySyncMode === 'auto_create' ? 'auto_create' : 'existing_only'
+            };
+        }
 
         function updatePricePreview() {
             // 预留：价格相关联动入口
@@ -2474,29 +2855,124 @@
         }
 
         function switchProductDetailTab(tabKey) {
-            const nextTab = tabKey === 'recipe' ? 'recipe' : 'basic';
+            const nextTab = tabKey === 'recipe'
+                ? 'recipe'
+                : (isCopyWorkflowActive() && tabKey === 'confirm' ? 'confirm' : 'basic');
             currentProductDetailTab = nextTab;
 
             const isBasic = nextTab === 'basic';
+            const isRecipe = nextTab === 'recipe';
+            const isConfirm = nextTab === 'confirm';
             const basicBtn = document.getElementById('productDetailTabBasicBtn');
             const recipeBtn = document.getElementById('productDetailTabRecipeBtn');
+            const confirmBtn = document.getElementById('productCopyStepConfirm');
             const basicPanel = document.getElementById('productDetailBasicPanel');
             const recipePanel = document.getElementById('productDetailRecipePanel');
+            const confirmPanel = document.getElementById('productDetailConfirmPanel');
 
             if (basicBtn) {
                 basicBtn.classList.toggle('active', isBasic);
                 basicBtn.setAttribute('aria-selected', isBasic ? 'true' : 'false');
             }
             if (recipeBtn) {
-                recipeBtn.classList.toggle('active', !isBasic);
-                recipeBtn.setAttribute('aria-selected', isBasic ? 'false' : 'true');
+                recipeBtn.classList.toggle('active', isRecipe);
+                recipeBtn.setAttribute('aria-selected', isRecipe ? 'true' : 'false');
+            }
+            if (confirmBtn) {
+                confirmBtn.classList.toggle('active', isConfirm);
             }
             if (basicPanel) {
                 basicPanel.classList.toggle('active', isBasic);
             }
             if (recipePanel) {
-                recipePanel.classList.toggle('active', !isBasic);
+                recipePanel.classList.toggle('active', isRecipe);
             }
+            if (confirmPanel) {
+                confirmPanel.classList.toggle('active', isConfirm);
+            }
+
+            if (isCopyWorkflowActive()) {
+                const copyBasicBtn = document.getElementById('productCopyStepBasic');
+                const copyRecipeBtn = document.getElementById('productCopyStepRecipe');
+                if (copyBasicBtn) {
+                    copyBasicBtn.classList.toggle('active', isBasic);
+                    copyBasicBtn.classList.toggle('done', !isBasic);
+                }
+                if (copyRecipeBtn) {
+                    copyRecipeBtn.classList.toggle('active', isRecipe);
+                    copyRecipeBtn.classList.toggle('done', isConfirm);
+                }
+                if (isConfirm) {
+                    renderCopyConfirmPanel();
+                }
+                updateCopyWorkflowActions();
+            }
+        }
+
+        function updateCopyWorkflowActions() {
+            const actions = document.getElementById('copyWorkflowActions');
+            const backBtn = document.getElementById('copyWorkflowBackBtn');
+            const primaryBtn = document.getElementById('copyWorkflowPrimaryBtn');
+            const editBasicBtn = document.getElementById('copyWorkflowEditBasicBtn');
+            const editRecipeBtn = document.getElementById('copyWorkflowEditRecipeBtn');
+            const headerSaveBtn = document.getElementById('headerSaveBtn');
+            const headerCancelBtn = document.getElementById('headerCancelBtn');
+            const defaultTabs = document.querySelector('.product-detail-tabs');
+            const copySteps = document.getElementById('productCopyFlowSteps');
+            const summary = document.getElementById('copyFlowSummary');
+
+            const active = isCopyWorkflowActive();
+            if (actions) actions.classList.toggle('active', active);
+            if (copySteps) copySteps.classList.toggle('active', active);
+            if (summary) summary.classList.toggle('active', active);
+            if (defaultTabs) defaultTabs.style.display = active ? 'none' : '';
+            if (headerSaveBtn) headerSaveBtn.style.display = active ? 'none' : '';
+            if (headerCancelBtn) headerCancelBtn.textContent = active ? '取消复制' : '取消';
+            if (!active) return;
+
+            const isBasic = currentProductDetailTab === 'basic';
+            const isRecipe = currentProductDetailTab === 'recipe';
+            const isConfirm = currentProductDetailTab === 'confirm';
+
+            if (backBtn) backBtn.style.visibility = isBasic ? 'hidden' : 'visible';
+            if (editBasicBtn) editBasicBtn.style.display = isConfirm ? 'inline-flex' : 'none';
+            if (editRecipeBtn) editRecipeBtn.style.display = isConfirm ? 'inline-flex' : 'none';
+            if (primaryBtn) {
+                primaryBtn.textContent = isBasic ? '下一步：配方配置' : (isRecipe ? '下一步：确认复制' : '确认复制');
+            }
+        }
+
+        function goToCopyWorkflowStep(stepKey) {
+            if (!isCopyWorkflowActive()) return;
+            switchProductDetailTab(stepKey);
+        }
+
+        function handleCopyWorkflowBack() {
+            if (!isCopyWorkflowActive()) return;
+            if (currentProductDetailTab === 'recipe') {
+                goToCopyWorkflowStep('basic');
+                return;
+            }
+            if (currentProductDetailTab === 'confirm') {
+                goToCopyWorkflowStep('recipe');
+            }
+        }
+
+        function handleCopyWorkflowPrimaryAction() {
+            if (!isCopyWorkflowActive()) {
+                saveProduct();
+                return;
+            }
+
+            if (currentProductDetailTab === 'basic') {
+                goToCopyWorkflowStep('recipe');
+                return;
+            }
+            if (currentProductDetailTab === 'recipe') {
+                goToCopyWorkflowStep('confirm');
+                return;
+            }
+            confirmCopyProduct();
         }
 
         function getRecipeGroupConfig(groupKey) {
@@ -2840,7 +3316,7 @@
             }
             recipeEditorState.recipe = getDefaultRecipeData(recipeEditorState.tagLabel);
             renderRecipeEditor();
-            showToast('已恢复为出厂配方，正在进入关联饮品确认');
+            showToast(isCopyWorkflowActive() ? '已恢复为出厂配方' : '已恢复为出厂配方，正在进入关联饮品确认');
             saveRecipeEditor();
         }
 
@@ -2903,7 +3379,7 @@
                     recipeEditorState.recipe.groups.baseCoffeeLiquid.percent = payload.percent;
                     renderRecipeEditor();
                     closeBaseRecipeUploadModal();
-                    showToast('基底咖啡配方已导入，正在进入关联饮品确认');
+                    showToast(isCopyWorkflowActive() ? '基底咖啡配方已导入' : '基底咖啡配方已导入，正在进入关联饮品确认');
                     saveRecipeEditor();
                 } catch (error) {
                     console.error('解析基底配方文件失败', error);
@@ -3541,6 +4017,27 @@
                 recipeEditorState.tagKey,
                 productData
             );
+
+            if (isCopyWorkflowActive()) {
+                setOptionRecipeLinkId(
+                    recipeEditorState.specKey,
+                    recipeEditorState.tagKey,
+                    linkId,
+                    productData
+                );
+                setOptionRecipe(
+                    recipeEditorState.specKey,
+                    recipeEditorState.tagKey,
+                    recipeEditorState.recipe,
+                    recipeEditorState.tagLabel,
+                    productData
+                );
+                persistRecipeChanges(productData ? [productData] : []);
+                closeRecipeEditor();
+                showToast('配方配置已更新');
+                return;
+            }
+
             const affectedEntries = getRecipeImpactEntries(
                 recipeEditorState.specKey,
                 recipeEditorState.tagKey,
@@ -3736,12 +4233,581 @@
             }).join('');
         }
 
+        function formatCopyWorkflowCategoryLabels(categoryKeys = []) {
+            const optionMap = new Map(productCategoryOptions.map(option => [option.key, resolveCategoryOptionLabel(option)]));
+            return (categoryKeys || []).map(key => optionMap.get(key) || key).filter(Boolean).join('、') || '-';
+        }
+
+        function formatCopyWorkflowDeviceLabels(deviceIds = []) {
+            const normalized = (deviceIds || []).map(deviceId => String(deviceId || '').trim()).filter(Boolean);
+            if (!normalized.length) return currentDevice || '-';
+            return normalized.join(' / ');
+        }
+
+        function formatCompareValue(value) {
+            if (value === null || value === undefined || value === '') return '-';
+            return String(value);
+        }
+
+        function buildCopyCompareTable(headers = [], rows = [], extraClass = '') {
+            const safeHeaders = headers.map(label => `<th>${escAttr(label)}</th>`).join('');
+            if (!rows.length) {
+                return `
+                    <table class="copy-confirm-table ${extraClass}">
+                        <thead><tr>${safeHeaders}</tr></thead>
+                        <tbody><tr><td colspan="${headers.length}" style="color:var(--text-muted);">无变化</td></tr></tbody>
+                    </table>
+                `;
+            }
+            return `
+                <table class="copy-confirm-table ${extraClass}">
+                    <thead><tr>${safeHeaders}</tr></thead>
+                    <tbody>
+                        ${rows.map(row => `
+                            <tr>
+                                <td>${escAttr(row.field)}</td>
+                                <td class="copy-confirm-before">${escAttr(formatCompareValue(row.before))}</td>
+                                <td class="copy-confirm-after">${escAttr(formatCompareValue(row.after))}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function collectProductDraftForSave(options = {}) {
+            if (!productData) return null;
+
+            const validate = options.validate !== false;
+            const langs = getDeviceLangs();
+            const firstLang = langs[0];
+            const selectedCategories = collectSelectedProductCategories();
+
+            if (validate && !selectedCategories.length) {
+                showToast('请至少选择一个所属分类', 'error');
+                return null;
+            }
+
+            const firstName = document.querySelector('.product-name-' + firstLang)?.value.trim() || '';
+            if (validate && !firstName) {
+                showToast(`请输入${getLangName(firstLang)}商品名称`, 'error');
+                return null;
+            }
+
+            const rawPrice = document.getElementById('productPrice').value;
+            const price = parseFloat(rawPrice);
+            if (validate && (!price || price <= 0)) {
+                showToast('请输入有效的价格', 'error');
+                return null;
+            }
+
+            const originalPriceRaw = document.getElementById('productOriginalPrice').value.trim();
+            let originalPrice = null;
+            if (originalPriceRaw) {
+                const parsedOriginalPrice = parseFloat(originalPriceRaw);
+                if (validate && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice <= 0)) {
+                    showToast('请输入有效的原价', 'error');
+                    return null;
+                }
+                if (validate && parsedOriginalPrice <= price) {
+                    showToast('原价需大于商品价格', 'error');
+                    return null;
+                }
+                originalPrice = Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : null;
+            }
+
+            const names = {};
+            const descs = {};
+            langs.forEach(lang => {
+                const nameEl = document.querySelector('.product-name-' + lang);
+                const descEl = document.querySelector('.product-desc-' + lang);
+                if (nameEl && nameEl.value.trim()) names[lang] = nameEl.value.trim();
+                if (descEl && descEl.value.trim()) descs[lang] = descEl.value.trim();
+            });
+
+            return {
+                selectedCategories,
+                updatedProduct: {
+                    ...productData,
+                    names,
+                    descs,
+                    image: document.getElementById('productImage').value.trim() || null,
+                    price: Number.isFinite(price) ? price : null,
+                    originalPrice,
+                    featured: document.getElementById('featuredSwitch').checked,
+                    onSale: document.getElementById('onSaleSwitch').checked,
+                    specs: productData.specs || {},
+                    defaultOptions: productData.defaultOptions || {},
+                    tagI18n: productData.tagI18n || {},
+                    tagExtraPrices: productData.tagExtraPrices || {},
+                    optionRecipes: productData.optionRecipes || {},
+                    optionRecipeLinks: productData.optionRecipeLinks || {},
+                    options: getSelectedOptions()
+                }
+            };
+        }
+
+        function buildCopyConfirmData() {
+            const sourceProduct = cloneProductValue(copyWorkflowState?.sourceProduct || productData || {});
+            const draft = collectProductDraftForSave({ validate: false });
+            const updatedProduct = draft?.updatedProduct || productData || {};
+            const selectedCategories = draft?.selectedCategories || collectSelectedProductCategories();
+            const langs = getDeviceLangs();
+
+            const basicRows = [
+                { field: '所属分类', before: copyWorkflowState?.sourceCategoryKey || currentCategoryKey || '-', after: formatCopyWorkflowCategoryLabels(selectedCategories) },
+                { field: '基础售价', before: sourceProduct.price ?? '-', after: updatedProduct.price ?? '-' },
+                { field: '原价', before: sourceProduct.originalPrice ?? '-', after: updatedProduct.originalPrice ?? '-' }
+            ];
+
+            const langBlocks = langs.map(lang => ({
+                title: getLangName(lang),
+                rows: [
+                    { field: '商品名称', before: sourceProduct.names?.[lang] || '', after: updatedProduct.names?.[lang] || '' },
+                    { field: '商品描述', before: sourceProduct.descs?.[lang] || '', after: updatedProduct.descs?.[lang] || '' }
+                ].filter(row => row.before !== row.after)
+            })).filter(block => block.rows.length);
+
+            const tagBlocks = langs.map(lang => {
+                const rows = [];
+                tagConfigs.forEach(cfg => {
+                    const beforeDefault = sourceProduct.defaultOptions?.[cfg.specKey] || '';
+                    const afterDefault = updatedProduct.defaultOptions?.[cfg.specKey] || '';
+                    const beforeLabel = beforeDefault ? getTagLabel(cfg.specKey, beforeDefault, lang) : '';
+                    const afterLabel = afterDefault ? getTagLabel(cfg.specKey, afterDefault, lang) : '';
+                    if (beforeLabel !== afterLabel) {
+                        rows.push({
+                            field: `${cfg.title}默认项`,
+                            before: beforeLabel,
+                            after: afterLabel
+                        });
+                    }
+                });
+                return { title: getLangName(lang), rows };
+            }).filter(block => block.rows.length);
+
+            const recipeDefaultRows = tagConfigs.map(cfg => {
+                const beforeKey = sourceProduct.defaultOptions?.[cfg.specKey] || '';
+                const afterKey = updatedProduct.defaultOptions?.[cfg.specKey] || '';
+                return {
+                    field: `${cfg.title}默认`,
+                    before: beforeKey ? getTagLabel(cfg.specKey, beforeKey, currentLang) : '',
+                    after: afterKey ? getTagLabel(cfg.specKey, afterKey, currentLang) : ''
+                };
+            }).filter(row => row.before !== row.after);
+
+            const recipeExtraPriceRows = [];
+            tagConfigs.forEach(cfg => {
+                const tagKeys = new Set([
+                    ...Object.keys(sourceProduct.tagExtraPrices?.[cfg.specKey] || {}),
+                    ...Object.keys(updatedProduct.tagExtraPrices?.[cfg.specKey] || {})
+                ]);
+                tagKeys.forEach(tagKey => {
+                    const before = Number(sourceProduct.tagExtraPrices?.[cfg.specKey]?.[tagKey] || 0);
+                    const after = Number(updatedProduct.tagExtraPrices?.[cfg.specKey]?.[tagKey] || 0);
+                    if (before !== after) {
+                        recipeExtraPriceRows.push({
+                            field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey}`,
+                            before,
+                            after
+                        });
+                    }
+                });
+            });
+
+            const recipePercentRows = [];
+            tagConfigs.forEach(cfg => {
+                const tagKeys = new Set([
+                    ...Object.keys(sourceProduct.optionRecipes?.[cfg.specKey] || {}),
+                    ...Object.keys(updatedProduct.optionRecipes?.[cfg.specKey] || {})
+                ]);
+                tagKeys.forEach(tagKey => {
+                    const beforeRecipe = normalizeRecipeData(sourceProduct.optionRecipes?.[cfg.specKey]?.[tagKey], getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey);
+                    const afterRecipe = normalizeRecipeData(updatedProduct.optionRecipes?.[cfg.specKey]?.[tagKey], getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey);
+                    RECIPE_GROUP_CONFIGS.forEach(groupCfg => {
+                        const before = Number(beforeRecipe.groups?.[groupCfg.key]?.percent || 100);
+                        const after = Number(afterRecipe.groups?.[groupCfg.key]?.percent || 100);
+                        if (before !== after) {
+                            recipePercentRows.push({
+                                field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey} · ${groupCfg.title}`,
+                                before: `${before}%`,
+                                after: `${after}%`
+                            });
+                        }
+                    });
+                });
+            });
+
+            return {
+                sourceProduct,
+                updatedProduct,
+                selectedCategories,
+                basicRows,
+                langBlocks,
+                tagBlocks,
+                recipeDefaultRows,
+                recipeExtraPriceRows,
+                recipePercentRows
+            };
+        }
+
+        function renderCopyWorkflowSummary() {
+            const summary = document.getElementById('copyFlowSummary');
+            if (!summary || !isCopyWorkflowActive()) return;
+            summary.innerHTML = `
+                模板商品：${escAttr(copyWorkflowState.sourceProduct?.names?.[currentLang] || copyWorkflowState.sourceProduct?.names?.zh || `ID ${copyWorkflowState.sourceProduct?.id || '-'}`)}
+                ，来源分类：${escAttr(copyWorkflowState.sourceCategoryKey || '-')}
+                ，目标设备：${escAttr(formatCopyWorkflowDeviceLabels(copyWorkflowState.targetDeviceIds))}
+                ，目标分类：${escAttr(formatCopyWorkflowCategoryLabels(copyWorkflowState.targetCategories))}
+            `;
+        }
+
+        function renderCopyConfirmPanel() {
+            if (!isCopyWorkflowActive()) return;
+            const data = buildCopyConfirmData();
+            const summaryTable = document.getElementById('copyConfirmSummaryTable');
+            const imageSection = document.getElementById('copyConfirmImageSection');
+            const beforeImage = document.getElementById('copyConfirmBeforeImage');
+            const afterImage = document.getElementById('copyConfirmAfterImage');
+            const beforeImageEmpty = document.getElementById('copyConfirmBeforeImageEmpty');
+            const afterImageEmpty = document.getElementById('copyConfirmAfterImageEmpty');
+            const imageNote = document.getElementById('copyConfirmImageNote');
+            const basicTable = document.getElementById('copyConfirmBasicTable');
+            const basicMeta = document.getElementById('copyConfirmBasicMeta');
+            const langContent = document.getElementById('copyConfirmLangContent');
+            const tagContent = document.getElementById('copyConfirmTagContent');
+            const recipeContent = document.getElementById('copyConfirmRecipeContent');
+            const recipeMeta = document.getElementById('copyConfirmRecipeMeta');
+
+            if (summaryTable) {
+                summaryTable.innerHTML = `
+                    <tbody>
+                        <tr>
+                            <td>复制范围</td>
+                            <td>${escAttr(copyWorkflowState.targetDeviceIds.length > 1 ? `复制到其他设备 · ${copyWorkflowState.targetDeviceIds.length} 台` : '复制到本设备')}</td>
+                            <td>来源设备</td>
+                            <td>${escAttr(currentDevice)}</td>
+                        </tr>
+                        <tr>
+                            <td>目标设备</td>
+                            <td>${escAttr(formatCopyWorkflowDeviceLabels(copyWorkflowState.targetDeviceIds))}</td>
+                            <td>模板商品</td>
+                            <td>${escAttr(data.sourceProduct.names?.[currentLang] || data.sourceProduct.names?.zh || `ID ${data.sourceProduct.id || '-'}`)}</td>
+                        </tr>
+                        <tr>
+                            <td>目标分类</td>
+                            <td>${escAttr(formatCopyWorkflowCategoryLabels(data.selectedCategories))}</td>
+                            <td>模板 ID</td>
+                            <td>${escAttr(data.sourceProduct.id || '-')}</td>
+                        </tr>
+                        <tr>
+                            <td>分类处理</td>
+                            <td>${escAttr(copyWorkflowState.categorySyncMode === 'auto_create' ? '缺失时自动新增分类' : '仅使用已有分类')}</td>
+                            <td>来源分类</td>
+                            <td>${escAttr(copyWorkflowState.sourceCategoryKey || '-')}</td>
+                        </tr>
+                    </tbody>
+                `;
+            }
+
+            const beforeSrc = data.sourceProduct.image || '';
+            const afterSrc = data.updatedProduct.image || '';
+            const shouldShowImageCompare = beforeSrc !== afterSrc;
+            if (imageSection) imageSection.style.display = shouldShowImageCompare ? '' : 'none';
+            if (beforeImage) beforeImage.src = beforeSrc;
+            if (afterImage) afterImage.src = afterSrc;
+            if (beforeImage) beforeImage.style.display = beforeSrc ? 'block' : 'none';
+            if (afterImage) afterImage.style.display = afterSrc ? 'block' : 'none';
+            if (beforeImageEmpty) beforeImageEmpty.style.display = beforeSrc ? 'none' : 'flex';
+            if (afterImageEmpty) afterImageEmpty.style.display = afterSrc ? 'none' : 'flex';
+            if (imageNote) {
+                imageNote.textContent = shouldShowImageCompare
+                    ? '本次复制已替换主图，确认复制后将使用右侧新图。'
+                    : '';
+            }
+
+            if (basicMeta) basicMeta.textContent = `${data.basicRows.length} 项变更`;
+            if (basicTable) basicTable.innerHTML = buildCopyCompareTable(['字段', '原值', '新值'], data.basicRows);
+
+            if (langContent) {
+                langContent.innerHTML = data.langBlocks.length
+                    ? data.langBlocks.map(block => `
+                        <div class="copy-confirm-block" style="margin:10px;">
+                            <div class="copy-confirm-block-head">
+                                <div>
+                                    <div class="copy-confirm-block-title">${escAttr(block.title)}</div>
+                                    <div class="copy-confirm-block-meta">名称、描述</div>
+                                </div>
+                            </div>
+                            ${buildCopyCompareTable(['字段', '原值', '新值'], block.rows)}
+                        </div>
+                    `).join('')
+                    : '<div class="copy-confirm-note">多语言文本无变化。</div>';
+            }
+
+            if (tagContent) {
+                tagContent.innerHTML = data.tagBlocks.length
+                    ? data.tagBlocks.map(block => `
+                        <div class="copy-confirm-block" style="margin:10px;">
+                            <div class="copy-confirm-block-head">
+                                <div>
+                                    <div class="copy-confirm-block-title">${escAttr(block.title)}</div>
+                                    <div class="copy-confirm-block-meta">默认标签文案</div>
+                                </div>
+                            </div>
+                            ${buildCopyCompareTable(['字段', '原值', '新值'], block.rows)}
+                        </div>
+                    `).join('')
+                    : '<div class="copy-confirm-note">标签文案无变化。</div>';
+            }
+
+            const recipeSections = [];
+            if (data.recipeDefaultRows.length) {
+                recipeSections.push(`
+                    <div class="copy-confirm-block" style="margin:10px;">
+                        <div class="copy-confirm-block-head">
+                            <div>
+                                <div class="copy-confirm-block-title">默认项</div>
+                                <div class="copy-confirm-block-meta">${data.recipeDefaultRows.length} 项</div>
+                            </div>
+                        </div>
+                        ${buildCopyCompareTable(['字段', '原值', '新值'], data.recipeDefaultRows)}
+                    </div>
+                `);
+            }
+            if (data.recipePercentRows.length) {
+                recipeSections.push(`
+                    <div class="copy-confirm-block" style="margin:10px;">
+                        <div class="copy-confirm-block-head">
+                            <div>
+                                <div class="copy-confirm-block-title">浓度加减百分比</div>
+                                <div class="copy-confirm-block-meta">${data.recipePercentRows.length} 项</div>
+                            </div>
+                        </div>
+                        ${buildCopyCompareTable(['字段', '原值', '新值'], data.recipePercentRows)}
+                    </div>
+                `);
+            }
+            if (data.recipeExtraPriceRows.length) {
+                recipeSections.push(`
+                    <div class="copy-confirm-block" style="margin:10px;">
+                        <div class="copy-confirm-block-head">
+                            <div>
+                                <div class="copy-confirm-block-title">标签附加价</div>
+                                <div class="copy-confirm-block-meta">${data.recipeExtraPriceRows.length} 项</div>
+                            </div>
+                        </div>
+                        ${buildCopyCompareTable(['字段', '原值', '新值'], data.recipeExtraPriceRows)}
+                    </div>
+                `);
+            }
+            if (recipeMeta) {
+                recipeMeta.textContent = `${data.recipeDefaultRows.length + data.recipePercentRows.length + data.recipeExtraPriceRows.length} 项变更`;
+            }
+            if (recipeContent) {
+                recipeContent.innerHTML = recipeSections.length
+                    ? recipeSections.join('')
+                    : '<div class="copy-confirm-note">配方配置无变化。</div>';
+            }
+        }
+
+        function getCopyProductDeviceCategoryCatalog() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function persistCopyProductDeviceCategoryCatalog(catalog = {}) {
+            localStorage.setItem(COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY, JSON.stringify(catalog || {}));
+        }
+
+        function getCopyProductDeviceCategorySet(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim() || currentDevice;
+            const catalog = getCopyProductDeviceCategoryCatalog();
+            const availableCategoryKeys = productCategoryOptions.map(option => option.key);
+            const storedCategories = Array.isArray(catalog[normalizedDeviceId]) ? catalog[normalizedDeviceId] : availableCategoryKeys;
+            return new Set(storedCategories
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(categoryKey => availableCategoryKeys.includes(categoryKey)));
+        }
+
+        function persistCopyProductDeviceCategorySet(deviceId = currentDevice, categorySet = new Set()) {
+            const normalizedDeviceId = String(deviceId || '').trim() || currentDevice;
+            const availableCategoryKeys = new Set(productCategoryOptions.map(option => option.key));
+            const normalizedCategories = Array.from(new Set(Array.from(categorySet || [])
+                .map(categoryKey => String(categoryKey || '').trim())
+                .filter(categoryKey => availableCategoryKeys.has(categoryKey))));
+            const catalog = getCopyProductDeviceCategoryCatalog();
+            catalog[normalizedDeviceId] = normalizedCategories;
+            persistCopyProductDeviceCategoryCatalog(catalog);
+        }
+
+        function getCopyProductQueueMap() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(COPY_PRODUCT_DEVICE_QUEUE_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function persistCopyProductQueueMap(queueMap = {}) {
+            localStorage.setItem(COPY_PRODUCT_DEVICE_QUEUE_KEY, JSON.stringify(queueMap || {}));
+        }
+
+        function enqueueCopiedProductForDevice(deviceId, product, categoryKeys = []) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId || !product) return;
+            const queueMap = getCopyProductQueueMap();
+            const queue = Array.isArray(queueMap[normalizedDeviceId]) ? queueMap[normalizedDeviceId] : [];
+            queue.push({
+                product: cloneProductValue(product),
+                categoryKeys: Array.from(new Set((categoryKeys || [])
+                    .map(categoryKey => String(categoryKey || '').trim())
+                    .filter(Boolean)))
+            });
+            queueMap[normalizedDeviceId] = queue;
+            persistCopyProductQueueMap(queueMap);
+        }
+
+        function persistSingleProductEdit(product) {
+            if (!product || !Number.isFinite(Number(product.id))) return;
+            let edits = {};
+            try {
+                edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
+            } catch (e) {
+                edits = {};
+            }
+            edits[Number(product.id)] = cloneProductValue(product);
+            localStorage.setItem('menuProductEdits', JSON.stringify(edits));
+        }
+
+        function collectKnownProductIds() {
+            const ids = new Set();
+            if (Number.isFinite(Number(productData?.id))) ids.add(Number(productData.id));
+            (linkedProductCatalog || []).forEach(entry => {
+                const productId = Number(entry?.product?.id ?? entry?.id);
+                if (Number.isFinite(productId)) ids.add(productId);
+            });
+            try {
+                const edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
+                Object.keys(edits || {}).forEach(key => {
+                    const productId = Number(key);
+                    if (Number.isFinite(productId)) ids.add(productId);
+                });
+            } catch (e) {
+                // ignore
+            }
+            return Array.from(ids);
+        }
+
+        function takeNextProductId() {
+            const knownIds = collectKnownProductIds();
+            const maxKnown = knownIds.length ? Math.max(...knownIds) : 0;
+            const stored = Number(localStorage.getItem(NEXT_PRODUCT_ID_STORAGE_KEY));
+            const nextId = Number.isFinite(stored) && stored > maxKnown ? stored : maxKnown + 1;
+            localStorage.setItem(NEXT_PRODUCT_ID_STORAGE_KEY, String(nextId + 1));
+            return nextId;
+        }
+
+        function cloneProductForCopy(sourceProduct) {
+            const cloned = cloneProductValue(sourceProduct) || {};
+            return {
+                ...cloned,
+                id: takeNextProductId(),
+                names: cloneProductValue(cloned.names) || {},
+                descs: cloneProductValue(cloned.descs) || {},
+                specs: cloneProductValue(cloned.specs) || {},
+                options: cloneProductValue(cloned.options) || {},
+                defaultOptions: cloneProductValue(cloned.defaultOptions) || {},
+                tagI18n: cloneProductValue(cloned.tagI18n) || {},
+                tagExtraPrices: cloneProductValue(cloned.tagExtraPrices) || {},
+                optionRecipes: cloneProductValue(cloned.optionRecipes) || {},
+                optionRecipeLinks: cloneProductValue(cloned.optionRecipeLinks) || {},
+                featured: cloned.featured !== false,
+                onSale: cloned.onSale !== false
+            };
+        }
+
+        function persistPendingCopyResults(results = []) {
+            localStorage.setItem(COPY_PRODUCT_PENDING_RESULTS_KEY, JSON.stringify(Array.isArray(results) ? results : []));
+        }
+
+        function confirmCopyProduct() {
+            if (!isCopyWorkflowActive()) return;
+            const draft = collectProductDraftForSave({ validate: true });
+            if (!draft) return;
+
+            const targetDeviceIds = copyWorkflowState.targetDeviceIds.length ? copyWorkflowState.targetDeviceIds : [currentDevice];
+            const selectedCategories = draft.selectedCategories;
+            const categorySyncMode = copyWorkflowState.categorySyncMode === 'auto_create' ? 'auto_create' : 'existing_only';
+            const sourceProduct = copyWorkflowState.sourceProduct || productData;
+            const copyResults = [];
+
+            targetDeviceIds.forEach(deviceId => {
+                const deviceCategorySet = getCopyProductDeviceCategorySet(deviceId);
+                const missingCategories = selectedCategories.filter(categoryKey => !deviceCategorySet.has(categoryKey));
+                if (missingCategories.length && categorySyncMode !== 'auto_create') {
+                    copyResults.push({
+                        deviceId,
+                        deviceLabel: deviceId,
+                        status: 'failed',
+                        message: `缺少分类：${missingCategories.join('、')}`
+                    });
+                    return;
+                }
+
+                if (missingCategories.length) {
+                    missingCategories.forEach(categoryKey => deviceCategorySet.add(categoryKey));
+                    persistCopyProductDeviceCategorySet(deviceId, deviceCategorySet);
+                }
+
+                const copiedTemplate = cloneProductForCopy(sourceProduct);
+                const copiedProduct = {
+                    ...copiedTemplate,
+                    ...cloneProductValue(draft.updatedProduct),
+                    id: copiedTemplate.id,
+                    names: cloneProductValue(draft.updatedProduct.names) || {},
+                    descs: cloneProductValue(draft.updatedProduct.descs) || {},
+                    specs: cloneProductValue(draft.updatedProduct.specs) || {},
+                    options: cloneProductValue(draft.updatedProduct.options) || {},
+                    defaultOptions: cloneProductValue(draft.updatedProduct.defaultOptions) || {},
+                    tagI18n: cloneProductValue(draft.updatedProduct.tagI18n) || {},
+                    tagExtraPrices: cloneProductValue(draft.updatedProduct.tagExtraPrices) || {},
+                    optionRecipes: cloneProductValue(draft.updatedProduct.optionRecipes) || {},
+                    optionRecipeLinks: cloneProductValue(draft.updatedProduct.optionRecipeLinks) || {}
+                };
+
+                if (deviceId === currentDevice) {
+                    persistSingleProductEdit(copiedProduct);
+                    persistProductCategoryAssignments(copiedProduct.id, selectedCategories);
+                } else {
+                    enqueueCopiedProductForDevice(deviceId, copiedProduct, selectedCategories);
+                }
+
+                copyResults.push({
+                    deviceId,
+                    deviceLabel: deviceId,
+                    status: 'success',
+                    message: `商品ID ${copiedProduct.id}`
+                });
+            });
+
+            persistPendingCopyResults(copyResults);
+            showToast('复制结果已保存，正在返回菜单');
+            setTimeout(() => goBack(), 400);
+        }
+
         function initPage() {
             renderSidebarLoginProfile();
             switchProductDetailTab('basic');
             // 解析 URL 参数
             const params = new URLSearchParams(window.location.search);
             const detailTab = params.get('detailTab');
+            const copyMode = params.get('mode');
             const payloadKey = params.get('payloadKey');
             const payloadStore = params.get('payloadStore');
             const productJson = params.get('product');
@@ -3772,6 +4838,12 @@
                         if (payload && Array.isArray(payload.catalog)) {
                             linkedProductCatalog = payload.catalog;
                         }
+                        if (payload && payload.copyWorkflow && copyMode === 'copy') {
+                            copyWorkflowState = normalizeCopyWorkflowState({
+                                ...payload.copyWorkflow,
+                                sourceProduct: payload.copySourceProduct || payload.product
+                            });
+                        }
                     }
                 } catch (e) {
                     console.error('读取会话商品数据失败', e);
@@ -3798,6 +4870,12 @@
                             }
                             if (wrapped.payload && Array.isArray(wrapped.payload.catalog)) {
                                 linkedProductCatalog = wrapped.payload.catalog;
+                            }
+                            if (wrapped.payload && wrapped.payload.copyWorkflow && copyMode === 'copy') {
+                                copyWorkflowState = normalizeCopyWorkflowState({
+                                    ...wrapped.payload.copyWorkflow,
+                                    sourceProduct: wrapped.payload.copySourceProduct || wrapped.payload.product
+                                });
                             }
                         }
                     }
@@ -3834,6 +4912,13 @@
             }
 
             if (productData) {
+                if (copyMode === 'copy') {
+                    copyWorkflowState = normalizeCopyWorkflowState({
+                        ...(copyWorkflowState || {}),
+                        sourceProduct: copyWorkflowState?.sourceProduct || productData
+                    });
+                    productData = cloneProductValue(productData);
+                }
                 document.getElementById('productId').textContent = 'ID: ' + productData.id;
                 if (!Array.isArray(linkedProductCatalog) || linkedProductCatalog.length === 0) {
                     linkedProductCatalog = [{
@@ -3847,6 +4932,12 @@
                 selectedProductCategoryKeys = new Set(getInitialAssignedCategoryKeys());
                 renderMultiLangInputs();
                 fillFormData();
+                renderCopyWorkflowSummary();
+                updateCopyWorkflowActions();
+                if (isCopyWorkflowActive()) {
+                    document.getElementById('productId').textContent = `复制模板 ID: ${copyWorkflowState.sourceProduct?.id || productData.id}`;
+                    document.querySelector('.header-subtitle').textContent = 'Copy product workflow';
+                }
             }
 
             // 图片输入监听
@@ -4214,6 +5305,12 @@
 
             const nextLabels = cloneTagLabels(cfg.specKey, tagKey, productData);
             persistRecipeChanges(productData ? [productData] : []);
+
+            if (isCopyWorkflowActive()) {
+                closeTagConfigDrawer();
+                showToast('标签配置已更新');
+                return;
+            }
 
             if (!hasTagLabelChanged(previousLabels, nextLabels)) {
                 closeTagConfigDrawer();
