@@ -318,17 +318,6 @@
             gap: 10px;
         }
 
-        .header-merchant-select {
-            min-width: 220px;
-            height: 40px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 0 12px;
-            background: #fff;
-            color: var(--text-primary);
-            outline: none;
-        }
-
         .btn {
             padding: 10px 18px;
             border: none;
@@ -367,30 +356,29 @@
             gap: 18px;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
+        .summary-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 18px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfefe 100%);
             box-shadow: var(--shadow);
         }
 
-        .stat-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
+        .summary-strip-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
+        .summary-strip-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
         }
 
         .list-card {
@@ -472,6 +460,14 @@
             gap: 2px;
         }
 
+        .manager-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
         .manager-name {
             font-size: 17px;
             font-weight: 700;
@@ -497,15 +493,65 @@
             background: #def4f2;
         }
 
+        .manager-toggle-btn {
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid #d0d7de;
+            background: #fff;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .manager-toggle-btn:hover {
+            border-color: #b9c4cf;
+            background: #f8fafc;
+        }
+
+        .manager-toggle-btn.is-danger {
+            border-color: #fecaca;
+            background: #fff5f5;
+            color: #b42318;
+        }
+
+        .manager-toggle-btn.is-danger:hover {
+            border-color: #fda4af;
+            background: #ffeaea;
+        }
+
+        .manager-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f766e;
+        }
+
+        .manager-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+            flex: none;
+        }
+
+        .manager-status.is-disabled {
+            color: #b42318;
+        }
+
+        .manager-status.is-disabled::before {
+            background: #ef4444;
+        }
+
         .manager-meta {
             font-size: 12px;
             color: var(--text-secondary);
-        }
-
-        .manager-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
         }
 
         .manager-panel {
@@ -516,34 +562,15 @@
             min-height: 0;
         }
 
+        .manager-device-panel {
+            margin-top: 4px;
+        }
+
         .manager-panel-title {
             font-size: 12px;
             color: #6b7280;
             margin-bottom: 6px;
             font-weight: 600;
-        }
-
-        .label-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            height: 24px;
-            padding: 0 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
-            background: var(--primary-light);
-            color: #0f766e;
-        }
-
-        .chip-muted {
-            background: #f3f4f6;
-            color: #6b7280;
         }
 
         .manager-value {
@@ -734,6 +761,53 @@
             height: 18px;
             accent-color: var(--primary-dark);
             flex: none;
+        }
+
+        .permission-tree {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .permission-group-card {
+            border: 1px solid #e5eef5;
+            border-radius: 10px;
+            padding: 12px;
+            background: linear-gradient(180deg, #ffffff, #fbfdff);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .permission-group-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .permission-group-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .permission-group-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-dark);
+            flex: none;
+        }
+
+        .permission-child-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .permission-option-item {
+            min-height: 44px;
         }
 
         .device-picker-entry {
@@ -956,13 +1030,16 @@
                 width: 100%;
             }
 
-            .header-merchant-select {
-                flex: 1;
-                min-width: 0;
-            }
-
             .btn {
                 padding: 10px 14px;
+            }
+
+            .summary-strip {
+                padding: 12px 14px;
+            }
+
+            .summary-strip-value {
+                font-size: 24px;
             }
 
             .manager-list {
@@ -1002,9 +1079,16 @@
                 font-size: 12px;
             }
 
-            .manager-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
+            .manager-toggle-btn {
+                height: 30px;
+                border-radius: 8px;
+                padding: 0 10px;
+                font-size: 12px;
+            }
+
+            .manager-actions {
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .manager-panel {
@@ -1012,22 +1096,8 @@
                 border-radius: 8px;
             }
 
-            .manager-panel:last-child {
-                grid-column: 1 / -1;
-            }
-
             .manager-panel-title {
                 margin-bottom: 4px;
-            }
-
-            .label-row {
-                gap: 4px;
-            }
-
-            .chip {
-                height: 21px;
-                padding: 0 7px;
-                font-size: 11px;
             }
 
             .manager-value {
@@ -1056,6 +1126,14 @@
             .device-option-item {
                 min-height: 40px;
                 padding: 7px 9px;
+            }
+
+            .permission-tree {
+                grid-template-columns: 1fr;
+            }
+
+            .permission-child-grid {
+                grid-template-columns: 1fr;
             }
 
             .device-code {
@@ -1144,7 +1222,6 @@
                     <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
                 </div>
                 <div class="header-right">
-                    <select id="merchantSelect" class="header-merchant-select" onchange="handleMerchantChange(this.value)"></select>
                     <button type="button" class="btn btn-primary" onclick="openStaffModal()">
                         <span>➕</span>
                         <span>添加人员</span>
@@ -1153,23 +1230,9 @@
             </header>
 
             <div class="content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffTotal">0</div>
-                        <div class="stat-label">当前商户管理人员</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffAdmin">0</div>
-                        <div class="stat-label">管理员权限人数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffOps">0</div>
-                        <div class="stat-label">运维修权限人数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffDeviceCount">0</div>
-                        <div class="stat-label">覆盖设备数</div>
-                    </div>
+                <div class="summary-strip">
+                    <span class="summary-strip-label">启用人员数</span>
+                    <strong class="summary-strip-value" id="staffEnabledCount">0</strong>
                 </div>
 
                 <section class="list-card">
@@ -1227,13 +1290,77 @@
                 </section>
 
                 <section class="section-block">
-                    <div class="section-title">选择权限<span class="required">*</span>(至少选择一个)</div>
-                    <div class="option-grid">
-                        <label class="option-item"><span>运维权限</span><input type="checkbox" name="permission" value="ops"></label>
-                        <label class="option-item"><span>维修权限</span><input type="checkbox" name="permission" value="repair"></label>
-                        <label class="option-item"><span>财务权限</span><input type="checkbox" name="permission" value="finance"></label>
-                        <label class="option-item"><span>管理员权限</span><input type="checkbox" name="permission" value="admin"></label>
-                        <label class="option-item"><span>运维&退款权限</span><input type="checkbox" name="permission" value="ops_refund"></label>
+                    <div class="section-title">菜单权限配置<span class="required">*</span>(至少选择一个)</div>
+                    <div class="permission-tree" id="permissionTree">
+                        <div class="permission-group-card" data-permission-group="overview">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">总览</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="overview" onchange="handlePermissionParentChange('overview', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看总览</span><input type="checkbox" name="permission" value="ops.overview" data-permission-group-child="overview" onchange="handlePermissionChildChange('overview')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="devices">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">设备</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="devices" onchange="handlePermissionParentChange('devices', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看设备</span><input type="checkbox" name="permission" value="ops.devices" data-permission-group-child="devices" onchange="handlePermissionChildChange('devices')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="products">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">商品管理</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="products" onchange="handlePermissionParentChange('products', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看商品管理</span><input type="checkbox" name="permission" value="ops.products" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                                <label class="option-item permission-option-item"><span>新增语言</span><input type="checkbox" name="permission" value="ops.products.language" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                                <label class="option-item permission-option-item"><span>更改币种</span><input type="checkbox" name="permission" value="ops.products.currency" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                                <label class="option-item permission-option-item"><span>编辑商品</span><input type="checkbox" name="permission" value="ops.products.edit" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                                <label class="option-item permission-option-item"><span>编辑配方</span><input type="checkbox" name="permission" value="ops.products.recipe" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="materials">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">物料</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="materials" onchange="handlePermissionParentChange('materials', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看物料</span><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="orders">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">订单</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="orders" onchange="handlePermissionParentChange('orders', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看订单</span><input type="checkbox" name="permission" value="ops.orders" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"></label>
+                                <label class="option-item permission-option-item"><span>订单退款</span><input type="checkbox" name="permission" value="ops.orders.refund" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="faults">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">故障列表</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="faults" onchange="handlePermissionParentChange('faults', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看故障列表</span><input type="checkbox" name="permission" value="ops.faults" data-permission-group-child="faults" onchange="handlePermissionChildChange('faults')"></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-card" data-permission-group="staff">
+                            <label class="permission-group-head">
+                                <span class="permission-group-title">人员管理</span>
+                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="staff" onchange="handlePermissionParentChange('staff', this.checked)">
+                            </label>
+                            <div class="permission-child-grid">
+                                <label class="option-item permission-option-item"><span>查看人员管理</span><input type="checkbox" name="permission" value="ops.staff" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"></label>
+                                <label class="option-item permission-option-item"><span>人员维护</span><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"></label>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -1549,6 +1676,74 @@
             { code: 'k9002', name: '深圳南山店' }
         ];
 
+        const permissionTreeGroups = [
+            {
+                key: 'overview',
+                label: '总览',
+                children: [
+                    { value: 'ops.overview', label: '查看总览' }
+                ]
+            },
+            {
+                key: 'devices',
+                label: '设备',
+                children: [
+                    { value: 'ops.devices', label: '查看设备' }
+                ]
+            },
+            {
+                key: 'products',
+                label: '商品管理',
+                children: [
+                    { value: 'ops.products', label: '查看商品管理' },
+                    { value: 'ops.products.language', label: '新增语言' },
+                    { value: 'ops.products.currency', label: '更改币种' },
+                    { value: 'ops.products.edit', label: '编辑商品' },
+                    { value: 'ops.products.recipe', label: '编辑配方' }
+                ]
+            },
+            {
+                key: 'materials',
+                label: '物料',
+                children: [
+                    { value: 'ops.materials', label: '查看物料' }
+                ]
+            },
+            {
+                key: 'orders',
+                label: '订单',
+                children: [
+                    { value: 'ops.orders', label: '查看订单' },
+                    { value: 'ops.orders.refund', label: '订单退款' }
+                ]
+            },
+            {
+                key: 'faults',
+                label: '故障列表',
+                children: [
+                    { value: 'ops.faults', label: '查看故障列表' }
+                ]
+            },
+            {
+                key: 'staff',
+                label: '人员管理',
+                children: [
+                    { value: 'ops.staff', label: '查看人员管理' },
+                    { value: 'ops.staff.manage', label: '人员维护' }
+                ]
+            }
+        ];
+
+        const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
+        const allPermissionKeySet = new Set(allPermissionKeys);
+        const legacyPermissionMigrationMap = {
+            ops: ['ops.devices', 'ops.materials', 'ops.faults'],
+            repair: ['ops.devices', 'ops.faults'],
+            finance: ['ops.orders'],
+            admin: [...allPermissionKeys],
+            ops_refund: ['ops.devices', 'ops.materials', 'ops.orders', 'ops.orders.refund']
+        };
+
         const defaultManagers = [
             {
                 id: 'S001',
@@ -1556,9 +1751,10 @@
                 merchantName: '星巴克咖啡',
                 username: '王运维',
                 phone: '13800138021',
+                accountEnabled: true,
                 opsOpenid: 'ops_wang_001',
                 wechatOpenid: 'wx_wang_001',
-                permissions: ['ops', 'admin'],
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
                 pushChannels: ['ops', 'admin'],
                 devices: ['RCK386', 'RCK385'],
                 createdAt: '2026-02-15'
@@ -1569,9 +1765,10 @@
                 merchantName: '星巴克咖啡',
                 username: '李财务',
                 phone: '13800138022',
+                accountEnabled: false,
                 opsOpenid: '',
                 wechatOpenid: 'wx_li_001',
-                permissions: ['finance'],
+                permissions: ['ops.orders'],
                 pushChannels: ['none'],
                 devices: ['RCK384'],
                 createdAt: '2026-02-17'
@@ -1582,35 +1779,21 @@
                 merchantName: '瑞幸咖啡',
                 username: '张维修',
                 phone: '13800138023',
+                accountEnabled: true,
                 opsOpenid: 'ops_zhang_002',
                 wechatOpenid: '',
-                permissions: ['repair'],
+                permissions: ['ops.devices', 'ops.faults'],
                 pushChannels: ['repair'],
                 devices: ['RCK410', 'RCK406'],
                 createdAt: '2026-02-18'
             }
         ];
 
-        const permissionLabelMap = {
-            ops: '运维权限',
-            repair: '维修权限',
-            finance: '财务权限',
-            admin: '管理员权限',
-            ops_refund: '运维&退款权限'
-        };
-
-        const pushLabelMap = {
-            none: '无需推送',
-            ops: '运维消息推送',
-            repair: '维修消息推送',
-            admin: '管理员消息推送'
-        };
-
         function init() {
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
+            renderPermissionTree();
             merchantOptions = getMerchantOptions();
-            renderMerchantSelect();
             selectedMerchantId = resolveInitialMerchantId();
             if (!selectedMerchantId && merchantOptions.length) {
                 selectedMerchantId = merchantOptions[0].id;
@@ -1618,17 +1801,138 @@
             if (selectedMerchantId) {
                 localStorage.setItem('currentMerchantId', selectedMerchantId);
             }
-            const select = document.getElementById('merchantSelect');
-            select.value = selectedMerchantId;
             renderManagers();
             updateStats();
         }
 
         function bootstrapStaffManagers() {
+            let shouldPersist = false;
             if (!Array.isArray(staffManagersData) || staffManagersData.length === 0) {
-                staffManagersData = [...defaultManagers];
+                staffManagersData = defaultManagers.map((item) => ({
+                    ...item,
+                    accountEnabled: item.accountEnabled !== false,
+                    permissions: normalizeStaffPermissions(item.permissions)
+                }));
+                shouldPersist = true;
+            } else {
+                staffManagersData = staffManagersData.map((item) => {
+                    const normalizedPermissions = normalizeStaffPermissions(item.permissions);
+                    const normalizedAccountEnabled = item.accountEnabled !== false;
+                    if (
+                        JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
+                        || normalizedAccountEnabled !== item.accountEnabled
+                    ) {
+                        shouldPersist = true;
+                    }
+                    return {
+                        ...item,
+                        accountEnabled: normalizedAccountEnabled,
+                        permissions: normalizedPermissions
+                    };
+                });
+            }
+
+            if (shouldPersist) {
                 localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
             }
+        }
+
+        function normalizeStaffPermissions(permissions) {
+            const source = Array.isArray(permissions) ? permissions : [];
+            const normalizedSet = new Set();
+
+            source.forEach((value) => {
+                const key = String(value || '').trim();
+                if (!key) return;
+                if (legacyPermissionMigrationMap[key]) {
+                    legacyPermissionMigrationMap[key].forEach((mappedValue) => normalizedSet.add(mappedValue));
+                    return;
+                }
+                if (allPermissionKeySet.has(key)) {
+                    normalizedSet.add(key);
+                }
+            });
+
+            permissionTreeGroups.forEach((group) => {
+                if (group.children.length <= 1) return;
+                const primaryValue = group.children[0].value;
+                const hasChildPermission = group.children.slice(1).some((child) => normalizedSet.has(child.value));
+                if (hasChildPermission) {
+                    normalizedSet.add(primaryValue);
+                }
+            });
+
+            return allPermissionKeys.filter((value) => normalizedSet.has(value));
+        }
+
+        function getPermissionGroupConfig(groupKey) {
+            return permissionTreeGroups.find((group) => group.key === groupKey) || null;
+        }
+
+        function getPermissionChildInputs(groupKey) {
+            return Array.from(document.querySelectorAll(`[data-permission-group-child="${groupKey}"]`));
+        }
+
+        function getPermissionParentInput(groupKey) {
+            return document.querySelector(`[data-permission-parent="${groupKey}"]`);
+        }
+
+        function syncPermissionParentState(groupKey) {
+            const childInputs = getPermissionChildInputs(groupKey);
+            const parentInput = getPermissionParentInput(groupKey);
+            if (!parentInput || !childInputs.length) return;
+
+            const checkedCount = childInputs.filter((input) => input.checked).length;
+            parentInput.checked = checkedCount > 0;
+            parentInput.indeterminate = checkedCount > 0 && checkedCount < childInputs.length;
+        }
+
+        function handlePermissionParentChange(groupKey, checked) {
+            getPermissionChildInputs(groupKey).forEach((input) => {
+                input.checked = checked;
+            });
+            syncPermissionParentState(groupKey);
+        }
+
+        function handlePermissionChildChange(groupKey) {
+            const group = getPermissionGroupConfig(groupKey);
+            const childInputs = getPermissionChildInputs(groupKey);
+            if (!group || !childInputs.length) {
+                syncPermissionParentState(groupKey);
+                return;
+            }
+
+            if (group.children.length > 1) {
+                const primaryValue = group.children[0].value;
+                const primaryInput = childInputs.find((input) => input.value === primaryValue);
+                const hasSecondaryChecked = childInputs.some((input) => input.value !== primaryValue && input.checked);
+
+                if (hasSecondaryChecked && primaryInput && !primaryInput.checked) {
+                    primaryInput.checked = true;
+                }
+
+                if (primaryInput && !primaryInput.checked) {
+                    childInputs.forEach((input) => {
+                        if (input !== primaryInput) {
+                            input.checked = false;
+                        }
+                    });
+                }
+            }
+
+            syncPermissionParentState(groupKey);
+        }
+
+        function renderPermissionTree() {
+            permissionTreeGroups.forEach((group) => {
+                syncPermissionParentState(group.key);
+            });
+        }
+
+        function getSelectedPermissionValues() {
+            return normalizeStaffPermissions(
+                Array.from(document.querySelectorAll('input[name="permission"]:checked')).map((input) => input.value)
+            );
         }
 
         function getMerchantOptions() {
@@ -1655,20 +1959,6 @@
             return merchantIds[0] || '';
         }
 
-        function renderMerchantSelect() {
-            const select = document.getElementById('merchantSelect');
-            select.innerHTML = merchantOptions
-                .map((merchant) => `<option value="${merchant.id}">商户：${merchant.name}</option>`)
-                .join('');
-        }
-
-        function handleMerchantChange(nextMerchantId) {
-            selectedMerchantId = nextMerchantId;
-            localStorage.setItem('currentMerchantId', selectedMerchantId);
-            renderManagers();
-            updateStats();
-        }
-
         function getManagersByMerchant(merchantId) {
             return staffManagersData.filter((item) => item.merchantId === merchantId);
         }
@@ -1693,8 +1983,8 @@
 
             list.innerHTML = filteredManagers
                 .map((manager) => {
-                    const permissionText = formatLabels(manager.permissions, permissionLabelMap);
-                    const pushText = formatLabels(manager.pushChannels, pushLabelMap);
+                    const deviceCount = Array.isArray(manager.devices) ? manager.devices.length : 0;
+                    const isEnabled = manager.accountEnabled !== false;
                     return `
                         <article class="manager-item">
                             <div class="manager-head">
@@ -1704,29 +1994,18 @@
                                         <div class="manager-name">${manager.username}</div>
                                         <div class="manager-meta">${manager.phone}</div>
                                         <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
+                                        <div class="manager-status ${isEnabled ? '' : 'is-disabled'}">账号状态：${manager.accountEnabled === false ? '已停用' : '已启用'}</div>
                                     </div>
                                 </div>
-                                <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
+                                <div class="manager-actions">
+                                    <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
+                                    <button type="button" class="manager-toggle-btn ${isEnabled ? 'is-danger' : ''}" onclick="toggleStaffLoginStatus('${manager.id}')">${isEnabled ? '停用账号' : '启用账号'}</button>
+                                </div>
                             </div>
-                            <div class="manager-grid">
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">权限</div>
-                                    <div class="label-row">
-                                        ${permissionText.map((text) => `<span class="chip">${text}</span>`).join('')}
-                                    </div>
-                                </div>
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">公众号推送</div>
-                                    <div class="label-row">
-                                        ${pushText.map((text) => `<span class="chip chip-muted">${text}</span>`).join('')}
-                                    </div>
-                                </div>
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">负责设备号</div>
-                                    <div class="manager-value">${(manager.devices || []).join('、') || '-'}</div>
-                                    <div class="manager-meta" style="margin-top: 6px;">运维 openId: ${manager.opsOpenid || '-'}</div>
-                                    <div class="manager-meta">公众号 openId: ${manager.wechatOpenid || '-'}</div>
-                                </div>
+                            <div class="manager-panel manager-device-panel">
+                                <div class="manager-panel-title">负责设备号</div>
+                                <div class="manager-value">${(manager.devices || []).join('、') || '-'}</div>
+                                <div class="manager-meta" style="margin-top: 6px;">共 ${deviceCount} 台设备</div>
                             </div>
                         </article>
                     `;
@@ -1736,15 +2015,9 @@
 
         function updateStats() {
             const filteredManagers = getManagersByMerchant(selectedMerchantId);
-            const adminCount = filteredManagers.filter((item) => (item.permissions || []).includes('admin')).length;
-            const opsCount = filteredManagers.filter((item) => (item.permissions || []).some((perm) => perm === 'ops' || perm === 'repair' || perm === 'ops_refund')).length;
-            const deviceSet = new Set();
-            filteredManagers.forEach((item) => (item.devices || []).forEach((deviceId) => deviceSet.add(deviceId)));
+            const enabledCount = filteredManagers.filter((item) => item.accountEnabled !== false).length;
 
-            document.getElementById('staffTotal').textContent = filteredManagers.length;
-            document.getElementById('staffAdmin').textContent = adminCount;
-            document.getElementById('staffOps').textContent = opsCount;
-            document.getElementById('staffDeviceCount').textContent = deviceSet.size;
+            document.getElementById('staffEnabledCount').textContent = enabledCount;
             document.getElementById('listHint').textContent = `共 ${filteredManagers.length} 位管理人员`;
         }
 
@@ -1773,16 +2046,39 @@
                 return;
             }
             selectedMerchantId = targetStaff.merchantId || selectedMerchantId;
-            const merchantSelect = document.getElementById('merchantSelect');
-            if (merchantSelect) {
-                merchantSelect.value = selectedMerchantId;
-            }
             editingStaffId = staffId;
             updateStaffModalState();
             fillStaffForm(targetStaff);
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
             document.getElementById('staffModal').classList.add('active');
+        }
+
+        function toggleStaffLoginStatus(staffId) {
+            const staffIndex = staffManagersData.findIndex((item) => item.id === staffId);
+            if (staffIndex === -1) {
+                showToast('未找到可操作人员');
+                return;
+            }
+
+            const currentStaff = staffManagersData[staffIndex];
+            const nextEnabled = currentStaff.accountEnabled === false;
+            const confirmText = nextEnabled
+                ? `确认启用 ${currentStaff.username} 的账号吗？`
+                : `确认停用 ${currentStaff.username} 的账号吗？停用后该人员将无法登录。`;
+
+            if (!window.confirm(confirmText)) {
+                return;
+            }
+
+            staffManagersData[staffIndex] = {
+                ...currentStaff,
+                accountEnabled: nextEnabled
+            };
+            localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
+            renderManagers();
+            updateStats();
+            showToast(nextEnabled ? '账号已启用' : '账号已停用');
         }
 
         function updateStaffModalState() {
@@ -1810,6 +2106,8 @@
             document.querySelectorAll('input[name="push"]').forEach((input) => {
                 input.checked = input.value === 'none';
             });
+
+            renderPermissionTree();
         }
 
         function fillStaffForm(targetStaff) {
@@ -1818,10 +2116,11 @@
             document.getElementById('opsOpenid').value = targetStaff.opsOpenid || '';
             document.getElementById('wechatOpenid').value = targetStaff.wechatOpenid || '';
 
-            const permissionSet = new Set(targetStaff.permissions || []);
+            const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
+            renderPermissionTree();
 
             const pushSet = new Set(targetStaff.pushChannels || []);
             document.querySelectorAll('input[name="push"]').forEach((input) => {
@@ -2074,7 +2373,7 @@
             const phone = document.getElementById('staffPhone').value.trim();
             const opsOpenid = document.getElementById('opsOpenid').value.trim();
             const wechatOpenid = document.getElementById('wechatOpenid').value.trim();
-            const selectedPermissions = Array.from(document.querySelectorAll('input[name="permission"]:checked')).map((input) => input.value);
+            const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
             let selectedPushChannels = Array.from(document.querySelectorAll('input[name="push"]:checked')).map((input) => input.value);
 
@@ -2134,6 +2433,7 @@
                 const newStaff = {
                     id: createStaffId(),
                     ...staffPayload,
+                    accountEnabled: true,
                     createdAt: new Date().toISOString().slice(0, 10)
                 };
                 staffManagersData.unshift(newStaff);
@@ -2153,14 +2453,6 @@
                 .filter((num) => Number.isFinite(num))
                 .reduce((max, num) => Math.max(max, num), 0);
             return `S${String(currentMax + 1).padStart(3, '0')}`;
-        }
-
-        function formatLabels(values, mapper) {
-            const list = Array.isArray(values) ? values : [];
-            if (!list.length) {
-                return ['-'];
-            }
-            return list.map((value) => mapper[value] || value);
         }
 
         function toggleSidebar() {
