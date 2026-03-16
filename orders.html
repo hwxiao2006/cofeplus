@@ -4668,6 +4668,7 @@
         const ORDERS_PREVIEW_RECORDS_KEY = 'ordersPreviewRecords';
         const MIN_ORDER_RECORDS = 20;
         const FALLBACK_MULTI_ITEM_ORDER_COUNT = 5;
+        const ORDERS_PRD_DEMO_STATES = ['metrics', 'filters', 'table', 'mobile-list', 'products', 'detail', 'refund', 'currency'];
         let deviceContextMap = {};
         let ordersData = [];
         let currentPage = 1;
@@ -4689,6 +4690,13 @@
             mode: 'drawer',
             open: false
         };
+        let ordersPrdDemoState = '';
+
+        function resolveOrdersPrdDemoState() {
+            const params = new URLSearchParams(window.location.search);
+            const state = String(params.get('demoState') || '').trim();
+            return ORDERS_PRD_DEMO_STATES.includes(state) ? state : '';
+        }
 
         function normalizeOrderCurrency(currencyLike) {
             const code = String(currencyLike || FALLBACK_ORDER_CURRENCY).toUpperCase();
@@ -4966,18 +4974,199 @@
             });
         }
 
+        function buildOrdersPrdCurrencyDemoOrders(runtimeDevices, runtimeProducts) {
+            const currencies = ['CNY', 'USD', 'EUR', 'HKD', 'JPY'];
+            const amountByCurrency = {
+                CNY: 32,
+                USD: 6.5,
+                EUR: 5.9,
+                HKD: 49,
+                JPY: 780
+            };
+            const deviceList = Array.isArray(runtimeDevices) && runtimeDevices.length
+                ? runtimeDevices
+                : [{ id: 'RCK386', merchant: 'mer001', location: 'k8298' }];
+            const productList = Array.isArray(runtimeProducts) && runtimeProducts.length
+                ? runtimeProducts
+                : [{ id: 0, price: 0, names: { zh: '-' }, descs: { zh: '' }, currency: orderDefaultCurrency }];
+            const now = Date.now();
+
+            return currencies.map((currency, index) => {
+                const createdAt = new Date(now - index * 5 * 60 * 1000);
+                const device = deviceList[index % deviceList.length];
+                const product = productList[index % productList.length];
+                const amount = Number(amountByCurrency[currency] || 0);
+                const decimals = SUPPORTED_CURRENCIES[currency]?.decimals ?? 2;
+                const orderItems = [buildFallbackOrderItem(product, 1)];
+
+                return normalizeRuntimeOrder({
+                    id: `PRD-DEMO-${currency}-${index + 1}`,
+                    deviceId: String(device?.id || ''),
+                    nickname: `多币种示例${index + 1}`,
+                    phone: buildFallbackOrderPhone(900 + index),
+                    transactionId: buildFallbackTransactionId(createdAt, 900 + index),
+                    product: buildLegacyOrderSummary(orderItems),
+                    specs: buildLegacyOrderSpecs(orderItems),
+                    orderItems,
+                    status: 'done',
+                    paymentStatus: 'succeed',
+                    amount: amount.toFixed(decimals),
+                    currency,
+                    pickupCode: buildFallbackPickupCode(900 + index),
+                    items: 1,
+                    createTime: formatFallbackOrderCreateTime(createdAt)
+                }, 900 + index);
+            });
+        }
+
+        function mergeOrdersPrdDemoOrders(orderList, runtimeDevices, runtimeProducts, demoState = ordersPrdDemoState) {
+            if (demoState !== 'currency') {
+                return Array.isArray(orderList) ? orderList : [];
+            }
+
+            const demoOrders = buildOrdersPrdCurrencyDemoOrders(runtimeDevices, runtimeProducts);
+            const seen = new Set();
+            return [...demoOrders, ...(Array.isArray(orderList) ? orderList : [])].filter(order => {
+                const key = String(order?.id || '').trim();
+                if (!key || seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        }
+
+        function findOrdersPrdDemoCandidate(options = {}) {
+            const source = filteredData.length ? filteredData : ordersData;
+            return source.find(order => {
+                const expandedItems = expandOrderItemsByQuantity(normalizeOrderItems(order));
+                if (options.requireSuccessful && order?.paymentStatus !== 'succeed') {
+                    return false;
+                }
+                if (options.requireMultipleItems && expandedItems.length < 2) {
+                    return false;
+                }
+                return true;
+            }) || null;
+        }
+
+        function ensureOrdersPrdDemoOrderVisible(orderId) {
+            const index = filteredData.findIndex(order => order.id === orderId);
+            if (index < 0) return false;
+            const targetPage = Math.floor(index / pageSize) + 1;
+            if (targetPage !== currentPage) {
+                currentPage = targetPage;
+                renderTable();
+                updatePagination();
+            }
+            return true;
+        }
+
+        function focusOrdersPrdDemoElement(selector, offset = 0) {
+            const element = document.querySelector(selector);
+            if (!element) return null;
+            element.scrollIntoView({ block: 'start', inline: 'nearest' });
+            if (offset) {
+                window.scrollBy(0, offset);
+            }
+            return element;
+        }
+
+        function openOrdersPrdProductsDemo(orderId) {
+            const trigger = Array.from(document.querySelectorAll('[data-order-products-trigger]')).find(button =>
+                String(button.getAttribute('onclick') || '').includes(`'${orderId}'`)
+            );
+            if (!trigger) return false;
+            toggleOrderProductsPopover({
+                currentTarget: trigger,
+                preventDefault() {},
+                stopPropagation() {}
+            }, orderId);
+            return true;
+        }
+
+        function applyOrdersPrdDemoState(state = ordersPrdDemoState) {
+            const normalizedState = ORDERS_PRD_DEMO_STATES.includes(state) ? state : resolveOrdersPrdDemoState();
+            document.body.dataset.ordersPrdDemoState = normalizedState || '';
+            if (!normalizedState) return;
+
+            closeOrderProductsPopover();
+            closeOrderDetail();
+            closeMobileFilterSheet();
+            closeMobileSortSheet();
+            closeRefundModal();
+            window.scrollTo(0, 0);
+
+            if (normalizedState === 'metrics') {
+                return;
+            }
+
+            if (normalizedState === 'filters') {
+                const panel = document.querySelector('.orders-control-panel');
+                if (panel && panel.classList.contains('collapsed')) {
+                    toggleAdvancedFilters();
+                }
+                return;
+            }
+
+            if (normalizedState === 'table' || normalizedState === 'mobile-list' || normalizedState === 'currency') {
+                handleStatusFilterChange('all', 'desktop');
+            }
+
+            if (normalizedState === 'table') {
+                focusOrdersPrdDemoElement('.order-workspace', -96);
+                return;
+            }
+
+            if (normalizedState === 'mobile-list') {
+                focusOrdersPrdDemoElement('#orderMobileList');
+                return;
+            }
+
+            if (normalizedState === 'currency') {
+                focusOrdersPrdDemoElement('.order-list-toolbar', -96);
+                return;
+            }
+
+            const order = findOrdersPrdDemoCandidate({
+                requireSuccessful: normalizedState === 'refund',
+                requireMultipleItems: normalizedState === 'products' || normalizedState === 'refund'
+            });
+            if (!order) return;
+
+            ensureOrdersPrdDemoOrderVisible(order.id);
+            focusOrdersPrdDemoElement('.order-workspace');
+
+            window.requestAnimationFrame(() => {
+                if (normalizedState === 'products') {
+                    openOrdersPrdProductsDemo(order.id);
+                    return;
+                }
+
+                if (normalizedState === 'detail') {
+                    openOrderDetail(order.id, 'drawer');
+                    return;
+                }
+
+                if (normalizedState === 'refund') {
+                    openRefundModal(order.id);
+                }
+            });
+        }
+
         function init() {
+            ordersPrdDemoState = resolveOrdersPrdDemoState();
+            document.body.dataset.ordersPrdDemoState = ordersPrdDemoState || '';
             renderSidebarLoginProfile();
             loadOrderDefaultCurrency();
             const runtimeDevices = loadRuntimeDevices();
             const runtimeProducts = loadRuntimeProducts();
             deviceContextMap = buildDeviceContextMap(runtimeDevices);
-            ordersData = loadOrdersData(runtimeDevices, runtimeProducts);
+            ordersData = mergeOrdersPrdDemoOrders(loadOrdersData(runtimeDevices, runtimeProducts), runtimeDevices, runtimeProducts, ordersPrdDemoState);
             filteredData = sortOrders(ordersData);
             initDeviceFilter();
             syncDesktopFiltersToMobile();
             renderTable();
             updatePagination();
+            applyOrdersPrdDemoState();
         }
 
         function initDeviceFilter() {
