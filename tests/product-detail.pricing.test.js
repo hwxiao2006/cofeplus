@@ -108,6 +108,26 @@ test('详情页应将基本信息与配方配置拆分为分页签', () => {
   assert.ok(/switchProductDetailTab\('basic'\)/.test(html));
 });
 
+test('基本信息中的多语言商品信息应改为矩阵式桌面布局并带移动端语种切换', () => {
+  assert.ok(/\.multilang-sheet\s*\{/.test(html));
+  assert.ok(/\.multilang-grid-scroll\s*\{[\s\S]*overflow-x:\s*auto;/.test(html));
+  assert.ok(/\.multilang-grid-head\s*\{/.test(html));
+  assert.ok(/\.multilang-grid-row\s*\{/.test(html));
+  assert.ok(/\.multilang-mobile-switch\s*\{/.test(html));
+  assert.ok(/function\s+setProductInfoActiveLang\s*\(/.test(html));
+  assert.ok(/function\s+buildMultilangGridMarkup\s*\(/.test(html));
+  assert.ok(/function\s+renderMultiLangInputs\s*\([\s\S]*?buildMultilangGridMarkup\(/.test(html));
+  assert.ok(!/function\s+renderMultiLangInputs\s*\([\s\S]*?lang-section/.test(html));
+});
+
+test('标签配置抽屉应复用同一套多语言矩阵布局', () => {
+  assert.ok(/function\s+setDrawerActiveLang\s*\(/.test(html));
+  assert.ok(/function\s+buildMultilangGridMarkup\s*\(/.test(html));
+  assert.ok(/function\s+renderDrawerEditor\s*\([\s\S]*?buildMultilangGridMarkup\(/.test(html));
+  assert.ok(/function\s+renderDrawerEditor\s*\([\s\S]*?drawer-tag-lang-/.test(html));
+  assert.ok(!/function\s+renderDrawerEditor\s*\([\s\S]*?lang-section/.test(html));
+});
+
 test('详情页应支持复制模式，并提供确认复制步骤', () => {
   assert.ok(/const\s+copyMode\s*=\s*params\.get\('mode'\)/.test(html));
   assert.ok(/copyMode === 'copy'/.test(html));

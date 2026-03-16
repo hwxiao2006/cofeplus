@@ -5284,11 +5284,13 @@
                 <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
                     <label class="form-label" style="color: var(--primary);">添加新语言</label>
                     <div class="form-group">
-                        <label class="form-label">语言名称 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="newLangName" placeholder="如：Français">
-                        <div style="margin-top: 6px; font-size: 12px; color: var(--text-secondary);">系统将根据语言名称自动生成编码</div>
+                        <label class="form-label">选择语种 <span class="required">*</span></label>
+                        <select class="form-select" id="newLangSelect" onchange="updateNewLanguageSubmitState()">
+                            <option value="">请选择语种</option>
+                        </select>
+                        <div style="margin-top: 6px; font-size: 12px; color: var(--text-secondary);">仅支持从系统预置语种中选择</div>
                     </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="addLanguage()">添加语言</button>
+                    <button class="btn btn-primary" id="newLangSubmitBtn" style="width: 100%;" onclick="addLanguage()">添加语言</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -5791,6 +5793,8 @@
             zh: '中文',
             en: 'English'
         };
+        const DEVICE_LANGUAGE_CONFIG_STORAGE_PREFIX = 'deviceLanguageConfig_';
+        const hydratedDeviceLanguageConfigIds = new Set();
         const DEVICE_LANGUAGE_PRESET_LIBRARY = [
             {
                 langs: ['zh', 'en'],
@@ -5817,6 +5821,39 @@
                 langNames: { ...DEFAULT_DEVICE_LANGUAGE_NAMES },
                 defaultOrderPreviewLang: 'zh'
             };
+        }
+
+        function getDeviceLanguageConfigStorageKey(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            return normalizedDeviceId ? `${DEVICE_LANGUAGE_CONFIG_STORAGE_PREFIX}${normalizedDeviceId}` : '';
+        }
+
+        function readStoredDeviceLanguageConfig(deviceId = currentDevice) {
+            const storageKey = getDeviceLanguageConfigStorageKey(deviceId);
+            if (!storageKey) return null;
+            try {
+                const raw = localStorage.getItem(storageKey);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function persistDeviceLanguageConfig(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) return;
+            const device = deviceConfig[normalizedDeviceId];
+            if (!device || typeof device !== 'object') return;
+            try {
+                localStorage.setItem(getDeviceLanguageConfigStorageKey(normalizedDeviceId), JSON.stringify({
+                    langs: Array.isArray(device.langs) ? device.langs.slice() : [],
+                    hiddenLangs: Array.isArray(device.hiddenLangs) ? device.hiddenLangs.slice() : [],
+                    langNames: device.langNames && typeof device.langNames === 'object' ? { ...device.langNames } : {},
+                    defaultOrderPreviewLang: typeof device.defaultOrderPreviewLang === 'string' ? device.defaultOrderPreviewLang : ''
+                }));
+            } catch (e) {}
         }
 
         function createSeededDeviceLanguageConfig(seedIndex = 0) {
@@ -5847,6 +5884,32 @@
             if (!normalizedDeviceId) return null;
 
             let device = deviceConfig[normalizedDeviceId];
+            if (!hydratedDeviceLanguageConfigIds.has(normalizedDeviceId)) {
+                const stored = readStoredDeviceLanguageConfig(normalizedDeviceId);
+                if (stored) {
+                    device = {
+                        ...(device && typeof device === 'object' ? device : createDefaultDeviceLanguageConfig()),
+                        ...stored,
+                        langs: Array.isArray(stored.langs)
+                            ? stored.langs.slice()
+                            : Array.isArray(device?.langs)
+                                ? device.langs.slice()
+                                : DEFAULT_DEVICE_LANGUAGE_CODES.slice(),
+                        hiddenLangs: Array.isArray(stored.hiddenLangs)
+                            ? stored.hiddenLangs.slice()
+                            : Array.isArray(device?.hiddenLangs)
+                                ? device.hiddenLangs.slice()
+                                : [],
+                        langNames: {
+                            ...DEFAULT_DEVICE_LANGUAGE_NAMES,
+                            ...(device && typeof device.langNames === 'object' ? device.langNames : {}),
+                            ...(stored.langNames && typeof stored.langNames === 'object' ? stored.langNames : {})
+                        }
+                    };
+                    deviceConfig[normalizedDeviceId] = device;
+                }
+                hydratedDeviceLanguageConfigIds.add(normalizedDeviceId);
+            }
             if (!device || typeof device !== 'object') {
                 device = createDefaultDeviceLanguageConfig();
                 deviceConfig[normalizedDeviceId] = device;
@@ -8555,66 +8618,54 @@
         }
 
         // ==================== 语言管理 ====================
-        const LANGUAGE_CODE_PRESETS = {
-            zh: ['zh', 'chinese', '中文', '汉语', '漢語', '华语', '華語', '简体中文', '簡體中文', '繁体中文', '繁體中文'],
-            en: ['en', 'english', '英文', '英语', '英語'],
-            jp: ['jp', 'ja', 'japanese', '日本语', '日本語', '日语', '日語', '日文'],
-            ko: ['ko', 'kr', 'korean', '한국어', '韩语', '韓語', '朝鲜语', '朝鮮語'],
-            th: ['th', 'thai', 'ไทย', '泰语', '泰語', '泰文'],
-            fr: ['fr', 'french', 'francais', 'français', '法语', '法語', '法文'],
-            de: ['de', 'german', 'deutsch', '德语', '德語', '德文'],
-            es: ['es', 'spanish', 'espanol', 'español', '西班牙语', '西班牙語', '西语', '西語', '西文'],
-            it: ['it', 'italian', 'italiano', '意大利语', '意大利語', '意大利文'],
-            pt: ['pt', 'portuguese', 'portugues', 'português', '葡萄牙语', '葡萄牙語', '葡语', '葡語'],
-            ru: ['ru', 'russian', 'русский', '俄语', '俄語', '俄文'],
-            ar: ['ar', 'arabic', 'العربية', '阿拉伯语', '阿拉伯語', '阿拉伯文'],
-            vi: ['vi', 'vietnamese', 'tiengviet', 'tiếngviệt', '越南语', '越南語']
-        };
+        const ADDABLE_LANGUAGE_PRESETS = [
+            { code: 'zh', name: '中文' },
+            { code: 'en', name: 'English' },
+            { code: 'jp', name: '日本語' },
+            { code: 'ko', name: '한국어' },
+            { code: 'th', name: 'ไทย' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'es', name: 'Español' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pt', name: 'Português' },
+            { code: 'ru', name: 'Русский' },
+            { code: 'ar', name: 'العربية' }
+        ];
 
-        function normalizeLanguageName(value = '') {
-            const raw = String(value || '').trim().toLowerCase();
-            if (!raw) return '';
-            const normalized = typeof raw.normalize === 'function' ? raw.normalize('NFKD') : raw;
-            return normalized.replace(/[\u0300-\u036f]/g, '').replace(/[\s_-]+/g, '');
-        }
-
-        function findExistingLanguageCodeByName(name, deviceId = currentDevice) {
+        function getAvailableLanguagePresets(deviceId = currentDevice) {
             const device = ensureDeviceLanguageConfig(deviceId);
-            const normalizedName = normalizeLanguageName(name);
-            if (!device || !normalizedName || !device.langNames) return '';
-
-            const matched = Object.entries(device.langNames).find(([, langName]) => normalizeLanguageName(langName) === normalizedName);
-            return matched ? matched[0] : '';
+            const configured = new Set(Array.isArray(device?.langs) ? device.langs : []);
+            return ADDABLE_LANGUAGE_PRESETS.filter(item => !configured.has(item.code));
         }
 
-        function generateLanguageCode(name, existingCodes = []) {
-            const normalizedName = normalizeLanguageName(name);
-            if (!normalizedName) return '';
+        function updateNewLanguageSubmitState() {
+            const select = document.getElementById('newLangSelect');
+            const button = document.getElementById('newLangSubmitBtn');
+            if (!select || !button) return;
+            button.disabled = select.disabled || !String(select.value || '').trim();
+        }
 
-            const preset = Object.entries(LANGUAGE_CODE_PRESETS).find(([, aliases]) => aliases.includes(normalizedName));
-            if (preset) {
-                return preset[0];
+        function renderNewLanguageSelect() {
+            const select = document.getElementById('newLangSelect');
+            const presets = getAvailableLanguagePresets();
+            if (!select) return;
+
+            if (!presets.length) {
+                select.innerHTML = '<option value="">暂无可添加语种</option>';
+                select.value = '';
+                select.disabled = true;
+                updateNewLanguageSubmitState();
+                return;
             }
 
-            const normalizedCodes = new Set((existingCodes || [])
-                .map(code => String(code || '').trim().toLowerCase())
-                .filter(Boolean));
-
-            let baseCode = normalizedName.replace(/[^a-z0-9]/g, '').slice(0, 4);
-            if (!baseCode) baseCode = 'lang';
-            if (/^\d/.test(baseCode)) {
-                baseCode = `lang${baseCode}`.slice(0, 6);
-            }
-
-            if (!normalizedCodes.has(baseCode)) {
-                return baseCode;
-            }
-
-            let index = 2;
-            while (normalizedCodes.has(`${baseCode}${index}`)) {
-                index += 1;
-            }
-            return `${baseCode}${index}`;
+            select.innerHTML = `
+                <option value="">请选择语种</option>
+                ${presets.map(item => `<option value="${item.code}">${item.name}</option>`).join('')}
+            `;
+            select.value = '';
+            select.disabled = false;
+            updateNewLanguageSubmitState();
         }
 
         function openLangModal() {
@@ -8622,7 +8673,7 @@
             document.getElementById('langManageDevice').textContent = currentDevice;
             renderLangList();
             document.getElementById('langModal').classList.add('active');
-            document.getElementById('newLangName').value = '';
+            renderNewLanguageSelect();
         }
 
         function closeLangModal() {
@@ -8652,6 +8703,7 @@
             const langs = getDeviceLangs(deviceId);
             if (!device || !langs.includes(lang)) return;
             device.defaultOrderPreviewLang = lang;
+            persistDeviceLanguageConfig(deviceId);
             if (deviceId === currentDevice) {
                 renderLangList();
             }
@@ -8683,6 +8735,7 @@
             if (!hiddenContainer) return;
             if (!hiddenLangs.length) {
                 hiddenContainer.innerHTML = '<div class="lang-list-empty">暂无隐藏语言</div>';
+                renderNewLanguageSelect();
                 return;
             }
             hiddenContainer.innerHTML = hiddenLangs.map(lang => `
@@ -8696,44 +8749,26 @@
                     </div>
                 </div>
             `).join('');
+            renderNewLanguageSelect();
         }
 
         function addLanguage() {
-            const name = document.getElementById('newLangName').value.trim();
-
-            if (!name) {
-                showToast('请输入语言名称', 'error');
+            const code = String(document.getElementById('newLangSelect').value || '').trim();
+            const preset = getAvailableLanguagePresets().find(item => item.code === code);
+            if (!preset) {
+                showToast('请选择语言', 'error');
                 return;
             }
-
             const device = ensureDeviceLanguageConfig(currentDevice);
             const allLangs = Array.isArray(device.langs) ? device.langs : (device.langs = []);
-            const existingCode = findExistingLanguageCodeByName(name);
-            const code = existingCode || generateLanguageCode(name, allLangs);
-            if (!code) {
-                showToast('无法生成语言编码', 'error');
-                return;
-            }
-
-            const langs = getDeviceLangs();
-            if (langs.includes(code)) {
+            if (allLangs.includes(code)) {
                 showToast('该语言已存在', 'error');
                 return;
             }
-
-            const hiddenLangs = getHiddenDeviceLangs();
-            const alreadyExists = allLangs.includes(code);
-            if (!alreadyExists) {
-                allLangs.push(code);
-            }
-            if (hiddenLangs.includes(code)) {
-                device.hiddenLangs = hiddenLangs.filter(lang => lang !== code);
-            }
-            device.langNames[code] = name;
+            allLangs.push(code);
+            device.langNames[code] = preset.name;
             ensureOrderPreviewDefaultLang();
-
-            // 清空输入
-            document.getElementById('newLangName').value = '';
+            persistDeviceLanguageConfig(currentDevice);
 
             // 刷新显示
             renderLangList();
@@ -8742,7 +8777,7 @@
             refreshOrderPreviewIfOpen();
             updateStats();
             
-            showToast(`${alreadyExists ? '已显示语言' : '已添加语言'}: ${name}`);
+            showToast(`已添加语言: ${preset.name}`);
         }
 
         function hideLanguage(lang) {
@@ -8771,6 +8806,7 @@
                     orderPreviewLang = visibleLangs[0] || '';
                 }
 
+                persistDeviceLanguageConfig(currentDevice);
                 renderLangList();
                 updateDeviceLangs();
                 renderLangSelector();
@@ -8789,6 +8825,7 @@
 
             device.hiddenLangs = hiddenLangs.filter(code => code !== lang);
             ensureOrderPreviewDefaultLang();
+            persistDeviceLanguageConfig(currentDevice);
 
             renderLangList();
             updateDeviceLangs();

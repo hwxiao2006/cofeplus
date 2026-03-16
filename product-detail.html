@@ -803,35 +803,210 @@
             line-height: 1.5;
         }
 
-        .lang-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 16px;
+        .multilang-sheet {
+            background: linear-gradient(180deg, #fbfdfd 0%, #f4f8f8 100%);
+            border: 1px solid #deeaeb;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 18px;
         }
 
-        .lang-section-header {
+        .multilang-sheet-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .multilang-sheet-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .multilang-sheet-hint {
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .multilang-sheet-summary {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(46, 196, 182, 0.12);
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .multilang-mobile-switch {
+            display: none;
+        }
+
+        .multilang-grid-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 4px;
+        }
+
+        .multilang-grid-head,
+        .multilang-grid-row {
+            display: grid;
+            grid-template-columns: 148px repeat(var(--lang-count), minmax(220px, 1fr));
+            min-width: max-content;
+        }
+
+        .multilang-grid-head {
+            position: relative;
+            z-index: 1;
+        }
+
+        .multilang-grid-corner,
+        .multilang-grid-label {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background: #f3f7f7;
+            border-right: 1px solid #deeaeb;
+        }
+
+        .multilang-grid-corner {
+            display: flex;
+            align-items: center;
+            padding: 14px 14px 12px;
+            border-top-left-radius: 14px;
+            border-bottom: 1px solid #deeaeb;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .multilang-grid-head-cell {
+            padding: 14px 14px 12px;
+            border-bottom: 1px solid #deeaeb;
+            border-right: 1px solid #e7efef;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .multilang-grid-head-cell:first-of-type {
+            border-top-left-radius: 0;
+        }
+
+        .multilang-grid-head-cell:last-child {
+            border-top-right-radius: 14px;
+        }
+
+        .multilang-grid-head-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            gap: 8px;
         }
 
-        .lang-section-title {
-            font-size: 12px;
+        .multilang-grid-lang-name {
+            font-size: 13px;
             font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-primary);
         }
 
-        .lang-section-badge {
-            padding: 4px 10px;
-            background: var(--primary);
-            color: #fff;
-            border-radius: 4px;
+        .multilang-grid-lang-code {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 24px;
+            padding: 0 8px;
+            border-radius: 999px;
+            background: rgba(46, 196, 182, 0.14);
+            color: #0f766e;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: lowercase;
+        }
+
+        .multilang-grid-meta {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .multilang-status-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 600;
+            line-height: 1;
+            background: #eef3f4;
+            color: var(--text-secondary);
+        }
+
+        .multilang-status-chip.default {
+            background: rgba(46, 196, 182, 0.16);
+            color: #0f766e;
+        }
+
+        .multilang-status-chip.empty {
+            background: #fff1f2;
+            color: #be123c;
+        }
+
+        .multilang-grid-row:last-child .multilang-grid-label {
+            border-bottom-left-radius: 14px;
+        }
+
+        .multilang-grid-label {
+            padding: 16px 14px;
+            border-bottom: 1px solid #deeaeb;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .multilang-grid-cell {
+            padding: 14px;
+            border-bottom: 1px solid #deeaeb;
+            border-right: 1px solid #e7efef;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .multilang-grid-row:last-child .multilang-grid-cell:last-child {
+            border-bottom-right-radius: 14px;
+        }
+
+        .multilang-grid-row:last-child .multilang-grid-cell[data-lang-cell]:last-child {
+            border-bottom-right-radius: 14px;
+        }
+
+        .multilang-cell-label {
+            display: none;
+        }
+
+        .multilang-sheet .form-group {
+            margin-bottom: 0;
+        }
+
+        .multilang-sheet .form-input,
+        .multilang-sheet .form-textarea {
+            background: #fff;
+        }
+
+        .multilang-sheet .form-textarea {
+            min-height: 72px;
+            resize: vertical;
         }
 
         .option-card {
@@ -1016,7 +1191,7 @@
 
         .tag-drawer {
             background: #fff;
-            width: min(980px, 92vw);
+            width: min(1160px, 96vw);
             box-shadow: var(--shadow);
             height: 100vh;
             overflow: hidden;
@@ -1769,8 +1944,129 @@
                 grid-template-columns: 1fr;
             }
 
-            .lang-section {
-                padding: 16px;
+            .multilang-sheet {
+                padding: 14px;
+                border-radius: 16px;
+            }
+
+            .multilang-sheet-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .multilang-sheet-summary {
+                align-self: flex-start;
+            }
+
+            .multilang-mobile-switch {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                padding-bottom: 6px;
+                margin-bottom: 12px;
+                scrollbar-width: none;
+            }
+
+            .multilang-mobile-switch::-webkit-scrollbar {
+                display: none;
+            }
+
+            .multilang-mobile-tab {
+                border: 1px solid #dce8ea;
+                background: #fff;
+                color: var(--text-secondary);
+                border-radius: 999px;
+                padding: 8px 12px;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .multilang-mobile-tab.active {
+                background: rgba(46, 196, 182, 0.14);
+                border-color: rgba(46, 196, 182, 0.28);
+                color: #0f766e;
+            }
+
+            .multilang-grid-scroll {
+                overflow: visible;
+            }
+
+            .multilang-grid-head {
+                display: none;
+            }
+
+            .multilang-grid-row {
+                display: block;
+                min-width: 0;
+                background: #fff;
+                border: 1px solid #e4ecec;
+                border-radius: 14px;
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .multilang-grid-label {
+                position: static;
+                border: none;
+                background: transparent;
+                padding: 0;
+                margin-bottom: 8px;
+                font-size: 12px;
+                color: var(--text-muted);
+            }
+
+            .multilang-grid-cell {
+                display: none;
+                border: none;
+                background: transparent;
+                padding: 0;
+            }
+
+            .multilang-grid-cell.is-active {
+                display: block;
+            }
+
+            .multilang-cell-label {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 8px;
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .multilang-cell-label-code {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 32px;
+                height: 22px;
+                padding: 0 8px;
+                border-radius: 999px;
+                background: rgba(46, 196, 182, 0.12);
+                color: #0f766e;
+                font-size: 11px;
+                font-weight: 700;
+            }
+
+            .tag-drawer {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .tag-drawer-side {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .tag-tree {
+                flex-direction: row;
+                overflow-x: auto;
             }
 
             .recipe-editor-overlay {
@@ -2602,6 +2898,14 @@
             'RCK113': { langs: ['zh', 'en', 'ko', 'th'], langNames: { 'zh': '中文', 'en': 'English', 'ko': '한국어', 'th': 'ไทย' } }
         };
 
+        const DEFAULT_DEVICE_LANGUAGE_CODES = ['zh', 'en'];
+        const DEFAULT_DEVICE_LANGUAGE_NAMES = {
+            zh: '中文',
+            en: 'English'
+        };
+        const DEVICE_LANGUAGE_CONFIG_STORAGE_PREFIX = 'deviceLanguageConfig_';
+        const hydratedDeviceLanguageConfigIds = new Set();
+
         let productData = null;
         let categoryNames = {};
         let linkedProductCatalog = [];
@@ -2612,6 +2916,7 @@
         let currentCategoryKey = '';
         let currentDevice = 'RCK111';
         let currentLang = 'zh';
+        let productInfoActiveLang = 'zh';
         let currentProductDetailTab = 'basic';
         let copyWorkflowState = null;
         let activeRecipeSpecKey = 'beans';
@@ -2625,6 +2930,7 @@
         let tagSyncState = null;
         let drawerActiveSpecKey = 'beans';
         let drawerSelectedTagKey = '';
+        let drawerActiveLang = 'zh';
         const tagConfigs = [
             { specKey: 'beans', title: '咖啡豆', listId: 'beanOptions', optionTitle: 'BEAN' },
             { specKey: 'temperature', title: '温度', listId: 'tempOptions', optionTitle: 'TEMPERATURE' },
@@ -2691,12 +2997,229 @@
             // 预留：价格相关联动入口
         }
 
+        function createDefaultDeviceLanguageConfig() {
+            return {
+                langs: DEFAULT_DEVICE_LANGUAGE_CODES.slice(),
+                hiddenLangs: [],
+                langNames: { ...DEFAULT_DEVICE_LANGUAGE_NAMES }
+            };
+        }
+
+        function getDeviceLanguageConfigStorageKey(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            return normalizedDeviceId ? `${DEVICE_LANGUAGE_CONFIG_STORAGE_PREFIX}${normalizedDeviceId}` : '';
+        }
+
+        function readStoredDeviceLanguageConfig(deviceId = currentDevice) {
+            const storageKey = getDeviceLanguageConfigStorageKey(deviceId);
+            if (!storageKey) return null;
+            try {
+                const raw = localStorage.getItem(storageKey);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function ensureDeviceLanguageConfig(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) return null;
+
+            let device = deviceConfig[normalizedDeviceId];
+            if (!hydratedDeviceLanguageConfigIds.has(normalizedDeviceId)) {
+                const stored = readStoredDeviceLanguageConfig(normalizedDeviceId);
+                if (stored) {
+                    device = {
+                        ...(device && typeof device === 'object' ? device : createDefaultDeviceLanguageConfig()),
+                        ...stored,
+                        langs: Array.isArray(stored.langs)
+                            ? stored.langs.slice()
+                            : Array.isArray(device?.langs)
+                                ? device.langs.slice()
+                                : DEFAULT_DEVICE_LANGUAGE_CODES.slice(),
+                        hiddenLangs: Array.isArray(stored.hiddenLangs)
+                            ? stored.hiddenLangs.slice()
+                            : Array.isArray(device?.hiddenLangs)
+                                ? device.hiddenLangs.slice()
+                                : [],
+                        langNames: {
+                            ...DEFAULT_DEVICE_LANGUAGE_NAMES,
+                            ...(device && typeof device.langNames === 'object' ? device.langNames : {}),
+                            ...(stored.langNames && typeof stored.langNames === 'object' ? stored.langNames : {})
+                        }
+                    };
+                    deviceConfig[normalizedDeviceId] = device;
+                }
+                hydratedDeviceLanguageConfigIds.add(normalizedDeviceId);
+            }
+
+            if (!device || typeof device !== 'object') {
+                device = createDefaultDeviceLanguageConfig();
+                deviceConfig[normalizedDeviceId] = device;
+                return device;
+            }
+
+            if (!Array.isArray(device.langs) || !device.langs.length) {
+                device.langs = DEFAULT_DEVICE_LANGUAGE_CODES.slice();
+            }
+
+            if (!device.langNames || typeof device.langNames !== 'object') {
+                device.langNames = {};
+            }
+            DEFAULT_DEVICE_LANGUAGE_CODES.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang];
+                }
+            });
+            device.langs.forEach(lang => {
+                if (!device.langNames[lang]) {
+                    device.langNames[lang] = DEFAULT_DEVICE_LANGUAGE_NAMES[lang] || lang;
+                }
+            });
+
+            if (!Array.isArray(device.hiddenLangs)) {
+                device.hiddenLangs = [];
+            }
+            device.hiddenLangs = device.hiddenLangs.filter(lang => device.langs.includes(lang));
+
+            return device;
+        }
+
         function getDeviceLangs() {
-            return deviceConfig[currentDevice]?.langs || ['zh', 'en'];
+            const device = ensureDeviceLanguageConfig(currentDevice);
+            const hiddenLangs = new Set(Array.isArray(device?.hiddenLangs) ? device.hiddenLangs : []);
+            return Array.isArray(device?.langs)
+                ? device.langs.filter(lang => !hiddenLangs.has(lang))
+                : DEFAULT_DEVICE_LANGUAGE_CODES.slice();
         }
 
         function getLangName(lang) {
-            return deviceConfig[currentDevice]?.langNames[lang] || lang;
+            const device = ensureDeviceLanguageConfig(currentDevice);
+            return device?.langNames?.[lang] || DEFAULT_DEVICE_LANGUAGE_NAMES[lang] || lang;
+        }
+
+        function ensureActiveMultilangLang(activeLang, langs, preferredLang = '') {
+            const list = Array.isArray(langs) ? langs : [];
+            const preferred = String(preferredLang || '').trim();
+            const current = String(activeLang || '').trim();
+            if (current && list.includes(current)) return current;
+            if (preferred && list.includes(preferred)) return preferred;
+            return list[0] || '';
+        }
+
+        function getMultilangCompletionState(values = []) {
+            return values.some(value => String(value || '').trim()) ? 'filled' : 'empty';
+        }
+
+        function buildMultilangStatusChip(label, tone = 'filled') {
+            return `<span class="multilang-status-chip ${tone}">${escAttr(label)}</span>`;
+        }
+
+        function syncMultilangEditorState(editorKey, activeLang) {
+            const root = document.querySelector(`[data-editor-key="${editorKey}"]`);
+            if (!root) return;
+            root.querySelectorAll('[data-lang-cell]').forEach(cell => {
+                cell.classList.toggle('is-active', cell.getAttribute('data-lang-cell') === activeLang);
+            });
+            root.querySelectorAll('[data-lang-head]').forEach(head => {
+                head.classList.toggle('is-active', head.getAttribute('data-lang-head') === activeLang);
+            });
+            root.querySelectorAll('[data-multilang-tab]').forEach(button => {
+                const active = button.getAttribute('data-multilang-tab') === activeLang;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
+
+        function setProductInfoActiveLang(lang) {
+            productInfoActiveLang = ensureActiveMultilangLang(lang, getDeviceLangs(), getDeviceLangs()[0]);
+            syncMultilangEditorState('product-info', productInfoActiveLang);
+        }
+
+        function setDrawerActiveLang(lang) {
+            drawerActiveLang = ensureActiveMultilangLang(lang, getDeviceLangs(), currentLang);
+            syncMultilangEditorState('tag-drawer', drawerActiveLang);
+        }
+
+        function buildMultilangGridMarkup(config = {}) {
+            const {
+                editorKey = 'product-info',
+                title = '多语言信息',
+                hint = '',
+                summary = '',
+                langs = [],
+                activeLang = '',
+                setActiveHandler = '',
+                getStatus,
+                rows = []
+            } = config;
+
+            const safeLangs = Array.isArray(langs) ? langs : [];
+            const currentActiveLang = ensureActiveMultilangLang(activeLang, safeLangs, safeLangs[0]);
+
+            const headerHtml = safeLangs.map(lang => {
+                const state = typeof getStatus === 'function'
+                    ? (getStatus(lang) || { label: '待补充', tone: 'empty' })
+                    : { label: '待补充', tone: 'empty' };
+                return `
+                    <div class="multilang-grid-head-cell ${lang === currentActiveLang ? 'is-active' : ''}" data-lang-head="${lang}">
+                        <div class="multilang-grid-head-top">
+                            <div class="multilang-grid-lang-name">${escAttr(getLangName(lang))}</div>
+                            <span class="multilang-grid-lang-code">${escAttr(lang)}</span>
+                        </div>
+                        <div class="multilang-grid-meta">
+                            ${buildMultilangStatusChip(state.label || '待补充', state.tone || 'empty')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const rowsHtml = rows.map(row => `
+                <div class="multilang-grid-row" style="--lang-count:${safeLangs.length};">
+                    <div class="multilang-grid-label">${row.label || ''}</div>
+                    ${safeLangs.map(lang => `
+                        <div class="multilang-grid-cell ${lang === currentActiveLang ? 'is-active' : ''}" data-lang-cell="${lang}">
+                            <div class="multilang-cell-label">
+                                <span>${escAttr(getLangName(lang))}</span>
+                                <span class="multilang-cell-label-code">${escAttr(lang)}</span>
+                            </div>
+                            ${typeof row.renderInput === 'function' ? row.renderInput(lang) : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            return `
+                <div class="multilang-sheet" data-editor-key="${editorKey}" style="--lang-count:${safeLangs.length};">
+                    <div class="multilang-sheet-header">
+                        <div>
+                            <div class="multilang-sheet-title">${escAttr(title)}</div>
+                            ${hint ? `<div class="multilang-sheet-hint">${escAttr(hint)}</div>` : ''}
+                        </div>
+                        ${summary ? `<div class="multilang-sheet-summary">${escAttr(summary)}</div>` : ''}
+                    </div>
+                    <div class="multilang-mobile-switch" role="tablist" aria-label="${escAttr(title)}语言切换">
+                        ${safeLangs.map(lang => `
+                            <button
+                                type="button"
+                                class="multilang-mobile-tab ${lang === currentActiveLang ? 'active' : ''}"
+                                data-multilang-tab="${lang}"
+                                aria-selected="${lang === currentActiveLang ? 'true' : 'false'}"
+                                onclick="${setActiveHandler}('${lang}')"
+                            >${escAttr(getLangName(lang))}</button>
+                        `).join('')}
+                    </div>
+                    <div class="multilang-grid-scroll">
+                        <div class="multilang-grid-head" style="--lang-count:${safeLangs.length};">
+                            <div class="multilang-grid-corner">字段</div>
+                            ${headerHtml}
+                        </div>
+                        ${rowsHtml}
+                    </div>
+                </div>
+            `;
         }
 
         function getSpec(lang) {
@@ -5048,23 +5571,51 @@
         function renderMultiLangInputs() {
             const container = document.getElementById('multiLangInputs');
             const langs = getDeviceLangs();
+            productInfoActiveLang = ensureActiveMultilangLang(productInfoActiveLang, langs, langs[0]);
 
-            container.innerHTML = langs.map(lang => `
-                <div class="lang-section">
-                    <div class="lang-section-header">
-                        <span class="lang-section-title">商品信息</span>
-                        <span class="lang-section-badge">${getLangName(lang)}</span>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">商品名称 ${lang === langs[0] ? '<span class="required">*</span>' : ''}</label>
-                        <input type="text" class="form-input product-name-${lang}" value="${productData.names?.[lang] || ''}" placeholder="请输入${getLangName(lang)}名称">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label class="form-label">商品描述</label>
-                        <textarea class="form-textarea product-desc-${lang}" placeholder="请输入${getLangName(lang)}描述" style="min-height: 60px;">${productData.descs?.[lang] || ''}</textarea>
-                    </div>
-                </div>
-            `).join('');
+            container.innerHTML = buildMultilangGridMarkup({
+                editorKey: 'product-info',
+                title: '多语言商品信息',
+                hint: '桌面端可横向对照编辑，移动端按语种逐个切换。',
+                summary: `共 ${langs.length} 种语种`,
+                langs,
+                activeLang: productInfoActiveLang,
+                setActiveHandler: 'setProductInfoActiveLang',
+                getStatus(lang) {
+                    if (lang === langs[0]) {
+                        return { label: '默认语种', tone: 'default' };
+                    }
+                    const state = getMultilangCompletionState([
+                        productData.names?.[lang],
+                        productData.descs?.[lang]
+                    ]);
+                    return state === 'filled'
+                        ? { label: '已填写', tone: 'filled' }
+                        : { label: '待补充', tone: 'empty' };
+                },
+                rows: [
+                    {
+                        label: `商品名称 ${langs[0] ? '<span class="required">*</span>' : ''}`,
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <input type="text" class="form-input product-name-${lang}" value="${escAttr(productData.names?.[lang] || '')}" placeholder="请输入${getLangName(lang)}名称">
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        label: '商品描述',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <textarea class="form-textarea product-desc-${lang}" placeholder="请输入${getLangName(lang)}描述">${escAttr(productData.descs?.[lang] || '')}</textarea>
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
         }
 
         function fillFormData() {
@@ -5191,6 +5742,7 @@
                 drawerSelectedTagKey = getCurrentSelectedTagKey(cfg.specKey) || tagKeys[0] || '';
             }
             const currentDefault = getDefaultOption(cfg.specKey);
+            drawerActiveLang = ensureActiveMultilangLang(drawerActiveLang, langs, currentLang || langs[0]);
 
             let html = `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
             html += `<div class="existing-tags">`;
@@ -5201,18 +5753,35 @@
             `).join('');
             html += `</div>`;
 
-            html += langs.map(lang => `
-                <div class="lang-section">
-                    <div class="lang-section-header">
-                        <span class="lang-section-title">${cfg.title}标签</span>
-                        <span class="lang-section-badge">${getLangName(lang)}</span>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label class="form-label">标签内容</label>
-                        <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${cfg.title}标签">
-                    </div>
-                </div>
-            `).join('');
+            html += buildMultilangGridMarkup({
+                editorKey: 'tag-drawer',
+                title: `${cfg.title}标签`,
+                hint: '桌面端可横向对照多语种标签，移动端按语种切换编辑。',
+                summary: `共 ${langs.length} 种语种`,
+                langs,
+                activeLang: drawerActiveLang,
+                setActiveHandler: 'setDrawerActiveLang',
+                getStatus(lang) {
+                    const state = getMultilangCompletionState([
+                        getTagLabel(cfg.specKey, drawerSelectedTagKey, lang)
+                    ]);
+                    return state === 'filled'
+                        ? { label: lang === langs[0] ? '默认语种' : '已填写', tone: lang === langs[0] ? 'default' : 'filled' }
+                        : { label: '待补充', tone: 'empty' };
+                },
+                rows: [
+                    {
+                        label: '标签内容',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${cfg.title}标签">
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
 
             html += `
                 <div class="form-group tag-extra-price-group">
