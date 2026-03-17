@@ -356,11 +356,11 @@
             gap: 18px;
         }
 
-        .summary-strip {
-            display: flex;
+        .staff-toolbar {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 14px;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
             padding: 14px 18px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -368,17 +368,42 @@
             box-shadow: var(--shadow);
         }
 
-        .summary-strip-label {
+        .staff-toolbar-stat {
+            min-width: 124px;
+        }
+
+        .staff-toolbar-label {
+            display: block;
             font-size: 13px;
             font-weight: 600;
             color: var(--text-secondary);
         }
 
-        .summary-strip-value {
+        .staff-toolbar-value {
+            display: block;
             font-size: 28px;
             font-weight: 700;
             color: var(--text-primary);
             line-height: 1;
+            margin-top: 4px;
+        }
+
+        .staff-toolbar-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .staff-toolbar-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .staff-toolbar-note {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
         .list-card {
@@ -387,21 +412,6 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
-        }
-
-        .list-head {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-
-        .list-note {
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 400;
         }
 
         .manager-list {
@@ -424,20 +434,18 @@
             box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
         }
 
-        .manager-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px dashed #dbe4ea;
-            margin-bottom: 12px;
+        .manager-row {
+            display: grid;
+            grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.2fr) auto;
+            gap: 16px;
+            align-items: center;
         }
 
         .manager-identity {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
         }
 
         .manager-avatar {
@@ -457,7 +465,15 @@
         .manager-summary {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .manager-detail-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
         }
 
         .manager-actions {
@@ -466,6 +482,7 @@
             gap: 8px;
             flex-wrap: wrap;
             justify-content: flex-end;
+            align-self: center;
         }
 
         .manager-name {
@@ -554,26 +571,21 @@
             color: var(--text-secondary);
         }
 
-        .manager-panel {
-            background: #fff;
-            border: 1px solid #eef2f6;
-            border-radius: 10px;
-            padding: 10px 12px;
+        .manager-device-summary {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
             min-height: 0;
         }
 
-        .manager-device-panel {
-            margin-top: 4px;
-        }
-
-        .manager-panel-title {
+        .manager-device-label {
             font-size: 12px;
             color: #6b7280;
-            margin-bottom: 6px;
             font-weight: 600;
         }
 
-        .manager-value {
+        .manager-device-text {
             color: var(--text-primary);
             font-size: 13px;
             word-break: break-all;
@@ -1023,6 +1035,21 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .staff-toolbar {
+                grid-template-columns: 1fr;
+                padding: 12px 14px;
+                gap: 10px;
+            }
+
+            .manager-row {
+                grid-template-columns: 1fr;
+                align-items: flex-start;
+            }
+
+            .manager-actions {
+                justify-content: flex-start;
+            }
         }
 
         @media (max-width: 680px) {
@@ -1034,14 +1061,6 @@
                 padding: 10px 14px;
             }
 
-            .summary-strip {
-                padding: 12px 14px;
-            }
-
-            .summary-strip-value {
-                font-size: 24px;
-            }
-
             .manager-list {
                 padding: 10px;
                 gap: 8px;
@@ -1050,11 +1069,6 @@
             .manager-item {
                 padding: 12px;
                 border-radius: 12px;
-            }
-
-            .manager-head {
-                padding-bottom: 8px;
-                margin-bottom: 8px;
             }
 
             .manager-avatar {
@@ -1089,19 +1103,6 @@
             .manager-actions {
                 width: 100%;
                 justify-content: flex-start;
-            }
-
-            .manager-panel {
-                padding: 8px 10px;
-                border-radius: 8px;
-            }
-
-            .manager-panel-title {
-                margin-bottom: 4px;
-            }
-
-            .manager-value {
-                font-size: 12px;
             }
 
             .device-picker-entry {
@@ -1230,16 +1231,18 @@
             </header>
 
             <div class="content">
-                <div class="summary-strip">
-                    <span class="summary-strip-label">启用人员数</span>
-                    <strong class="summary-strip-value" id="staffEnabledCount">0</strong>
-                </div>
+                <section class="staff-toolbar">
+                    <div class="staff-toolbar-stat">
+                        <span class="staff-toolbar-label">启用人员数</span>
+                        <strong class="staff-toolbar-value" id="staffEnabledCount">0</strong>
+                    </div>
+                    <div class="staff-toolbar-meta">
+                        <span class="staff-toolbar-title" id="listTitle">管理人员列表</span>
+                        <span class="staff-toolbar-note" id="listHint">按商户过滤展示</span>
+                    </div>
+                </section>
 
                 <section class="list-card">
-                    <div class="list-head">
-                        <span id="listTitle">管理人员列表</span>
-                        <span class="list-note" id="listHint">按商户过滤展示</span>
-                    </div>
                     <div class="manager-list" id="managerList"></div>
                 </section>
             </div>
@@ -1984,28 +1987,31 @@
             list.innerHTML = filteredManagers
                 .map((manager) => {
                     const deviceCount = Array.isArray(manager.devices) ? manager.devices.length : 0;
+                    const deviceSummary = (manager.devices || []).join('、') || '-';
                     const isEnabled = manager.accountEnabled !== false;
                     return `
                         <article class="manager-item">
-                            <div class="manager-head">
+                            <div class="manager-row">
                                 <div class="manager-identity">
                                     <span class="manager-avatar">${(manager.username || '?').slice(0, 1)}</span>
                                     <div class="manager-summary">
                                         <div class="manager-name">${manager.username}</div>
-                                        <div class="manager-meta">${manager.phone}</div>
-                                        <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
                                         <div class="manager-status ${isEnabled ? '' : 'is-disabled'}">账号状态：${manager.accountEnabled === false ? '已停用' : '已启用'}</div>
                                     </div>
+                                </div>
+                                <div class="manager-detail-stack">
+                                    <div class="manager-meta">${manager.phone}</div>
+                                    <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
+                                    <div class="manager-device-summary">
+                                        <span class="manager-device-label">负责设备：</span>
+                                        <span class="manager-device-text">${deviceSummary}</span>
+                                    </div>
+                                    <div class="manager-meta">共 ${deviceCount} 台设备</div>
                                 </div>
                                 <div class="manager-actions">
                                     <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
                                     <button type="button" class="manager-toggle-btn ${isEnabled ? 'is-danger' : ''}" onclick="toggleStaffLoginStatus('${manager.id}')">${isEnabled ? '停用账号' : '启用账号'}</button>
                                 </div>
-                            </div>
-                            <div class="manager-panel manager-device-panel">
-                                <div class="manager-panel-title">负责设备号</div>
-                                <div class="manager-value">${(manager.devices || []).join('、') || '-'}</div>
-                                <div class="manager-meta" style="margin-top: 6px;">共 ${deviceCount} 台设备</div>
                             </div>
                         </article>
                     `;
