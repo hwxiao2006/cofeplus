@@ -117,9 +117,13 @@ loginPages.forEach(([file, expectedTheme]) => {
     runtime.form.handler({ preventDefault() {} });
 
     const session = JSON.parse(runtime.store.cofeLoginSession);
+    const profile = JSON.parse(runtime.store.sidebarLoginProfile);
 
     assert.strictEqual(session.theme, expectedTheme);
+    assert.strictEqual(session.account, 'ops-admin');
     assert.ok(runtime.store.sidebarLoginProfile);
+    assert.strictEqual(profile.name, '运营管理员');
+    assert.strictEqual(profile.phone, '13800138000');
     assert.strictEqual(runtime.submitButton.disabled, true);
     assert.strictEqual(runtime.submitButton.textContent, '登录中...');
     assert.strictEqual(runtime.locationState.replacedWith, 'overview.html');

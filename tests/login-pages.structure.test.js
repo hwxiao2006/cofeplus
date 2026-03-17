@@ -26,6 +26,14 @@ test('morning 登录页应包含统一品牌和表单骨架', () => {
   assert.ok(/进入控制台/.test(morningHtml));
 });
 
+test('三套登录页应预填统一演示账号和密码', () => {
+  [morningHtml, counterHtml, paperHtml].forEach((html, index) => {
+    const pageName = ['morning', 'counter', 'paper'][index];
+    assert.ok(/id="loginAccount"[\s\S]*value="13800138000"/.test(html), `${pageName} 登录页缺少默认账号`);
+    assert.ok(/id="loginPassword"[\s\S]*value="123456"/.test(html), `${pageName} 登录页缺少默认密码`);
+  });
+});
+
 test('morning 登录页应暴露主题钩子和移动端断点', () => {
   assert.ok(/login-page-morning/.test(morningHtml));
   assert.ok(/@media\s*\(max-width:\s*768px\)/.test(morningHtml));

@@ -121,7 +121,7 @@
         .stage-body {
             position: relative;
             z-index: 1;
-            max-width: 380px;
+            max-width: 460px;
         }
 
         .stage-index {
@@ -140,13 +140,23 @@
         }
 
         .stage-body h2 {
-            font-size: 60px;
-            line-height: 0.98;
-            letter-spacing: -0.06em;
-            margin-bottom: 22px;
+            font-size: 50px;
+            line-height: 1.06;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+
+        .stage-title-line {
+            display: block;
+            white-space: nowrap;
+        }
+
+        .stage-title-line + .stage-title-line {
+            margin-top: 0.04em;
         }
 
         .stage-body p {
+            max-width: 360px;
             font-size: 16px;
             line-height: 1.82;
             color: var(--paper-muted);
@@ -325,7 +335,7 @@
             }
 
             .stage-body h2 {
-                font-size: 46px;
+                font-size: 44px;
             }
         }
 
@@ -361,7 +371,9 @@
             }
 
             .stage-body h2 {
-                font-size: 28px;
+                font-size: 30px;
+                line-height: 1.1;
+                letter-spacing: -0.02em;
                 margin-bottom: 10px;
             }
 
@@ -410,7 +422,11 @@
 
             <div class="stage-body">
                 <div class="stage-index">Paper Edition</div>
-                <h2>把门店现场，印进一张更有记忆点的登录纸卡。</h2>
+                <h2>
+                    <span class="stage-title-line">把门店现场，</span>
+                    <span class="stage-title-line">印进更有记忆点的</span>
+                    <span class="stage-title-line">登录纸卡。</span>
+                </h2>
                 <p>这套方案把品牌感放在纸张肌理、边框和排版秩序里，不靠复杂装饰也能让后台入口带上精品咖啡菜单的节奏感。</p>
             </div>
 
@@ -436,12 +452,12 @@
                 <form id="loginForm" class="login-form" novalidate>
                     <div class="login-field">
                         <label for="loginAccount">账号</label>
-                        <input id="loginAccount" name="account" type="text" placeholder="请输入运营账号" autocomplete="username">
+                        <input id="loginAccount" name="account" type="text" value="13800138000" placeholder="请输入运营账号" autocomplete="username">
                     </div>
 
                     <div class="login-field">
                         <label for="loginPassword">密码</label>
-                        <input id="loginPassword" name="password" type="password" placeholder="请输入登录密码" autocomplete="current-password">
+                        <input id="loginPassword" name="password" type="password" value="123456" placeholder="请输入登录密码" autocomplete="current-password">
                     </div>
 
                     <p id="loginError" class="login-error" role="alert" aria-live="polite"></p>
@@ -460,6 +476,8 @@
         const LOGIN_BUTTON_IDLE_TEXT = '进入控制台';
         const LOGIN_BUTTON_LOADING_TEXT = '登录中...';
         const LOGIN_THEME = 'paper';
+        const SIDEBAR_LOGIN_DISPLAY_NAME = '运营管理员';
+        const SIDEBAR_LOGIN_DISPLAY_PHONE = '13800138000';
 
         const loginForm = document.getElementById('loginForm');
         const loginAccountInput = document.getElementById('loginAccount');
@@ -493,8 +511,8 @@
                 loggedInAt: new Date().toISOString()
             }));
             localStorage.setItem(SIDEBAR_LOGIN_PROFILE_KEY, JSON.stringify({
-                name: account,
-                phone: account
+                name: SIDEBAR_LOGIN_DISPLAY_NAME,
+                phone: SIDEBAR_LOGIN_DISPLAY_PHONE
             }));
         }
 

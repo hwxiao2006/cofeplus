@@ -402,12 +402,12 @@
                 <form id="loginForm" class="login-form" novalidate>
                     <div class="login-field">
                         <label for="loginAccount">账号</label>
-                        <input id="loginAccount" name="account" type="text" placeholder="请输入运营账号" autocomplete="username">
+                        <input id="loginAccount" name="account" type="text" value="13800138000" placeholder="请输入运营账号" autocomplete="username">
                     </div>
 
                     <div class="login-field">
                         <label for="loginPassword">密码</label>
-                        <input id="loginPassword" name="password" type="password" placeholder="请输入登录密码" autocomplete="current-password">
+                        <input id="loginPassword" name="password" type="password" value="123456" placeholder="请输入登录密码" autocomplete="current-password">
                     </div>
 
                     <p id="loginError" class="login-error" role="alert" aria-live="polite"></p>
@@ -426,6 +426,8 @@
         const LOGIN_BUTTON_IDLE_TEXT = '进入控制台';
         const LOGIN_BUTTON_LOADING_TEXT = '登录中...';
         const LOGIN_THEME = 'morning';
+        const SIDEBAR_LOGIN_DISPLAY_NAME = '运营管理员';
+        const SIDEBAR_LOGIN_DISPLAY_PHONE = '13800138000';
 
         const loginForm = document.getElementById('loginForm');
         const loginAccountInput = document.getElementById('loginAccount');
@@ -459,8 +461,8 @@
                 loggedInAt: new Date().toISOString()
             }));
             localStorage.setItem(SIDEBAR_LOGIN_PROFILE_KEY, JSON.stringify({
-                name: account,
-                phone: account
+                name: SIDEBAR_LOGIN_DISPLAY_NAME,
+                phone: SIDEBAR_LOGIN_DISPLAY_PHONE
             }));
         }
 
