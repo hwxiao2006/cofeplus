@@ -4,6 +4,7 @@ const path = require('path');
 
 const morningHtml = fs.readFileSync(path.join(__dirname, '..', 'login-morning.html'), 'utf8');
 const counterHtml = fs.readFileSync(path.join(__dirname, '..', 'login-counter.html'), 'utf8');
+const paperHtml = fs.readFileSync(path.join(__dirname, '..', 'login-paper.html'), 'utf8');
 
 function test(name, fn) {
   try {
@@ -38,4 +39,12 @@ test('counter 登录页应包含统一表单骨架和专属文案', () => {
   assert.ok(/id="loginAccount"/.test(counterHtml));
   assert.ok(/id="loginPassword"/.test(counterHtml));
   assert.ok(/login-page-counter/.test(counterHtml));
+});
+
+test('paper 登录页应包含统一表单骨架和专属文案', () => {
+  assert.ok(/欢迎登录/.test(paperHtml));
+  assert.ok(/连接每日出杯现场，进入运营工作台/.test(paperHtml));
+  assert.ok(/id="loginAccount"/.test(paperHtml));
+  assert.ok(/id="loginPassword"/.test(paperHtml));
+  assert.ok(/login-page-paper/.test(paperHtml));
 });

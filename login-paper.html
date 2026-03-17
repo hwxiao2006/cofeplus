@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COFE+ 欢迎登录</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --paper-bg: #efe2cf;
+            --paper-card: #f9f3e8;
+            --paper-surface: rgba(255, 252, 247, 0.82);
+            --paper-ink: #3a271e;
+            --paper-muted: rgba(58, 39, 30, 0.68);
+            --paper-line: rgba(104, 71, 50, 0.16);
+            --paper-accent: #7a4d36;
+            --paper-accent-soft: rgba(122, 77, 54, 0.12);
+            --paper-shadow: 0 30px 75px rgba(74, 46, 29, 0.16);
+            --radius-xl: 34px;
+            --radius-lg: 28px;
+            --radius-md: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.04)),
+                linear-gradient(135deg, #f4eadc 0%, #ecddc7 48%, #dcc2a0 100%);
+            color: var(--paper-ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            padding: 28px;
+        }
+
+        .login-layout {
+            min-height: calc(100vh - 56px);
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08)),
+                rgba(250, 243, 231, 0.52);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: var(--paper-shadow);
+        }
+
+        .login-stage {
+            position: relative;
+            padding: 54px 48px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08)),
+                linear-gradient(160deg, rgba(255, 252, 246, 0.9), rgba(239, 226, 204, 0.88));
+            border-right: 1px solid rgba(103, 71, 49, 0.08);
+        }
+
+        .login-stage::before {
+            content: '';
+            position: absolute;
+            inset: 26px;
+            border-radius: 28px;
+            border: 1px solid rgba(102, 70, 49, 0.1);
+            pointer-events: none;
+        }
+
+        .login-stage::after {
+            content: '';
+            position: absolute;
+            left: 56px;
+            right: 56px;
+            bottom: 48px;
+            height: 120px;
+            background:
+                radial-gradient(circle at 30% 32%, rgba(255, 255, 255, 0.6), transparent 24%),
+                linear-gradient(180deg, rgba(122, 77, 54, 0.08), rgba(122, 77, 54, 0));
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .stage-header {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 74px;
+        }
+
+        .stage-header img {
+            width: 68px;
+            height: 68px;
+            border-radius: 22px;
+            object-fit: cover;
+            box-shadow: 0 16px 30px rgba(86, 57, 39, 0.14);
+        }
+
+        .stage-header strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(58, 39, 30, 0.58);
+            margin-bottom: 8px;
+        }
+
+        .stage-header span {
+            font-size: 16px;
+            color: rgba(58, 39, 30, 0.76);
+        }
+
+        .stage-body {
+            position: relative;
+            z-index: 1;
+            max-width: 380px;
+        }
+
+        .stage-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid var(--paper-line);
+            background: rgba(255, 252, 247, 0.64);
+            font-size: 12px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .stage-body h2 {
+            font-size: 60px;
+            line-height: 0.98;
+            letter-spacing: -0.06em;
+            margin-bottom: 22px;
+        }
+
+        .stage-body p {
+            font-size: 16px;
+            line-height: 1.82;
+            color: var(--paper-muted);
+        }
+
+        .stage-footer {
+            position: relative;
+            z-index: 1;
+            margin-top: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .stage-footer span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid var(--paper-line);
+            background: rgba(255, 252, 247, 0.68);
+            font-size: 12px;
+            color: rgba(58, 39, 30, 0.72);
+        }
+
+        .login-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 38px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04)),
+                linear-gradient(180deg, rgba(244, 234, 220, 0.78), rgba(239, 224, 198, 0.7));
+        }
+
+        .login-panel {
+            width: min(100%, 460px);
+            padding: 36px 34px 32px;
+            border-radius: 30px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.18)),
+                var(--paper-surface);
+            border: 1px solid rgba(122, 77, 54, 0.12);
+            box-shadow: var(--paper-shadow);
+            position: relative;
+        }
+
+        .login-panel::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border-radius: 22px;
+            border: 1px solid rgba(122, 77, 54, 0.09);
+            pointer-events: none;
+        }
+
+        .login-panel-top {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .login-panel-top img {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            box-shadow: 0 14px 24px rgba(86, 57, 39, 0.14);
+        }
+
+        .login-product-label {
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(58, 39, 30, 0.54);
+            margin-bottom: 6px;
+        }
+
+        .login-card h1 {
+            font-size: 40px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            margin-bottom: 12px;
+        }
+
+        .login-supporting {
+            font-size: 15px;
+            line-height: 1.72;
+            color: var(--paper-muted);
+            margin-bottom: 28px;
+        }
+
+        .login-form {
+            position: relative;
+            display: grid;
+            gap: 16px;
+        }
+
+        .login-field {
+            display: grid;
+            gap: 9px;
+        }
+
+        .login-field label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(58, 39, 30, 0.76);
+        }
+
+        .login-field input {
+            width: 100%;
+            height: 54px;
+            padding: 0 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--paper-line);
+            background: rgba(255, 251, 246, 0.9);
+            color: var(--paper-ink);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .login-field input:focus {
+            border-color: rgba(122, 77, 54, 0.66);
+            box-shadow: 0 0 0 4px var(--paper-accent-soft);
+            transform: translateY(-1px);
+        }
+
+        .login-field input::placeholder {
+            color: rgba(58, 39, 30, 0.32);
+        }
+
+        .login-error {
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #9b3e33;
+        }
+
+        .login-submit {
+            height: 56px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #8c5b42 0%, #72452f 100%);
+            color: #fff8f3;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            box-shadow: 0 16px 26px rgba(122, 77, 54, 0.2);
+        }
+
+        .login-footer {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(122, 77, 54, 0.1);
+            font-size: 12px;
+            line-height: 1.72;
+            color: rgba(58, 39, 30, 0.52);
+        }
+
+        @media (max-width: 1024px) {
+            .login-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .login-stage {
+                min-height: 420px;
+                padding: 36px 30px 30px;
+            }
+
+            .stage-header {
+                margin-bottom: 44px;
+            }
+
+            .stage-body h2 {
+                font-size: 46px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-page {
+                padding: 14px;
+            }
+
+            .login-layout {
+                min-height: calc(100vh - 28px);
+                border-radius: 28px;
+            }
+
+            .login-stage {
+                min-height: 320px;
+                padding: 24px 20px;
+            }
+
+            .login-stage::before {
+                inset: 14px;
+                border-radius: 22px;
+            }
+
+            .stage-header {
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .stage-header img {
+                width: 54px;
+                height: 54px;
+                border-radius: 18px;
+            }
+
+            .stage-body h2 {
+                font-size: 34px;
+                margin-bottom: 16px;
+            }
+
+            .stage-body p {
+                font-size: 14px;
+            }
+
+            .stage-footer {
+                margin-top: 20px;
+            }
+
+            .login-card {
+                padding: 0 14px 14px;
+                margin-top: -24px;
+                background: transparent;
+            }
+
+            .login-panel {
+                width: 100%;
+                padding: 26px 20px 22px;
+                border-radius: 24px;
+            }
+
+            .login-card h1 {
+                font-size: 32px;
+            }
+
+            .login-supporting {
+                margin-bottom: 22px;
+            }
+        }
+    </style>
+</head>
+<body class="login-page login-page-paper">
+    <main class="login-layout">
+        <section class="login-stage">
+            <div class="stage-header">
+                <img src="logo.png" alt="COFE+ 标识">
+                <div>
+                    <strong>COFE+</strong>
+                    <span>运营控制台</span>
+                </div>
+            </div>
+
+            <div class="stage-body">
+                <div class="stage-index">Paper Edition</div>
+                <h2>把门店现场，印进一张更有记忆点的登录纸卡。</h2>
+                <p>这套方案把品牌感放在纸张肌理、边框和排版秩序里，不靠复杂装饰也能让后台入口带上精品咖啡菜单的节奏感。</p>
+            </div>
+
+            <div class="stage-footer">
+                <span>Crafted Layout</span>
+                <span>Warm Editorial Tone</span>
+                <span>Fast Login Flow</span>
+            </div>
+        </section>
+
+        <section class="login-card">
+            <div class="login-panel">
+                <div class="login-panel-top">
+                    <img src="logo.png" alt="COFE+ 标识">
+                    <div>
+                        <p class="login-product-label">COFE+ · 运营控制台</p>
+                        <h1>欢迎登录</h1>
+                    </div>
+                </div>
+
+                <p class="login-supporting">连接每日出杯现场，进入运营工作台</p>
+
+                <form id="loginForm" class="login-form" novalidate>
+                    <div class="login-field">
+                        <label for="loginAccount">账号</label>
+                        <input id="loginAccount" name="account" type="text" placeholder="请输入运营账号" autocomplete="username">
+                    </div>
+
+                    <div class="login-field">
+                        <label for="loginPassword">密码</label>
+                        <input id="loginPassword" name="password" type="password" placeholder="请输入登录密码" autocomplete="current-password">
+                    </div>
+
+                    <p id="loginError" class="login-error" role="alert" aria-live="polite"></p>
+
+                    <button id="loginSubmit" class="login-submit" type="submit">进入控制台</button>
+                </form>
+
+                <div class="login-footer">纸感方案保留最小表单骨架，让品牌个性落在材质与排版里，而不是加更多无关动作。</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
