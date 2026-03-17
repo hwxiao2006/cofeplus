@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COFE+ 欢迎登录</title>
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        :root {
+            --morning-foam: #fbf4ea;
+            --morning-oat: #f1e1cb;
+            --morning-caramel: #c88753;
+            --morning-espresso: #513122;
+            --text-primary: #2f1d16;
+            --text-secondary: rgba(47, 29, 22, 0.7);
+            --border-soft: rgba(110, 71, 44, 0.12);
+            --shadow-card: 0 26px 70px rgba(93, 53, 30, 0.16);
+            --shadow-soft: 0 18px 32px rgba(92, 54, 32, 0.12);
+            --radius-xl: 36px;
+            --radius-lg: 26px;
+            --radius-md: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(255, 248, 235, 0.92), transparent 34%),
+                radial-gradient(circle at 78% 22%, rgba(200, 136, 83, 0.16), transparent 26%),
+                linear-gradient(135deg, #fbf4ea 0%, #f2e3d0 44%, #ead4b8 100%);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            padding: 28px;
+        }
+
+        .login-layout {
+            min-height: calc(100vh - 56px);
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background: rgba(255, 250, 244, 0.5);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(18px);
+        }
+
+        .login-stage {
+            position: relative;
+            overflow: hidden;
+            padding: 56px;
+            background:
+                radial-gradient(circle at 18% 22%, rgba(255, 251, 243, 0.88), transparent 24%),
+                radial-gradient(circle at 72% 26%, rgba(205, 143, 89, 0.28), transparent 20%),
+                linear-gradient(180deg, rgba(255, 249, 239, 0.68), rgba(239, 222, 196, 0.8)),
+                linear-gradient(145deg, #f6ead7 0%, #ead4b6 58%, #d7b08b 100%);
+        }
+
+        .login-stage::before,
+        .login-stage::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .login-stage::before {
+            width: 320px;
+            height: 320px;
+            left: -40px;
+            bottom: -96px;
+            background: rgba(140, 88, 50, 0.12);
+            filter: blur(8px);
+        }
+
+        .login-stage::after {
+            width: 420px;
+            height: 420px;
+            right: -96px;
+            top: -120px;
+            background: rgba(255, 250, 240, 0.4);
+            filter: blur(10px);
+        }
+
+        .stage-brand {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 76px;
+        }
+
+        .stage-brand-mark {
+            width: 68px;
+            height: 68px;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 18px 28px rgba(84, 49, 29, 0.18);
+        }
+
+        .stage-brand-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .stage-brand-copy strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(81, 49, 34, 0.65);
+            margin-bottom: 8px;
+        }
+
+        .stage-brand-copy span {
+            font-size: 16px;
+            color: rgba(81, 49, 34, 0.8);
+        }
+
+        .stage-story {
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
+        }
+
+        .stage-story h2 {
+            font-size: 64px;
+            line-height: 0.96;
+            letter-spacing: -0.06em;
+            margin-bottom: 24px;
+        }
+
+        .stage-story p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 460px;
+        }
+
+        .stage-quote {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 28px;
+            padding: 12px 16px;
+            border-radius: 999px;
+            background: rgba(255, 251, 244, 0.56);
+            border: 1px solid rgba(81, 49, 34, 0.08);
+            box-shadow: 0 14px 24px rgba(98, 60, 34, 0.08);
+            font-size: 13px;
+            color: rgba(63, 39, 27, 0.76);
+        }
+
+        .login-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 44px;
+            background: linear-gradient(180deg, rgba(255, 252, 247, 0.9), rgba(250, 242, 231, 0.86));
+        }
+
+        .login-panel {
+            width: min(100%, 420px);
+            padding: 34px;
+            border-radius: 30px;
+            background: rgba(255, 252, 247, 0.82);
+            border: 1px solid rgba(118, 79, 51, 0.08);
+            box-shadow: var(--shadow-card);
+            backdrop-filter: blur(18px);
+        }
+
+        .login-panel-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .login-panel-top img {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            box-shadow: 0 14px 24px rgba(95, 58, 36, 0.16);
+        }
+
+        .login-product-label {
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(81, 49, 34, 0.58);
+            margin-bottom: 6px;
+        }
+
+        .login-card h1 {
+            font-size: 40px;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            margin-bottom: 12px;
+        }
+
+        .login-supporting {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .login-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .login-field {
+            display: grid;
+            gap: 9px;
+        }
+
+        .login-field label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(47, 29, 22, 0.74);
+        }
+
+        .login-field input {
+            width: 100%;
+            height: 54px;
+            padding: 0 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-soft);
+            background: rgba(255, 251, 246, 0.92);
+            font-size: 15px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .login-field input:focus {
+            border-color: rgba(200, 136, 83, 0.72);
+            box-shadow: 0 0 0 4px rgba(200, 136, 83, 0.14);
+            transform: translateY(-1px);
+        }
+
+        .login-field input::placeholder {
+            color: rgba(47, 29, 22, 0.34);
+        }
+
+        .login-error {
+            min-height: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #a0423c;
+        }
+
+        .login-submit {
+            height: 56px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #67412d 0%, #4d2d1f 100%);
+            color: #fff7f2;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            box-shadow: 0 16px 28px rgba(77, 45, 31, 0.24);
+        }
+
+        .login-footer {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(118, 79, 51, 0.08);
+            font-size: 12px;
+            line-height: 1.7;
+            color: rgba(47, 29, 22, 0.52);
+        }
+
+        @media (max-width: 1024px) {
+            .login-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .login-stage {
+                min-height: 420px;
+                padding: 36px 30px 30px;
+            }
+
+            .stage-brand {
+                margin-bottom: 46px;
+            }
+
+            .stage-story h2 {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-page {
+                padding: 14px;
+            }
+
+            .login-layout {
+                min-height: calc(100vh - 28px);
+                border-radius: 28px;
+            }
+
+            .login-stage {
+                min-height: 320px;
+                padding: 24px 20px;
+            }
+
+            .stage-brand {
+                gap: 12px;
+                margin-bottom: 28px;
+            }
+
+            .stage-brand-mark {
+                width: 54px;
+                height: 54px;
+                border-radius: 18px;
+            }
+
+            .stage-story h2 {
+                font-size: 34px;
+                margin-bottom: 16px;
+            }
+
+            .stage-story p {
+                font-size: 14px;
+                max-width: none;
+            }
+
+            .stage-quote {
+                margin-top: 18px;
+                font-size: 12px;
+            }
+
+            .login-card {
+                padding: 0 14px 14px;
+                margin-top: -28px;
+                background: transparent;
+            }
+
+            .login-panel {
+                width: 100%;
+                padding: 26px 20px 22px;
+                border-radius: 24px;
+            }
+
+            .login-card h1 {
+                font-size: 32px;
+            }
+
+            .login-supporting {
+                margin-bottom: 22px;
+            }
+        }
+    </style>
+</head>
+<body class="login-page login-page-morning">
+    <main class="login-layout">
+        <section class="login-stage">
+            <div class="stage-brand">
+                <div class="stage-brand-mark">
+                    <img src="logo.png" alt="COFE+ 标识">
+                </div>
+                <div class="stage-brand-copy">
+                    <strong>COFE+</strong>
+                    <span>运营控制台</span>
+                </div>
+            </div>
+            <div class="stage-story">
+                <h2>在第一杯咖啡之前，先看清今天的现场。</h2>
+                <p>从设备巡检、点位运营到订单波动，登录后就能快速回到每一家门店的实时状态。这个版本保留温暖的咖啡生活方式气质，但不让入口偏离后台效率。</p>
+                <div class="stage-quote">Morning login concept · calm, warm, precise</div>
+            </div>
+        </section>
+
+        <section class="login-card">
+            <div class="login-panel">
+                <div class="login-panel-top">
+                    <img src="logo.png" alt="COFE+ 标识">
+                    <div>
+                        <p class="login-product-label">COFE+ · 运营控制台</p>
+                        <h1>欢迎登录</h1>
+                    </div>
+                </div>
+
+                <p class="login-supporting">开始今天的门店运营与设备巡检</p>
+
+                <form id="loginForm" class="login-form" novalidate>
+                    <div class="login-field">
+                        <label for="loginAccount">账号</label>
+                        <input id="loginAccount" name="account" type="text" placeholder="请输入运营账号" autocomplete="username">
+                    </div>
+
+                    <div class="login-field">
+                        <label for="loginPassword">密码</label>
+                        <input id="loginPassword" name="password" type="password" placeholder="请输入登录密码" autocomplete="current-password">
+                    </div>
+
+                    <p id="loginError" class="login-error" role="alert" aria-live="polite"></p>
+
+                    <button id="loginSubmit" class="login-submit" type="submit">进入控制台</button>
+                </form>
+
+                <div class="login-footer">双端统一高保真登录方案，当前版本仅保留最必要的账号密码入口。</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
