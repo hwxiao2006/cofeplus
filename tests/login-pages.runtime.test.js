@@ -89,43 +89,37 @@ function test(name, fn) {
   }
 }
 
-const loginPages = [
-  ['login-morning.html', 'morning'],
-  ['login-counter.html', 'counter'],
-  ['login-paper.html', 'paper']
-];
+const loginPageFile = 'login-paper.html';
 
-loginPages.forEach(([file, expectedTheme]) => {
-  test(`${file} 缺少账号时应提示并阻止提交`, () => {
-    const runtime = createRuntime(file);
-    runtime.passwordInput.value = 'secret';
-    runtime.form.handler({ preventDefault() {} });
-    assert.strictEqual(runtime.errorNode.textContent, '请输入账号');
-  });
+test(`${loginPageFile} 缺少账号时应提示并阻止提交`, () => {
+  const runtime = createRuntime(loginPageFile);
+  runtime.passwordInput.value = 'secret';
+  runtime.form.handler({ preventDefault() {} });
+  assert.strictEqual(runtime.errorNode.textContent, '请输入账号');
+});
 
-  test(`${file} 缺少密码时应提示`, () => {
-    const runtime = createRuntime(file);
-    runtime.accountInput.value = 'ops-admin';
-    runtime.form.handler({ preventDefault() {} });
-    assert.strictEqual(runtime.errorNode.textContent, '请输入密码');
-  });
+test(`${loginPageFile} 缺少密码时应提示`, () => {
+  const runtime = createRuntime(loginPageFile);
+  runtime.accountInput.value = 'ops-admin';
+  runtime.form.handler({ preventDefault() {} });
+  assert.strictEqual(runtime.errorNode.textContent, '请输入密码');
+});
 
-  test(`${file} 成功提交后应记录主题并进入加载态`, () => {
-    const runtime = createRuntime(file);
-    runtime.accountInput.value = 'ops-admin';
-    runtime.passwordInput.value = 'secret';
-    runtime.form.handler({ preventDefault() {} });
+test(`${loginPageFile} 成功提交后应记录主题并进入加载态`, () => {
+  const runtime = createRuntime(loginPageFile);
+  runtime.accountInput.value = 'ops-admin';
+  runtime.passwordInput.value = 'secret';
+  runtime.form.handler({ preventDefault() {} });
 
-    const session = JSON.parse(runtime.store.cofeLoginSession);
-    const profile = JSON.parse(runtime.store.sidebarLoginProfile);
+  const session = JSON.parse(runtime.store.cofeLoginSession);
+  const profile = JSON.parse(runtime.store.sidebarLoginProfile);
 
-    assert.strictEqual(session.theme, expectedTheme);
-    assert.strictEqual(session.account, 'ops-admin');
-    assert.ok(runtime.store.sidebarLoginProfile);
-    assert.strictEqual(profile.name, '运营管理员');
-    assert.strictEqual(profile.phone, '13800138000');
-    assert.strictEqual(runtime.submitButton.disabled, true);
-    assert.strictEqual(runtime.submitButton.textContent, '登录中...');
-    assert.strictEqual(runtime.locationState.replacedWith, 'overview.html');
-  });
+  assert.strictEqual(session.theme, 'paper');
+  assert.strictEqual(session.account, 'ops-admin');
+  assert.ok(runtime.store.sidebarLoginProfile);
+  assert.strictEqual(profile.name, '运营管理员');
+  assert.strictEqual(profile.phone, '13800138000');
+  assert.strictEqual(runtime.submitButton.disabled, true);
+  assert.strictEqual(runtime.submitButton.textContent, '登录中...');
+  assert.strictEqual(runtime.locationState.replacedWith, 'overview.html');
 });

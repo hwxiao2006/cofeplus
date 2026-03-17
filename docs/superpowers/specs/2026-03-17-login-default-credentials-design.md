@@ -2,11 +2,11 @@
 
 ## Goal
 
-Provide a ready-to-use demo account on all three login concept pages while keeping the post-login sidebar identity anchored to the existing admin layout position and profile format.
+Provide a ready-to-use demo account on the remaining paper login page while keeping the post-login sidebar identity anchored to the existing admin layout position and profile format.
 
 ## Approved Direction
 
-Use the following demo credentials on every login page:
+Use the following demo credentials on the shipped login page:
 
 - account: `13800138000`
 - password: `123456`
@@ -18,13 +18,13 @@ After successful login, keep the stored session account as the entered account v
 
 ## Problem Being Solved
 
-The current login pages require manual typing for every preview run, and the current profile persistence mirrors the account value into both `name` and `phone`. That causes the sidebar login area to lose its original design intent and can produce awkward output in the existing top-of-sidebar login slot.
+The current login page requires manual typing for every preview run, and the current profile persistence mirrors the account value into both `name` and `phone`. That causes the sidebar login area to lose its original design intent and can produce awkward output in the existing top-of-sidebar login slot.
 
 ## Design Decisions
 
 ### Default credentials
 
-- Pre-fill all three login pages with the same demo credentials.
+- Pre-fill the remaining login page with the same demo credentials.
 - Keep the form editable so the demo still behaves like a real login form.
 - Do not change validation rules or submit flow.
 
@@ -43,8 +43,6 @@ The current login pages require manual typing for every preview run, and the cur
 
 In scope:
 
-- `login-morning.html`
-- `login-counter.html`
 - `login-paper.html`
 - login page structure/runtime regression tests
 

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Pre-fill the three login concept pages with demo credentials and persist the sidebar profile in the existing admin display format after login.
+**Goal:** Pre-fill the remaining paper login page with demo credentials and persist the sidebar profile in the existing admin display format after login.
 
-**Architecture:** Keep the current single-file login pages and shared inline-script pattern. Add test coverage first for static default values and runtime persistence, then make minimal HTML and script changes in each login page.
+**Architecture:** Keep the current single-file paper login page and shared inline-script pattern. Add test coverage first for static default values and runtime persistence, then make minimal HTML and script changes in the remaining login page.
 
 **Tech Stack:** Static HTML, inline CSS, inline vanilla JavaScript, Node.js built-in test runner, regex-based HTML assertions, `vm`-based runtime tests.
 
@@ -13,13 +13,9 @@
 ## File Structure
 
 - Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/tests/login-pages.structure.test.js`
-  Responsibility: verify the three login pages expose the approved default account and password values.
+  Responsibility: verify `login-paper.html` exposes the approved default account and password values.
 - Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/tests/login-pages.runtime.test.js`
-  Responsibility: verify successful login writes the session account and the stable sidebar profile separately.
-- Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-morning.html`
-  Responsibility: add the approved default credentials and stable sidebar-profile persistence.
-- Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-counter.html`
-  Responsibility: add the approved default credentials and stable sidebar-profile persistence.
+  Responsibility: verify successful paper login writes the session account and the stable sidebar profile separately.
 - Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-paper.html`
   Responsibility: add the approved default credentials and stable sidebar-profile persistence.
 
@@ -33,7 +29,7 @@
 
 - [ ] **Step 1: Write the failing structure assertions**
 
-Verify each login page contains:
+Verify the remaining login page contains:
 
 - `value="13800138000"` on the account input
 - `value="123456"` on the password input
@@ -57,14 +53,12 @@ Expected: FAIL because the HTML has no default values and the runtime still mirr
 
 ## Chunk 2: Minimal Login Page Updates
 
-### Task 2: Update The Three Login Pages
+### Task 2: Update The Remaining Login Page
 
 **Files:**
-- Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-morning.html`
-- Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-counter.html`
 - Modify: `/Users/mac/.config/superpowers/worktrees/New project 4/login-gallery-concepts/login-paper.html`
 
-- [ ] **Step 1: Add the default credentials to both inputs on every page**
+- [ ] **Step 1: Add the default credentials to both inputs**
 
 - [ ] **Step 2: Persist the stable sidebar profile separately from the submitted session account**
 

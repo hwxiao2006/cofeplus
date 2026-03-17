@@ -4,7 +4,6 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const galleryHtml = fs.readFileSync(path.join(root, 'login-gallery.html'), 'utf8');
 
 function test(name, fn) {
   try {
@@ -17,22 +16,13 @@ function test(name, fn) {
   }
 }
 
-test('index 应跳转到 login-gallery.html', () => {
-  assert.ok(/url=login-gallery\.html/.test(indexHtml));
-  assert.ok(/window\.location\.replace\('login-gallery\.html'\)/.test(indexHtml));
+test('index 应直接跳转到 login-paper.html', () => {
+  assert.ok(/url=login-paper\.html/.test(indexHtml));
+  assert.ok(/window\.location\.replace\('login-paper\.html'\)/.test(indexHtml));
 });
 
-test('gallery 页应展示三套登录方案入口', () => {
-  assert.ok(/href="login-morning\.html"/.test(galleryHtml));
-  assert.ok(/href="login-counter\.html"/.test(galleryHtml));
-  assert.ok(/href="login-paper\.html"/.test(galleryHtml));
-  assert.ok(/清晨咖啡馆/.test(galleryHtml));
-  assert.ok(/夜间吧台/.test(galleryHtml));
-  assert.ok(/手作菜单纸/.test(galleryHtml));
-});
-
-test('gallery 页应包含移动端断点和统一品牌文案', () => {
-  assert.ok(/COFE\+/.test(galleryHtml));
-  assert.ok(/运营控制台/.test(galleryHtml));
-  assert.ok(/@media\s*\(max-width:\s*768px\)/.test(galleryHtml));
+test('仓库中不应继续保留画廊页和其他登录方案页', () => {
+  ['login-gallery.html', 'login-morning.html', 'login-counter.html'].forEach(file => {
+    assert.ok(!fs.existsSync(path.join(root, file)), `${file} should be removed`);
+  });
 });
