@@ -143,6 +143,25 @@ test('人员管理页：桌面端应使用紧凑工具头与单层卡片布局',
   assert.ok(!/manager-panel manager-device-panel/.test(renderManagersBlock), '桌面端不应继续使用独立设备面板');
 });
 
+test('人员管理页：桌面端负责设备应支持摘要与卡片内展开', () => {
+  assert.ok(/let\s+expandedDeviceStaffIds\s*=\s*new Set\(\)/.test(staffHtml));
+  assert.ok(/function\s+getManagerDeviceSummary\s*\(devices,\s*staffId\)/.test(staffHtml));
+  assert.ok(/function\s+toggleManagerDevices\s*\(staffId\)/.test(staffHtml));
+  assert.ok(/deviceCount\s*<=\s*3/.test(staffHtml));
+  assert.ok(/devices\.slice\(0,\s*2\)/.test(staffHtml));
+  assert.ok(/查看全部/.test(staffHtml));
+  assert.ok(/收起/.test(staffHtml));
+
+  const renderManagersBlockMatch = staffHtml.match(/function\s+renderManagers\s*\(\)\s*\{[\s\S]*?\n\s*function\s+updateStats/);
+  assert.ok(renderManagersBlockMatch, '应存在 renderManagers 逻辑');
+  const renderManagersBlock = renderManagersBlockMatch[0];
+
+  assert.ok(/manager-device-summary/.test(renderManagersBlock));
+  assert.ok(/manager-device-toggle/.test(renderManagersBlock));
+  assert.ok(/manager-device-expanded/.test(renderManagersBlock));
+  assert.ok(/onclick="toggleManagerDevices\('\$\{manager\.id\}'\)"/.test(renderManagersBlock));
+});
+
 test('人员管理页：应使用运营菜单权限树替代旧角色权限，并让列表聚焦人员信息与负责设备', () => {
   assert.ok(/ops\.products\.language/.test(staffHtml));
   assert.ok(/ops\.products\.currency/.test(staffHtml));

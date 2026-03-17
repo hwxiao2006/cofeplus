@@ -591,6 +591,35 @@
             word-break: break-all;
         }
 
+        .manager-device-toggle {
+            border: none;
+            background: transparent;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .manager-device-expanded {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 112px;
+            overflow: auto;
+            padding-top: 6px;
+        }
+
+        .manager-device-chip {
+            border-radius: 999px;
+            border: 1px solid #bfe9e6;
+            background: #ecfbf9;
+            color: #0f766e;
+            font-size: 12px;
+            line-height: 24px;
+            padding: 0 10px;
+        }
+
         .empty-state {
             padding: 56px 20px;
             text-align: center;
@@ -1638,6 +1667,7 @@
         let merchantOptions = [];
         let selectedMerchantId = '';
         let editingStaffId = null;
+        let expandedDeviceStaffIds = new Set();
         let currentDeviceOptions = [];
         let deviceSelectionSet = new Set();
         let deviceSearchKeyword = '';
@@ -1966,6 +1996,47 @@
             return staffManagersData.filter((item) => item.merchantId === merchantId);
         }
 
+        function getManagerDeviceSummary(devices, staffId) {
+            const normalizedDevices = Array.isArray(devices) ? devices.filter(Boolean) : [];
+            const deviceCount = normalizedDevices.length;
+
+            if (!deviceCount) {
+                return {
+                    summaryText: '-',
+                    toggleText: '',
+                    expandedMarkup: ''
+                };
+            }
+
+            if (deviceCount <= 3) {
+                return {
+                    summaryText: normalizedDevices.join('、'),
+                    toggleText: '',
+                    expandedMarkup: ''
+                };
+            }
+
+            const preview = devices.slice(0, 2).join('、');
+            const isExpanded = expandedDeviceStaffIds.has(staffId);
+
+            return {
+                summaryText: `${preview} 等 ${deviceCount} 台`,
+                toggleText: isExpanded ? '收起' : '查看全部',
+                expandedMarkup: isExpanded ? `
+                    ${normalizedDevices.map((device) => `<span class="manager-device-chip">${device}</span>`).join('')}
+                ` : ''
+            };
+        }
+
+        function toggleManagerDevices(staffId) {
+            if (expandedDeviceStaffIds.has(staffId)) {
+                expandedDeviceStaffIds.delete(staffId);
+            } else {
+                expandedDeviceStaffIds.add(staffId);
+            }
+            renderManagers();
+        }
+
         function renderManagers() {
             const list = document.getElementById('managerList');
             const listTitle = document.getElementById('listTitle');
@@ -1986,8 +2057,9 @@
 
             list.innerHTML = filteredManagers
                 .map((manager) => {
-                    const deviceCount = Array.isArray(manager.devices) ? manager.devices.length : 0;
-                    const deviceSummary = (manager.devices || []).join('、') || '-';
+                    const devices = Array.isArray(manager.devices) ? manager.devices.filter(Boolean) : [];
+                    const deviceCount = devices.length;
+                    const deviceSummary = getManagerDeviceSummary(devices, manager.id);
                     const isEnabled = manager.accountEnabled !== false;
                     return `
                         <article class="manager-item">
@@ -2004,9 +2076,11 @@
                                     <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
                                     <div class="manager-device-summary">
                                         <span class="manager-device-label">负责设备：</span>
-                                        <span class="manager-device-text">${deviceSummary}</span>
+                                        <span class="manager-device-text">${deviceSummary.summaryText}</span>
+                                        ${deviceSummary.toggleText ? `<button type="button" class="manager-device-toggle" onclick="toggleManagerDevices('${manager.id}')">${deviceSummary.toggleText}</button>` : ''}
                                     </div>
-                                    <div class="manager-meta">共 ${deviceCount} 台设备</div>
+                                    ${deviceSummary.expandedMarkup ? `<div class="manager-device-expanded">${deviceSummary.expandedMarkup}</div>` : ''}
+                                    ${deviceCount ? `<div class="manager-meta">共 ${deviceCount} 台设备</div>` : ''}
                                 </div>
                                 <div class="manager-actions">
                                     <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
