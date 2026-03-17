@@ -48,3 +48,9 @@ test('paper 登录页应包含统一表单骨架和专属文案', () => {
   assert.ok(/id="loginPassword"/.test(paperHtml));
   assert.ok(/login-page-paper/.test(paperHtml));
 });
+
+test('paper 登录页移动端应压缩头图区并把登录卡片提到首屏中段', () => {
+  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.login-stage\s*\{[\s\S]*min-height:\s*248px;/.test(paperHtml));
+  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.stage-footer\s*\{[\s\S]*display:\s*none;/.test(paperHtml));
+  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.login-card\s*\{[\s\S]*align-items:\s*flex-start;[\s\S]*margin-top:\s*-48px;/.test(paperHtml));
+});
