@@ -262,10 +262,16 @@
         .mobile-header {
             display: none;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
             padding: 12px 16px;
             background: #fff;
             border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-header-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
         .menu-btn {
@@ -301,10 +307,23 @@
             gap: 4px;
         }
 
+        .header-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .header-title {
             font-size: 22px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .header-desc {
@@ -316,17 +335,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .header-merchant-select {
-            min-width: 220px;
-            height: 40px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 0 12px;
-            background: #fff;
-            color: var(--text-primary);
-            outline: none;
         }
 
         .btn {
@@ -367,28 +375,52 @@
             gap: 18px;
         }
 
-        .stats-grid {
+        .staff-toolbar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: auto minmax(0, 1fr);
             gap: 14px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
+            align-items: center;
+            padding: 14px 18px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfefe 100%);
             box-shadow: var(--shadow);
         }
 
-        .stat-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
+        .staff-toolbar-stat {
+            min-width: 124px;
         }
 
-        .stat-label {
+        .staff-toolbar-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .staff-toolbar-value {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        .staff-toolbar-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .staff-toolbar-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .staff-toolbar-note {
             font-size: 12px;
             color: var(--text-secondary);
         }
@@ -399,21 +431,6 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
-        }
-
-        .list-head {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-
-        .list-note {
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 400;
         }
 
         .manager-list {
@@ -436,20 +453,18 @@
             box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
         }
 
-        .manager-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px dashed #dbe4ea;
-            margin-bottom: 12px;
+        .manager-row {
+            display: grid;
+            grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.2fr) auto;
+            gap: 16px;
+            align-items: center;
         }
 
         .manager-identity {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
         }
 
         .manager-avatar {
@@ -469,7 +484,24 @@
         .manager-summary {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .manager-detail-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .manager-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-self: center;
         }
 
         .manager-name {
@@ -497,59 +529,114 @@
             background: #def4f2;
         }
 
+        .manager-toggle-btn {
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid #d0d7de;
+            background: #fff;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .manager-toggle-btn:hover {
+            border-color: #b9c4cf;
+            background: #f8fafc;
+        }
+
+        .manager-toggle-btn.is-danger {
+            border-color: #fecaca;
+            background: #fff5f5;
+            color: #b42318;
+        }
+
+        .manager-toggle-btn.is-danger:hover {
+            border-color: #fda4af;
+            background: #ffeaea;
+        }
+
+        .manager-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f766e;
+        }
+
+        .manager-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #22c55e;
+            flex: none;
+        }
+
+        .manager-status.is-disabled {
+            color: #b42318;
+        }
+
+        .manager-status.is-disabled::before {
+            background: #ef4444;
+        }
+
         .manager-meta {
             font-size: 12px;
             color: var(--text-secondary);
         }
 
-        .manager-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .manager-panel {
-            background: #fff;
-            border: 1px solid #eef2f6;
-            border-radius: 10px;
-            padding: 10px 12px;
+        .manager-device-summary {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
             min-height: 0;
         }
 
-        .manager-panel-title {
+        .manager-device-label {
             font-size: 12px;
             color: #6b7280;
-            margin-bottom: 6px;
             font-weight: 600;
         }
 
-        .label-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            height: 24px;
-            padding: 0 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
-            background: var(--primary-light);
-            color: #0f766e;
-        }
-
-        .chip-muted {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .manager-value {
+        .manager-device-text {
             color: var(--text-primary);
             font-size: 13px;
             word-break: break-all;
+        }
+
+        .manager-device-toggle {
+            border: none;
+            background: transparent;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .manager-device-expanded {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 112px;
+            overflow: auto;
+            padding-top: 6px;
+        }
+
+        .manager-device-chip {
+            border-radius: 999px;
+            border: 1px solid #bfe9e6;
+            background: #ecfbf9;
+            color: #0f766e;
+            font-size: 12px;
+            line-height: 24px;
+            padding: 0 10px;
         }
 
         .empty-state {
@@ -732,6 +819,162 @@
         .option-item input {
             width: 18px;
             height: 18px;
+            accent-color: var(--primary-dark);
+            flex: none;
+        }
+
+        .permission-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .permission-section-note {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .permission-selection-stats {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #eef9f7;
+            color: #17827a;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .permission-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .permission-group-row {
+            border: 1px solid #e6edf2;
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .permission-group-row[data-selected="true"] {
+            border-color: #d6ece7;
+        }
+
+        .permission-group-row[data-expanded="true"] {
+            background: #fcfefe;
+            box-shadow: 0 6px 18px rgba(15, 118, 110, 0.05);
+        }
+
+        .permission-group-main {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+        }
+
+        .permission-group-head {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            min-width: 132px;
+        }
+
+        .permission-group-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .permission-group-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-dark);
+            flex: none;
+            margin: 0;
+        }
+
+        .permission-group-trigger,
+        .permission-group-count {
+            border: 0;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .permission-group-trigger {
+            min-width: 0;
+            text-align: left;
+        }
+
+        .permission-group-summary-text {
+            display: block;
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .permission-group-row[data-selected="true"] .permission-group-summary-text {
+            color: #1f766f;
+            font-weight: 600;
+        }
+
+        .permission-group-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .permission-group-row[data-selected="true"] .permission-group-count {
+            color: #17827a;
+        }
+
+        .permission-group-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 12px 10px 36px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .permission-group-options[hidden] {
+            display: none;
+        }
+
+        .permission-inline-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 30px;
+            padding: 6px 10px;
+            border: 1px solid #e5eef5;
+            border-radius: 999px;
+            background: #fff;
+            font-size: 12px;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .permission-inline-option input {
+            width: 14px;
+            height: 14px;
+            margin: 0;
             accent-color: var(--primary-dark);
             flex: none;
         }
@@ -949,16 +1192,54 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .staff-toolbar {
+                grid-template-columns: 1fr;
+                padding: 12px 14px;
+                gap: 10px;
+            }
+
+            .manager-row {
+                grid-template-columns: 1fr;
+                align-items: flex-start;
+            }
+
+            .manager-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-left {
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .header-title {
+                display: none;
+            }
+
+            .header-desc {
+                font-size: 14px;
+                line-height: 1.35;
+                color: #475569;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-start;
+            }
         }
 
         @media (max-width: 680px) {
             .header-right {
                 width: 100%;
-            }
-
-            .header-merchant-select {
-                flex: 1;
-                min-width: 0;
             }
 
             .btn {
@@ -973,11 +1254,6 @@
             .manager-item {
                 padding: 12px;
                 border-radius: 12px;
-            }
-
-            .manager-head {
-                padding-bottom: 8px;
-                margin-bottom: 8px;
             }
 
             .manager-avatar {
@@ -1002,36 +1278,16 @@
                 font-size: 12px;
             }
 
-            .manager-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-            }
-
-            .manager-panel {
-                padding: 8px 10px;
+            .manager-toggle-btn {
+                height: 30px;
                 border-radius: 8px;
-            }
-
-            .manager-panel:last-child {
-                grid-column: 1 / -1;
-            }
-
-            .manager-panel-title {
-                margin-bottom: 4px;
-            }
-
-            .label-row {
-                gap: 4px;
-            }
-
-            .chip {
-                height: 21px;
-                padding: 0 7px;
-                font-size: 11px;
-            }
-
-            .manager-value {
+                padding: 0 10px;
                 font-size: 12px;
+            }
+
+            .manager-actions {
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .device-picker-entry {
@@ -1056,6 +1312,36 @@
             .device-option-item {
                 min-height: 40px;
                 padding: 7px 9px;
+            }
+
+            .permission-section-head {
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .permission-group-main {
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: start;
+                row-gap: 4px;
+            }
+
+            .permission-group-head {
+                min-width: 0;
+            }
+
+            .permission-group-trigger {
+                grid-column: 1 / 2;
+                padding-left: 24px;
+            }
+
+            .permission-group-count {
+                grid-column: 2 / 3;
+                grid-row: 1 / span 2;
+                align-self: center;
+            }
+
+            .permission-group-options {
+                padding: 0 12px 10px 12px;
             }
 
             .device-code {
@@ -1135,16 +1421,19 @@
         <main class="main">
             <div class="mobile-header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                <strong>人员管理</strong>
+                <strong class="mobile-header-title">人员管理</strong>
             </div>
 
             <header class="header">
                 <div class="header-left">
-                    <h1 class="header-title">人员管理</h1>
-                    <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
+                    <div class="header-title-wrapper">
+                        <h1 class="header-title">人员管理</h1>
+                        <div class="header-meta">
+                            <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="header-right">
-                    <select id="merchantSelect" class="header-merchant-select" onchange="handleMerchantChange(this.value)"></select>
                     <button type="button" class="btn btn-primary" onclick="openStaffModal()">
                         <span>➕</span>
                         <span>添加人员</span>
@@ -1153,30 +1442,18 @@
             </header>
 
             <div class="content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffTotal">0</div>
-                        <div class="stat-label">当前商户管理人员</div>
+                <section class="staff-toolbar">
+                    <div class="staff-toolbar-stat">
+                        <span class="staff-toolbar-label">启用人员数</span>
+                        <strong class="staff-toolbar-value" id="staffEnabledCount">0</strong>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffAdmin">0</div>
-                        <div class="stat-label">管理员权限人数</div>
+                    <div class="staff-toolbar-meta">
+                        <span class="staff-toolbar-title" id="listTitle">管理人员列表</span>
+                        <span class="staff-toolbar-note" id="listHint">按商户过滤展示</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffOps">0</div>
-                        <div class="stat-label">运维修权限人数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="staffDeviceCount">0</div>
-                        <div class="stat-label">覆盖设备数</div>
-                    </div>
-                </div>
+                </section>
 
                 <section class="list-card">
-                    <div class="list-head">
-                        <span id="listTitle">管理人员列表</span>
-                        <span class="list-note" id="listHint">按商户过滤展示</span>
-                    </div>
                     <div class="manager-list" id="managerList"></div>
                 </section>
             </div>
@@ -1201,49 +1478,129 @@
                             <label class="form-label" for="staffPhone">手机号</label>
                             <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
                         </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="opsAuthHint">运维小程序授权</label>
-                            <div class="auth-row">
-                                <input type="text" class="form-input" id="opsAuthHint" value="扫码后自动写入下方 openId" readonly>
-                                <button type="button" class="auth-btn" onclick="mockAuthorize('ops')">扫码授权</button>
-                            </div>
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="opsOpenid">openId</label>
-                            <input type="text" class="form-input" id="opsOpenid" placeholder="请输入您的openId">
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="wechatAuthHint">微信公众号推送授权</label>
-                            <div class="auth-row">
-                                <input type="text" class="form-input" id="wechatAuthHint" value="扫码后自动写入下方 openId" readonly>
-                                <button type="button" class="auth-btn" onclick="mockAuthorize('wechat')">扫码授权</button>
-                            </div>
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="wechatOpenid">openId</label>
-                            <input type="text" class="form-input" id="wechatOpenid" placeholder="请输入您的openId">
-                        </div>
                     </div>
                 </section>
 
                 <section class="section-block">
-                    <div class="section-title">选择权限<span class="required">*</span>(至少选择一个)</div>
-                    <div class="option-grid">
-                        <label class="option-item"><span>运维权限</span><input type="checkbox" name="permission" value="ops"></label>
-                        <label class="option-item"><span>维修权限</span><input type="checkbox" name="permission" value="repair"></label>
-                        <label class="option-item"><span>财务权限</span><input type="checkbox" name="permission" value="finance"></label>
-                        <label class="option-item"><span>管理员权限</span><input type="checkbox" name="permission" value="admin"></label>
-                        <label class="option-item"><span>运维&退款权限</span><input type="checkbox" name="permission" value="ops_refund"></label>
+                    <div class="permission-section-head">
+                        <div>
+                            <div class="section-title">菜单权限配置<span class="required">*</span>(至少选择一个)</div>
+                            <p class="permission-section-note">按模块快速勾选，一屏完成。</p>
+                        </div>
+                        <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
                     </div>
-                </section>
-
-                <section class="section-block">
-                    <div class="section-title">公众号推送</div>
-                    <div class="option-grid">
-                        <label class="option-item"><span>无需推送</span><input type="checkbox" name="push" value="none" checked onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>运维消息推送</span><input type="checkbox" name="push" value="ops" onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>维修消息推送</span><input type="checkbox" name="push" value="repair" onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>管理员消息推送</span><input type="checkbox" name="push" value="admin" onchange="handlePushOptionChange(this)"></label>
+                    <div class="permission-tree" id="permissionTree">
+                        <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="overview" onchange="handlePermissionParentChange('overview', this.checked)">
+                                    <span class="permission-group-title">总览</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('overview')">
+                                    <span class="permission-group-summary-text" data-permission-summary="overview">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="overview" onclick="togglePermissionGroup('overview')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-overview" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.overview" data-permission-group-child="overview" onchange="handlePermissionChildChange('overview')"><span>查看总览</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="devices" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="devices" onchange="handlePermissionParentChange('devices', this.checked)">
+                                    <span class="permission-group-title">设备</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('devices')">
+                                    <span class="permission-group-summary-text" data-permission-summary="devices">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="devices" onclick="togglePermissionGroup('devices')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-devices" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.devices" data-permission-group-child="devices" onchange="handlePermissionChildChange('devices')"><span>查看设备</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="products" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="products" onchange="handlePermissionParentChange('products', this.checked)">
+                                    <span class="permission-group-title">商品管理</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('products')">
+                                    <span class="permission-group-summary-text" data-permission-summary="products">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="products" onclick="togglePermissionGroup('products')">0/5</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-products" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>查看商品管理</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.language" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>新增语言</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.currency" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>更改币种</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.edit" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>编辑商品</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.recipe" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>编辑配方</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="materials" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="materials" onchange="handlePermissionParentChange('materials', this.checked)">
+                                    <span class="permission-group-title">物料</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('materials')">
+                                    <span class="permission-group-summary-text" data-permission-summary="materials">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="materials" onclick="togglePermissionGroup('materials')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-materials" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"><span>查看物料</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="orders" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="orders" onchange="handlePermissionParentChange('orders', this.checked)">
+                                    <span class="permission-group-title">订单</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('orders')">
+                                    <span class="permission-group-summary-text" data-permission-summary="orders">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="orders" onclick="togglePermissionGroup('orders')">0/2</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-orders" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.orders" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"><span>查看订单</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.orders.refund" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"><span>订单退款</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="faults" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="faults" onchange="handlePermissionParentChange('faults', this.checked)">
+                                    <span class="permission-group-title">故障列表</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('faults')">
+                                    <span class="permission-group-summary-text" data-permission-summary="faults">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="faults" onclick="togglePermissionGroup('faults')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-faults" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.faults" data-permission-group-child="faults" onchange="handlePermissionChildChange('faults')"><span>查看故障列表</span></label>
+                            </div>
+                        </div>
+                        <div class="permission-group-row" data-permission-group="staff" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="staff" onchange="handlePermissionParentChange('staff', this.checked)">
+                                    <span class="permission-group-title">人员管理</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('staff')">
+                                    <span class="permission-group-summary-text" data-permission-summary="staff">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="staff" onclick="togglePermissionGroup('staff')">0/2</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-staff" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>查看人员管理</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>人员维护</span></label>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -1508,6 +1865,8 @@
         let merchantOptions = [];
         let selectedMerchantId = '';
         let editingStaffId = null;
+        let expandedDeviceStaffIds = new Set();
+        let expandedPermissionGroups = new Set();
         let currentDeviceOptions = [];
         let deviceSelectionSet = new Set();
         let deviceSearchKeyword = '';
@@ -1549,6 +1908,74 @@
             { code: 'k9002', name: '深圳南山店' }
         ];
 
+        const permissionTreeGroups = [
+            {
+                key: 'overview',
+                label: '总览',
+                children: [
+                    { value: 'ops.overview', label: '查看总览' }
+                ]
+            },
+            {
+                key: 'devices',
+                label: '设备',
+                children: [
+                    { value: 'ops.devices', label: '查看设备' }
+                ]
+            },
+            {
+                key: 'products',
+                label: '商品管理',
+                children: [
+                    { value: 'ops.products', label: '查看商品管理' },
+                    { value: 'ops.products.language', label: '新增语言' },
+                    { value: 'ops.products.currency', label: '更改币种' },
+                    { value: 'ops.products.edit', label: '编辑商品' },
+                    { value: 'ops.products.recipe', label: '编辑配方' }
+                ]
+            },
+            {
+                key: 'materials',
+                label: '物料',
+                children: [
+                    { value: 'ops.materials', label: '查看物料' }
+                ]
+            },
+            {
+                key: 'orders',
+                label: '订单',
+                children: [
+                    { value: 'ops.orders', label: '查看订单' },
+                    { value: 'ops.orders.refund', label: '订单退款' }
+                ]
+            },
+            {
+                key: 'faults',
+                label: '故障列表',
+                children: [
+                    { value: 'ops.faults', label: '查看故障列表' }
+                ]
+            },
+            {
+                key: 'staff',
+                label: '人员管理',
+                children: [
+                    { value: 'ops.staff', label: '查看人员管理' },
+                    { value: 'ops.staff.manage', label: '人员维护' }
+                ]
+            }
+        ];
+
+        const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
+        const allPermissionKeySet = new Set(allPermissionKeys);
+        const legacyPermissionMigrationMap = {
+            ops: ['ops.devices', 'ops.materials', 'ops.faults'],
+            repair: ['ops.devices', 'ops.faults'],
+            finance: ['ops.orders'],
+            admin: [...allPermissionKeys],
+            ops_refund: ['ops.devices', 'ops.materials', 'ops.orders', 'ops.orders.refund']
+        };
+
         const defaultManagers = [
             {
                 id: 'S001',
@@ -1556,10 +1983,8 @@
                 merchantName: '星巴克咖啡',
                 username: '王运维',
                 phone: '13800138021',
-                opsOpenid: 'ops_wang_001',
-                wechatOpenid: 'wx_wang_001',
-                permissions: ['ops', 'admin'],
-                pushChannels: ['ops', 'admin'],
+                accountEnabled: true,
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
                 createdAt: '2026-02-15'
             },
@@ -1569,10 +1994,8 @@
                 merchantName: '星巴克咖啡',
                 username: '李财务',
                 phone: '13800138022',
-                opsOpenid: '',
-                wechatOpenid: 'wx_li_001',
-                permissions: ['finance'],
-                pushChannels: ['none'],
+                accountEnabled: false,
+                permissions: ['ops.orders'],
                 devices: ['RCK384'],
                 createdAt: '2026-02-17'
             },
@@ -1582,35 +2005,18 @@
                 merchantName: '瑞幸咖啡',
                 username: '张维修',
                 phone: '13800138023',
-                opsOpenid: 'ops_zhang_002',
-                wechatOpenid: '',
-                permissions: ['repair'],
-                pushChannels: ['repair'],
+                accountEnabled: true,
+                permissions: ['ops.devices', 'ops.faults'],
                 devices: ['RCK410', 'RCK406'],
                 createdAt: '2026-02-18'
             }
         ];
 
-        const permissionLabelMap = {
-            ops: '运维权限',
-            repair: '维修权限',
-            finance: '财务权限',
-            admin: '管理员权限',
-            ops_refund: '运维&退款权限'
-        };
-
-        const pushLabelMap = {
-            none: '无需推送',
-            ops: '运维消息推送',
-            repair: '维修消息推送',
-            admin: '管理员消息推送'
-        };
-
         function init() {
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
+            renderPermissionTree();
             merchantOptions = getMerchantOptions();
-            renderMerchantSelect();
             selectedMerchantId = resolveInitialMerchantId();
             if (!selectedMerchantId && merchantOptions.length) {
                 selectedMerchantId = merchantOptions[0].id;
@@ -1618,17 +2024,209 @@
             if (selectedMerchantId) {
                 localStorage.setItem('currentMerchantId', selectedMerchantId);
             }
-            const select = document.getElementById('merchantSelect');
-            select.value = selectedMerchantId;
             renderManagers();
             updateStats();
         }
 
         function bootstrapStaffManagers() {
+            let shouldPersist = false;
             if (!Array.isArray(staffManagersData) || staffManagersData.length === 0) {
-                staffManagersData = [...defaultManagers];
+                staffManagersData = defaultManagers.map((item) => ({
+                    ...item,
+                    accountEnabled: item.accountEnabled !== false,
+                    permissions: normalizeStaffPermissions(item.permissions)
+                }));
+                shouldPersist = true;
+            } else {
+                staffManagersData = staffManagersData.map((item) => {
+                    const normalizedPermissions = normalizeStaffPermissions(item.permissions);
+                    const normalizedAccountEnabled = item.accountEnabled !== false;
+                    if (
+                        JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
+                        || normalizedAccountEnabled !== item.accountEnabled
+                    ) {
+                        shouldPersist = true;
+                    }
+                    return {
+                        ...item,
+                        accountEnabled: normalizedAccountEnabled,
+                        permissions: normalizedPermissions
+                    };
+                });
+            }
+
+            if (shouldPersist) {
                 localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
             }
+        }
+
+        function normalizeStaffPermissions(permissions) {
+            const source = Array.isArray(permissions) ? permissions : [];
+            const normalizedSet = new Set();
+
+            source.forEach((value) => {
+                const key = String(value || '').trim();
+                if (!key) return;
+                if (legacyPermissionMigrationMap[key]) {
+                    legacyPermissionMigrationMap[key].forEach((mappedValue) => normalizedSet.add(mappedValue));
+                    return;
+                }
+                if (allPermissionKeySet.has(key)) {
+                    normalizedSet.add(key);
+                }
+            });
+
+            permissionTreeGroups.forEach((group) => {
+                if (group.children.length <= 1) return;
+                const primaryValue = group.children[0].value;
+                const hasChildPermission = group.children.slice(1).some((child) => normalizedSet.has(child.value));
+                if (hasChildPermission) {
+                    normalizedSet.add(primaryValue);
+                }
+            });
+
+            return allPermissionKeys.filter((value) => normalizedSet.has(value));
+        }
+
+        function getPermissionGroupConfig(groupKey) {
+            return permissionTreeGroups.find((group) => group.key === groupKey) || null;
+        }
+
+        function getPermissionChildInputs(groupKey) {
+            return Array.from(document.querySelectorAll(`[data-permission-group-child="${groupKey}"]`));
+        }
+
+        function getPermissionParentInput(groupKey) {
+            return document.querySelector(`[data-permission-parent="${groupKey}"]`);
+        }
+
+        function getPermissionGroupRow(groupKey) {
+            return document.querySelector(`.permission-group-row[data-permission-group="${groupKey}"]`);
+        }
+
+        function getPermissionSummaryNode(groupKey) {
+            return document.querySelector(`[data-permission-summary="${groupKey}"]`);
+        }
+
+        function getPermissionCountNode(groupKey) {
+            return document.querySelector(`[data-permission-count="${groupKey}"]`);
+        }
+
+        function getPermissionOptionsPanel(groupKey) {
+            return document.getElementById(`permissionOptions-${groupKey}`);
+        }
+
+        function syncPermissionParentState(groupKey) {
+            const childInputs = getPermissionChildInputs(groupKey);
+            const parentInput = getPermissionParentInput(groupKey);
+            if (!parentInput || !childInputs.length) return;
+
+            const checkedCount = childInputs.filter((input) => input.checked).length;
+            parentInput.checked = checkedCount > 0;
+            parentInput.indeterminate = checkedCount > 0 && checkedCount < childInputs.length;
+        }
+
+        function handlePermissionParentChange(groupKey, checked) {
+            getPermissionChildInputs(groupKey).forEach((input) => {
+                input.checked = checked;
+            });
+            refreshPermissionSelectionUi();
+        }
+
+        function handlePermissionChildChange(groupKey) {
+            const group = getPermissionGroupConfig(groupKey);
+            const childInputs = getPermissionChildInputs(groupKey);
+            if (!group || !childInputs.length) {
+                refreshPermissionSelectionUi();
+                return;
+            }
+
+            if (group.children.length > 1) {
+                const primaryValue = group.children[0].value;
+                const primaryInput = childInputs.find((input) => input.value === primaryValue);
+                const hasSecondaryChecked = childInputs.some((input) => input.value !== primaryValue && input.checked);
+
+                if (hasSecondaryChecked && primaryInput && !primaryInput.checked) {
+                    primaryInput.checked = true;
+                }
+
+                if (primaryInput && !primaryInput.checked) {
+                    childInputs.forEach((input) => {
+                        if (input !== primaryInput) {
+                            input.checked = false;
+                        }
+                    });
+                }
+            }
+
+            refreshPermissionSelectionUi();
+        }
+
+        function updatePermissionSelectionStats() {
+            const stats = document.getElementById('permissionSelectionStats');
+            if (!stats) return;
+            const totalSelected = getSelectedPermissionValues().length;
+            stats.textContent = `${totalSelected}项已选`;
+        }
+
+        function updatePermissionGroupDisplay(groupKey) {
+            const group = getPermissionGroupConfig(groupKey);
+            const row = getPermissionGroupRow(groupKey);
+            const summaryNode = getPermissionSummaryNode(groupKey);
+            const countNode = getPermissionCountNode(groupKey);
+            const childInputs = getPermissionChildInputs(groupKey);
+            if (!group || !row || !summaryNode || !countNode || !childInputs.length) return;
+
+            const checkedValues = childInputs.filter((input) => input.checked).map((input) => input.value);
+            const checkedLabels = group.children
+                .filter((child) => checkedValues.includes(child.value))
+                .map((child) => child.label);
+
+            summaryNode.textContent = checkedLabels.length ? checkedLabels.join(' · ') : '点击选择权限';
+            countNode.textContent = `${checkedLabels.length}/${group.children.length}`;
+            row.setAttribute('data-selected', checkedLabels.length ? 'true' : 'false');
+        }
+
+        function syncPermissionGroupVisibility(groupKey) {
+            const row = getPermissionGroupRow(groupKey);
+            const optionsPanel = getPermissionOptionsPanel(groupKey);
+            const expanded = expandedPermissionGroups.has(groupKey);
+            if (row) {
+                row.setAttribute('data-expanded', expanded ? 'true' : 'false');
+            }
+            if (optionsPanel) {
+                optionsPanel.hidden = !expanded;
+            }
+        }
+
+        function refreshPermissionSelectionUi() {
+            permissionTreeGroups.forEach((group) => {
+                syncPermissionParentState(group.key);
+                updatePermissionGroupDisplay(group.key);
+                syncPermissionGroupVisibility(group.key);
+            });
+            updatePermissionSelectionStats();
+        }
+
+        function renderPermissionTree() {
+            refreshPermissionSelectionUi();
+        }
+
+        function togglePermissionGroup(groupKey) {
+            if (expandedPermissionGroups.has(groupKey)) {
+                expandedPermissionGroups.delete(groupKey);
+            } else {
+                expandedPermissionGroups = new Set([groupKey]);
+            }
+            permissionTreeGroups.forEach((group) => {
+                syncPermissionGroupVisibility(group.key);
+            });
+        }
+
+        function getSelectedPermissionValues() {
+            return normalizeStaffPermissions(
+                Array.from(document.querySelectorAll('input[name="permission"]:checked')).map((input) => input.value)
+            );
         }
 
         function getMerchantOptions() {
@@ -1655,22 +2253,49 @@
             return merchantIds[0] || '';
         }
 
-        function renderMerchantSelect() {
-            const select = document.getElementById('merchantSelect');
-            select.innerHTML = merchantOptions
-                .map((merchant) => `<option value="${merchant.id}">商户：${merchant.name}</option>`)
-                .join('');
-        }
-
-        function handleMerchantChange(nextMerchantId) {
-            selectedMerchantId = nextMerchantId;
-            localStorage.setItem('currentMerchantId', selectedMerchantId);
-            renderManagers();
-            updateStats();
-        }
-
         function getManagersByMerchant(merchantId) {
             return staffManagersData.filter((item) => item.merchantId === merchantId);
+        }
+
+        function getManagerDeviceSummary(devices, staffId) {
+            const normalizedDevices = Array.isArray(devices) ? devices.filter(Boolean) : [];
+            const deviceCount = normalizedDevices.length;
+
+            if (!deviceCount) {
+                return {
+                    summaryText: '-',
+                    toggleText: '',
+                    expandedMarkup: ''
+                };
+            }
+
+            if (deviceCount <= 3) {
+                return {
+                    summaryText: normalizedDevices.join('、'),
+                    toggleText: '',
+                    expandedMarkup: ''
+                };
+            }
+
+            const preview = devices.slice(0, 2).join('、');
+            const isExpanded = expandedDeviceStaffIds.has(staffId);
+
+            return {
+                summaryText: `${preview} 等 ${deviceCount} 台`,
+                toggleText: isExpanded ? '收起' : '查看全部',
+                expandedMarkup: isExpanded ? `
+                    ${normalizedDevices.map((device) => `<span class="manager-device-chip">${device}</span>`).join('')}
+                ` : ''
+            };
+        }
+
+        function toggleManagerDevices(staffId) {
+            if (expandedDeviceStaffIds.has(staffId)) {
+                expandedDeviceStaffIds.delete(staffId);
+            } else {
+                expandedDeviceStaffIds.add(staffId);
+            }
+            renderManagers();
         }
 
         function renderManagers() {
@@ -1693,39 +2318,34 @@
 
             list.innerHTML = filteredManagers
                 .map((manager) => {
-                    const permissionText = formatLabels(manager.permissions, permissionLabelMap);
-                    const pushText = formatLabels(manager.pushChannels, pushLabelMap);
+                    const devices = Array.isArray(manager.devices) ? manager.devices.filter(Boolean) : [];
+                    const deviceCount = devices.length;
+                    const deviceSummary = getManagerDeviceSummary(devices, manager.id);
+                    const isEnabled = manager.accountEnabled !== false;
                     return `
                         <article class="manager-item">
-                            <div class="manager-head">
+                            <div class="manager-row">
                                 <div class="manager-identity">
                                     <span class="manager-avatar">${(manager.username || '?').slice(0, 1)}</span>
                                     <div class="manager-summary">
                                         <div class="manager-name">${manager.username}</div>
-                                        <div class="manager-meta">${manager.phone}</div>
-                                        <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
+                                        <div class="manager-status ${isEnabled ? '' : 'is-disabled'}">账号状态：${manager.accountEnabled === false ? '已停用' : '已启用'}</div>
                                     </div>
                                 </div>
-                                <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
-                            </div>
-                            <div class="manager-grid">
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">权限</div>
-                                    <div class="label-row">
-                                        ${permissionText.map((text) => `<span class="chip">${text}</span>`).join('')}
+                                <div class="manager-detail-stack">
+                                    <div class="manager-meta">${manager.phone}</div>
+                                    <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
+                                    <div class="manager-device-summary">
+                                        <span class="manager-device-label">负责设备：</span>
+                                        <span class="manager-device-text">${deviceSummary.summaryText}</span>
+                                        ${deviceSummary.toggleText ? `<button type="button" class="manager-device-toggle" onclick="toggleManagerDevices('${manager.id}')">${deviceSummary.toggleText}</button>` : ''}
                                     </div>
+                                    ${deviceSummary.expandedMarkup ? `<div class="manager-device-expanded">${deviceSummary.expandedMarkup}</div>` : ''}
+                                    ${deviceCount ? `<div class="manager-meta">共 ${deviceCount} 台设备</div>` : ''}
                                 </div>
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">公众号推送</div>
-                                    <div class="label-row">
-                                        ${pushText.map((text) => `<span class="chip chip-muted">${text}</span>`).join('')}
-                                    </div>
-                                </div>
-                                <div class="manager-panel">
-                                    <div class="manager-panel-title">负责设备号</div>
-                                    <div class="manager-value">${(manager.devices || []).join('、') || '-'}</div>
-                                    <div class="manager-meta" style="margin-top: 6px;">运维 openId: ${manager.opsOpenid || '-'}</div>
-                                    <div class="manager-meta">公众号 openId: ${manager.wechatOpenid || '-'}</div>
+                                <div class="manager-actions">
+                                    <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
+                                    <button type="button" class="manager-toggle-btn ${isEnabled ? 'is-danger' : ''}" onclick="toggleStaffLoginStatus('${manager.id}')">${isEnabled ? '停用账号' : '启用账号'}</button>
                                 </div>
                             </div>
                         </article>
@@ -1736,15 +2356,9 @@
 
         function updateStats() {
             const filteredManagers = getManagersByMerchant(selectedMerchantId);
-            const adminCount = filteredManagers.filter((item) => (item.permissions || []).includes('admin')).length;
-            const opsCount = filteredManagers.filter((item) => (item.permissions || []).some((perm) => perm === 'ops' || perm === 'repair' || perm === 'ops_refund')).length;
-            const deviceSet = new Set();
-            filteredManagers.forEach((item) => (item.devices || []).forEach((deviceId) => deviceSet.add(deviceId)));
+            const enabledCount = filteredManagers.filter((item) => item.accountEnabled !== false).length;
 
-            document.getElementById('staffTotal').textContent = filteredManagers.length;
-            document.getElementById('staffAdmin').textContent = adminCount;
-            document.getElementById('staffOps').textContent = opsCount;
-            document.getElementById('staffDeviceCount').textContent = deviceSet.size;
+            document.getElementById('staffEnabledCount').textContent = enabledCount;
             document.getElementById('listHint').textContent = `共 ${filteredManagers.length} 位管理人员`;
         }
 
@@ -1773,16 +2387,39 @@
                 return;
             }
             selectedMerchantId = targetStaff.merchantId || selectedMerchantId;
-            const merchantSelect = document.getElementById('merchantSelect');
-            if (merchantSelect) {
-                merchantSelect.value = selectedMerchantId;
-            }
             editingStaffId = staffId;
             updateStaffModalState();
             fillStaffForm(targetStaff);
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
             document.getElementById('staffModal').classList.add('active');
+        }
+
+        function toggleStaffLoginStatus(staffId) {
+            const staffIndex = staffManagersData.findIndex((item) => item.id === staffId);
+            if (staffIndex === -1) {
+                showToast('未找到可操作人员');
+                return;
+            }
+
+            const currentStaff = staffManagersData[staffIndex];
+            const nextEnabled = currentStaff.accountEnabled === false;
+            const confirmText = nextEnabled
+                ? `确认启用 ${currentStaff.username} 的账号吗？`
+                : `确认停用 ${currentStaff.username} 的账号吗？停用后该人员将无法登录。`;
+
+            if (!window.confirm(confirmText)) {
+                return;
+            }
+
+            staffManagersData[staffIndex] = {
+                ...currentStaff,
+                accountEnabled: nextEnabled
+            };
+            localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
+            renderManagers();
+            updateStats();
+            showToast(nextEnabled ? '账号已启用' : '账号已停用');
         }
 
         function updateStaffModalState() {
@@ -1800,38 +2437,25 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
-            document.getElementById('opsOpenid').value = '';
-            document.getElementById('wechatOpenid').value = '';
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = false;
             });
 
-            document.querySelectorAll('input[name="push"]').forEach((input) => {
-                input.checked = input.value === 'none';
-            });
+            expandedPermissionGroups.clear();
+            renderPermissionTree();
         }
 
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
-            document.getElementById('opsOpenid').value = targetStaff.opsOpenid || '';
-            document.getElementById('wechatOpenid').value = targetStaff.wechatOpenid || '';
 
-            const permissionSet = new Set(targetStaff.permissions || []);
+            const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
-
-            const pushSet = new Set(targetStaff.pushChannels || []);
-            document.querySelectorAll('input[name="push"]').forEach((input) => {
-                input.checked = pushSet.has(input.value);
-            });
-            if (!pushSet.size) {
-                document.querySelectorAll('input[name="push"]').forEach((input) => {
-                    input.checked = input.value === 'none';
-                });
-            }
+            expandedPermissionGroups.clear();
+            renderPermissionTree();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -2035,48 +2659,11 @@
             summary.innerHTML = chips + moreText;
         }
 
-        function handlePushOptionChange(changedInput) {
-            const pushInputs = Array.from(document.querySelectorAll('input[name="push"]'));
-            if (changedInput.value === 'none' && changedInput.checked) {
-                pushInputs.forEach((input) => {
-                    if (input !== changedInput) {
-                        input.checked = false;
-                    }
-                });
-                return;
-            }
-
-            if (changedInput.value !== 'none' && changedInput.checked) {
-                const noneInput = pushInputs.find((input) => input.value === 'none');
-                if (noneInput) {
-                    noneInput.checked = false;
-                }
-            }
-
-            const checkedCount = pushInputs.filter((input) => input.checked).length;
-            if (!checkedCount) {
-                const noneInput = pushInputs.find((input) => input.value === 'none');
-                if (noneInput) {
-                    noneInput.checked = true;
-                }
-            }
-        }
-
-        function mockAuthorize(type) {
-            const fieldId = type === 'ops' ? 'opsOpenid' : 'wechatOpenid';
-            const value = `${type}_` + Math.random().toString(36).slice(2, 12);
-            document.getElementById(fieldId).value = value;
-            showToast('已模拟扫码授权');
-        }
-
         function saveStaff() {
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
-            const opsOpenid = document.getElementById('opsOpenid').value.trim();
-            const wechatOpenid = document.getElementById('wechatOpenid').value.trim();
-            const selectedPermissions = Array.from(document.querySelectorAll('input[name="permission"]:checked')).map((input) => input.value);
+            const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
-            let selectedPushChannels = Array.from(document.querySelectorAll('input[name="push"]:checked')).map((input) => input.value);
 
             if (!username || !phone) {
                 showToast('请填写用户名和手机号');
@@ -2098,24 +2685,13 @@
                 return;
             }
 
-            if (!selectedPushChannels.length) {
-                selectedPushChannels = ['none'];
-            }
-
-            if (selectedPushChannels.includes('none') && selectedPushChannels.length > 1) {
-                selectedPushChannels = ['none'];
-            }
-
             const merchantName = merchantOptions.find((item) => item.id === selectedMerchantId)?.name || '';
             const staffPayload = {
                 merchantId: selectedMerchantId,
                 merchantName,
                 username,
                 phone,
-                opsOpenid,
-                wechatOpenid,
                 permissions: selectedPermissions,
-                pushChannels: selectedPushChannels,
                 devices: selectedDevices
             };
 
@@ -2134,6 +2710,7 @@
                 const newStaff = {
                     id: createStaffId(),
                     ...staffPayload,
+                    accountEnabled: true,
                     createdAt: new Date().toISOString().slice(0, 10)
                 };
                 staffManagersData.unshift(newStaff);
@@ -2153,14 +2730,6 @@
                 .filter((num) => Number.isFinite(num))
                 .reduce((max, num) => Math.max(max, num), 0);
             return `S${String(currentMax + 1).padStart(3, '0')}`;
-        }
-
-        function formatLabels(values, mapper) {
-            const list = Array.isArray(values) ? values : [];
-            if (!list.length) {
-                return ['-'];
-            }
-            return list.map((value) => mapper[value] || value);
         }
 
         function toggleSidebar() {
