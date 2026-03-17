@@ -436,5 +436,67 @@
             </div>
         </section>
     </main>
+    <script>
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const LOGIN_SUCCESS_TARGET = 'overview.html';
+        const LOGIN_BUTTON_IDLE_TEXT = '进入控制台';
+        const LOGIN_BUTTON_LOADING_TEXT = '登录中...';
+        const LOGIN_THEME = 'counter';
+
+        const loginForm = document.getElementById('loginForm');
+        const loginAccountInput = document.getElementById('loginAccount');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginErrorNode = document.getElementById('loginError');
+        const loginSubmitButton = document.getElementById('loginSubmit');
+
+        function renderLoginError(message) {
+            loginErrorNode.textContent = message || '';
+        }
+
+        function setLoginSubmittingState(isSubmitting) {
+            loginSubmitButton.disabled = isSubmitting;
+            loginSubmitButton.textContent = isSubmitting ? LOGIN_BUTTON_LOADING_TEXT : LOGIN_BUTTON_IDLE_TEXT;
+        }
+
+        function validateLoginForm() {
+            if (!loginAccountInput.value.trim()) {
+                return '请输入账号';
+            }
+            if (!loginPasswordInput.value.trim()) {
+                return '请输入密码';
+            }
+            return '';
+        }
+
+        function persistLoginSession(account) {
+            localStorage.setItem(LOGIN_SESSION_KEY, JSON.stringify({
+                account,
+                theme: LOGIN_THEME,
+                loggedInAt: new Date().toISOString()
+            }));
+            localStorage.setItem(SIDEBAR_LOGIN_PROFILE_KEY, JSON.stringify({
+                name: account,
+                phone: account
+            }));
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const error = validateLoginForm();
+            renderLoginError(error);
+            if (error) {
+                return;
+            }
+            setLoginSubmittingState(true);
+            setTimeout(() => {
+                const account = loginAccountInput.value.trim();
+                persistLoginSession(account);
+                window.location.replace(LOGIN_SUCCESS_TARGET);
+            }, 800);
+        }
+
+        loginForm.addEventListener('submit', handleLoginSubmit);
+    </script>
 </body>
 </html>
