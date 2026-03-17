@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const morningHtml = fs.readFileSync(path.join(__dirname, '..', 'login-morning.html'), 'utf8');
+const counterHtml = fs.readFileSync(path.join(__dirname, '..', 'login-counter.html'), 'utf8');
 
 function test(name, fn) {
   try {
@@ -29,4 +30,12 @@ test('morning 登录页应暴露主题钩子和移动端断点', () => {
   assert.ok(/@media\s*\(max-width:\s*768px\)/.test(morningHtml));
   assert.ok(/class="login-stage"/.test(morningHtml));
   assert.ok(/class="login-card"/.test(morningHtml));
+});
+
+test('counter 登录页应包含统一表单骨架和专属文案', () => {
+  assert.ok(/欢迎登录/.test(counterHtml));
+  assert.ok(/进入运营后台，查看设备、订单与门店状态/.test(counterHtml));
+  assert.ok(/id="loginAccount"/.test(counterHtml));
+  assert.ok(/id="loginPassword"/.test(counterHtml));
+  assert.ok(/login-page-counter/.test(counterHtml));
 });
