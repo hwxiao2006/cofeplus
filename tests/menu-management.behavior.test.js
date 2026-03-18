@@ -23,7 +23,7 @@ function loadMenuContext() {
     .replace("let currentDevice = 'RCK111';", "globalThis.currentDevice = 'RCK111';")
     .replace("let currentLang = 'zh';", "globalThis.currentLang = 'zh';")
     .replace("let platformLang = 'zh';", "globalThis.platformLang = 'zh';")
-    .replace("let currentMenuInnerTab = 'settings';", "globalThis.currentMenuInnerTab = 'settings';")
+    .replace("let currentMenuInnerTab = 'manage';", "globalThis.currentMenuInnerTab = 'manage';")
     .replace("let batchFixedPriceKeyword = '';", "globalThis.batchFixedPriceKeyword = '';")
     .replace("let menuSharedCategoryFilter = '';", "globalThis.menuSharedCategoryFilter = '';")
     .replace("let menuManageActiveCategory = '';", "globalThis.menuManageActiveCategory = '';")
@@ -1776,11 +1776,17 @@ test('商品售价：未加税时仅展示单一价格', () => {
   assert.ok(!html.includes('税后'));
 });
 
-test('菜单管理主页面应包含基础设置、菜单管理、批量改价三个tab', () => {
+test('菜单管理主页面应按菜单管理、基本设置、批量改价顺序展示三个tab', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(html.includes('menuInnerTabSettingsBtn'));
-  assert.ok(html.includes('menuInnerTabManageBtn'));
-  assert.ok(html.includes('menuInnerTabBatchBtn'));
+  const settingsIndex = html.indexOf('id="menuInnerTabSettingsBtn"');
+  const manageIndex = html.indexOf('id="menuInnerTabManageBtn"');
+  const batchIndex = html.indexOf('id="menuInnerTabBatchBtn"');
+
+  assert.ok(manageIndex > -1);
+  assert.ok(settingsIndex > -1);
+  assert.ok(batchIndex > -1);
+  assert.ok(manageIndex < settingsIndex);
+  assert.ok(settingsIndex < batchIndex);
   assert.ok(html.includes('menuSettingsPanel'));
   assert.ok(html.includes('menuManagePanel'));
   assert.ok(html.includes('menuBatchPanel'));
@@ -1958,6 +1964,27 @@ test('切换菜单内部tab时，应更新当前tab状态', () => {
   assert.strictEqual(ctx.document.getElementById('menuInnerTabBatchBtn').classList.contains('active'), true);
   assert.strictEqual(ctx.document.getElementById('menuInnerTabManageBtn').classList.contains('active'), false);
   ctx.switchMenuInnerTab('settings');
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabSettingsBtn').classList.contains('active'), true);
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabManageBtn').classList.contains('active'), false);
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabBatchBtn').classList.contains('active'), false);
+});
+
+test('菜单管理页初始化时默认应打开菜单管理tab', () => {
+  const ctx = loadMenuContext();
+  ctx.window.location.search = '?tab=menu';
+  assert.strictEqual(typeof ctx.init, 'function');
+  ctx.init();
+
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabManageBtn').classList.contains('active'), true);
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabSettingsBtn').classList.contains('active'), false);
+  assert.strictEqual(ctx.document.getElementById('menuInnerTabBatchBtn').classList.contains('active'), false);
+});
+
+test('菜单管理页初始化时应支持通过 innerTab 参数选中基本设置', () => {
+  const ctx = loadMenuContext();
+  ctx.window.location.search = '?tab=menu&innerTab=settings';
+  ctx.init();
+
   assert.strictEqual(ctx.document.getElementById('menuInnerTabSettingsBtn').classList.contains('active'), true);
   assert.strictEqual(ctx.document.getElementById('menuInnerTabManageBtn').classList.contains('active'), false);
   assert.strictEqual(ctx.document.getElementById('menuInnerTabBatchBtn').classList.contains('active'), false);
