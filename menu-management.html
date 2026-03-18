@@ -5013,8 +5013,8 @@
                         </div>
                     </div>
                     <div class="menu-inner-tabs">
-                        <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('settings')">基本设置</button>
-                        <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('settings')">基本设置</button>
                         <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
                     </div>
 
@@ -5992,7 +5992,7 @@
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
-        let currentMenuInnerTab = 'settings';
+        let currentMenuInnerTab = 'manage';
         let previewActiveCategory = '';
         let orderPreviewLang = '';
         let orderPreviewDetailState = {
