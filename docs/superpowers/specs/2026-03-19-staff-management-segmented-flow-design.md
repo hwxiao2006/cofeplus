@@ -121,6 +121,18 @@ State behavior:
 
 The step header is informative, not a full router. Clicking may jump to a step if allowed, but the page should still feel like one modal, not a separate wizard screen.
 
+Allowed jump rules:
+
+- current step: always open
+- completed earlier steps: can be reopened from either the step header or the collapsed summary row
+- future steps: cannot be opened directly from the header until all preceding steps are valid and marked complete
+
+Example:
+
+- if Step 1 is incomplete, Step 2 and Step 3 stay non-interactive
+- if Step 1 is complete but Step 2 is incomplete, Step 3 stays non-interactive
+- once Step 2 is complete, Step 3 becomes the active next step
+
 ## Step Details
 
 ### Step 1: 可管理设备
@@ -267,7 +279,9 @@ If Step 1 removes a device:
 
 - remove it automatically from every page scope selection
 - keep permission selections unchanged
-- if a `custom` page scope becomes empty, show an inline warning in Step 3
+- if a `custom` page scope becomes empty, keep the row in `指定设备` mode, show an inline warning in Step 3, and require the admin to either:
+  - reselect at least one device, or
+  - manually switch that row back to `全部可管理设备`
 
 Recommended warning text:
 
@@ -299,6 +313,11 @@ Validation behavior:
 - Step 1: at least one `可管理设备`
 - Step 2: at least one permission
 - Step 3: if a supported authorized page uses `custom`, it must contain at least one selected device
+
+Important consistency rule:
+
+- if Step 1 pruning causes a Step 3 `custom` row to drop to `0` devices, the modal stays editable, but final save must be blocked until the admin fixes that row
+- the UI must not auto-convert an empty `custom` row into `全部可管理设备`, because that would silently broaden access beyond the admin's last explicit choice
 
 Validation copy should reference `可管理设备` where applicable.
 
