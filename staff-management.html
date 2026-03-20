@@ -731,6 +731,187 @@
             margin-top: 12px;
         }
 
+        .staff-modal-basic-section {
+            margin-bottom: 12px;
+        }
+
+        .staff-modal-step-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .staff-modal-stepbar {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .staff-modal-step-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text-primary);
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .staff-modal-step-trigger[data-state="current"] {
+            border-color: #bfe9e6;
+            background: #ecfbf9;
+            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.08);
+        }
+
+        .staff-modal-step-trigger[data-state="done"] {
+            border-color: #d6ece7;
+            background: #fff;
+        }
+
+        .staff-modal-step-trigger[data-state="locked"] {
+            background: #f8fafc;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .staff-modal-step-trigger-index {
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 700;
+            flex: none;
+        }
+
+        .staff-modal-step-trigger[data-state="current"] .staff-modal-step-trigger-index,
+        .staff-modal-step-trigger[data-state="done"] .staff-modal-step-trigger-index {
+            background: #dff6f4;
+            color: #0f766e;
+        }
+
+        .staff-modal-step-trigger[data-state="locked"] .staff-modal-step-trigger-index {
+            background: #eef2f7;
+            color: #94a3b8;
+        }
+
+        .staff-modal-step-trigger-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .staff-modal-step-trigger-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: inherit;
+            line-height: 1.35;
+        }
+
+        .staff-modal-step-trigger-hint {
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .staff-modal-step-summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .staff-modal-step-summary-list[hidden] {
+            display: none;
+        }
+
+        .staff-modal-step-summary-row {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .staff-modal-step-summary-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            white-space: nowrap;
+        }
+
+        .staff-modal-step-summary-text {
+            min-width: 0;
+            font-size: 12px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .staff-modal-step-summary-action {
+            height: 28px;
+            border: 1px solid #dbe5ec;
+            border-radius: 999px;
+            background: #fff;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .staff-modal-step-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+
+        .staff-modal-step-section[hidden] {
+            display: none;
+        }
+
+        .staff-modal-step-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .staff-modal-step-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .staff-modal-step-note {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
         .section-title {
             font-size: 13px;
             font-weight: 700;
@@ -1011,6 +1192,165 @@
             flex-wrap: wrap;
             gap: 6px;
             min-height: 26px;
+        }
+
+        .module-scope-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .module-scope-note {
+            margin: 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .module-scope-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .module-scope-row {
+            border: 1px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+            padding: 10px 12px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .module-scope-row.is-disabled {
+            background: #f8fafc;
+            border-color: #e8edf3;
+            opacity: 0.72;
+        }
+
+        .module-scope-row.is-warning {
+            border-color: #fecaca;
+            background: #fff7f7;
+        }
+
+        .module-scope-main {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .module-scope-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+            align-items: center;
+        }
+
+        .module-scope-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .module-scope-status {
+            display: inline-flex;
+            align-items: center;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 999px;
+            background: #eef9f7;
+            color: #0f766e;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .module-scope-status.is-muted {
+            background: #eef2f7;
+            color: #64748b;
+        }
+
+        .module-scope-summary {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .module-scope-warning {
+            font-size: 12px;
+            color: var(--danger);
+            line-height: 1.45;
+        }
+
+        .module-scope-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .module-scope-mode {
+            height: 30px;
+            border: 1px solid #dbe5ec;
+            border-radius: 999px;
+            background: #fff;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+
+        .module-scope-mode.is-active {
+            border-color: #bfe9e6;
+            background: #ecfbf9;
+            color: #0f766e;
+        }
+
+        .module-scope-config-btn {
+            height: 30px;
+            border: 1px solid #bfe9e6;
+            border-radius: 999px;
+            background: #f0fbfa;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+
+        .module-scope-config-btn[disabled],
+        .module-scope-mode[disabled] {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .module-scope-selected {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 22px;
+        }
+
+        .module-scope-chip {
+            display: inline-flex;
+            align-items: center;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid #e5eef5;
+            color: #475569;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .module-scope-empty {
+            font-size: 12px;
+            color: #94a3b8;
         }
 
         .selected-chip {
@@ -1344,6 +1684,41 @@
                 padding: 0 12px 10px 12px;
             }
 
+            .staff-modal-stepbar {
+                grid-template-columns: 1fr;
+            }
+
+            .staff-modal-step-trigger-hint {
+                white-space: normal;
+            }
+
+            .staff-modal-step-summary-row {
+                grid-template-columns: minmax(0, 1fr) auto;
+            }
+
+            .staff-modal-step-summary-title,
+            .staff-modal-step-summary-text {
+                grid-column: 1 / 2;
+            }
+
+            .staff-modal-step-summary-text {
+                white-space: normal;
+            }
+
+            .staff-modal-step-heading {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .module-scope-row {
+                grid-template-columns: 1fr;
+            }
+
+            .module-scope-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
             .device-code {
                 font-size: 13px;
             }
@@ -1467,7 +1842,7 @@
                 <button type="button" class="modal-close" onclick="closeStaffModal()">×</button>
             </div>
             <div class="modal-body">
-                <section class="section-block">
+                <section class="section-block staff-modal-basic-section">
                     <div class="section-title">基本信息<span class="required">*</span></div>
                     <div class="form-grid">
                         <div class="form-item">
@@ -1481,15 +1856,57 @@
                     </div>
                 </section>
 
-                <section class="section-block">
-                    <div class="permission-section-head">
-                        <div>
-                            <div class="section-title">菜单权限配置<span class="required">*</span>(至少选择一个)</div>
-                            <p class="permission-section-note">按模块快速勾选，一屏完成。</p>
-                        </div>
-                        <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                <div class="staff-modal-step-layout">
+                    <div class="staff-modal-stepbar" id="staffModalStepbar">
+                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="manageableDevices" onclick="handleStaffModalStepTrigger('manageableDevices')">
+                            <span class="staff-modal-step-trigger-index">1</span>
+                            <span class="staff-modal-step-trigger-text">
+                                <span class="staff-modal-step-trigger-label">步骤 1 · 可管理设备</span>
+                                <span class="staff-modal-step-trigger-hint">先选该人员可管理的设备</span>
+                            </span>
+                        </button>
+                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="pagePermissions" onclick="handleStaffModalStepTrigger('pagePermissions')">
+                            <span class="staff-modal-step-trigger-index">2</span>
+                            <span class="staff-modal-step-trigger-text">
+                                <span class="staff-modal-step-trigger-label">步骤 2 · 页面权限</span>
+                                <span class="staff-modal-step-trigger-hint">再决定能进入哪些页面</span>
+                            </span>
+                        </button>
+                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="pageDeviceScopes" onclick="handleStaffModalStepTrigger('pageDeviceScopes')">
+                            <span class="staff-modal-step-trigger-index">3</span>
+                            <span class="staff-modal-step-trigger-text">
+                                <span class="staff-modal-step-trigger-label">步骤 3 · 页面设备范围</span>
+                                <span class="staff-modal-step-trigger-hint">仅对支持范围的页面细分设备</span>
+                            </span>
+                        </button>
                     </div>
-                    <div class="permission-tree" id="permissionTree">
+
+                    <div class="staff-modal-step-summary-list" id="staffModalStepSummaryList" hidden></div>
+
+                    <section class="staff-modal-step-section" data-staff-step="manageableDevices">
+                        <div class="staff-modal-step-heading">
+                            <div>
+                                <div class="staff-modal-step-title">步骤 1 · 可管理设备<span class="required">*</span></div>
+                                <p class="staff-modal-step-note">先选择该人员可管理的设备，后续页面可见设备都从这里选择</p>
+                            </div>
+                            <span class="device-selection-stats" id="deviceSelectionStats">已选 0 / 共 0</span>
+                        </div>
+                        <div class="device-picker-entry">
+                            <p class="module-scope-note">选择完成后，会自动带入后续可设置范围的页面。</p>
+                            <button type="button" class="device-picker-btn" id="openDeviceSelectorBtn" onclick="openDeviceSelector()">选择可管理设备</button>
+                        </div>
+                        <div class="selected-device-summary" id="selectedDeviceSummary"></div>
+                    </section>
+
+                    <section class="staff-modal-step-section" data-staff-step="pagePermissions">
+                        <div class="permission-section-head">
+                            <div>
+                                <div class="staff-modal-step-title">步骤 2 · 页面权限<span class="required">*</span></div>
+                                <p class="permission-section-note">按模块快速勾选，一屏完成。</p>
+                            </div>
+                            <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                        </div>
+                        <div class="permission-tree" id="permissionTree">
                         <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
                             <div class="permission-group-main">
                                 <label class="permission-group-head">
@@ -1601,17 +2018,20 @@
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>人员维护</span></label>
                             </div>
                         </div>
-                    </div>
-                </section>
+                        </div>
+                    </section>
 
-                <section class="section-block">
-                    <div class="section-title">负责设备号<span class="required">*</span>(至少选择一个)</div>
-                    <div class="device-picker-entry">
-                        <span class="device-selection-stats" id="deviceSelectionStats">已选 0 / 共 0</span>
-                        <button type="button" class="device-picker-btn" id="openDeviceSelectorBtn" onclick="openDeviceSelector()">选择设备</button>
-                    </div>
-                    <div class="selected-device-summary" id="selectedDeviceSummary"></div>
-                </section>
+                    <section class="staff-modal-step-section module-scope-section" data-staff-step="pageDeviceScopes">
+                        <div class="staff-modal-step-heading">
+                            <div>
+                                <div class="staff-modal-step-title">步骤 3 · 页面设备范围</div>
+                                <p class="staff-modal-step-note">只显示已勾选且当前真正支持设备范围的页面；其他页面不在这里出现</p>
+                                <p class="module-scope-note">默认继承全部可管理设备；只有切到“指定设备”时，才需要进一步选择</p>
+                            </div>
+                        </div>
+                        <div class="module-scope-list" id="moduleDeviceScopeRows"></div>
+                    </section>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="closeStaffModal()">取消</button>
@@ -1623,7 +2043,7 @@
     <div class="modal-overlay device-selector-overlay" id="deviceSelectorModal">
         <div class="modal device-selector-modal">
             <div class="modal-header">
-                <h3 class="modal-title">选择负责设备</h3>
+                <h3 class="modal-title">选择可管理设备</h3>
                 <button type="button" class="modal-close" onclick="closeDeviceSelector()">×</button>
             </div>
             <div class="device-selector-body">
@@ -1642,6 +2062,29 @@
         </div>
     </div>
 
+    <div class="modal-overlay device-selector-overlay" id="moduleScopeSelectorModal">
+        <div class="modal device-selector-modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="moduleScopeSelectorTitle">选择页面设备范围</h3>
+                <button type="button" class="modal-close" onclick="closeModuleDeviceScopeSelector()">×</button>
+            </div>
+            <div class="device-selector-body">
+                <div class="device-picker-toolbar">
+                    <input type="text" class="form-input device-search-input" id="moduleScopeSearchInput" placeholder="搜索设备编号或点位名称" oninput="handleModuleScopeSearch(this.value)">
+                    <label class="device-selected-toggle">
+                        <input type="checkbox" id="moduleScopeSelectedOnly" onchange="toggleModuleScopeSelectedOnly(this.checked)">
+                        <span>仅看已选</span>
+                    </label>
+                </div>
+                <div class="device-list" id="moduleScopeDevicePicker"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="closeModuleDeviceScopeSelector()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveModuleDeviceScopeSelection()">完成选择</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1649,7 +2092,9 @@
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
-            phone: '13800138000'
+            phone: '13800138000',
+            merchantId: 'C001',
+            merchantName: '星巴克咖啡'
         };
 
         const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
@@ -1825,11 +2270,21 @@
                 const parsed = JSON.parse(raw);
                 return {
                     name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
-                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone),
+                    merchantId: String(parsed?.merchantId || DEFAULT_SIDEBAR_LOGIN_PROFILE.merchantId),
+                    merchantName: String(parsed?.merchantName || DEFAULT_SIDEBAR_LOGIN_PROFILE.merchantName)
                 };
             } catch (e) {
                 return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
             }
+        }
+
+        function getCurrentMerchantContext() {
+            const profile = getSidebarLoginProfile();
+            return {
+                merchantId: String(profile.merchantId || ''),
+                merchantName: String(profile.merchantName || '')
+            };
         }
 
         function renderSidebarLoginProfile() {
@@ -1862,7 +2317,6 @@
         });
 
         let staffManagersData = JSON.parse(localStorage.getItem('staffManagersData') || '[]');
-        let merchantOptions = [];
         let selectedMerchantId = '';
         let editingStaffId = null;
         let expandedDeviceStaffIds = new Set();
@@ -1871,13 +2325,13 @@
         let deviceSelectionSet = new Set();
         let deviceSearchKeyword = '';
         let showOnlySelectedDevices = false;
-
-        const defaultMerchants = [
-            { id: 'C001', name: '星巴克咖啡' },
-            { id: 'C002', name: '瑞幸咖啡' },
-            { id: 'C003', name: '太平洋咖啡' },
-            { id: 'C004', name: 'Costa咖啡' }
-        ];
+        let currentModuleDeviceScopes = {};
+        let currentStaffModalStep = 'manageableDevices';
+        let completedStaffModalSteps = new Set();
+        let activeModuleScopeKey = '';
+        let moduleScopeDeviceSelectionSet = new Set();
+        let moduleScopeSearchKeyword = '';
+        let showOnlySelectedModuleScopeDevices = false;
 
         const defaultDeviceMap = {
             C001: ['RCK386', 'RCK385', 'RCK384', 'RCK409'],
@@ -1966,6 +2420,18 @@
             }
         ];
 
+        const deviceScopedModuleConfigs = [
+            { moduleKey: 'devices', label: '设备', permission: 'ops.devices' },
+            { moduleKey: 'orders', label: '订单', permission: 'ops.orders' },
+            { moduleKey: 'faults', label: '故障列表', permission: 'ops.faults' }
+        ];
+
+        const staffModalStepConfigs = [
+            { key: 'manageableDevices', label: '可管理设备', title: '步骤 1 · 可管理设备' },
+            { key: 'pagePermissions', label: '页面权限', title: '步骤 2 · 页面权限' },
+            { key: 'pageDeviceScopes', label: '页面设备范围', title: '步骤 3 · 页面设备范围' }
+        ];
+
         const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
         const allPermissionKeySet = new Set(allPermissionKeys);
         const legacyPermissionMigrationMap = {
@@ -1986,6 +2452,11 @@
                 accountEnabled: true,
                 permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
+                moduleDeviceScopes: {
+                    devices: { mode: 'inherit', deviceIds: [] },
+                    orders: { mode: 'custom', deviceIds: ['RCK386'] },
+                    faults: { mode: 'inherit', deviceIds: [] }
+                },
                 createdAt: '2026-02-15'
             },
             {
@@ -1997,6 +2468,11 @@
                 accountEnabled: false,
                 permissions: ['ops.orders'],
                 devices: ['RCK384'],
+                moduleDeviceScopes: {
+                    devices: { mode: 'inherit', deviceIds: [] },
+                    orders: { mode: 'inherit', deviceIds: [] },
+                    faults: { mode: 'inherit', deviceIds: [] }
+                },
                 createdAt: '2026-02-17'
             },
             {
@@ -2008,6 +2484,11 @@
                 accountEnabled: true,
                 permissions: ['ops.devices', 'ops.faults'],
                 devices: ['RCK410', 'RCK406'],
+                moduleDeviceScopes: {
+                    devices: { mode: 'inherit', deviceIds: [] },
+                    orders: { mode: 'inherit', deviceIds: [] },
+                    faults: { mode: 'custom', deviceIds: ['RCK410'] }
+                },
                 createdAt: '2026-02-18'
             }
         ];
@@ -2016,14 +2497,7 @@
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
             renderPermissionTree();
-            merchantOptions = getMerchantOptions();
-            selectedMerchantId = resolveInitialMerchantId();
-            if (!selectedMerchantId && merchantOptions.length) {
-                selectedMerchantId = merchantOptions[0].id;
-            }
-            if (selectedMerchantId) {
-                localStorage.setItem('currentMerchantId', selectedMerchantId);
-            }
+            selectedMerchantId = getCurrentMerchantContext().merchantId;
             renderManagers();
             updateStats();
         }
@@ -2034,23 +2508,27 @@
                 staffManagersData = defaultManagers.map((item) => ({
                     ...item,
                     accountEnabled: item.accountEnabled !== false,
-                    permissions: normalizeStaffPermissions(item.permissions)
+                    permissions: normalizeStaffPermissions(item.permissions),
+                    moduleDeviceScopes: normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices)
                 }));
                 shouldPersist = true;
             } else {
                 staffManagersData = staffManagersData.map((item) => {
                     const normalizedPermissions = normalizeStaffPermissions(item.permissions);
                     const normalizedAccountEnabled = item.accountEnabled !== false;
+                    const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices);
                     if (
                         JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
                         || normalizedAccountEnabled !== item.accountEnabled
+                        || JSON.stringify(normalizedModuleDeviceScopes) !== JSON.stringify(item.moduleDeviceScopes || {})
                     ) {
                         shouldPersist = true;
                     }
                     return {
                         ...item,
                         accountEnabled: normalizedAccountEnabled,
-                        permissions: normalizedPermissions
+                        permissions: normalizedPermissions,
+                        moduleDeviceScopes: normalizedModuleDeviceScopes
                     };
                 });
             }
@@ -2086,6 +2564,282 @@
             });
 
             return allPermissionKeys.filter((value) => normalizedSet.has(value));
+        }
+
+        function getDeviceScopedModuleConfig(moduleKey) {
+            return deviceScopedModuleConfigs.find((item) => item.moduleKey === moduleKey) || null;
+        }
+
+        function createDefaultModuleDeviceScopes() {
+            return deviceScopedModuleConfigs.reduce((scopes, config) => {
+                scopes[config.moduleKey] = {
+                    mode: 'inherit',
+                    deviceIds: []
+                };
+                return scopes;
+            }, {});
+        }
+
+        function getStaffModalStepIndex(stepKey) {
+            return staffModalStepConfigs.findIndex((item) => item.key === stepKey);
+        }
+
+        function getCompletedStaffModalSteps(selectedDevices = getAssignedDeviceIds(), selectedPermissions = getSelectedPermissionValues()) {
+            const completedSteps = new Set();
+            if (Array.isArray(selectedDevices) && selectedDevices.length) {
+                completedSteps.add('manageableDevices');
+            }
+            if (completedSteps.has('manageableDevices') && Array.isArray(selectedPermissions) && selectedPermissions.length) {
+                completedSteps.add('pagePermissions');
+            }
+            return completedSteps;
+        }
+
+        function getNextRequiredStaffModalStep(selectedDevices = getAssignedDeviceIds(), selectedPermissions = getSelectedPermissionValues()) {
+            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
+                return 'manageableDevices';
+            }
+            if (!Array.isArray(selectedPermissions) || !selectedPermissions.length) {
+                return 'pagePermissions';
+            }
+            return 'pageDeviceScopes';
+        }
+
+        function getStaffModalMaxOpenIndex(currentStep = currentStaffModalStep, completedSteps = completedStaffModalSteps) {
+            const completedIndexes = Array.from(completedSteps).map((stepKey) => getStaffModalStepIndex(stepKey));
+            const lastCompletedIndex = completedIndexes.length ? Math.max(...completedIndexes) : -1;
+            const currentIndex = getStaffModalStepIndex(currentStep);
+            return Math.max(lastCompletedIndex + 1, currentIndex);
+        }
+
+        function canOpenStaffModalStep(stepKey, currentStep = currentStaffModalStep, completedSteps = completedStaffModalSteps) {
+            const stepIndex = getStaffModalStepIndex(stepKey);
+            if (stepIndex === -1) return false;
+            return stepIndex <= getStaffModalMaxOpenIndex(currentStep, completedSteps);
+        }
+
+        function getStaffModalStepState(stepKey) {
+            if (stepKey === currentStaffModalStep) return 'current';
+            if (completedStaffModalSteps.has(stepKey)) return 'done';
+            return 'locked';
+        }
+
+        function getSelectedPermissionGroupLabels(selectedPermissions = getSelectedPermissionValues()) {
+            const permissionSet = new Set(Array.isArray(selectedPermissions) ? selectedPermissions : []);
+            return permissionTreeGroups
+                .filter((group) => group.children.some((child) => permissionSet.has(child.value)))
+                .map((group) => group.label);
+        }
+
+        function buildManageableDevicesStepSummary(selectedDevices = getAssignedDeviceIds()) {
+            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
+                return '暂未选择可管理设备';
+            }
+            const preview = selectedDevices.slice(0, 5).join('、');
+            const suffix = selectedDevices.length > 5 ? ` 等 ${selectedDevices.length} 台` : '';
+            return `已选 ${selectedDevices.length} 台：${preview}${suffix}`;
+        }
+
+        function buildPermissionsStepSummary(selectedPermissions = getSelectedPermissionValues()) {
+            const labels = getSelectedPermissionGroupLabels(selectedPermissions);
+            if (!labels.length) {
+                return '暂未选择页面权限';
+            }
+            return `已选 ${labels.length} 项：${labels.join('、')}`;
+        }
+
+        function getAvailableScopedModulesForStep(selectedPermissions = getSelectedPermissionValues()) {
+            const permissionSet = new Set(Array.isArray(selectedPermissions) ? selectedPermissions : []);
+            return deviceScopedModuleConfigs.filter((config) => permissionSet.has(config.permission));
+        }
+
+        function buildPageScopeStepSummary(selectedPermissions = getSelectedPermissionValues()) {
+            const availableModules = getAvailableScopedModulesForStep(selectedPermissions);
+            const assignedDeviceIds = getAssignedDeviceIds();
+            if (!availableModules.length) {
+                return '当前无需单独设置页面设备范围';
+            }
+            return availableModules.map((config) => {
+                const scope = currentModuleDeviceScopes[config.moduleKey] || { mode: 'inherit', deviceIds: [] };
+                if (scope.mode === 'custom') {
+                    return `${config.label} ${scope.deviceIds.length}/${assignedDeviceIds.length || 0} 台`;
+                }
+                return `${config.label} 全部可管理设备`;
+            }).join(' · ');
+        }
+
+        function getEmptyCustomScopeModuleKeys(moduleDeviceScopes, selectedPermissions = getSelectedPermissionValues()) {
+            const availableModules = getAvailableScopedModulesForStep(selectedPermissions);
+            return availableModules
+                .filter((config) => {
+                    const scope = moduleDeviceScopes?.[config.moduleKey] || { mode: 'inherit', deviceIds: [] };
+                    return scope.mode === 'custom' && !(Array.isArray(scope.deviceIds) && scope.deviceIds.length);
+                })
+                .map((config) => config.moduleKey);
+        }
+
+        function buildStepSummaryContent(stepKey) {
+            if (stepKey === 'manageableDevices') {
+                return buildManageableDevicesStepSummary();
+            }
+            if (stepKey === 'pagePermissions') {
+                return buildPermissionsStepSummary();
+            }
+            return buildPageScopeStepSummary();
+        }
+
+        function updateStaffModalStepUi() {
+            const stepbar = document.getElementById('staffModalStepbar');
+            const summaryList = document.getElementById('staffModalStepSummaryList');
+            const currentIndex = getStaffModalStepIndex(currentStaffModalStep);
+
+            if (stepbar) {
+                Array.from(stepbar.querySelectorAll('[data-staff-step-trigger]')).forEach((button) => {
+                    const stepKey = button.getAttribute('data-staff-step-trigger');
+                    const state = getStaffModalStepState(stepKey);
+                    button.setAttribute('data-state', state);
+                    button.disabled = !canOpenStaffModalStep(stepKey);
+                });
+            }
+
+            if (summaryList) {
+                const summaryMarkup = staffModalStepConfigs
+                    .filter((config) => completedStaffModalSteps.has(config.key) && getStaffModalStepIndex(config.key) < currentIndex)
+                    .map((config) => `
+                        <div class="staff-modal-step-summary-row">
+                            <span class="staff-modal-step-summary-title">${config.title}</span>
+                            <span class="staff-modal-step-summary-text">${buildStepSummaryContent(config.key)}</span>
+                            <button type="button" class="staff-modal-step-summary-action" onclick="openCompletedStaffModalStep('${config.key}')">修改</button>
+                        </div>
+                    `)
+                    .join('');
+                summaryList.innerHTML = summaryMarkup;
+                summaryList.hidden = !summaryMarkup;
+            }
+
+            Array.from(document.querySelectorAll('[data-staff-step]')).forEach((section) => {
+                const stepKey = section.getAttribute('data-staff-step');
+                const isCurrent = stepKey === currentStaffModalStep;
+                section.hidden = !isCurrent;
+                section.setAttribute('data-step-state', isCurrent ? 'current' : getStaffModalStepState(stepKey));
+            });
+        }
+
+        function syncStaffModalProgress({ preferredStepKey = '', autoAdvance = false } = {}) {
+            const selectedDevices = getAssignedDeviceIds();
+            const selectedPermissions = getSelectedPermissionValues();
+            const nextCompletedSteps = getCompletedStaffModalSteps(selectedDevices, selectedPermissions);
+            const nextRequiredStep = getNextRequiredStaffModalStep(selectedDevices, selectedPermissions);
+
+            completedStaffModalSteps = nextCompletedSteps;
+
+            if (preferredStepKey) {
+                currentStaffModalStep = canOpenStaffModalStep(preferredStepKey, nextRequiredStep, nextCompletedSteps)
+                    ? preferredStepKey
+                    : nextRequiredStep;
+            } else if (autoAdvance) {
+                currentStaffModalStep = nextRequiredStep;
+            } else if (!canOpenStaffModalStep(currentStaffModalStep, nextRequiredStep, nextCompletedSteps)) {
+                currentStaffModalStep = nextRequiredStep;
+            }
+
+            updateStaffModalStepUi();
+        }
+
+        function openCompletedStaffModalStep(stepKey) {
+            if (!canOpenStaffModalStep(stepKey)) {
+                return;
+            }
+            currentStaffModalStep = stepKey;
+            updateStaffModalStepUi();
+        }
+
+        function handleStaffModalStepTrigger(stepKey) {
+            openCompletedStaffModalStep(stepKey);
+        }
+
+        function resolveStaffModalValidationResult({
+            username,
+            phone,
+            selectedPermissions,
+            selectedDevices,
+            moduleDeviceScopes
+        }) {
+            if (!username || !phone) {
+                return { stepKey: '', message: '请填写用户名和手机号' };
+            }
+            if (!/^1\d{10}$/.test(phone)) {
+                return { stepKey: '', message: '请输入正确的手机号' };
+            }
+            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
+                return { stepKey: 'manageableDevices', message: '请至少选择一个可管理设备' };
+            }
+            if (!Array.isArray(selectedPermissions) || !selectedPermissions.length) {
+                return { stepKey: 'pagePermissions', message: '请至少选择一个权限' };
+            }
+            const invalidScopeKeys = getEmptyCustomScopeModuleKeys(moduleDeviceScopes, selectedPermissions);
+            if (invalidScopeKeys.length) {
+                const config = getDeviceScopedModuleConfig(invalidScopeKeys[0]);
+                return {
+                    stepKey: 'pageDeviceScopes',
+                    message: `${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`
+                };
+            }
+            return { stepKey: '', message: '' };
+        }
+
+        function normalizeModuleDeviceScopes(moduleDeviceScopes, assignedDevices) {
+            const source = moduleDeviceScopes && typeof moduleDeviceScopes === 'object' ? moduleDeviceScopes : {};
+            const normalizedAssignedDevices = Array.from(new Set((Array.isArray(assignedDevices) ? assignedDevices : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+
+            return deviceScopedModuleConfigs.reduce((scopes, config) => {
+                const rawScope = source[config.moduleKey] && typeof source[config.moduleKey] === 'object'
+                    ? source[config.moduleKey]
+                    : {};
+                const mode = rawScope.mode === 'custom' ? 'custom' : 'inherit';
+                const deviceIds = mode === 'custom'
+                    ? Array.from(new Set((Array.isArray(rawScope.deviceIds) ? rawScope.deviceIds : [])
+                        .map((deviceId) => String(deviceId || '').trim())
+                        .filter((deviceId) => normalizedAssignedDevices.includes(deviceId))))
+                    : [];
+                scopes[config.moduleKey] = { mode, deviceIds };
+                return scopes;
+            }, {});
+        }
+
+        function pruneModuleDeviceScopesToAssignedDevices(moduleDeviceScopes, assignedDevices) {
+            return normalizeModuleDeviceScopes(moduleDeviceScopes, assignedDevices);
+        }
+
+        function getAssignedDeviceIds() {
+            return Array.from(deviceSelectionSet);
+        }
+
+        function getAssignedDeviceOptions() {
+            const assignedDeviceSet = new Set(getAssignedDeviceIds());
+            return currentDeviceOptions.filter((device) => assignedDeviceSet.has(device.id));
+        }
+
+        function getSelectedPermissionKeySet() {
+            return new Set(getSelectedPermissionValues());
+        }
+
+        function hasModulePermissionSelection(permissionSet, moduleKey) {
+            const config = getDeviceScopedModuleConfig(moduleKey);
+            if (!config) return false;
+            return permissionSet.has(config.permission);
+        }
+
+        function validateModuleDeviceScopes(moduleDeviceScopes, selectedPermissions, assignedDevices) {
+            const normalizedScopes = normalizeModuleDeviceScopes(moduleDeviceScopes, assignedDevices);
+            const invalidScopeKeys = getEmptyCustomScopeModuleKeys(normalizedScopes, selectedPermissions);
+            if (invalidScopeKeys.length) {
+                const config = getDeviceScopedModuleConfig(invalidScopeKeys[0]);
+                return `${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`;
+            }
+            return '';
         }
 
         function getPermissionGroupConfig(groupKey) {
@@ -2131,6 +2885,7 @@
                 input.checked = checked;
             });
             refreshPermissionSelectionUi();
+            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function handlePermissionChildChange(groupKey) {
@@ -2160,6 +2915,7 @@
             }
 
             refreshPermissionSelectionUi();
+            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function updatePermissionSelectionStats() {
@@ -2206,6 +2962,7 @@
                 syncPermissionGroupVisibility(group.key);
             });
             updatePermissionSelectionStats();
+            renderModuleDeviceScopeRows();
         }
 
         function renderPermissionTree() {
@@ -2229,28 +2986,209 @@
             );
         }
 
-        function getMerchantOptions() {
-            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-            let source = customersData.filter((item) => item.status !== 'inactive').map((item) => ({ id: item.id, name: item.name }));
-            if (!source.length) {
-                source = defaultMerchants;
+        function syncModuleDeviceScopeStateWithAssignedDevices(showWarnings = false) {
+            const previousScopes = currentModuleDeviceScopes;
+            const normalizedModuleDeviceScopes = pruneModuleDeviceScopesToAssignedDevices(previousScopes, getAssignedDeviceIds());
+            const selectedPermissions = getSelectedPermissionValues();
+            const previousInvalidKeys = new Set(getEmptyCustomScopeModuleKeys(previousScopes, selectedPermissions));
+
+            currentModuleDeviceScopes = normalizedModuleDeviceScopes;
+
+            if (showWarnings) {
+                getEmptyCustomScopeModuleKeys(normalizedModuleDeviceScopes, selectedPermissions).forEach((moduleKey) => {
+                    if (!previousInvalidKeys.has(moduleKey)) {
+                        const config = getDeviceScopedModuleConfig(moduleKey);
+                        showToast(`${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`);
+                    }
+                });
             }
-            return source;
+
+            renderModuleDeviceScopeRows();
+            return normalizedModuleDeviceScopes;
         }
 
-        function resolveInitialMerchantId() {
-            const params = new URLSearchParams(window.location.search || '');
-            const merchantFromUrl = params.get('merchant');
-            const savedMerchantId = localStorage.getItem('currentMerchantId') || '';
-            const merchantIds = merchantOptions.map((item) => item.id);
+        function buildModuleScopeDeviceLabel(deviceId) {
+            const device = currentDeviceOptions.find((item) => item.id === deviceId);
+            if (!device) return deviceId;
+            return `${device.id}${device.locationLabel ? ` · ${device.locationLabel}` : ''}`;
+        }
 
-            if (merchantFromUrl && merchantIds.includes(merchantFromUrl)) {
-                return merchantFromUrl;
+        function renderModuleDeviceScopeRows() {
+            const container = document.getElementById('moduleDeviceScopeRows');
+            if (!container) return;
+
+            const assignedDeviceIds = getAssignedDeviceIds();
+            const availableModules = getAvailableScopedModulesForStep();
+            const invalidScopeKeys = new Set(getEmptyCustomScopeModuleKeys(currentModuleDeviceScopes));
+
+            if (!availableModules.length) {
+                container.innerHTML = '<div class="module-scope-empty">当前未勾选支持设备范围的页面，保存后默认使用全部可管理设备。</div>';
+                return;
             }
-            if (savedMerchantId && merchantIds.includes(savedMerchantId)) {
-                return savedMerchantId;
+
+            container.innerHTML = availableModules.map((config) => {
+                const scope = currentModuleDeviceScopes[config.moduleKey] || { mode: 'inherit', deviceIds: [] };
+                const selectedLabels = scope.deviceIds.map((deviceId) => buildModuleScopeDeviceLabel(deviceId));
+                const isWarning = invalidScopeKeys.has(config.moduleKey);
+                const scopeSummary = scope.mode === 'inherit'
+                    ? `当前可查看设备：全部可管理设备（${assignedDeviceIds.length} / ${assignedDeviceIds.length} 台）`
+                    : `当前可查看设备：已指定 ${scope.deviceIds.length} / ${assignedDeviceIds.length} 台设备`;
+                const selectedMarkup = scope.mode === 'inherit'
+                    ? '<span class="module-scope-chip">全部可管理设备</span>'
+                    : selectedLabels.length
+                        ? selectedLabels.slice(0, 3).map((label) => `<span class="module-scope-chip">${label}</span>`).join('') + (selectedLabels.length > 3 ? `<span class="module-scope-chip">+${selectedLabels.length - 3}台</span>` : '')
+                        : '<span class="module-scope-empty">暂未指定设备</span>';
+                const warningMarkup = isWarning
+                    ? `<div class="module-scope-warning">${config.label}页面已无可见设备，请重新选择范围或改回“全部可管理设备”。</div>`
+                    : '';
+
+                return `
+                    <div class="module-scope-row module-scope-row-compact ${isWarning ? 'is-warning' : ''}">
+                        <div class="module-scope-main">
+                            <div class="module-scope-header">
+                                <span class="module-scope-title">${config.label}</span>
+                                <span class="module-scope-status">已授权</span>
+                            </div>
+                            <div class="module-scope-summary">${scopeSummary}</div>
+                            ${warningMarkup}
+                            <div class="module-scope-selected">
+                                ${selectedMarkup}
+                            </div>
+                        </div>
+                        <div class="module-scope-controls">
+                            <button type="button" class="module-scope-mode ${scope.mode === 'inherit' ? 'is-active' : ''}" onclick="setModuleDeviceScopeMode('${config.moduleKey}', 'inherit')">全部可管理设备</button>
+                            <button type="button" class="module-scope-mode ${scope.mode === 'custom' ? 'is-active' : ''}" onclick="setModuleDeviceScopeMode('${config.moduleKey}', 'custom')">指定设备</button>
+                            <button type="button" class="module-scope-config-btn" ${scope.mode === 'custom' ? '' : 'disabled'} onclick="openModuleDeviceScopeSelector('${config.moduleKey}')">${scope.mode === 'custom' ? '重新选择' : '选择设备'}</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setModuleDeviceScopeMode(moduleKey, mode) {
+            const currentScope = currentModuleDeviceScopes[moduleKey] || { mode: 'inherit', deviceIds: [] };
+            const nextScope = {
+                mode: mode === 'custom' ? 'custom' : 'inherit',
+                deviceIds: mode === 'custom' ? currentScope.deviceIds || [] : []
+            };
+
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes({
+                ...currentModuleDeviceScopes,
+                [moduleKey]: nextScope
+            }, getAssignedDeviceIds());
+
+            renderModuleDeviceScopeRows();
+        }
+
+        function openModuleDeviceScopeSelector(moduleKey) {
+            const config = getDeviceScopedModuleConfig(moduleKey);
+            const assignedOptions = getAssignedDeviceOptions();
+            if (!config) return;
+
+            if (!assignedOptions.length) {
+                showToast('请先选择可管理设备');
+                return;
             }
-            return merchantIds[0] || '';
+
+            activeModuleScopeKey = moduleKey;
+            moduleScopeDeviceSelectionSet = new Set((currentModuleDeviceScopes[moduleKey] || { deviceIds: [] }).deviceIds || []);
+            moduleScopeSearchKeyword = '';
+            showOnlySelectedModuleScopeDevices = false;
+
+            const title = document.getElementById('moduleScopeSelectorTitle');
+            const searchInput = document.getElementById('moduleScopeSearchInput');
+            const selectedOnlyInput = document.getElementById('moduleScopeSelectedOnly');
+            if (title) {
+                title.textContent = `选择${config.label}页面可查看设备`;
+            }
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            if (selectedOnlyInput) {
+                selectedOnlyInput.checked = false;
+            }
+
+            document.getElementById('moduleScopeSelectorModal').classList.add('active');
+            renderModuleScopeDevicePickerList();
+        }
+
+        function closeModuleDeviceScopeSelector() {
+            activeModuleScopeKey = '';
+            document.getElementById('moduleScopeSelectorModal').classList.remove('active');
+        }
+
+        function renderModuleScopeDevicePickerList() {
+            const picker = document.getElementById('moduleScopeDevicePicker');
+            if (!picker) return;
+
+            const assignedOptions = getAssignedDeviceOptions();
+            if (!assignedOptions.length) {
+                picker.innerHTML = '<div class="device-empty">请先选择可管理设备</div>';
+                return;
+            }
+
+            const filteredDevices = assignedOptions.filter((device) => {
+                const searchableText = `${device.id} ${device.locationLabel}`.toLowerCase();
+                const matchedKeyword = !moduleScopeSearchKeyword || searchableText.includes(moduleScopeSearchKeyword);
+                const matchedSelected = !showOnlySelectedModuleScopeDevices || moduleScopeDeviceSelectionSet.has(device.id);
+                return matchedKeyword && matchedSelected;
+            });
+
+            if (!filteredDevices.length) {
+                picker.innerHTML = '<div class="device-empty">没有匹配的设备，请调整筛选条件</div>';
+                return;
+            }
+
+            picker.innerHTML = filteredDevices.map((device) => `
+                <label class="option-item device-option-item">
+                    <span class="device-option-meta">
+                        <span class="device-code">${device.id}</span>
+                        <span class="device-location">${device.locationLabel}</span>
+                    </span>
+                    <input type="checkbox" name="moduleScopeDevice" value="${device.id}" ${moduleScopeDeviceSelectionSet.has(device.id) ? 'checked' : ''} onchange="handleModuleScopeDeviceSelectionChange('${device.id}', this.checked)">
+                </label>
+            `).join('');
+        }
+
+        function handleModuleScopeSearch(keyword) {
+            moduleScopeSearchKeyword = String(keyword || '').trim().toLowerCase();
+            renderModuleScopeDevicePickerList();
+        }
+
+        function toggleModuleScopeSelectedOnly(checked) {
+            showOnlySelectedModuleScopeDevices = checked;
+            renderModuleScopeDevicePickerList();
+        }
+
+        function handleModuleScopeDeviceSelectionChange(deviceId, checked) {
+            if (checked) {
+                moduleScopeDeviceSelectionSet.add(deviceId);
+            } else {
+                moduleScopeDeviceSelectionSet.delete(deviceId);
+            }
+
+            if (showOnlySelectedModuleScopeDevices && !checked) {
+                renderModuleScopeDevicePickerList();
+            }
+        }
+
+        function saveModuleDeviceScopeSelection() {
+            if (!activeModuleScopeKey) {
+                closeModuleDeviceScopeSelector();
+                return;
+            }
+
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes({
+                ...currentModuleDeviceScopes,
+                [activeModuleScopeKey]: {
+                    mode: 'custom',
+                    deviceIds: Array.from(moduleScopeDeviceSelectionSet)
+                }
+            }, getAssignedDeviceIds());
+
+            closeModuleDeviceScopeSelector();
+            renderModuleDeviceScopeRows();
+            syncStaffModalProgress({ preferredStepKey: 'pageDeviceScopes' });
         }
 
         function getManagersByMerchant(merchantId) {
@@ -2301,9 +3239,18 @@
         function renderManagers() {
             const list = document.getElementById('managerList');
             const listTitle = document.getElementById('listTitle');
-            const currentMerchant = merchantOptions.find((item) => item.id === selectedMerchantId);
-            const merchantName = currentMerchant ? currentMerchant.name : '未选择商户';
-            listTitle.textContent = `${merchantName} · 管理人员列表`;
+            selectedMerchantId = getCurrentMerchantContext().merchantId;
+            listTitle.textContent = `${getCurrentMerchantContext().merchantName || '未获取登录商户'} · 管理人员列表`;
+
+            if (!selectedMerchantId) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <div>未获取登录商户信息，请重新登录后再试</div>
+                    </div>
+                `;
+                return;
+            }
 
             const filteredManagers = getManagersByMerchant(selectedMerchantId);
             if (!filteredManagers.length) {
@@ -2336,7 +3283,7 @@
                                     <div class="manager-meta">${manager.phone}</div>
                                     <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
                                     <div class="manager-device-summary">
-                                        <span class="manager-device-label">负责设备：</span>
+                                        <span class="manager-device-label">可管理设备：</span>
                                         <span class="manager-device-text">${deviceSummary.summaryText}</span>
                                         ${deviceSummary.toggleText ? `<button type="button" class="manager-device-toggle" onclick="toggleManagerDevices('${manager.id}')">${deviceSummary.toggleText}</button>` : ''}
                                     </div>
@@ -2355,6 +3302,12 @@
         }
 
         function updateStats() {
+            selectedMerchantId = getCurrentMerchantContext().merchantId;
+            if (!selectedMerchantId) {
+                document.getElementById('staffEnabledCount').textContent = '0';
+                document.getElementById('listHint').textContent = '未获取登录商户信息';
+                return;
+            }
             const filteredManagers = getManagersByMerchant(selectedMerchantId);
             const enabledCount = filteredManagers.filter((item) => item.accountEnabled !== false).length;
 
@@ -2363,20 +3316,24 @@
         }
 
         function openStaffModal() {
-            if (!selectedMerchantId) {
-                showToast('请先选择商户');
+            selectedMerchantId = getCurrentMerchantContext().merchantId;
+            if (!selectedMerchantId || !getCurrentMerchantContext().merchantName) {
+                showToast('未获取登录商户信息');
                 return;
             }
             closeDeviceSelector();
+            closeModuleDeviceScopeSelector();
             editingStaffId = null;
             updateStaffModalState();
             resetStaffForm();
             renderDevicePicker(selectedMerchantId, []);
+            syncStaffModalProgress({ preferredStepKey: 'manageableDevices' });
             document.getElementById('staffModal').classList.add('active');
         }
 
         function closeStaffModal() {
             closeDeviceSelector();
+            closeModuleDeviceScopeSelector();
             document.getElementById('staffModal').classList.remove('active');
         }
 
@@ -2386,12 +3343,13 @@
                 showToast('未找到可编辑人员');
                 return;
             }
-            selectedMerchantId = targetStaff.merchantId || selectedMerchantId;
             editingStaffId = staffId;
             updateStaffModalState();
             fillStaffForm(targetStaff);
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
+            closeModuleDeviceScopeSelector();
+            syncStaffModalProgress({ preferredStepKey: 'manageableDevices' });
             document.getElementById('staffModal').classList.add('active');
         }
 
@@ -2437,6 +3395,9 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
+            currentModuleDeviceScopes = createDefaultModuleDeviceScopes();
+            currentStaffModalStep = 'manageableDevices';
+            completedStaffModalSteps = new Set();
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = false;
@@ -2444,11 +3405,15 @@
 
             expandedPermissionGroups.clear();
             renderPermissionTree();
+            updateStaffModalStepUi();
         }
 
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
+            currentStaffModalStep = 'manageableDevices';
+            completedStaffModalSteps = new Set();
 
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
@@ -2456,6 +3421,7 @@
             });
             expandedPermissionGroups.clear();
             renderPermissionTree();
+            updateStaffModalStepUi();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -2562,6 +3528,7 @@
                 onlySelectedInput.checked = false;
             }
             renderDevicePickerList();
+            syncModuleDeviceScopeStateWithAssignedDevices(false);
         }
 
         function openDeviceSelector() {
@@ -2627,14 +3594,19 @@
             }
             if (showOnlySelectedDevices && !checked) {
                 renderDevicePickerList();
+                syncModuleDeviceScopeStateWithAssignedDevices(true);
                 return;
             }
             renderDeviceSelectionSummary();
+            syncModuleDeviceScopeStateWithAssignedDevices(true);
+            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function removeSelectedDevice(deviceId) {
             deviceSelectionSet.delete(deviceId);
             renderDevicePickerList();
+            syncModuleDeviceScopeStateWithAssignedDevices(true);
+            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function renderDeviceSelectionSummary() {
@@ -2647,7 +3619,7 @@
 
             const selectedDevices = currentDeviceOptions.filter((device) => deviceSelectionSet.has(device.id));
             if (!selectedDevices.length) {
-                summary.innerHTML = '<span class="summary-empty">暂未选择设备</span>';
+                summary.innerHTML = '<span class="summary-empty">暂未选择可管理设备</span>';
                 return;
             }
 
@@ -2660,48 +3632,53 @@
         }
 
         function saveStaff() {
+            selectedMerchantId = getCurrentMerchantContext().merchantId;
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
+            const merchantName = getCurrentMerchantContext().merchantName || '';
+            const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
 
-            if (!username || !phone) {
-                showToast('请填写用户名和手机号');
+            if (!selectedMerchantId || !merchantName) {
+                showToast('未获取登录商户信息');
                 return;
             }
 
-            if (!/^1\d{10}$/.test(phone)) {
-                showToast('请输入正确的手机号');
+            const validationResult = resolveStaffModalValidationResult({
+                username,
+                phone,
+                selectedPermissions,
+                selectedDevices,
+                moduleDeviceScopes: normalizedModuleDeviceScopes
+            });
+            if (validationResult.message) {
+                if (validationResult.stepKey) {
+                    currentStaffModalStep = validationResult.stepKey;
+                    updateStaffModalStepUi();
+                }
+                showToast(validationResult.message);
                 return;
             }
 
-            if (!selectedPermissions.length) {
-                showToast('请至少选择一个权限');
-                return;
-            }
-
-            if (!selectedDevices.length) {
-                showToast('请至少选择一个负责设备号');
-                return;
-            }
-
-            const merchantName = merchantOptions.find((item) => item.id === selectedMerchantId)?.name || '';
             const staffPayload = {
                 merchantId: selectedMerchantId,
                 merchantName,
                 username,
                 phone,
                 permissions: selectedPermissions,
-                devices: selectedDevices
+                devices: selectedDevices,
+                moduleDeviceScopes: normalizedModuleDeviceScopes
             };
 
+            let nextStaffManagersData = staffManagersData.slice();
             if (editingStaffId) {
                 const staffIndex = staffManagersData.findIndex((item) => item.id === editingStaffId);
                 if (staffIndex === -1) {
                     showToast('未找到可编辑人员');
                     return;
                 }
-                staffManagersData[staffIndex] = {
+                nextStaffManagersData[staffIndex] = {
                     ...staffManagersData[staffIndex],
                     ...staffPayload,
                     devices: selectedDevices
@@ -2713,9 +3690,17 @@
                     accountEnabled: true,
                     createdAt: new Date().toISOString().slice(0, 10)
                 };
-                staffManagersData.unshift(newStaff);
+                nextStaffManagersData.unshift(newStaff);
             }
-            localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
+
+            try {
+                localStorage.setItem('staffManagersData', JSON.stringify(nextStaffManagersData));
+            } catch (error) {
+                showToast('保存失败，请稍后重试');
+                return;
+            }
+
+            staffManagersData = nextStaffManagersData;
             closeStaffModal();
             renderManagers();
             updateStats();
