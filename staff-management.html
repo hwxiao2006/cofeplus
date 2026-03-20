@@ -262,10 +262,16 @@
         .mobile-header {
             display: none;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
             padding: 12px 16px;
             background: #fff;
             border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-header-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
         .menu-btn {
@@ -301,10 +307,23 @@
             gap: 4px;
         }
 
+        .header-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .header-title {
             font-size: 22px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .header-desc {
@@ -804,51 +823,160 @@
             flex: none;
         }
 
-        .permission-tree {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
+        .permission-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
-        .permission-group-card {
-            border: 1px solid #e5eef5;
-            border-radius: 10px;
-            padding: 12px;
-            background: linear-gradient(180deg, #ffffff, #fbfdff);
+        .permission-section-note {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .permission-selection-stats {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #eef9f7;
+            color: #17827a;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .permission-tree {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .permission-group-row {
+            border: 1px solid #e6edf2;
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .permission-group-row[data-selected="true"] {
+            border-color: #d6ece7;
+        }
+
+        .permission-group-row[data-expanded="true"] {
+            background: #fcfefe;
+            box-shadow: 0 6px 18px rgba(15, 118, 110, 0.05);
+        }
+
+        .permission-group-main {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
         }
 
         .permission-group-head {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            gap: 8px;
             margin: 0;
+            min-width: 132px;
         }
 
         .permission-group-title {
             font-size: 14px;
             font-weight: 700;
             color: var(--text-primary);
+            white-space: nowrap;
         }
 
         .permission-group-checkbox {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             accent-color: var(--primary-dark);
             flex: none;
+            margin: 0;
         }
 
-        .permission-child-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+        .permission-group-trigger,
+        .permission-group-count {
+            border: 0;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .permission-group-trigger {
+            min-width: 0;
+            text-align: left;
+        }
+
+        .permission-group-summary-text {
+            display: block;
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .permission-group-row[data-selected="true"] .permission-group-summary-text {
+            color: #1f766f;
+            font-weight: 600;
+        }
+
+        .permission-group-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .permission-group-row[data-selected="true"] .permission-group-count {
+            color: #17827a;
+        }
+
+        .permission-group-options {
+            display: flex;
+            flex-wrap: wrap;
             gap: 8px;
+            padding: 0 12px 10px 36px;
+            border-top: 1px solid #f1f5f9;
         }
 
-        .permission-option-item {
-            min-height: 44px;
+        .permission-group-options[hidden] {
+            display: none;
+        }
+
+        .permission-inline-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 30px;
+            padding: 6px 10px;
+            border: 1px solid #e5eef5;
+            border-radius: 999px;
+            background: #fff;
+            font-size: 12px;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .permission-inline-option input {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            accent-color: var(--primary-dark);
+            flex: none;
         }
 
         .device-picker-entry {
@@ -1081,6 +1209,34 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-left {
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .header-title {
+                display: none;
+            }
+
+            .header-desc {
+                font-size: 14px;
+                line-height: 1.35;
+                color: #475569;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
         @media (max-width: 680px) {
             .header-right {
                 width: 100%;
@@ -1158,12 +1314,34 @@
                 padding: 7px 9px;
             }
 
-            .permission-tree {
-                grid-template-columns: 1fr;
+            .permission-section-head {
+                flex-wrap: wrap;
+                align-items: center;
             }
 
-            .permission-child-grid {
-                grid-template-columns: 1fr;
+            .permission-group-main {
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: start;
+                row-gap: 4px;
+            }
+
+            .permission-group-head {
+                min-width: 0;
+            }
+
+            .permission-group-trigger {
+                grid-column: 1 / 2;
+                padding-left: 24px;
+            }
+
+            .permission-group-count {
+                grid-column: 2 / 3;
+                grid-row: 1 / span 2;
+                align-self: center;
+            }
+
+            .permission-group-options {
+                padding: 0 12px 10px 12px;
             }
 
             .device-code {
@@ -1243,13 +1421,17 @@
         <main class="main">
             <div class="mobile-header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                <strong>人员管理</strong>
+                <strong class="mobile-header-title">人员管理</strong>
             </div>
 
             <header class="header">
                 <div class="header-left">
-                    <h1 class="header-title">人员管理</h1>
-                    <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
+                    <div class="header-title-wrapper">
+                        <h1 class="header-title">人员管理</h1>
+                        <div class="header-meta">
+                            <span class="header-desc">列出当前商户下所有管理人员，支持按截图表单新增人员</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="header-right">
                     <button type="button" class="btn btn-primary" onclick="openStaffModal()">
@@ -1296,113 +1478,129 @@
                             <label class="form-label" for="staffPhone">手机号</label>
                             <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
                         </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="opsAuthHint">运维小程序授权</label>
-                            <div class="auth-row">
-                                <input type="text" class="form-input" id="opsAuthHint" value="扫码后自动写入下方 openId" readonly>
-                                <button type="button" class="auth-btn" onclick="mockAuthorize('ops')">扫码授权</button>
-                            </div>
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="opsOpenid">openId</label>
-                            <input type="text" class="form-input" id="opsOpenid" placeholder="请输入您的openId">
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="wechatAuthHint">微信公众号推送授权</label>
-                            <div class="auth-row">
-                                <input type="text" class="form-input" id="wechatAuthHint" value="扫码后自动写入下方 openId" readonly>
-                                <button type="button" class="auth-btn" onclick="mockAuthorize('wechat')">扫码授权</button>
-                            </div>
-                        </div>
-                        <div class="form-item form-col-full">
-                            <label class="form-label" for="wechatOpenid">openId</label>
-                            <input type="text" class="form-input" id="wechatOpenid" placeholder="请输入您的openId">
-                        </div>
                     </div>
                 </section>
 
                 <section class="section-block">
-                    <div class="section-title">菜单权限配置<span class="required">*</span>(至少选择一个)</div>
+                    <div class="permission-section-head">
+                        <div>
+                            <div class="section-title">菜单权限配置<span class="required">*</span>(至少选择一个)</div>
+                            <p class="permission-section-note">按模块快速勾选，一屏完成。</p>
+                        </div>
+                        <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                    </div>
                     <div class="permission-tree" id="permissionTree">
-                        <div class="permission-group-card" data-permission-group="overview">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">总览</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="overview" onchange="handlePermissionParentChange('overview', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看总览</span><input type="checkbox" name="permission" value="ops.overview" data-permission-group-child="overview" onchange="handlePermissionChildChange('overview')"></label>
+                        <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="overview" onchange="handlePermissionParentChange('overview', this.checked)">
+                                    <span class="permission-group-title">总览</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('overview')">
+                                    <span class="permission-group-summary-text" data-permission-summary="overview">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="overview" onclick="togglePermissionGroup('overview')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-overview" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.overview" data-permission-group-child="overview" onchange="handlePermissionChildChange('overview')"><span>查看总览</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="devices">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">设备</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="devices" onchange="handlePermissionParentChange('devices', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看设备</span><input type="checkbox" name="permission" value="ops.devices" data-permission-group-child="devices" onchange="handlePermissionChildChange('devices')"></label>
+                        <div class="permission-group-row" data-permission-group="devices" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="devices" onchange="handlePermissionParentChange('devices', this.checked)">
+                                    <span class="permission-group-title">设备</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('devices')">
+                                    <span class="permission-group-summary-text" data-permission-summary="devices">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="devices" onclick="togglePermissionGroup('devices')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-devices" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.devices" data-permission-group-child="devices" onchange="handlePermissionChildChange('devices')"><span>查看设备</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="products">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">商品管理</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="products" onchange="handlePermissionParentChange('products', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看商品管理</span><input type="checkbox" name="permission" value="ops.products" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
-                                <label class="option-item permission-option-item"><span>新增语言</span><input type="checkbox" name="permission" value="ops.products.language" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
-                                <label class="option-item permission-option-item"><span>更改币种</span><input type="checkbox" name="permission" value="ops.products.currency" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
-                                <label class="option-item permission-option-item"><span>编辑商品</span><input type="checkbox" name="permission" value="ops.products.edit" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
-                                <label class="option-item permission-option-item"><span>编辑配方</span><input type="checkbox" name="permission" value="ops.products.recipe" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"></label>
+                        <div class="permission-group-row" data-permission-group="products" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="products" onchange="handlePermissionParentChange('products', this.checked)">
+                                    <span class="permission-group-title">商品管理</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('products')">
+                                    <span class="permission-group-summary-text" data-permission-summary="products">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="products" onclick="togglePermissionGroup('products')">0/5</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-products" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>查看商品管理</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.language" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>新增语言</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.currency" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>更改币种</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.edit" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>编辑商品</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products.recipe" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>编辑配方</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="materials">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">物料</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="materials" onchange="handlePermissionParentChange('materials', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看物料</span><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"></label>
+                        <div class="permission-group-row" data-permission-group="materials" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="materials" onchange="handlePermissionParentChange('materials', this.checked)">
+                                    <span class="permission-group-title">物料</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('materials')">
+                                    <span class="permission-group-summary-text" data-permission-summary="materials">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="materials" onclick="togglePermissionGroup('materials')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-materials" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"><span>查看物料</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="orders">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">订单</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="orders" onchange="handlePermissionParentChange('orders', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看订单</span><input type="checkbox" name="permission" value="ops.orders" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"></label>
-                                <label class="option-item permission-option-item"><span>订单退款</span><input type="checkbox" name="permission" value="ops.orders.refund" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"></label>
+                        <div class="permission-group-row" data-permission-group="orders" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="orders" onchange="handlePermissionParentChange('orders', this.checked)">
+                                    <span class="permission-group-title">订单</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('orders')">
+                                    <span class="permission-group-summary-text" data-permission-summary="orders">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="orders" onclick="togglePermissionGroup('orders')">0/2</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-orders" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.orders" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"><span>查看订单</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.orders.refund" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"><span>订单退款</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="faults">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">故障列表</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="faults" onchange="handlePermissionParentChange('faults', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看故障列表</span><input type="checkbox" name="permission" value="ops.faults" data-permission-group-child="faults" onchange="handlePermissionChildChange('faults')"></label>
+                        <div class="permission-group-row" data-permission-group="faults" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="faults" onchange="handlePermissionParentChange('faults', this.checked)">
+                                    <span class="permission-group-title">故障列表</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('faults')">
+                                    <span class="permission-group-summary-text" data-permission-summary="faults">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="faults" onclick="togglePermissionGroup('faults')">0/1</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-faults" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.faults" data-permission-group-child="faults" onchange="handlePermissionChildChange('faults')"><span>查看故障列表</span></label>
                             </div>
                         </div>
-                        <div class="permission-group-card" data-permission-group="staff">
-                            <label class="permission-group-head">
-                                <span class="permission-group-title">人员管理</span>
-                                <input type="checkbox" class="permission-group-checkbox" data-permission-parent="staff" onchange="handlePermissionParentChange('staff', this.checked)">
-                            </label>
-                            <div class="permission-child-grid">
-                                <label class="option-item permission-option-item"><span>查看人员管理</span><input type="checkbox" name="permission" value="ops.staff" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"></label>
-                                <label class="option-item permission-option-item"><span>人员维护</span><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"></label>
+                        <div class="permission-group-row" data-permission-group="staff" data-selected="false" data-expanded="false">
+                            <div class="permission-group-main">
+                                <label class="permission-group-head">
+                                    <input type="checkbox" class="permission-group-checkbox" data-permission-parent="staff" onchange="handlePermissionParentChange('staff', this.checked)">
+                                    <span class="permission-group-title">人员管理</span>
+                                </label>
+                                <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('staff')">
+                                    <span class="permission-group-summary-text" data-permission-summary="staff">点击选择权限</span>
+                                </button>
+                                <button type="button" class="permission-group-count" data-permission-count="staff" onclick="togglePermissionGroup('staff')">0/2</button>
+                            </div>
+                            <div class="permission-group-options" id="permissionOptions-staff" hidden>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>查看人员管理</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>人员维护</span></label>
                             </div>
                         </div>
-                    </div>
-                </section>
-
-                <section class="section-block">
-                    <div class="section-title">公众号推送</div>
-                    <div class="option-grid">
-                        <label class="option-item"><span>无需推送</span><input type="checkbox" name="push" value="none" checked onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>运维消息推送</span><input type="checkbox" name="push" value="ops" onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>维修消息推送</span><input type="checkbox" name="push" value="repair" onchange="handlePushOptionChange(this)"></label>
-                        <label class="option-item"><span>管理员消息推送</span><input type="checkbox" name="push" value="admin" onchange="handlePushOptionChange(this)"></label>
                     </div>
                 </section>
 
@@ -1668,6 +1866,7 @@
         let selectedMerchantId = '';
         let editingStaffId = null;
         let expandedDeviceStaffIds = new Set();
+        let expandedPermissionGroups = new Set();
         let currentDeviceOptions = [];
         let deviceSelectionSet = new Set();
         let deviceSearchKeyword = '';
@@ -1785,10 +1984,7 @@
                 username: '王运维',
                 phone: '13800138021',
                 accountEnabled: true,
-                opsOpenid: 'ops_wang_001',
-                wechatOpenid: 'wx_wang_001',
                 permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
-                pushChannels: ['ops', 'admin'],
                 devices: ['RCK386', 'RCK385'],
                 createdAt: '2026-02-15'
             },
@@ -1799,10 +1995,7 @@
                 username: '李财务',
                 phone: '13800138022',
                 accountEnabled: false,
-                opsOpenid: '',
-                wechatOpenid: 'wx_li_001',
                 permissions: ['ops.orders'],
-                pushChannels: ['none'],
                 devices: ['RCK384'],
                 createdAt: '2026-02-17'
             },
@@ -1813,10 +2006,7 @@
                 username: '张维修',
                 phone: '13800138023',
                 accountEnabled: true,
-                opsOpenid: 'ops_zhang_002',
-                wechatOpenid: '',
                 permissions: ['ops.devices', 'ops.faults'],
-                pushChannels: ['repair'],
                 devices: ['RCK410', 'RCK406'],
                 createdAt: '2026-02-18'
             }
@@ -1910,6 +2100,22 @@
             return document.querySelector(`[data-permission-parent="${groupKey}"]`);
         }
 
+        function getPermissionGroupRow(groupKey) {
+            return document.querySelector(`.permission-group-row[data-permission-group="${groupKey}"]`);
+        }
+
+        function getPermissionSummaryNode(groupKey) {
+            return document.querySelector(`[data-permission-summary="${groupKey}"]`);
+        }
+
+        function getPermissionCountNode(groupKey) {
+            return document.querySelector(`[data-permission-count="${groupKey}"]`);
+        }
+
+        function getPermissionOptionsPanel(groupKey) {
+            return document.getElementById(`permissionOptions-${groupKey}`);
+        }
+
         function syncPermissionParentState(groupKey) {
             const childInputs = getPermissionChildInputs(groupKey);
             const parentInput = getPermissionParentInput(groupKey);
@@ -1924,14 +2130,14 @@
             getPermissionChildInputs(groupKey).forEach((input) => {
                 input.checked = checked;
             });
-            syncPermissionParentState(groupKey);
+            refreshPermissionSelectionUi();
         }
 
         function handlePermissionChildChange(groupKey) {
             const group = getPermissionGroupConfig(groupKey);
             const childInputs = getPermissionChildInputs(groupKey);
             if (!group || !childInputs.length) {
-                syncPermissionParentState(groupKey);
+                refreshPermissionSelectionUi();
                 return;
             }
 
@@ -1953,12 +2159,67 @@
                 }
             }
 
-            syncPermissionParentState(groupKey);
+            refreshPermissionSelectionUi();
+        }
+
+        function updatePermissionSelectionStats() {
+            const stats = document.getElementById('permissionSelectionStats');
+            if (!stats) return;
+            const totalSelected = getSelectedPermissionValues().length;
+            stats.textContent = `${totalSelected}项已选`;
+        }
+
+        function updatePermissionGroupDisplay(groupKey) {
+            const group = getPermissionGroupConfig(groupKey);
+            const row = getPermissionGroupRow(groupKey);
+            const summaryNode = getPermissionSummaryNode(groupKey);
+            const countNode = getPermissionCountNode(groupKey);
+            const childInputs = getPermissionChildInputs(groupKey);
+            if (!group || !row || !summaryNode || !countNode || !childInputs.length) return;
+
+            const checkedValues = childInputs.filter((input) => input.checked).map((input) => input.value);
+            const checkedLabels = group.children
+                .filter((child) => checkedValues.includes(child.value))
+                .map((child) => child.label);
+
+            summaryNode.textContent = checkedLabels.length ? checkedLabels.join(' · ') : '点击选择权限';
+            countNode.textContent = `${checkedLabels.length}/${group.children.length}`;
+            row.setAttribute('data-selected', checkedLabels.length ? 'true' : 'false');
+        }
+
+        function syncPermissionGroupVisibility(groupKey) {
+            const row = getPermissionGroupRow(groupKey);
+            const optionsPanel = getPermissionOptionsPanel(groupKey);
+            const expanded = expandedPermissionGroups.has(groupKey);
+            if (row) {
+                row.setAttribute('data-expanded', expanded ? 'true' : 'false');
+            }
+            if (optionsPanel) {
+                optionsPanel.hidden = !expanded;
+            }
+        }
+
+        function refreshPermissionSelectionUi() {
+            permissionTreeGroups.forEach((group) => {
+                syncPermissionParentState(group.key);
+                updatePermissionGroupDisplay(group.key);
+                syncPermissionGroupVisibility(group.key);
+            });
+            updatePermissionSelectionStats();
         }
 
         function renderPermissionTree() {
+            refreshPermissionSelectionUi();
+        }
+
+        function togglePermissionGroup(groupKey) {
+            if (expandedPermissionGroups.has(groupKey)) {
+                expandedPermissionGroups.delete(groupKey);
+            } else {
+                expandedPermissionGroups = new Set([groupKey]);
+            }
             permissionTreeGroups.forEach((group) => {
-                syncPermissionParentState(group.key);
+                syncPermissionGroupVisibility(group.key);
             });
         }
 
@@ -2176,41 +2437,25 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
-            document.getElementById('opsOpenid').value = '';
-            document.getElementById('wechatOpenid').value = '';
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = false;
             });
 
-            document.querySelectorAll('input[name="push"]').forEach((input) => {
-                input.checked = input.value === 'none';
-            });
-
+            expandedPermissionGroups.clear();
             renderPermissionTree();
         }
 
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
-            document.getElementById('opsOpenid').value = targetStaff.opsOpenid || '';
-            document.getElementById('wechatOpenid').value = targetStaff.wechatOpenid || '';
 
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
+            expandedPermissionGroups.clear();
             renderPermissionTree();
-
-            const pushSet = new Set(targetStaff.pushChannels || []);
-            document.querySelectorAll('input[name="push"]').forEach((input) => {
-                input.checked = pushSet.has(input.value);
-            });
-            if (!pushSet.size) {
-                document.querySelectorAll('input[name="push"]').forEach((input) => {
-                    input.checked = input.value === 'none';
-                });
-            }
         }
 
         function buildMerchantAliases(merchantId) {
@@ -2414,48 +2659,11 @@
             summary.innerHTML = chips + moreText;
         }
 
-        function handlePushOptionChange(changedInput) {
-            const pushInputs = Array.from(document.querySelectorAll('input[name="push"]'));
-            if (changedInput.value === 'none' && changedInput.checked) {
-                pushInputs.forEach((input) => {
-                    if (input !== changedInput) {
-                        input.checked = false;
-                    }
-                });
-                return;
-            }
-
-            if (changedInput.value !== 'none' && changedInput.checked) {
-                const noneInput = pushInputs.find((input) => input.value === 'none');
-                if (noneInput) {
-                    noneInput.checked = false;
-                }
-            }
-
-            const checkedCount = pushInputs.filter((input) => input.checked).length;
-            if (!checkedCount) {
-                const noneInput = pushInputs.find((input) => input.value === 'none');
-                if (noneInput) {
-                    noneInput.checked = true;
-                }
-            }
-        }
-
-        function mockAuthorize(type) {
-            const fieldId = type === 'ops' ? 'opsOpenid' : 'wechatOpenid';
-            const value = `${type}_` + Math.random().toString(36).slice(2, 12);
-            document.getElementById(fieldId).value = value;
-            showToast('已模拟扫码授权');
-        }
-
         function saveStaff() {
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
-            const opsOpenid = document.getElementById('opsOpenid').value.trim();
-            const wechatOpenid = document.getElementById('wechatOpenid').value.trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
-            let selectedPushChannels = Array.from(document.querySelectorAll('input[name="push"]:checked')).map((input) => input.value);
 
             if (!username || !phone) {
                 showToast('请填写用户名和手机号');
@@ -2477,24 +2685,13 @@
                 return;
             }
 
-            if (!selectedPushChannels.length) {
-                selectedPushChannels = ['none'];
-            }
-
-            if (selectedPushChannels.includes('none') && selectedPushChannels.length > 1) {
-                selectedPushChannels = ['none'];
-            }
-
             const merchantName = merchantOptions.find((item) => item.id === selectedMerchantId)?.name || '';
             const staffPayload = {
                 merchantId: selectedMerchantId,
                 merchantName,
                 username,
                 phone,
-                opsOpenid,
-                wechatOpenid,
                 permissions: selectedPermissions,
-                pushChannels: selectedPushChannels,
                 devices: selectedDevices
             };
 

@@ -8,6 +8,7 @@ const pageFiles = [
   'device-entry.html',
   'devices.html',
   'faults.html',
+  'login-paper.html',
   'locations.html',
   'materials-orders.html',
   'materials-refill.html',
