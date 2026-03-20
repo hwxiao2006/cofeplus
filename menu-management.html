@@ -1096,7 +1096,7 @@
 
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 16px;
             margin-bottom: 16px;
         }
@@ -1179,6 +1179,49 @@
             gap: 6px;
             flex: 1;
             justify-content: center;
+        }
+
+        .settings-scope-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eef8f8;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .settings-contact-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .settings-contact-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .settings-contact-field span {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .settings-contact-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .settings-contact-status.is-dirty {
+            color: #c2410c;
+            font-weight: 700;
         }
 
         .settings-device-lang-panel .lang-tag {
@@ -3561,6 +3604,77 @@
             background: #fafcfd;
         }
 
+        .order-preview-products-contact {
+            margin-top: 14px;
+        }
+
+        .order-preview-detail-contact {
+            margin-top: 14px;
+        }
+
+        .order-preview-contact-card {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 14px;
+            background: linear-gradient(180deg, #fcfefe 0%, #f5fbfb 100%);
+            padding: 12px;
+        }
+
+        .order-preview-contact-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .order-preview-contact-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            line-height: 1.45;
+        }
+
+        .order-preview-contact-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .order-preview-contact-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(14, 35, 52, 0.06);
+        }
+
+        .order-preview-contact-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .order-preview-contact-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .order-preview-contact-placeholder {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px dashed rgba(14, 35, 52, 0.12);
+            background: rgba(255, 255, 255, 0.82);
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
         .order-preview-detail-overlay {
             position: absolute;
             inset: 0;
@@ -4468,6 +4582,10 @@
                 align-items: stretch;
             }
 
+            .settings-contact-form {
+                grid-template-columns: 1fr;
+            }
+
             .settings-add-lang-btn {
                 width: 100%;
             }
@@ -4753,6 +4871,15 @@
                 font-size: 13px;
             }
 
+            .order-preview-contact-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-preview-contact-value {
+                text-align: left;
+            }
+
             .overlay {
                 display: none;
                 position: fixed;
@@ -5013,18 +5140,18 @@
                         </div>
                     </div>
                     <div class="menu-inner-tabs">
-                        <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('settings')">基本设置</button>
-                        <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('settings')">基本设置</button>
                         <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
                     </div>
 
-                    <div id="menuSettingsPanel" class="menu-inner-panel active">
+                    <div id="menuSettingsPanel" class="menu-inner-panel">
                         <div class="settings-grid">
                             <section class="settings-card settings-card-language">
                                 <div class="settings-card-head">
                                     <div class="settings-card-copy">
                                         <h3 class="settings-title">设备语言</h3>
-                                        <p class="settings-desc">配置当前设备点单屏支持语言</p>
+                                        <p class="settings-desc">当前设备生效，配置该设备点单屏支持语言</p>
                                     </div>
                                     <button class="add-lang-mini-btn add-lang-inline-btn settings-add-lang-btn settings-card-action" onclick="openLangModal()">编辑</button>
                                 </div>
@@ -5037,9 +5164,29 @@
                                     </div>
                                 </div>
                             </section>
+                            <section class="settings-card settings-card-contact">
+                                <div class="settings-card-head">
+                                    <div class="settings-card-copy">
+                                        <h3 class="settings-title">点单屏联系信息</h3>
+                                        <p class="settings-desc">当前设备生效，切换设备后显示该设备自己的客服电话与客服邮箱</p>
+                                    </div>
+                                    <div class="settings-scope-pill" id="orderContactScopeSummary">当前设备生效</div>
+                                </div>
+                                <div class="settings-contact-form">
+                                    <label class="settings-contact-field">
+                                        <span>客服电话</span>
+                                        <input type="tel" class="form-input" id="orderContactPhoneInput" placeholder="例如 400-800-1234" oninput="handleOrderContactInputChange()">
+                                    </label>
+                                    <label class="settings-contact-field">
+                                        <span>客服邮箱</span>
+                                        <input type="email" class="form-input" id="orderContactEmailInput" placeholder="例如 support@example.com" oninput="handleOrderContactInputChange()">
+                                    </label>
+                                </div>
+                                <div class="settings-contact-status" id="orderContactStatusText">当前设备暂未配置联系信息</div>
+                            </section>
                             <section class="settings-card">
                                 <h3 class="settings-title">售价币种</h3>
-                                <p class="settings-desc">统一菜单商品显示币种</p>
+                                <p class="settings-desc">全局生效，统一菜单商品显示币种</p>
                                 <select class="form-select settings-select" id="globalCurrencySelect" onchange="updatePricingSummary()">
                                     <option value="CNY">CNY (¥)</option>
                                     <option value="USD">USD ($)</option>
@@ -5050,7 +5197,7 @@
                             </section>
                             <section class="settings-card">
                                 <h3 class="settings-title">税率设置</h3>
-                                <p class="settings-desc">勾选后前台默认显示税后价格，并展示税前价格</p>
+                                <p class="settings-desc">全局生效，勾选后前台默认显示税后价格，并展示税前价格</p>
                                 <div class="settings-tax-row settings-tax-inline-row">
                                     <label class="settings-checkbox">
                                         <input type="checkbox" id="globalTaxEnabled" onchange="toggleGlobalTaxRateInput()">
@@ -5073,7 +5220,7 @@
                         </div>
                     </div>
 
-                    <div id="menuManagePanel" class="menu-inner-panel">
+                    <div id="menuManagePanel" class="menu-inner-panel active">
                         <div class="stats-bar">
                             <div class="stat-card">
                                 <div class="stat-icon blue">☕</div>
@@ -5794,7 +5941,10 @@
             en: 'English'
         };
         const DEVICE_LANGUAGE_CONFIG_STORAGE_PREFIX = 'deviceLanguageConfig_';
+        const DEVICE_ORDER_CONTACT_CONFIG_STORAGE_PREFIX = 'deviceOrderContactConfig_';
         const hydratedDeviceLanguageConfigIds = new Set();
+        const hydratedDeviceOrderContactConfigIds = new Set();
+        const deviceOrderContactConfig = {};
         const DEVICE_LANGUAGE_PRESET_LIBRARY = [
             {
                 langs: ['zh', 'en'],
@@ -5947,6 +6097,171 @@
             return device;
         }
 
+        function createDefaultDeviceOrderContactConfig() {
+            return {
+                phone: '',
+                email: ''
+            };
+        }
+
+        function normalizeDeviceOrderContactConfig(config) {
+            return {
+                phone: typeof config?.phone === 'string' ? config.phone.trim() : '',
+                email: typeof config?.email === 'string' ? config.email.trim() : ''
+            };
+        }
+
+        function isSameDeviceOrderContactConfig(left, right) {
+            const normalizedLeft = normalizeDeviceOrderContactConfig(left);
+            const normalizedRight = normalizeDeviceOrderContactConfig(right);
+            return normalizedLeft.phone === normalizedRight.phone
+                && normalizedLeft.email === normalizedRight.email;
+        }
+
+        function getDeviceOrderContactConfigStorageKey(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            return normalizedDeviceId ? `${DEVICE_ORDER_CONTACT_CONFIG_STORAGE_PREFIX}${normalizedDeviceId}` : '';
+        }
+
+        function readStoredDeviceOrderContactConfig(deviceId = currentDevice) {
+            const storageKey = getDeviceOrderContactConfigStorageKey(deviceId);
+            if (!storageKey) return null;
+            try {
+                const raw = localStorage.getItem(storageKey);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object'
+                    ? normalizeDeviceOrderContactConfig(parsed)
+                    : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function ensureDeviceOrderContactConfig(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) {
+                return createDefaultDeviceOrderContactConfig();
+            }
+
+            if (!hydratedDeviceOrderContactConfigIds.has(normalizedDeviceId)) {
+                deviceOrderContactConfig[normalizedDeviceId] = normalizeDeviceOrderContactConfig(
+                    readStoredDeviceOrderContactConfig(normalizedDeviceId)
+                );
+                hydratedDeviceOrderContactConfigIds.add(normalizedDeviceId);
+            }
+
+            const normalized = normalizeDeviceOrderContactConfig(deviceOrderContactConfig[normalizedDeviceId]);
+            deviceOrderContactConfig[normalizedDeviceId] = normalized;
+            return normalized;
+        }
+
+        function persistDeviceOrderContactConfig(deviceId = currentDevice, nextConfig = null) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (!normalizedDeviceId) return createDefaultDeviceOrderContactConfig();
+
+            const normalized = normalizeDeviceOrderContactConfig(nextConfig || deviceOrderContactConfig[normalizedDeviceId]);
+            deviceOrderContactConfig[normalizedDeviceId] = normalized;
+            hydratedDeviceOrderContactConfigIds.add(normalizedDeviceId);
+            try {
+                localStorage.setItem(getDeviceOrderContactConfigStorageKey(normalizedDeviceId), JSON.stringify(normalized));
+            } catch (e) {
+                // ignore localStorage errors
+            }
+            return normalized;
+        }
+
+        function readOrderContactFormValue() {
+            return normalizeDeviceOrderContactConfig({
+                phone: document.getElementById('orderContactPhoneInput')?.value || '',
+                email: document.getElementById('orderContactEmailInput')?.value || ''
+            });
+        }
+
+        function hasOrderContactValue(config) {
+            const normalized = normalizeDeviceOrderContactConfig(config);
+            return Boolean(normalized.phone || normalized.email);
+        }
+
+        function validateDeviceOrderContactConfig(config) {
+            const normalized = normalizeDeviceOrderContactConfig(config);
+            if (normalized.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized.email)) {
+                return {
+                    ok: false,
+                    message: '请输入有效的客服邮箱'
+                };
+            }
+            return {
+                ok: true,
+                value: normalized
+            };
+        }
+
+        function isCurrentDeviceOrderContactDirty() {
+            const phoneInput = document.getElementById('orderContactPhoneInput');
+            const emailInput = document.getElementById('orderContactEmailInput');
+            if (!phoneInput || !emailInput) return false;
+            return !isSameDeviceOrderContactConfig(readOrderContactFormValue(), ensureDeviceOrderContactConfig(currentDevice));
+        }
+
+        function updateOrderContactCardState() {
+            const scopeSummary = document.getElementById('orderContactScopeSummary');
+            const statusText = document.getElementById('orderContactStatusText');
+            const phoneInput = document.getElementById('orderContactPhoneInput');
+            const emailInput = document.getElementById('orderContactEmailInput');
+            if (scopeSummary) {
+                scopeSummary.textContent = `当前设备生效 · ${currentDevice}`;
+            }
+            if (!statusText || !phoneInput || !emailInput) return;
+
+            const currentValue = readOrderContactFormValue();
+            const savedValue = ensureDeviceOrderContactConfig(currentDevice);
+            const isDirty = !isSameDeviceOrderContactConfig(currentValue, savedValue);
+
+            statusText.classList.toggle('is-dirty', isDirty);
+            if (isDirty) {
+                statusText.textContent = `当前设备 ${currentDevice} 有未保存修改`;
+                return;
+            }
+
+            statusText.textContent = hasOrderContactValue(savedValue)
+                ? `当前设备 ${currentDevice} 的联系信息已保存`
+                : `当前设备 ${currentDevice} 暂未配置联系信息`;
+        }
+
+        function handleOrderContactInputChange() {
+            updateOrderContactCardState();
+        }
+
+        function restoreCurrentDeviceSearchInput() {
+            const input = document.getElementById('deviceSearchInput');
+            if (input) {
+                input.value = getDeviceSearchDisplayLabel(currentDevice);
+            }
+        }
+
+        function confirmOrderContactDeviceSwitch(nextDeviceId) {
+            const normalizedNextDeviceId = String(nextDeviceId || '').trim();
+            if (!normalizedNextDeviceId || normalizedNextDeviceId === currentDevice) return true;
+            if (!isCurrentDeviceOrderContactDirty()) return true;
+
+            const shouldSaveAndSwitch = confirm(`当前设备 ${currentDevice} 的点单屏联系信息有未保存修改。\n点击“确定”保存后切换设备，点击“取消”查看更多选项。`);
+            if (shouldSaveAndSwitch) {
+                const saved = saveMenuBasicSettings();
+                if (!saved) {
+                    restoreCurrentDeviceSearchInput();
+                    return false;
+                }
+                return true;
+            }
+
+            const shouldDiscardAndSwitch = confirm(`是否放弃当前设备 ${currentDevice} 未保存的联系信息修改并切换设备？\n点击“确定”放弃并切换，点击“取消”留在当前设备。`);
+            if (!shouldDiscardAndSwitch) {
+                restoreCurrentDeviceSearchInput();
+            }
+            return shouldDiscardAndSwitch;
+        }
+
         // ==================== 商品数据（多语言结构） ====================
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         const cloneSharedMenuProducts = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
@@ -5992,7 +6307,7 @@
         let overviewAllDevices = [];
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
-        let currentMenuInnerTab = 'settings';
+        let currentMenuInnerTab = 'manage';
         let previewActiveCategory = '';
         let orderPreviewLang = '';
         let orderPreviewDetailState = {
@@ -6219,6 +6534,13 @@
             mediumCup: { zh: '中杯型', en: 'Medium' },
             xlCup: { zh: '超大杯型', en: 'XL' }
         };
+        const ORDER_CONTACT_PREVIEW_COPY = {
+            title: { zh: '联系门店支持', en: 'Need Help?' },
+            desc: { zh: '如需帮助，可通过当前设备配置的联系方式联系门店运营支持。', en: 'Contact the configured store support channel for help.' },
+            phone: { zh: '电话', en: 'Phone' },
+            email: { zh: '邮箱', en: 'Email' },
+            placeholder: { zh: '当前设备暂未配置客服电话或客服邮箱。', en: 'No phone or email configured for this device yet.' }
+        };
 
         // ==================== 初始化 ====================
         function init() {
@@ -6440,13 +6762,19 @@
             const currencySelect = document.getElementById('globalCurrencySelect');
             const taxEnabledInput = document.getElementById('globalTaxEnabled');
             const taxRateInput = document.getElementById('globalTaxRate');
-            if (!currencySelect || !taxEnabledInput || !taxRateInput) return;
+            const orderContactPhoneInput = document.getElementById('orderContactPhoneInput');
+            const orderContactEmailInput = document.getElementById('orderContactEmailInput');
+            if (!currencySelect || !taxEnabledInput || !taxRateInput || !orderContactPhoneInput || !orderContactEmailInput) return;
 
             currencySelect.value = normalizeProductCurrency({ currency: menuBasicSettings.currency });
             taxEnabledInput.checked = Boolean(menuBasicSettings.taxEnabled);
             taxRateInput.value = (menuBasicSettings.taxRate * 100).toFixed(1).replace(/\.0$/, '');
+            const orderContact = ensureDeviceOrderContactConfig(currentDevice);
+            orderContactPhoneInput.value = orderContact.phone;
+            orderContactEmailInput.value = orderContact.email;
             toggleGlobalTaxRateInput();
             updatePricingSummary();
+            updateOrderContactCardState();
         }
 
         function toggleGlobalTaxRateInput() {
@@ -6471,12 +6799,12 @@
 
             const currency = normalizeProductCurrency({ currency: currencySelect.value || menuBasicSettings.currency });
             if (!taxEnabledInput.checked) {
-                summary.textContent = `当前：全站菜单按 ${currency} 显示，不启用税费。`;
+                summary.textContent = `全局生效：全站菜单按 ${currency} 显示，不启用税费。`;
                 return;
             }
             const taxRateValue = parseFloat(taxRateInput.value);
             const safeRate = Number.isFinite(taxRateValue) && taxRateValue > 0 ? taxRateValue : DEFAULT_TAX_RATE * 100;
-            summary.textContent = `当前：全站菜单按 ${currency} 显示，税率 ${safeRate.toFixed(1).replace(/\.0$/, '')}%（默认显示税后价格，并展示税前价格）。`;
+            summary.textContent = `全局生效：全站菜单按 ${currency} 显示，税率 ${safeRate.toFixed(1).replace(/\.0$/, '')}%（默认显示税后价格，并展示税前价格）。`;
         }
 
         function updateProductPricingRuleHint() {
@@ -6493,7 +6821,8 @@
             const currencySelect = document.getElementById('globalCurrencySelect');
             const taxEnabledInput = document.getElementById('globalTaxEnabled');
             const taxRateInput = document.getElementById('globalTaxRate');
-            if (!currencySelect || !taxEnabledInput || !taxRateInput) return;
+            const orderContactDraft = readOrderContactFormValue();
+            if (!currencySelect || !taxEnabledInput || !taxRateInput) return false;
 
             const currency = normalizeProductCurrency({ currency: currencySelect.value });
             const taxEnabled = taxEnabledInput.checked;
@@ -6502,9 +6831,14 @@
                 const taxRatePercent = parseFloat(taxRateInput.value);
                 if (!Number.isFinite(taxRatePercent) || taxRatePercent <= 0 || taxRatePercent > 100) {
                     showToast('请输入 0-100 之间的有效税率', 'error');
-                    return;
+                    return false;
                 }
                 taxRate = taxRatePercent / 100;
+            }
+            const orderContactValidation = validateDeviceOrderContactConfig(orderContactDraft);
+            if (!orderContactValidation.ok) {
+                showToast(orderContactValidation.message, 'error');
+                return false;
             }
 
             menuBasicSettings.currency = currency;
@@ -6513,11 +6847,14 @@
 
             applyGlobalPricingSettingsToProducts();
             persistMenuBasicSettings();
+            persistDeviceOrderContactConfig(currentDevice, orderContactValidation.value);
+            renderMenuBasicSettingsForm();
             updatePricingSummary();
             updateProductPricingRuleHint();
             renderMenu();
             refreshOrderPreviewIfOpen();
             showToast('基础设置已保存');
+            return true;
         }
 
         function applySavedProductEdits() {
@@ -7870,6 +8207,73 @@
             return pack[lang] || pack.zh || '';
         }
 
+        function getOrderContactPreviewCopy(key, lang) {
+            const pack = ORDER_CONTACT_PREVIEW_COPY[key] || {};
+            return pack[lang] || pack.zh || '';
+        }
+
+        function buildOrderContactPreviewItems(deviceId = currentDevice, lang = 'zh') {
+            const contact = ensureDeviceOrderContactConfig(deviceId);
+            const items = [];
+            if (contact.phone) {
+                items.push({
+                    key: 'phone',
+                    label: getOrderContactPreviewCopy('phone', lang),
+                    value: contact.phone
+                });
+            }
+            if (contact.email) {
+                items.push({
+                    key: 'email',
+                    label: getOrderContactPreviewCopy('email', lang),
+                    value: contact.email
+                });
+            }
+            return items;
+        }
+
+        function renderOrderContactPreviewList(items, lang) {
+            if (!items.length) {
+                return `<div class="order-preview-contact-placeholder">${escapePreviewText(getOrderContactPreviewCopy('placeholder', lang))}</div>`;
+            }
+            return `
+                <div class="order-preview-contact-list">
+                    ${items.map(item => `
+                        <div class="order-preview-contact-item">
+                            <div class="order-preview-contact-label">${escapePreviewText(item.label)}</div>
+                            <div class="order-preview-contact-value">${escapePreviewText(item.value)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderOrderPreviewProductsContact(lang) {
+            const items = buildOrderContactPreviewItems(currentDevice, lang);
+            return `
+                <section class="order-preview-products-contact">
+                    <div class="order-preview-contact-card">
+                        <div class="order-preview-contact-title">${escapePreviewText(getOrderContactPreviewCopy('title', lang))}</div>
+                        <div class="order-preview-contact-desc">${escapePreviewText(getOrderContactPreviewCopy('desc', lang))}</div>
+                        ${renderOrderContactPreviewList(items, lang)}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderOrderPreviewDetailContact(lang) {
+            const items = buildOrderContactPreviewItems(currentDevice, lang);
+            return `
+                <section class="order-preview-detail-contact">
+                    <div class="order-preview-contact-card">
+                        <div class="order-preview-contact-title">${escapePreviewText(getOrderContactPreviewCopy('title', lang))}</div>
+                        <div class="order-preview-contact-desc">${escapePreviewText(getOrderContactPreviewCopy('desc', lang))}</div>
+                        ${renderOrderContactPreviewList(items, lang)}
+                    </div>
+                </section>
+            `;
+        }
+
         function formatOrderPreviewDisplayMoney(amount, currency) {
             const normalized = normalizeProductCurrency({ currency });
             const safeAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
@@ -8380,6 +8784,8 @@
                         <div class="order-preview-detail-custom-hint">${escapePreviewText(getOrderPreviewCopy('customHint', previewLang))}</div>
                     </div>
 
+                    ${renderOrderPreviewDetailContact(previewLang)}
+
                     <div class="order-preview-detail-submit-row">
                         <button type="button" class="order-preview-detail-submit-btn" id="orderPreviewMockOrderBtn" onclick="createPreviewOrder()">${escapePreviewText(getOrderPreviewCopy('mockOrderAction', previewLang))}</button>
                     </div>
@@ -8535,7 +8941,10 @@
             if (productsTitle) productsTitle.textContent = `${escapePreviewText(active.name)}`;
 
             if (!active.items.length) {
-                container.innerHTML = '<div class="order-preview-empty">当前分类暂无在售商品</div>';
+                container.innerHTML = `
+                    <div class="order-preview-empty">当前分类暂无在售商品</div>
+                    ${renderOrderPreviewProductsContact(previewLang)}
+                `;
                 return;
             }
 
@@ -8563,6 +8972,7 @@
                         </article>
                     `).join('')}
                 </div>
+                ${renderOrderPreviewProductsContact(previewLang)}
             `;
         }
 
@@ -11853,8 +12263,16 @@
                 input.value = getDeviceSearchDisplayLabel(currentDevice);
                 return;
             }
+            if (matched === currentDevice) {
+                input.value = getDeviceSearchDisplayLabel(currentDevice);
+                return;
+            }
+            if (!confirmOrderContactDeviceSwitch(matched)) {
+                return;
+            }
             currentDevice = matched;
             ensureDeviceLanguageConfig(currentDevice);
+            ensureDeviceOrderContactConfig(currentDevice);
             const queuedCopyCount = applyQueuedCopiedProductsForDevice(currentDevice);
             input.value = getDeviceSearchDisplayLabel(matched);
             updateCurrentDeviceTag();
@@ -11862,8 +12280,10 @@
             syncCurrentLangWithPlatform();
             updateDeviceLangs();
             renderLangSelector();
+            renderMenuBasicSettingsForm();
             renderMenu();
             updateStats();
+            refreshOrderPreviewIfOpen();
             
             if (queuedCopyCount > 0) {
                 showToast(`已切换到设备 ${currentDevice}，并同步 ${queuedCopyCount} 个待复制商品`);
