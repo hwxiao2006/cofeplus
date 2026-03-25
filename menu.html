@@ -1179,17 +1179,6 @@
             -webkit-box-orient: vertical;
         }
 
-        .featured-badge {
-            background: linear-gradient(135deg, #ffa502 0%, #ff7f50 100%);
-            color: #fff;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(255, 165, 2, 0.3);
-        }
-
         .product-desc {
             font-size: 13px;
             color: var(--text-secondary);
@@ -2108,13 +2097,6 @@
                             </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon orange">⭐</div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="featuredCount">4</div>
-                                <div class="stat-label">推荐商品</div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
                             <div class="stat-icon green">📂</div>
                             <div class="stat-info">
                                 <div class="stat-value" id="categoryCount">3</div>
@@ -2258,10 +2240,6 @@
                         <label class="form-label">商品编号</label>
                         <input type="text" class="form-input" id="productCode" placeholder="自动生成">
                     </div>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="productFeatured" checked>
-                    <label for="productFeatured">设为推荐商品</label>
                 </div>
             </div>
             <div class="modal-footer">
@@ -3257,16 +3235,13 @@
         // ==================== 统计 ====================
         function updateStats() {
             let totalOnSale = 0;
-            let featured = 0;
             let categories = Object.keys(productsData).length;
             
             for (const category of Object.values(productsData)) {
                 totalOnSale += category.items.filter(isProductOnSale).length;
-                featured += category.items.filter(p => p.featured).length;
             }
             
             document.getElementById('totalProducts').textContent = totalOnSale;
-            document.getElementById('featuredCount').textContent = featured;
             document.getElementById('categoryCount').textContent = categories;
         }
 
@@ -3434,7 +3409,6 @@
                                     <div class="product-content">
                                         <div class="product-card-header">
                                             <div class="product-name">${p.names[currentLang] || p.names['zh'] || p.names['en']}</div>
-                                            ${p.featured ? '<span class="featured-badge">推荐</span>' : ''}
                                         </div>
                                         <div class="product-desc">${getProductDescription(p, currentLang)}</div>
                                         <div class="product-footer">
@@ -3622,7 +3596,6 @@
                 editingProductCategory = sourceCategory;
                 document.getElementById('productImage').value = productToEdit.image || '';
                 document.getElementById('productPrice').value = productToEdit.price;
-                document.getElementById('productFeatured').checked = !!productToEdit.featured;
 
                 const langs = getDeviceLangs();
                 langs.forEach(lang => {
@@ -3649,7 +3622,6 @@
                 editingProductCategory = '';
                 document.getElementById('productImage').value = '';
                 document.getElementById('productPrice').value = '';
-                document.getElementById('productFeatured').checked = true;
             }
 
             modal.classList.add('active');
@@ -3670,7 +3642,6 @@
             const category = document.getElementById('productCategory').value;
             const image = document.getElementById('productImage').value.trim();
             const price = parseFloat(document.getElementById('productPrice').value);
-            const featured = document.getElementById('productFeatured').checked;
             const langs = getDeviceLangs();
             const firstLang = langs[0];
 
@@ -3772,7 +3743,6 @@
                         return { names: updatedNames, descs: updatedDescs, specs: updatedSpecs };
                     })(),
                     price: price,
-                    featured: featured,
                     image: image || null,
                     onSale: oldOnSale
                 };
@@ -3792,7 +3762,6 @@
             const newProduct = {
                 id: nextProductId++,
                 price: price,
-                featured: featured,
                 image: image || null,
                 names: names,
                 descs: descs,

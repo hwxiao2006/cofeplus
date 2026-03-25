@@ -1970,6 +1970,76 @@
             padding: 20px 24px;
         }
 
+        .menu-manage-product-sort {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .menu-manage-product-sort-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .menu-manage-product-sort-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .menu-manage-product-sort-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-manage-product-sort-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .menu-manage-product-sort-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .menu-manage-product-sort-item-handle {
+            color: var(--text-muted);
+            cursor: grab;
+            user-select: none;
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .menu-manage-product-sort-item-name {
+            min-width: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .menu-manage-product-sort-item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
         .product-table-head {
             display: none;
         }
@@ -2388,15 +2458,33 @@
             -webkit-box-orient: vertical;
         }
 
-        .featured-badge {
-            background: linear-gradient(135deg, #ffa502 0%, #ff7f50 100%);
-            color: #fff;
-            padding: 3px 10px;
-            border-radius: 12px;
+        .product-business-tag-list {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .product-business-tag,
+        .product-business-tag-more {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 600;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(255, 165, 2, 0.3);
+            line-height: 1.2;
+        }
+
+        .product-business-tag {
+            color: #155e75;
+            background: #cffafe;
+        }
+
+        .product-business-tag-more {
+            color: #475569;
+            background: #e2e8f0;
         }
 
         .batch-result-tag {
@@ -3512,16 +3600,33 @@
             min-width: 0;
         }
 
-        .order-preview-featured-badge {
-            background: linear-gradient(135deg, #ffa502 0%, #ff7f50 100%);
-            color: #fff;
+        .order-preview-business-tag-list,
+        .order-preview-detail-business-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .order-preview-business-tag-list {
+            margin-bottom: 8px;
+        }
+
+        .order-preview-business-tag {
+            display: inline-flex;
+            align-items: center;
             padding: 2px 8px;
-            border-radius: 10px;
+            border-radius: 999px;
             font-size: 10px;
             font-weight: 700;
             line-height: 1.2;
-            flex-shrink: 0;
-            white-space: nowrap;
+            color: #155e75;
+            background: #cffafe;
+        }
+
+        .order-preview-detail-business-tags {
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .order-preview-product-desc {
@@ -5225,29 +5330,15 @@
                             <div class="stat-card">
                                 <div class="stat-icon blue">☕</div>
                                 <div class="stat-info">
-                                    <div class="stat-value" id="totalProducts">13</div>
-                                    <div class="stat-label">在售商品</div>
+                                    <div class="stat-value" id="totalProducts">31</div>
+                                    <div class="stat-label">商品总数</div>
                                 </div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-icon orange">⭐</div>
+                                <div class="stat-icon orange">🟢</div>
                                 <div class="stat-info">
-                                    <div class="stat-value" id="featuredCount">4</div>
-                                    <div class="stat-label">推荐商品</div>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon green">📂</div>
-                                <div class="stat-info">
-                                    <div class="stat-value" id="categoryCount">3</div>
-                                    <div class="stat-label">商品分类</div>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon purple">🌐</div>
-                                <div class="stat-info">
-                                    <div class="stat-value" id="langCount">2</div>
-                                    <div class="stat-label">支持语言</div>
+                                    <div class="stat-value" id="onSaleProducts">13</div>
+                                    <div class="stat-label">在售商品数</div>
                                 </div>
                             </div>
                         </div>
@@ -5319,6 +5410,21 @@
                             </div>
                             <div class="menu-shared-mobile-sheet-body" id="menuSharedMobileCategorySheetBody"></div>
                             <div class="menu-shared-mobile-sheet-footer" id="menuSharedMobileCategorySheetFooter"></div>
+                        </div>
+                    </div>
+
+                    <div class="menu-shared-mobile-sheet" id="menuManageProductSortSheet">
+                        <div class="menu-shared-mobile-sheet-backdrop" onclick="closeMenuManageProductSortSheet()"></div>
+                        <div class="menu-shared-mobile-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="menuManageProductSortSheetTitle">
+                            <div class="menu-shared-mobile-sheet-header">
+                                <div>
+                                    <h3 class="menu-shared-mobile-sheet-title" id="menuManageProductSortSheetTitle">调整商品顺序</h3>
+                                    <p class="menu-shared-mobile-sheet-subtitle" id="menuManageProductSortSheetSubtitle">拖动商品，调整它在当前分类中的显示顺序</p>
+                                </div>
+                                <button type="button" class="menu-shared-mobile-sheet-mode-btn" onclick="closeMenuManageProductSortSheet()">关闭</button>
+                            </div>
+                            <div class="menu-shared-mobile-sheet-body" id="menuManageProductSortSheetBody"></div>
+                            <div class="menu-shared-mobile-sheet-footer" id="menuManageProductSortSheetFooter"></div>
                         </div>
                     </div>
 
@@ -5684,9 +5790,9 @@
                     <label class="form-label">价格规则</label>
                     <div class="form-input" id="productPricingRuleHint" style="display:flex;align-items:center;background:#f8fafc;color:var(--text-secondary);">采用“基本设置”中的币种与税率</div>
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="productFeatured" checked>
-                    <label for="productFeatured">设为推荐商品</label>
+                <div class="form-group">
+                    <label class="form-label">业务标签</label>
+                    <div class="form-input" style="display:flex;align-items:center;background:#f8fafc;color:var(--text-secondary);">请在商品详情页中维护业务标签与展示顺序</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -6318,6 +6424,87 @@
             selected: {},
             customSelected: false
         };
+
+        function normalizeBusinessTagIds(tagIds) {
+            return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
+                .map(tagId => String(tagId || '').trim())
+                .filter(Boolean)));
+        }
+
+        function normalizeBusinessTagEntry(tagId, tag) {
+            const normalizedId = String(tagId || tag?.id || '').trim();
+            if (!normalizedId) return null;
+            return {
+                id: normalizedId,
+                names: tag && typeof tag.names === 'object' ? cloneSharedMenuProducts(tag.names) : {},
+                status: tag?.status === 'disabled' ? 'disabled' : 'active'
+            };
+        }
+
+        function normalizeBusinessTagLibrary(library) {
+            return Object.entries(library && typeof library === 'object' ? library : {}).reduce((acc, [tagId, tag]) => {
+                const normalized = normalizeBusinessTagEntry(tagId, tag);
+                if (normalized) {
+                    acc[normalized.id] = normalized;
+                }
+                return acc;
+            }, {});
+        }
+
+        function getStoredBusinessTagLibrary() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function getBusinessTagLibrary() {
+            return {
+                ...normalizeBusinessTagLibrary(sharedAdminMockData.defaultBusinessTags || {}),
+                ...normalizeBusinessTagLibrary(getStoredBusinessTagLibrary())
+            };
+        }
+
+        function getProductBusinessTagIds(product) {
+            const explicitIds = normalizeBusinessTagIds(product?.businessTagIds);
+            if (explicitIds.length) return explicitIds;
+            return product?.featured ? ['tag_signature'] : [];
+        }
+
+        function getActiveProductBusinessTags(product) {
+            const library = getBusinessTagLibrary();
+            return getProductBusinessTagIds(product)
+                .map(tagId => library[tagId])
+                .filter(tag => tag && tag.status !== 'disabled');
+        }
+
+        function getBusinessTagLabel(tag, lang) {
+            if (!tag) return '';
+            return tag.names?.[lang] || tag.names?.zh || tag.names?.en || tag.id || '';
+        }
+
+        function renderBusinessTagList(product, lang, options = {}) {
+            const tags = getActiveProductBusinessTags(product);
+            if (!tags.length) return '';
+
+            const max = Number.isFinite(Number(options.max)) ? Number(options.max) : tags.length;
+            const visibleTags = tags.slice(0, max);
+            const remaining = Math.max(0, tags.length - visibleTags.length);
+            const listClass = options.listClass || 'product-business-tag-list';
+            const tagClass = options.tagClass || 'product-business-tag';
+            const overflowMode = options.overflowMode || 'count';
+            const overflowClass = options.overflowClass || 'product-business-tag-more';
+
+            return `
+                <div class="${listClass}">
+                    ${visibleTags.map(tag => `<span class="${tagClass}">${escapePreviewText(getBusinessTagLabel(tag, lang))}</span>`).join('')}
+                    ${remaining > 0 && overflowMode === 'count' ? `<span class="${overflowClass}">+${remaining}</span>` : ''}
+                </div>
+            `;
+        }
+
         let isBatchFixedPriceMode = false;
         let batchFixedPriceActiveCategory = '__ALL__';
         let batchFixedPriceKeyword = '';
@@ -6329,6 +6516,11 @@
         let menuManageCategoryKeyword = '';
         let menuManageProductKeyword = '';
         let menuManageProductScope = 'current';
+        let menuManageProductSortMode = false;
+        let menuManageProductSortDraftOrder = [];
+        let menuManageProductSortDraggedProductId = null;
+        let menuManageProductSortTouchState = null;
+        let menuManageProductSortSheetOpen = false;
         let productModalCategoryOptions = [];
         let selectedProductModalCategoryKeys = new Set();
         let isProductModalCategorySelectorOpen = false;
@@ -6352,6 +6544,7 @@
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
         const MENU_MANAGE_CATEGORY_ORDER_KEY = 'categoryOrder';
+        const BUSINESS_TAG_LIBRARY_STORAGE_KEY = 'menuBusinessTagLibrary';
         const COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY = 'menuCopyDeviceCategoryCatalog';
         const COPY_PRODUCT_DEVICE_QUEUE_KEY = 'menuCopyProductQueue';
         const COPY_PRODUCT_PENDING_RESULTS_KEY = 'menuCopyProductPendingResults';
@@ -8104,17 +8297,6 @@
             return product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
         }
 
-        function getFeaturedLabel(lang) {
-            const labels = {
-                zh: '推荐',
-                en: 'Recommended',
-                jp: 'おすすめ',
-                ko: '추천',
-                th: 'แนะนำ'
-            };
-            return labels[lang] || labels.zh;
-        }
-
         function normalizeProductCurrency(product) {
             const code = (product?.currency || 'CNY').toUpperCase();
             return SUPPORTED_CURRENCIES[code] ? code : 'CNY';
@@ -8774,6 +8956,12 @@
                                 </div>
                             </div>
                         </div>
+                        ${renderBusinessTagList(product, previewLang, {
+                            max: Number.MAX_SAFE_INTEGER,
+                            listClass: 'order-preview-detail-business-tags',
+                            tagClass: 'order-preview-business-tag',
+                            overflowMode: 'none'
+                        })}
                         <div class="order-preview-detail-intro">${escapePreviewText(detailDesc)}</div>
                     </section>
 
@@ -8961,8 +9149,13 @@
                             <div class="order-preview-product-content">
                                 <div class="order-preview-product-name-row">
                                     <div class="order-preview-product-name">${escapePreviewText(product.names?.[previewLang] || product.names?.zh || product.names?.en || '-')}</div>
-                                    ${product.featured ? `<span class="order-preview-featured-badge">${escapePreviewText(getFeaturedLabel(previewLang))}</span>` : ''}
                                 </div>
+                                ${renderBusinessTagList(product, previewLang, {
+                                    max: 2,
+                                    listClass: 'order-preview-business-tag-list',
+                                    tagClass: 'order-preview-business-tag',
+                                    overflowMode: 'none'
+                                })}
                                 <div class="order-preview-product-desc">${escapePreviewText(getProductDescription(product, previewLang))}</div>
                                 <div class="order-preview-product-footer">
                                     ${renderProductPriceHtml(product, { compact: true })}
@@ -9262,7 +9455,10 @@
                 ).join('');
             }
 
-            document.getElementById('langCount').textContent = langs.length;
+            const langCount = document.getElementById('langCount');
+            if (langCount) {
+                langCount.textContent = langs.length;
+            }
         }
 
         function updateCurrentDeviceTag() {
@@ -9290,18 +9486,30 @@
 
         // ==================== 统计 ====================
         function updateStats() {
-            let totalOnSale = 0;
-            let featured = 0;
-            let categories = Object.keys(productsData).length;
-            
-            for (const category of Object.values(productsData)) {
-                totalOnSale += category.items.filter(isProductOnSale).length;
-                featured += category.items.filter(p => p.featured).length;
-            }
-            
-            document.getElementById('totalProducts').textContent = totalOnSale;
-            document.getElementById('featuredCount').textContent = featured;
-            document.getElementById('categoryCount').textContent = categories;
+            const uniqueProducts = new Map();
+
+            Object.values(productsData || {}).forEach(category => {
+                (category?.items || []).forEach(item => {
+                    const numericId = Number(item?.id);
+                    const productKey = Number.isFinite(numericId)
+                        ? String(numericId)
+                        : JSON.stringify(item?.names || {});
+                    if (!uniqueProducts.has(productKey)) {
+                        uniqueProducts.set(productKey, item);
+                        return;
+                    }
+                    if (isProductOnSale(item)) {
+                        uniqueProducts.set(productKey, {
+                            ...uniqueProducts.get(productKey),
+                            ...item,
+                            onSale: true
+                        });
+                    }
+                });
+            });
+
+            document.getElementById('totalProducts').textContent = uniqueProducts.size;
+            document.getElementById('onSaleProducts').textContent = Array.from(uniqueProducts.values()).filter(isProductOnSale).length;
         }
 
         function formatCurrency(amount) {
@@ -10266,6 +10474,216 @@
             return entries;
         }
 
+        function normalizeMenuManageProductSortDraftOrder(order = []) {
+            const category = productsData[menuManageActiveCategory] || {};
+            const items = Array.isArray(category.items) ? category.items : [];
+            const sourceIds = items.map(item => Number(item.id)).filter(Number.isFinite);
+            const normalizedOrder = Array.from(new Set((order || [])
+                .map(value => Number(value))
+                .filter(Number.isFinite)
+                .filter(id => sourceIds.includes(id))));
+
+            sourceIds.forEach(id => {
+                if (!normalizedOrder.includes(id)) {
+                    normalizedOrder.push(id);
+                }
+            });
+            return normalizedOrder;
+        }
+
+        function setMenuManageProductSortDraftOrder(order = []) {
+            menuManageProductSortDraftOrder = normalizeMenuManageProductSortDraftOrder(order);
+            renderMenuManageProductSortSheet();
+        }
+
+        function enterMenuManageProductSortMode() {
+            if (menuManageProductScope === 'all') return;
+            ensureMenuManageActiveCategory();
+            menuManageProductSortMode = true;
+            menuManageProductSortDraftOrder = normalizeMenuManageProductSortDraftOrder(menuManageProductSortDraftOrder);
+            if (isMenuSharedMobileViewport()) {
+                openMenuManageProductSortSheet();
+            }
+            renderMenu();
+        }
+
+        function cancelMenuManageProductSortMode() {
+            menuManageProductSortMode = false;
+            menuManageProductSortDraftOrder = [];
+            closeMenuManageProductSortSheet();
+            renderMenu();
+        }
+
+        function buildMenuManageProductSortItems() {
+            const category = productsData[menuManageActiveCategory] || {};
+            const items = Array.isArray(category.items) ? category.items : [];
+            const itemMap = new Map(items.map(item => [Number(item.id), item]));
+            return normalizeMenuManageProductSortDraftOrder(menuManageProductSortDraftOrder)
+                .map(id => itemMap.get(Number(id)))
+                .filter(Boolean);
+        }
+
+        function renderMenuManageProductSortListMarkup(listId = 'menuManageProductSortList') {
+            const orderedItems = buildMenuManageProductSortItems();
+            if (!orderedItems.length) {
+                return '<div class="menu-manage-empty">当前分类暂无可排序商品</div>';
+            }
+
+            return `
+                <div class="menu-manage-product-sort-list" id="${listId}">
+                    ${orderedItems.map((product, index) => `
+                        <div class="menu-manage-product-sort-item" data-product-id="${product.id}" draggable="true">
+                            <div class="menu-manage-product-sort-item-left">
+                                <span class="menu-manage-product-sort-item-handle" aria-hidden="true">⠿</span>
+                                <div>
+                                    <div class="menu-manage-product-sort-item-name">${escapePreviewText(getMenuManageProductName(product))}</div>
+                                    <div class="menu-manage-product-sort-item-meta">当前序号 ${index + 1}</div>
+                                </div>
+                            </div>
+                            <div class="menu-manage-product-sort-actions">
+                                <button type="button" class="btn btn-default" onclick="moveMenuManageProductSortItem(${product.id}, -1)">上移</button>
+                                <button type="button" class="btn btn-default" onclick="moveMenuManageProductSortItem(${product.id}, 1)">下移</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function bindMenuManageProductSortInteractions(listId = 'menuManageProductSortList') {
+            const list = document.getElementById(listId);
+            if (!list || typeof list.querySelectorAll !== 'function') return;
+            const items = list.querySelectorAll('.menu-manage-product-sort-item[data-product-id]');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleMenuManageProductDragStart);
+                item.addEventListener('dragover', handleMenuManageProductDragOver);
+                item.addEventListener('drop', handleMenuManageProductDrop);
+                item.addEventListener('dragend', handleMenuManageProductDragEnd);
+                item.addEventListener('touchstart', handleMenuManageProductTouchStart, { passive: false });
+                item.addEventListener('touchmove', handleMenuManageProductTouchMove, { passive: false });
+                item.addEventListener('touchend', handleMenuManageProductTouchEnd);
+            });
+        }
+
+        function reorderMenuManageProductSortDraft(draggedProductId, targetProductId) {
+            const draggedId = Number(draggedProductId);
+            const targetId = Number(targetProductId);
+            if (!Number.isFinite(draggedId) || !Number.isFinite(targetId) || draggedId === targetId) return;
+            const nextOrder = normalizeMenuManageProductSortDraftOrder(menuManageProductSortDraftOrder);
+            const fromIndex = nextOrder.indexOf(draggedId);
+            const toIndex = nextOrder.indexOf(targetId);
+            if (fromIndex === -1 || toIndex === -1) return;
+            nextOrder.splice(fromIndex, 1);
+            nextOrder.splice(toIndex, 0, draggedId);
+            setMenuManageProductSortDraftOrder(nextOrder);
+        }
+
+        function moveMenuManageProductSortItem(productId, delta) {
+            const numericId = Number(productId);
+            const nextOrder = normalizeMenuManageProductSortDraftOrder(menuManageProductSortDraftOrder);
+            const currentIndex = nextOrder.indexOf(numericId);
+            const nextIndex = currentIndex + Number(delta || 0);
+            if (currentIndex === -1 || nextIndex < 0 || nextIndex >= nextOrder.length) return;
+            nextOrder.splice(currentIndex, 1);
+            nextOrder.splice(nextIndex, 0, numericId);
+            setMenuManageProductSortDraftOrder(nextOrder);
+        }
+
+        function handleMenuManageProductDragStart(event) {
+            const productId = Number(event.currentTarget?.dataset?.productId);
+            if (!Number.isFinite(productId)) return;
+            menuManageProductSortDraggedProductId = productId;
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', String(productId));
+            }
+        }
+
+        function handleMenuManageProductDragOver(event) {
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+        }
+
+        function handleMenuManageProductDrop(event) {
+            event.preventDefault();
+            const targetProductId = Number(event.currentTarget?.dataset?.productId);
+            const draggedProductId = Number(menuManageProductSortDraggedProductId || event.dataTransfer?.getData('text/plain'));
+            reorderMenuManageProductSortDraft(draggedProductId, targetProductId);
+        }
+
+        function handleMenuManageProductDragEnd() {
+            menuManageProductSortDraggedProductId = null;
+        }
+
+        function handleMenuManageProductTouchStart(event) {
+            const productId = Number(event.currentTarget?.dataset?.productId);
+            if (!Number.isFinite(productId)) return;
+            menuManageProductSortTouchState = {
+                productId,
+                startY: event.touches?.[0]?.clientY || 0
+            };
+        }
+
+        function handleMenuManageProductTouchMove(event) {
+            if (!menuManageProductSortTouchState) return;
+            event.preventDefault();
+        }
+
+        function handleMenuManageProductTouchEnd(event) {
+            const targetProductId = Number(event.currentTarget?.dataset?.productId);
+            const draggedProductId = Number(menuManageProductSortTouchState?.productId);
+            if (Number.isFinite(draggedProductId) && Number.isFinite(targetProductId)) {
+                reorderMenuManageProductSortDraft(draggedProductId, targetProductId);
+            }
+            menuManageProductSortTouchState = null;
+        }
+
+        function saveMenuManageProductSortOrder() {
+            ensureMenuManageActiveCategory();
+            const category = productsData[menuManageActiveCategory];
+            if (!category || !Array.isArray(category.items)) return;
+            const orderedIds = normalizeMenuManageProductSortDraftOrder(menuManageProductSortDraftOrder);
+            const itemMap = new Map(category.items.map(item => [Number(item.id), item]));
+            category.items = orderedIds.map(id => itemMap.get(Number(id))).filter(Boolean);
+            menuManageProductSortMode = false;
+            menuManageProductSortDraftOrder = [];
+            closeMenuManageProductSortSheet();
+            renderMenu();
+        }
+
+        function openMenuManageProductSortSheet() {
+            menuManageProductSortSheetOpen = true;
+            renderMenuManageProductSortSheet();
+        }
+
+        function closeMenuManageProductSortSheet() {
+            const sheet = document.getElementById('menuManageProductSortSheet');
+            menuManageProductSortSheetOpen = false;
+            if (sheet) sheet.classList.remove('active');
+        }
+
+        function renderMenuManageProductSortSheet() {
+            const sheet = document.getElementById('menuManageProductSortSheet');
+            const body = document.getElementById('menuManageProductSortSheetBody');
+            const footer = document.getElementById('menuManageProductSortSheetFooter');
+            if (!sheet || !body || !footer) return;
+
+            if (!menuManageProductSortSheetOpen) {
+                sheet.classList.remove('active');
+                return;
+            }
+
+            sheet.classList.add('active');
+            body.innerHTML = renderMenuManageProductSortListMarkup('menuManageProductSortSheetList');
+            footer.innerHTML = `
+                <button type="button" class="btn btn-default" onclick="cancelMenuManageProductSortMode()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="saveMenuManageProductSortOrder()">保存顺序</button>
+            `;
+            bindMenuManageProductSortInteractions('menuManageProductSortSheetList');
+        }
+
         function renderMenuManageCategoryNavigation() {
             ensureMenuManageActiveCategory();
             ensureMenuSharedCategoryFilter();
@@ -10380,8 +10798,14 @@
                     <div class="product-content">
                         <div class="product-card-header">
                             <div class="product-name">${escapePreviewText(productName)}</div>
-                            ${product.featured ? '<span class="featured-badge">推荐</span>' : ''}
                         </div>
+                        ${renderBusinessTagList(product, currentLang, {
+                            max: 2,
+                            listClass: 'product-business-tag-list',
+                            tagClass: 'product-business-tag',
+                            overflowMode: 'count',
+                            overflowClass: 'product-business-tag-more'
+                        })}
                         <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
                         <div class="product-footer">
                             <div class="product-meta">
@@ -10427,6 +10851,11 @@
                 : '默认只展示当前分类，分类很多时页面也不会无限拉长。';
             let summary = `${currentItems.length} 个商品`;
             let contentHtml = '';
+            const workspaceActions = [];
+
+            if (!isGlobalScope && currentItems.length > 1) {
+                workspaceActions.push('<button type="button" class="btn btn-default" onclick="enterMenuManageProductSortMode()">调整商品顺序</button>');
+            }
 
             if (isGlobalScope) {
                 title = normalizeMenuManageKeyword(menuManageProductKeyword) ? '全部分类搜索结果' : '全部分类商品';
@@ -10448,6 +10877,22 @@
                         </div>
                     `
                     : '<div class="menu-manage-empty">当前搜索范围下暂无匹配商品</div>';
+            } else if (menuManageProductSortMode) {
+                contentHtml = `
+                    <div class="menu-manage-product-sort">
+                        <div class="menu-manage-product-sort-header">
+                            <div>
+                                <div class="menu-manage-main-title">调整“${escapePreviewText(getCategoryName(menuManageActiveCategory))}”商品顺序</div>
+                                <div class="menu-manage-main-desc">拖动商品，可调整它在当前分类中的显示顺序</div>
+                            </div>
+                            <div class="menu-manage-product-sort-actions">
+                                <button type="button" class="btn btn-default" onclick="cancelMenuManageProductSortMode()">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="saveMenuManageProductSortOrder()">保存顺序</button>
+                            </div>
+                        </div>
+                        ${renderMenuManageProductSortListMarkup('menuManageProductSortList')}
+                    </div>
+                `;
             } else {
                 const categoryName = menuManageActiveCategory;
                 contentHtml = currentItems.length
@@ -10476,10 +10921,22 @@
                         <h3 class="menu-manage-main-title">${escapePreviewText(title)}</h3>
                         <p class="menu-manage-main-desc">${escapePreviewText(desc)}</p>
                     </div>
-                    <div class="menu-manage-summary-badge">${escapePreviewText(summary)}</div>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+                        ${workspaceActions.join('')}
+                        <div class="menu-manage-summary-badge">${escapePreviewText(summary)}</div>
+                    </div>
                 </div>
                 ${contentHtml}
             `;
+
+            if (menuManageProductSortMode && !isGlobalScope && !isMenuSharedMobileViewport()) {
+                bindMenuManageProductSortInteractions('menuManageProductSortList');
+            }
+            if (!isMenuSharedMobileViewport()) {
+                closeMenuManageProductSortSheet();
+            } else {
+                renderMenuManageProductSortSheet();
+            }
 
             if (currentMenuInnerTab === 'batch') {
                 renderBatchFixedPricePanel();
@@ -10507,6 +10964,9 @@
             if (menuManageProductScope === 'all') {
                 menuSharedCategoryFilter = '__ALL__';
                 batchFixedPriceActiveCategory = '__ALL__';
+                menuManageProductSortMode = false;
+                menuManageProductSortDraftOrder = [];
+                closeMenuManageProductSortSheet();
             } else {
                 ensureMenuManageActiveCategory();
                 menuSharedCategoryFilter = menuManageActiveCategory || getMenuSharedDefaultCategory();
@@ -11145,6 +11605,7 @@
                     taxEnabled: menuBasicSettings.taxEnabled,
                     taxRate: menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0,
                     featured: true,
+                    businessTagIds: [],
                     image: null,
                     names: {},
                     descs: {},
@@ -11171,6 +11632,7 @@
                     ? 0
                     : (Number.isFinite(Number(cloned.taxRate)) ? Number(cloned.taxRate) : (menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0)),
                 featured: cloned.featured !== false,
+                businessTagIds: getProductBusinessTagIds(cloned),
                 image: cloned.image || null,
                 names: cloneProductValue(cloned.names) || {},
                 descs: cloneProductValue(cloned.descs) || {},
@@ -11191,7 +11653,6 @@
             document.getElementById('productImageFile').value = '';
             document.getElementById('productPrice').value = product?.price || '';
             document.getElementById('productOriginalPrice').value = product?.originalPrice || '';
-            document.getElementById('productFeatured').checked = product ? !!product.featured : true;
 
             const langs = getDeviceLangs();
             langs.forEach(lang => {
@@ -11981,7 +12442,6 @@
             const currency = menuBasicSettings.currency;
             const taxEnabled = menuBasicSettings.taxEnabled;
             const taxRate = taxEnabled ? menuBasicSettings.taxRate : 0;
-            const featured = document.getElementById('productFeatured').checked;
             const langs = getDeviceLangs();
             const firstLang = langs[0];
 
@@ -12022,12 +12482,14 @@
             let existingNames = {};
             let existingDescs = {};
             let existingSpecs = {};
+            let existingBusinessTagIds = [];
             let oldOnSale = true;
             let editingSnapshot = null;
             if (productCopySource && editingProductId === null) {
                 existingNames = { ...(productCopySource.names || {}) };
                 existingDescs = { ...(productCopySource.descs || {}) };
                 existingSpecs = { ...(productCopySource.specs || {}) };
+                existingBusinessTagIds = getProductBusinessTagIds(productCopySource);
             }
             if (editingProductId !== null) {
                 editingSnapshot = resolveProductSnapshotForAssignment(editingProductId, getSavedProductEditsMap());
@@ -12038,6 +12500,7 @@
                     existingNames = { ...(editingSnapshot.names || {}) };
                     existingDescs = { ...(editingSnapshot.descs || {}) };
                     existingSpecs = { ...(editingSnapshot.specs || {}) };
+                    existingBusinessTagIds = getProductBusinessTagIds(editingSnapshot);
                     oldOnSale = isProductOnSale(editingSnapshot);
                 }
             }
@@ -12091,7 +12554,7 @@
                     currency: currency,
                     taxEnabled: taxEnabled,
                     taxRate: taxEnabled ? taxRate : 0,
-                    featured: featured,
+                    businessTagIds: existingBusinessTagIds,
                     image: image || null,
                     onSale: oldOnSale
                 };
@@ -12166,7 +12629,7 @@
                     currency: currency,
                     taxEnabled: taxEnabled,
                     taxRate: taxEnabled ? taxRate : 0,
-                    featured: featured,
+                    businessTagIds: existingBusinessTagIds.length ? existingBusinessTagIds : getProductBusinessTagIds(copiedTemplate),
                     image: image || null,
                     onSale: true
                 };

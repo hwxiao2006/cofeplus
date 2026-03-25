@@ -48,3 +48,22 @@ test('菜单分类排序应包含本地持久化逻辑', () => {
   assert.ok(/function\s+getMenuManageCategoryKeys\s*\(/.test(html));
   assert.ok(/localStorage\.setItem\(MENU_MANAGE_CATEGORY_ORDER_KEY/.test(html));
 });
+
+test('菜单商品排序应提供桌面端内联排序状态', () => {
+  const html = readMenuManagementHtml();
+  assert.ok(/function\s+enterMenuManageProductSortMode\s*\(/.test(html));
+  assert.ok(/function\s+cancelMenuManageProductSortMode\s*\(/.test(html));
+  assert.ok(/function\s+saveMenuManageProductSortOrder\s*\(/.test(html));
+  assert.ok(/menuManageProductSortMode/.test(html));
+  assert.ok(html.includes('调整商品顺序'));
+});
+
+test('菜单商品排序应提供移动端全屏排序状态与触摸拖拽', () => {
+  const html = readMenuManagementHtml();
+  assert.ok(html.includes('id="menuManageProductSortSheet"'));
+  assert.ok(/function\s+openMenuManageProductSortSheet\s*\(/.test(html));
+  assert.ok(/function\s+closeMenuManageProductSortSheet\s*\(/.test(html));
+  assert.ok(/function\s+handleMenuManageProductTouchStart\s*\(/.test(html));
+  assert.ok(/function\s+handleMenuManageProductTouchMove\s*\(/.test(html));
+  assert.ok(/function\s+handleMenuManageProductTouchEnd\s*\(/.test(html));
+});

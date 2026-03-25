@@ -175,6 +175,7 @@ function loadMenuContext() {
   context.__realRenderMenu = context.renderMenu;
   context.renderMenu = () => {};
   context.renderOverview = () => {};
+  context.__realUpdateStats = context.updateStats;
   context.updateStats = () => {};
   context.showToast = () => {};
   context.__realUpdateDeviceLangs = context.updateDeviceLangs;
@@ -998,25 +999,111 @@ test('点单屏预览：有原价时应显示划线原价', () => {
   assert.ok(html.includes('CNY 9.90'));
 });
 
-test('点单屏预览：推荐商品应显示推荐标签', () => {
+test('菜单管理顶部统计卡应只展示商品总数和在售商品数', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const statsStart = html.indexOf('<div class="stats-bar">');
+  const statsEnd = html.indexOf('<div id="menuManageSharedContextSlot"', statsStart);
+  const statsSection = statsStart >= 0 && statsEnd > statsStart ? html.slice(statsStart, statsEnd) : html;
+
+  assert.ok(/id="totalProducts"/.test(statsSection));
+  assert.ok(/id="onSaleProducts"/.test(statsSection));
+  assert.ok(/<div class="stat-label">商品总数<\/div>/.test(statsSection));
+  assert.ok(/<div class="stat-label">在售商品数<\/div>/.test(statsSection));
+  assert.ok(!statsSection.includes('id="featuredCount"'));
+  assert.ok(!statsSection.includes('商品分类'));
+  assert.ok(!statsSection.includes('支持语言'));
+});
+
+test('菜单管理顶部统计应按商品 ID 去重计算商品总数和在售商品数', () => {
+  const ctx = loadMenuContext();
+  ctx.productsData = {
+    经典: {
+      icon: '☕',
+      items: [
+        { id: 1, onSale: false, names: { zh: '经典一号' } },
+        { id: 2, onSale: true, names: { zh: '经典二号' } }
+      ]
+    },
+    新品: {
+      icon: '🆕',
+      items: [
+        { id: 1, onSale: false, names: { zh: '经典一号' } },
+        { id: 3, onSale: false, names: { zh: '新品三号' } }
+      ]
+    }
+  };
+
+  ctx.__realUpdateStats();
+
+  assert.strictEqual(ctx.document.getElementById('totalProducts').textContent, 3);
+  assert.strictEqual(ctx.document.getElementById('onSaleProducts').textContent, 1);
+});
+
+test('点单屏预览：业务标签应显示前两个启用标签并隐藏停用标签', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
+  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
+    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
+    tag_new: { id: 'tag_new', names: { zh: '新品', en: 'New' }, status: 'active' },
+    tag_hidden: { id: 'tag_hidden', names: { zh: '隐藏标签', en: 'Hidden tag' }, status: 'disabled' }
+  };
+  ctx.productsData = {
+    测试分类: {
+      icon: '☕',
+      names: { zh: '测试分类', en: 'Test Category' },
+      items: [
+        {
+          id: 101,
+          price: 19.9,
+          onSale: true,
+          names: { zh: '测试拿铁', en: 'Test Latte' },
+          descs: { zh: '测试描述', en: 'Test description' },
+          businessTagIds: ['tag_signature', 'tag_new', 'tag_hidden']
+        }
+      ]
+    }
+  };
   ctx.openOrderPreviewModal();
 
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
-  assert.ok(productHtml.includes('order-preview-featured-badge'));
-  assert.ok(productHtml.includes('推荐'));
+  assert.ok(productHtml.includes('招牌'));
+  assert.ok(productHtml.includes('新品'));
+  assert.ok(!productHtml.includes('隐藏标签'));
+  assert.ok(!productHtml.includes('order-preview-featured-badge'));
 });
 
-test('点单屏预览：切换语言后推荐标签文案应同步', () => {
+test('点单屏预览：切换语言后业务标签文案应同步', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
+  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
+    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
+    tag_new: { id: 'tag_new', names: { zh: '新品', en: 'New' }, status: 'active' },
+    tag_hidden: { id: 'tag_hidden', names: { zh: '隐藏标签', en: 'Hidden tag' }, status: 'disabled' }
+  };
+  ctx.productsData = {
+    测试分类: {
+      icon: '☕',
+      names: { zh: '测试分类', en: 'Test Category' },
+      items: [
+        {
+          id: 101,
+          price: 19.9,
+          onSale: true,
+          names: { zh: '测试拿铁', en: 'Test Latte' },
+          descs: { zh: '测试描述', en: 'Test description' },
+          businessTagIds: ['tag_signature', 'tag_new', 'tag_hidden']
+        }
+      ]
+    }
+  };
   ctx.openOrderPreviewModal();
   ctx.setOrderPreviewLang('en');
 
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
-  assert.ok(productHtml.includes('order-preview-featured-badge'));
-  assert.ok(productHtml.includes('Recommended'));
+  assert.ok(productHtml.includes('Signature'));
+  assert.ok(productHtml.includes('New'));
+  assert.ok(!productHtml.includes('Hidden tag'));
+  assert.ok(!productHtml.includes('order-preview-featured-badge'));
 });
 
 test('点单屏预览：点击商品应打开详情预览层', () => {
@@ -2338,6 +2425,71 @@ test('菜单管理商品卡片：上架和下架按钮应使用不同状态色',
   assert.ok(/\.product-action-btn-sale-on\s*\{[\s\S]*color:\s*#15803d;[\s\S]*background:\s*#dcfce7;/.test(html));
   assert.ok(/\.product-action-btn-sale-off\s*\{[\s\S]*color:\s*#c2410c;[\s\S]*background:\s*#ffedd5;/.test(html));
   assert.ok(/saleActionClass\s*=\s*isOnSale\s*\?\s*'product-action-btn-sale-off'\s*:\s*'product-action-btn-sale-on'/.test(html));
+});
+
+test('菜单管理工作区：当前分类模式应提供调整商品顺序入口，全部分类模式不显示', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    经典咖啡: {
+      icon: '☕',
+      names: { zh: '经典咖啡' },
+      items: [
+        { id: 1, price: 12.9, names: { zh: '经典美式' }, onSale: true },
+        { id: 2, price: 14.9, names: { zh: '榛果美式' }, onSale: true }
+      ]
+    },
+    新品推荐: {
+      icon: '🆕',
+      names: { zh: '新品推荐' },
+      items: [
+        { id: 3, price: 16.9, names: { zh: '橘皮拿铁' }, onSale: true }
+      ]
+    }
+  };
+  ctx.menuManageActiveCategory = '经典咖啡';
+  ctx.menuSharedCategoryFilter = '经典咖啡';
+  ctx.menuManageProductScope = 'current';
+
+  ctx.renderMenu();
+  assert.ok(ctx.document.getElementById('categoriesContainer').innerHTML.includes('调整商品顺序'));
+
+  ctx.setMenuManageProductScope('all');
+  assert.ok(!ctx.document.getElementById('categoriesContainer').innerHTML.includes('调整商品顺序'));
+});
+
+test('菜单管理工作区：保存当前分类商品顺序时不应影响其他分类', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    经典咖啡: {
+      icon: '☕',
+      names: { zh: '经典咖啡' },
+      items: [
+        { id: 1, price: 12.9, names: { zh: '经典美式' }, onSale: true },
+        { id: 2, price: 14.9, names: { zh: '榛果美式' }, onSale: true },
+        { id: 3, price: 15.9, names: { zh: '厚乳黑咖' }, onSale: true }
+      ]
+    },
+    新品推荐: {
+      icon: '🆕',
+      names: { zh: '新品推荐' },
+      items: [
+        { id: 3, price: 15.9, names: { zh: '厚乳黑咖' }, onSale: true },
+        { id: 1, price: 12.9, names: { zh: '经典美式' }, onSale: true }
+      ]
+    }
+  };
+  ctx.menuManageActiveCategory = '经典咖啡';
+  ctx.menuSharedCategoryFilter = '经典咖啡';
+  ctx.menuManageProductScope = 'current';
+
+  ctx.enterMenuManageProductSortMode();
+  ctx.setMenuManageProductSortDraftOrder([3, 1, 2]);
+  ctx.saveMenuManageProductSortOrder();
+
+  assert.deepStrictEqual(Array.from(ctx.productsData.经典咖啡.items, item => item.id), [3, 1, 2]);
+  assert.deepStrictEqual(Array.from(ctx.productsData.新品推荐.items, item => item.id), [3, 1]);
 });
 
 test('菜单管理工作区：全部分类搜索结果应按商品ID去重且不展示分类标签', () => {
