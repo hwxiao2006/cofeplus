@@ -10493,6 +10493,10 @@
 
         function setMenuManageProductSortDraftOrder(order = []) {
             menuManageProductSortDraftOrder = normalizeMenuManageProductSortDraftOrder(order);
+            if (menuManageProductSortMode && menuManageProductScope !== 'all' && !isMenuSharedMobileViewport()) {
+                renderMenu();
+                return;
+            }
             renderMenuManageProductSortSheet();
         }
 
