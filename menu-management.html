@@ -1249,70 +1249,6 @@
             min-height: 34px;
         }
 
-        .settings-tax-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-start;
-        }
-
-        .settings-tax-inline-row {
-            flex-direction: row;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px 12px;
-        }
-
-        .settings-tax-inline-row .settings-tax-input-wrap {
-            margin-left: auto;
-        }
-
-        .settings-checkbox {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .settings-checkbox input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--primary);
-        }
-
-        .settings-tax-input-wrap {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            width: fit-content;
-            max-width: 100%;
-            background: #fff;
-        }
-
-        .settings-tax-input-wrap .tax-prefix,
-        .settings-tax-input-wrap .tax-suffix {
-            padding: 0 10px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .settings-tax-input {
-            border: none;
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            border-radius: 0;
-            box-shadow: none !important;
-            min-height: 36px;
-            width: 96px;
-            flex: 0 0 96px;
-            text-align: center;
-            font-variant-numeric: tabular-nums;
-        }
-
         .settings-footer {
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -1589,16 +1525,11 @@
             color: var(--text-primary);
         }
 
-        .menu-manage-sidebar-desc,
         .menu-manage-main-desc {
             margin: 0;
             font-size: 13px;
             line-height: 1.5;
             color: var(--text-muted);
-        }
-
-        .menu-manage-category-search {
-            margin-bottom: 14px;
         }
 
         .menu-manage-category-list {
@@ -2552,6 +2483,13 @@
             white-space: nowrap;
         }
 
+        .product-price-original {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            line-height: 1.2;
+        }
+
         .product-price-line {
             display: flex;
             align-items: baseline;
@@ -2568,10 +2506,6 @@
             font-size: 13px;
             font-weight: 700;
             color: var(--text-secondary);
-        }
-
-        .product-price-line.after-tax .price-value {
-            color: var(--danger);
         }
 
         .product-status {
@@ -3001,35 +2935,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
-        }
-
-        .tax-config-row {
-            align-items: end;
-        }
-
-        .tax-toggle {
-            height: 46px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #fff;
-        }
-
-        .tax-toggle input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .tax-toggle label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            cursor: pointer;
         }
 
         .checkbox-group {
@@ -3683,10 +3588,6 @@
             font-size: 12px;
             font-weight: 700;
             color: var(--text-secondary);
-        }
-
-        .order-preview-product-price-line.after-tax .price-value {
-            color: #0f766e;
         }
 
         .order-preview-pick-btn {
@@ -4695,15 +4596,6 @@
                 width: 100%;
             }
 
-            .settings-tax-inline-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .settings-tax-inline-row .settings-tax-input-wrap {
-                margin-left: 0;
-            }
-
             .settings-footer {
                 flex-direction: column;
                 align-items: stretch;
@@ -5300,21 +5192,6 @@
                                     <option value="JPY">JPY (¥)</option>
                                 </select>
                             </section>
-                            <section class="settings-card">
-                                <h3 class="settings-title">税率设置</h3>
-                                <p class="settings-desc">全局生效，勾选后前台默认显示税后价格，并展示税前价格</p>
-                                <div class="settings-tax-row settings-tax-inline-row">
-                                    <label class="settings-checkbox">
-                                        <input type="checkbox" id="globalTaxEnabled" onchange="toggleGlobalTaxRateInput()">
-                                        <span>启用税费</span>
-                                    </label>
-                                    <div class="settings-tax-input-wrap">
-                                        <span class="tax-prefix">税率</span>
-                                        <input type="number" class="form-input settings-tax-input" id="globalTaxRate" min="0" max="100" step="0.1" placeholder="13" oninput="updatePricingSummary()">
-                                        <span class="tax-suffix">%</span>
-                                    </div>
-                                </div>
-                            </section>
                         </div>
                         <div class="settings-footer">
                             <div class="settings-summary" id="pricingSummary">未设置</div>
@@ -5367,11 +5244,6 @@
                             <aside class="menu-manage-sidebar">
                                 <div class="menu-manage-sidebar-head">
                                     <h3 class="menu-manage-sidebar-title">分类导航</h3>
-                                    <p class="menu-manage-sidebar-desc">分类变多时，左侧负责定位，右侧只展示当前工作区商品。</p>
-                                </div>
-                                <div class="form-group menu-manage-category-search">
-                                    <label class="form-label" for="menuManageCategoryKeyword">搜索分类</label>
-                                    <input type="text" class="form-input" id="menuManageCategoryKeyword" placeholder="输入分类名称" oninput="setMenuManageCategoryKeyword(this.value)">
                                 </div>
                                 <div id="menuManageCategoryList" class="menu-manage-category-list"></div>
                             </aside>
@@ -5788,7 +5660,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">价格规则</label>
-                    <div class="form-input" id="productPricingRuleHint" style="display:flex;align-items:center;background:#f8fafc;color:var(--text-secondary);">采用“基本设置”中的币种与税率</div>
+                    <div class="form-input" id="productPricingRuleHint" style="display:flex;align-items:center;background:#f8fafc;color:var(--text-secondary);">采用基础设置中的币种</div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">业务标签</label>
@@ -6513,7 +6385,6 @@
         let batchFixedPriceFailedMap = {};
         let menuSharedCategoryFilter = '';
         let menuManageActiveCategory = '';
-        let menuManageCategoryKeyword = '';
         let menuManageProductKeyword = '';
         let menuManageProductScope = 'current';
         let menuManageProductSortMode = false;
@@ -6551,7 +6422,6 @@
         const NEXT_PRODUCT_ID_STORAGE_KEY = 'menuNextProductId';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const ORDERS_PREVIEW_RECORDS_KEY = 'ordersPreviewRecords';
-        const DEFAULT_TAX_RATE = 0.13;
         const SUPPORTED_CURRENCIES = {
             CNY: { decimals: 2 },
             USD: { decimals: 2 },
@@ -6560,9 +6430,7 @@
             JPY: { decimals: 0 }
         };
         let menuBasicSettings = {
-            currency: 'CNY',
-            taxEnabled: false,
-            taxRate: DEFAULT_TAX_RATE
+            currency: 'CNY'
         };
         const salesHistoryData = [
             { date: '2026-02-07', gross: 3120, net: 2980, orders: 183, cups: 239, hourly: [0,0,0,0,0,20,42,85,120,168,220,262,290,315,305,286,240,210,186,155,120,80,40,12] },
@@ -6921,9 +6789,6 @@
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     menuBasicSettings.currency = normalizeProductCurrency({ currency: parsed.currency || menuBasicSettings.currency });
-                    menuBasicSettings.taxEnabled = Boolean(parsed.taxEnabled);
-                    const rate = Number(parsed.taxRate);
-                    menuBasicSettings.taxRate = Number.isFinite(rate) && rate > 0 ? rate : DEFAULT_TAX_RATE;
                 }
             } catch (e) {
                 // ignore invalid settings
@@ -6935,7 +6800,9 @@
 
         function persistMenuBasicSettings() {
             try {
-                localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify(menuBasicSettings));
+                localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify({
+                    currency: menuBasicSettings.currency
+                }));
             } catch (e) {
                 // ignore localStorage errors
             }
@@ -6943,91 +6810,48 @@
 
         function applyGlobalPricingSettingsToProducts() {
             Object.values(productsData).forEach(category => {
-                category.items.forEach(item => {
-                    item.currency = menuBasicSettings.currency;
-                    item.taxEnabled = menuBasicSettings.taxEnabled;
-                    item.taxRate = menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0;
-                });
+                category.items = category.items.map(item => sanitizeMenuProductRecord({
+                    ...item,
+                    currency: menuBasicSettings.currency
+                }));
             });
         }
 
         function renderMenuBasicSettingsForm() {
             const currencySelect = document.getElementById('globalCurrencySelect');
-            const taxEnabledInput = document.getElementById('globalTaxEnabled');
-            const taxRateInput = document.getElementById('globalTaxRate');
             const orderContactPhoneInput = document.getElementById('orderContactPhoneInput');
             const orderContactEmailInput = document.getElementById('orderContactEmailInput');
-            if (!currencySelect || !taxEnabledInput || !taxRateInput || !orderContactPhoneInput || !orderContactEmailInput) return;
+            if (!currencySelect || !orderContactPhoneInput || !orderContactEmailInput) return;
 
             currencySelect.value = normalizeProductCurrency({ currency: menuBasicSettings.currency });
-            taxEnabledInput.checked = Boolean(menuBasicSettings.taxEnabled);
-            taxRateInput.value = (menuBasicSettings.taxRate * 100).toFixed(1).replace(/\.0$/, '');
             const orderContact = ensureDeviceOrderContactConfig(currentDevice);
             orderContactPhoneInput.value = orderContact.phone;
             orderContactEmailInput.value = orderContact.email;
-            toggleGlobalTaxRateInput();
             updatePricingSummary();
             updateOrderContactCardState();
-        }
-
-        function toggleGlobalTaxRateInput() {
-            const taxEnabledInput = document.getElementById('globalTaxEnabled');
-            const taxRateInput = document.getElementById('globalTaxRate');
-            if (!taxEnabledInput || !taxRateInput) return;
-            const enabled = taxEnabledInput.checked;
-            taxRateInput.disabled = !enabled;
-            taxRateInput.style.opacity = enabled ? '1' : '0.5';
-            if (!enabled) {
-                taxRateInput.value = (DEFAULT_TAX_RATE * 100).toFixed(1).replace(/\.0$/, '');
-            }
-            updatePricingSummary();
         }
 
         function updatePricingSummary() {
             const summary = document.getElementById('pricingSummary');
             const currencySelect = document.getElementById('globalCurrencySelect');
-            const taxEnabledInput = document.getElementById('globalTaxEnabled');
-            const taxRateInput = document.getElementById('globalTaxRate');
-            if (!summary || !currencySelect || !taxEnabledInput || !taxRateInput) return;
+            if (!summary || !currencySelect) return;
 
             const currency = normalizeProductCurrency({ currency: currencySelect.value || menuBasicSettings.currency });
-            if (!taxEnabledInput.checked) {
-                summary.textContent = `全局生效：全站菜单按 ${currency} 显示，不启用税费。`;
-                return;
-            }
-            const taxRateValue = parseFloat(taxRateInput.value);
-            const safeRate = Number.isFinite(taxRateValue) && taxRateValue > 0 ? taxRateValue : DEFAULT_TAX_RATE * 100;
-            summary.textContent = `全局生效：全站菜单按 ${currency} 显示，税率 ${safeRate.toFixed(1).replace(/\.0$/, '')}%（默认显示税后价格，并展示税前价格）。`;
+            summary.textContent = `全局生效：全站菜单按 ${currency} 显示。`;
         }
 
         function updateProductPricingRuleHint() {
             const hint = document.getElementById('productPricingRuleHint');
             if (!hint) return;
-            if (!menuBasicSettings.taxEnabled) {
-                hint.textContent = `采用基础设置：${menuBasicSettings.currency}，不启用税费`;
-                return;
-            }
-            hint.textContent = `采用基础设置：${menuBasicSettings.currency}，税率 ${(menuBasicSettings.taxRate * 100).toFixed(1).replace(/\.0$/, '')}%`;
+            hint.textContent = `采用基础设置：${menuBasicSettings.currency}`;
         }
 
         function saveMenuBasicSettings() {
             const currencySelect = document.getElementById('globalCurrencySelect');
-            const taxEnabledInput = document.getElementById('globalTaxEnabled');
-            const taxRateInput = document.getElementById('globalTaxRate');
             const orderContactDraft = readOrderContactFormValue();
-            if (!currencySelect || !taxEnabledInput || !taxRateInput) return false;
+            if (!currencySelect) return false;
 
             const currency = normalizeProductCurrency({ currency: currencySelect.value });
-            const taxEnabled = taxEnabledInput.checked;
-            let taxRate = 0;
-            if (taxEnabled) {
-                const taxRatePercent = parseFloat(taxRateInput.value);
-                if (!Number.isFinite(taxRatePercent) || taxRatePercent <= 0 || taxRatePercent > 100) {
-                    showToast('请输入 0-100 之间的有效税率', 'error');
-                    return false;
-                }
-                taxRate = taxRatePercent / 100;
-            }
             const orderContactValidation = validateDeviceOrderContactConfig(orderContactDraft);
             if (!orderContactValidation.ok) {
                 showToast(orderContactValidation.message, 'error');
@@ -7035,8 +6859,6 @@
             }
 
             menuBasicSettings.currency = currency;
-            menuBasicSettings.taxEnabled = taxEnabled;
-            menuBasicSettings.taxRate = taxEnabled ? taxRate : DEFAULT_TAX_RATE;
 
             applyGlobalPricingSettingsToProducts();
             persistMenuBasicSettings();
@@ -7051,17 +6873,14 @@
         }
 
         function applySavedProductEdits() {
-            let edits = {};
-            try {
-                edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
-            } catch (e) {
-                edits = {};
-            }
-
+            const edits = getSavedProductEditsMap();
             if (!edits || typeof edits !== 'object') return;
 
             for (const category of Object.values(productsData)) {
-                category.items = category.items.map(item => edits[item.id] ? { ...item, ...edits[item.id] } : item);
+                category.items = category.items.map(item => {
+                    const merged = edits[item.id] ? { ...item, ...edits[item.id] } : item;
+                    return sanitizeMenuProductRecord(merged);
+                });
             }
         }
 
@@ -7092,7 +6911,11 @@
         function getSavedProductEditsMap() {
             try {
                 const parsed = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
-                return parsed && typeof parsed === 'object' ? parsed : {};
+                if (!parsed || typeof parsed !== 'object') return {};
+                return Object.entries(parsed).reduce((acc, [productId, product]) => {
+                    acc[productId] = sanitizeMenuProductRecord(product);
+                    return acc;
+                }, {});
             } catch (e) {
                 return {};
             }
@@ -7109,7 +6932,7 @@
             for (const category of Object.values(productsData || {})) {
                 const matched = (category?.items || []).find(item => Number(item.id) === numericId);
                 if (matched) {
-                    return cloneMenuProductRecord(matched);
+                    return sanitizeMenuProductRecord(cloneMenuProductRecord(matched));
                 }
             }
 
@@ -7768,7 +7591,7 @@
             } catch (e) {
                 edits = {};
             }
-            edits[product.id] = { ...(edits[product.id] || {}), ...product };
+            edits[product.id] = sanitizeMenuProductRecord({ ...(edits[product.id] || {}), ...product });
             localStorage.setItem('menuProductEdits', JSON.stringify(edits));
         }
 
@@ -8302,24 +8125,13 @@
             return SUPPORTED_CURRENCIES[code] ? code : 'CNY';
         }
 
-        function normalizeProductTaxRate(product) {
-            const raw = Number(product?.taxRate);
-            if (!Number.isFinite(raw) || raw <= 0) return DEFAULT_TAX_RATE;
-            return raw;
-        }
-
         function getProductPriceInfo(product) {
             const currency = normalizeProductCurrency({ currency: menuBasicSettings.currency });
-            const storedPrice = Number(product?.price || 0);
-            const taxEnabled = Boolean(menuBasicSettings.taxEnabled);
-            const taxRate = taxEnabled ? normalizeProductTaxRate({ taxRate: menuBasicSettings.taxRate }) : 0;
-            const afterTax = storedPrice;
-            const preTax = taxEnabled ? afterTax / (1 + taxRate) : storedPrice;
+            const price = Number(product?.price || 0);
             const originalStoredPrice = Number(product?.originalPrice || 0);
-            const hasOriginalPrice = Number.isFinite(originalStoredPrice) && originalStoredPrice > storedPrice;
-            const originalAfterTax = hasOriginalPrice ? originalStoredPrice : 0;
-            const originalPreTax = hasOriginalPrice && taxEnabled ? originalAfterTax / (1 + taxRate) : originalStoredPrice;
-            return { currency, preTax, taxEnabled, taxRate, afterTax, hasOriginalPrice, originalPreTax, originalAfterTax };
+            const hasOriginalPrice = Number.isFinite(originalStoredPrice) && originalStoredPrice > price;
+            const originalPrice = hasOriginalPrice ? originalStoredPrice : 0;
+            return { currency, price, hasOriginalPrice, originalPrice };
         }
 
         function formatMoneyByCurrency(amount, currency) {
@@ -8337,40 +8149,19 @@
             const { compact = false } = options;
             const info = getProductPriceInfo(product);
 
-            if (!info.taxEnabled) {
-                if (compact) {
-                    return `
-                        <div class="order-preview-product-price-wrap">
-                            ${info.hasOriginalPrice ? `<div class="order-preview-product-original-price">${escapePreviewText(formatMoneyByCurrency(info.originalPreTax, info.currency))}</div>` : ''}
-                            <div class="order-preview-product-price">${escapePreviewText(formatMoneyByCurrency(info.preTax, info.currency))}</div>
-                        </div>
-                    `;
-                }
-                return `<div class="product-price"><div class="product-price-single">${escapePreviewText(formatMoneyByCurrency(info.preTax, info.currency))}</div></div>`;
-            }
-
-            const preTaxText = escapePreviewText(formatMoneyByCurrency(info.preTax, info.currency));
-            const afterTaxText = escapePreviewText(formatMoneyByCurrency(info.afterTax, info.currency));
             if (compact) {
                 return `
                     <div class="order-preview-product-price-wrap">
-                        ${info.hasOriginalPrice ? `<div class="order-preview-product-original-price">${escapePreviewText(formatMoneyByCurrency(info.originalAfterTax, info.currency))}</div>` : ''}
-                        <div class="order-preview-product-price">${afterTaxText}</div>
-                        <div class="order-preview-product-price-line">
-                            <span class="price-label">税前</span>
-                            <span class="price-value">${preTaxText}</span>
-                        </div>
+                        ${info.hasOriginalPrice ? `<div class="order-preview-product-original-price">${escapePreviewText(formatMoneyByCurrency(info.originalPrice, info.currency))}</div>` : ''}
+                        <div class="order-preview-product-price">${escapePreviewText(formatMoneyByCurrency(info.price, info.currency))}</div>
                     </div>
                 `;
             }
 
             return `
                 <div class="product-price">
-                    <div class="product-price-single">${afterTaxText}</div>
-                    <div class="product-price-line">
-                        <span class="price-label">税前</span>
-                        <span class="price-value">${preTaxText}</span>
-                    </div>
+                    ${info.hasOriginalPrice ? `<div class="product-price-original">${escapePreviewText(formatMoneyByCurrency(info.originalPrice, info.currency))}</div>` : ''}
+                    <div class="product-price-single">${escapePreviewText(formatMoneyByCurrency(info.price, info.currency))}</div>
                 </div>
             `;
         }
@@ -8521,8 +8312,7 @@
         function buildPreviewOrderRecord(product, categoryKey = '', date = new Date()) {
             const quantity = Number(orderPreviewDetailState.quantity) > 0 ? Number(orderPreviewDetailState.quantity) : 1;
             const priceInfo = getProductPriceInfo(product);
-            const displayBasePrice = priceInfo.taxEnabled ? priceInfo.afterTax : priceInfo.preTax;
-            const unitAmount = displayBasePrice + getOrderPreviewSelectedExtraPrice(product);
+            const unitAmount = priceInfo.price + getOrderPreviewSelectedExtraPrice(product);
             const currency = priceInfo.currency;
             const decimals = SUPPORTED_CURRENCIES[currency]?.decimals ?? 2;
             const totalAmount = Number((unitAmount * quantity).toFixed(decimals));
@@ -8922,8 +8712,7 @@
             const summaryDesc = getProductDescription(product, previewLang);
             const detailDesc = product.descs?.[previewLang] || product.descs?.zh || product.descs?.en || summaryDesc || '';
             const priceInfo = getProductPriceInfo(product);
-            const displayBasePrice = priceInfo.taxEnabled ? priceInfo.afterTax : priceInfo.preTax;
-            const displayPrice = formatOrderPreviewDisplayMoney(displayBasePrice + getOrderPreviewSelectedExtraPrice(product), priceInfo.currency);
+            const displayPrice = formatOrderPreviewDisplayMoney(priceInfo.price + getOrderPreviewSelectedExtraPrice(product), priceInfo.currency);
             const cupText = getOrderPreviewCupsizeText(product, previewLang);
             const quantity = Number(orderPreviewDetailState.quantity) > 0 ? Number(orderPreviewDetailState.quantity) : 1;
 
@@ -10435,16 +10224,8 @@
             setMenuSharedCategoryFilter(getMenuManageCategoryKeys().length ? getMenuManageCategoryKeys()[0] : '');
         }
 
-        function getMenuManageVisibleCategoryKeys(keyword = menuManageCategoryKeyword) {
-            const normalizedKeyword = normalizeMenuManageKeyword(keyword);
-            const categoryKeys = getMenuManageCategoryKeys();
-            if (!normalizedKeyword) return categoryKeys;
-
-            return categoryKeys.filter(categoryKey => {
-                const names = productsData[categoryKey]?.names || {};
-                const candidates = [getCategoryNameByLang(categoryKey, currentLang), ...Object.values(names)];
-                return candidates.some(value => String(value || '').toLowerCase().includes(normalizedKeyword));
-            });
+        function getMenuManageVisibleCategoryKeys() {
+            return getMenuManageCategoryKeys();
         }
 
         function getMenuManageProductName(product = {}) {
@@ -10692,7 +10473,6 @@
             ensureMenuManageActiveCategory();
             ensureMenuSharedCategoryFilter();
 
-            const keywordInput = document.getElementById('menuManageCategoryKeyword');
             const categoryList = document.getElementById('menuManageCategoryList');
             const mobileSelect = document.getElementById('menuManageCategorySelect');
             const scopeCurrentBtn = document.getElementById('menuManageScopeCurrentBtn');
@@ -10700,7 +10480,6 @@
             const productKeywordInput = document.getElementById('menuManageProductKeyword');
             const isCurrentScope = menuManageProductScope !== 'all';
 
-            if (keywordInput) keywordInput.value = menuManageCategoryKeyword;
             if (productKeywordInput) productKeywordInput.value = menuManageProductKeyword;
             if (scopeCurrentBtn) {
                 scopeCurrentBtn.classList.toggle('active', isCurrentScope);
@@ -10952,11 +10731,6 @@
         function setMenuManageActiveCategory(categoryKey) {
             if (Date.now() < menuManageIgnoreCategoryClickUntil) return;
             setMenuSharedCategoryFilter(String(categoryKey || '').trim());
-        }
-
-        function setMenuManageCategoryKeyword(keyword = '') {
-            menuManageCategoryKeyword = String(keyword || '');
-            renderMenu();
         }
 
         function setMenuManageProductKeyword(keyword = '') {
@@ -11599,15 +11373,22 @@
             return JSON.parse(JSON.stringify(value));
         }
 
+        function sanitizeMenuProductRecord(product) {
+            if (!product || typeof product !== 'object') return product;
+            const sanitized = cloneProductValue(product) || {};
+            sanitized.currency = normalizeProductCurrency({ currency: sanitized.currency || menuBasicSettings.currency });
+            delete sanitized.taxEnabled;
+            delete sanitized.taxRate;
+            return sanitized;
+        }
+
         function cloneProductForCopy(sourceProduct) {
             if (!sourceProduct || typeof sourceProduct !== 'object') {
-                return {
+                return sanitizeMenuProductRecord({
                     id: nextProductId++,
                     price: 0,
                     originalPrice: null,
                     currency: menuBasicSettings.currency,
-                    taxEnabled: menuBasicSettings.taxEnabled,
-                    taxRate: menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0,
                     featured: true,
                     businessTagIds: [],
                     image: null,
@@ -11621,20 +11402,16 @@
                     optionRecipes: {},
                     optionRecipeLinks: {},
                     onSale: true
-                };
+                });
             }
 
             const cloned = cloneProductValue(sourceProduct) || {};
-            return {
+            return sanitizeMenuProductRecord({
                 ...cloned,
                 id: nextProductId++,
                 price: Number.isFinite(Number(cloned.price)) ? Number(cloned.price) : 0,
                 originalPrice: Number.isFinite(Number(cloned.originalPrice)) && Number(cloned.originalPrice) > 0 ? Number(cloned.originalPrice) : null,
                 currency: normalizeProductCurrency({ currency: cloned.currency || menuBasicSettings.currency }),
-                taxEnabled: cloned.taxEnabled !== undefined ? Boolean(cloned.taxEnabled) : Boolean(menuBasicSettings.taxEnabled),
-                taxRate: cloned.taxEnabled === false
-                    ? 0
-                    : (Number.isFinite(Number(cloned.taxRate)) ? Number(cloned.taxRate) : (menuBasicSettings.taxEnabled ? menuBasicSettings.taxRate : 0)),
                 featured: cloned.featured !== false,
                 businessTagIds: getProductBusinessTagIds(cloned),
                 image: cloned.image || null,
@@ -11648,7 +11425,7 @@
                 optionRecipes: cloneProductValue(cloned.optionRecipes) || {},
                 optionRecipeLinks: cloneProductValue(cloned.optionRecipeLinks) || {},
                 onSale: true
-            };
+            });
         }
 
         function populateProductModalFields(sourceProduct = null) {
@@ -11959,7 +11736,7 @@
             const queueMap = getCopyProductQueueMap();
             const queue = Array.isArray(queueMap[normalizedDeviceId]) ? queueMap[normalizedDeviceId] : [];
             queue.push({
-                product: cloneProductValue(product),
+                product: sanitizeMenuProductRecord(product),
                 categoryKeys: Array.from(new Set((categoryKeys || [])
                     .map(categoryKey => String(categoryKey || '').trim())
                     .filter(Boolean)))
@@ -12444,8 +12221,6 @@
             const price = parseFloat(document.getElementById('productPrice').value);
             const originalPriceRaw = document.getElementById('productOriginalPrice').value.trim();
             const currency = menuBasicSettings.currency;
-            const taxEnabled = menuBasicSettings.taxEnabled;
-            const taxRate = taxEnabled ? menuBasicSettings.taxRate : 0;
             const langs = getDeviceLangs();
             const firstLang = langs[0];
 
@@ -12498,7 +12273,7 @@
             if (editingProductId !== null) {
                 editingSnapshot = resolveProductSnapshotForAssignment(editingProductId, getSavedProductEditsMap());
                 if (!editingSnapshot && editingProductCategory && productsData[editingProductCategory]) {
-                    editingSnapshot = cloneProductValue(productsData[editingProductCategory].items.find(item => item.id === editingProductId));
+                    editingSnapshot = sanitizeMenuProductRecord(cloneProductValue(productsData[editingProductCategory].items.find(item => item.id === editingProductId)));
                 }
                 if (editingSnapshot) {
                     existingNames = { ...(editingSnapshot.names || {}) };
@@ -12550,18 +12325,16 @@
                     removeMissingDescs: true,
                     removeMissingSpecs: true
                 });
-                const updatedProduct = {
+                const updatedProduct = sanitizeMenuProductRecord({
                     ...editingSnapshot,
                     ...mergedLocalizedFields,
                     price: price,
                     originalPrice: originalPrice,
                     currency: currency,
-                    taxEnabled: taxEnabled,
-                    taxRate: taxEnabled ? taxRate : 0,
                     businessTagIds: existingBusinessTagIds,
                     image: image || null,
                     onSale: oldOnSale
-                };
+                });
 
                 persistSingleProductEdit(updatedProduct);
                 persistProductCategoryAssignments(updatedProduct.id, selectedCategories);
@@ -12625,18 +12398,16 @@
                 }
 
                 const copiedTemplate = cloneProductForCopy(productCopySource);
-                const copiedProduct = {
+                const copiedProduct = sanitizeMenuProductRecord({
                     ...copiedTemplate,
                     ...cloneProductValue(mergedLocalizedFields),
                     price: price,
                     originalPrice: originalPrice,
                     currency: currency,
-                    taxEnabled: taxEnabled,
-                    taxRate: taxEnabled ? taxRate : 0,
                     businessTagIds: existingBusinessTagIds.length ? existingBusinessTagIds : getProductBusinessTagIds(copiedTemplate),
                     image: image || null,
                     onSale: true
-                };
+                });
 
                 try {
                     if (deviceId === currentDevice) {
