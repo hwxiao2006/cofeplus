@@ -2397,6 +2397,16 @@
             margin-bottom: 8px;
         }
 
+        .product-business-tag-list-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+            justify-content: flex-end;
+            max-width: calc(100% - 24px);
+            margin-bottom: 0;
+        }
+
         .product-business-tag,
         .product-business-tag-more {
             display: inline-flex;
@@ -10566,6 +10576,13 @@
             const saleActionLabel = isOnSale ? '下架' : '上架';
             const saleStatusLabel = isOnSale ? '在售' : '已下架';
             const saleActionClass = isOnSale ? 'product-action-btn-sale-off' : 'product-action-btn-sale-on';
+            const businessTagHtml = renderBusinessTagList(product, currentLang, {
+                max: 2,
+                listClass: 'product-business-tag-list product-business-tag-list-overlay',
+                tagClass: 'product-business-tag',
+                overflowMode: 'count',
+                overflowClass: 'product-business-tag-more'
+            });
 
             return `
                 <div class="product-card product-row">
@@ -10577,18 +10594,12 @@
                                 <span>暂无图片</span>
                             </div>`
                         }
+                        ${businessTagHtml}
                     </div>
                     <div class="product-content">
                         <div class="product-card-header">
                             <div class="product-name">${escapePreviewText(productName)}</div>
                         </div>
-                        ${renderBusinessTagList(product, currentLang, {
-                            max: 2,
-                            listClass: 'product-business-tag-list',
-                            tagClass: 'product-business-tag',
-                            overflowMode: 'count',
-                            overflowClass: 'product-business-tag-more'
-                        })}
                         <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
                         <div class="product-footer">
                             <div class="product-meta">

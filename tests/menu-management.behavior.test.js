@@ -2441,6 +2441,30 @@ test('菜单管理商品卡片：上架和下架按钮应使用不同状态色',
   assert.ok(/saleActionClass\s*=\s*isOnSale\s*\?\s*'product-action-btn-sale-off'\s*:\s*'product-action-btn-sale-on'/.test(html));
 });
 
+test('菜单管理商品卡片：业务标签应悬浮在商品图右上角，不占用正文布局', () => {
+  const ctx = loadMenuContext();
+  ctx.currentLang = 'zh';
+  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
+    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
+    tag_recommend: { id: 'tag_recommend', names: { zh: '推荐', en: 'Recommend' }, status: 'active' }
+  };
+  const product = {
+    id: 9,
+    price: 10,
+    onSale: true,
+    names: { zh: '卡布其诺*' },
+    descs: { zh: '金奖黑咖-浓香意式、热、标准' },
+    businessTagIds: ['tag_signature', 'tag_recommend']
+  };
+
+  const cardHtml = ctx.renderMenuManageProductCard(product, { categoryKey: '奶咖系列' });
+  const source = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+
+  assert.ok(/<div class="product-image-wrapper">[\s\S]*product-business-tag-list product-business-tag-list-overlay/.test(cardHtml));
+  assert.ok(!/<div class="product-content">[\s\S]*product-business-tag-list/.test(cardHtml));
+  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(source));
+});
+
 test('菜单管理工作区：当前分类模式应提供调整商品顺序入口，全部分类模式不显示', () => {
   const ctx = loadMenuContext();
   ctx.renderMenu = ctx.__realRenderMenu;
