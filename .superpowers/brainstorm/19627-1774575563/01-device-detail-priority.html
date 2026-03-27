@@ -1,0 +1,106 @@
+<h2>设备详情页改版方向</h2>
+<p class="subtitle">你说的“太乱、一般人看不懂”，核心不是信息不够，而是首屏同时塞了太多层级：设备档案、故障指标、入场信息、图片、目录导航、动作入口一起出现。</p>
+
+<div class="section">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">当前首屏的问题</div>
+      <div class="mockup-body">
+        <div style="display:grid;gap:10px">
+          <div style="padding:10px 12px;border:1px solid #f3b3b3;background:#fff6f6;border-radius:10px">
+            <div class="label">问题 1</div>
+            <strong>信息层级混在一起</strong>
+            <p style="margin:6px 0 0;color:#666">设备信息、故障处理、入场核心、入场详情、图片都默认展开，用户不知道先看哪里。</p>
+          </div>
+          <div style="padding:10px 12px;border:1px solid #f3d5a5;background:#fffaf2;border-radius:10px">
+            <div class="label">问题 2</div>
+            <strong>右侧栏太像第二个页面</strong>
+            <p style="margin:6px 0 0;color:#666">目录导航、状态摘要、设备操作都在侧栏，和左侧主内容抢注意力。</p>
+          </div>
+          <div style="padding:10px 12px;border:1px solid #cfe4ff;background:#f7fbff;border-radius:10px">
+            <div class="label">问题 3</div>
+            <strong>“完整动作入口”有了，但不够聚焦</strong>
+            <p style="margin:6px 0 0;color:#666">远程操作、编辑状态、状态记录、物料页面都很重要，但首屏缺少“先看状态，再做动作”的引导。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">我建议的简化原则</div>
+      <div class="mockup-body">
+        <div style="display:grid;gap:10px">
+          <div style="padding:10px 12px;border:1px solid #d9e7ff;background:#fbfdff;border-radius:10px">
+            <strong>首屏只回答 3 个问题</strong>
+            <p style="margin:6px 0 0;color:#666">这是谁的设备？现在是否异常？我下一步最可能做什么？</p>
+          </div>
+          <div style="padding:10px 12px;border:1px solid #d9e7ff;background:#fbfdff;border-radius:10px">
+            <strong>动作统一放在一个区域</strong>
+            <p style="margin:6px 0 0;color:#666">远程操作不是故障专属，所以设备级动作要统一归到同一块，不再分散。</p>
+          </div>
+          <div style="padding:10px 12px;border:1px solid #d9e7ff;background:#fbfdff;border-radius:10px">
+            <strong>深层信息默认折叠</strong>
+            <p style="margin:6px 0 0;color:#666">入场全部信息、图片、技术参数、完整记录，应该按需展开，而不是首屏全部压给用户。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>先定一个最重要的问题：首屏优先服务谁？</h3>
+  <p class="subtitle">点击一个最接近你预期的方向。我会基于你的选择继续出下一版线框。</p>
+
+  <div class="cards">
+    <div class="card" data-choice="ops-first" onclick="toggleSelect(this)">
+      <div class="card-image">
+        <div style="display:grid;gap:8px">
+          <div class="mock-nav">设备概览</div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:8px">
+            <div class="mock-content">基础信息 + 当前状态 + 最近异常</div>
+            <div class="mock-sidebar">常用动作</div>
+          </div>
+          <div class="placeholder">深层信息折叠到后面</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>A. 运营优先</h3>
+        <p>先让普通人一眼看懂设备是谁、在哪、现在正不正常，再决定要不要展开深层内容。</p>
+      </div>
+    </div>
+
+    <div class="card" data-choice="maint-first" onclick="toggleSelect(this)">
+      <div class="card-image">
+        <div style="display:grid;gap:8px">
+          <div class="mock-nav">当前异常</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="mock-content">异常摘要 + 机构状态</div>
+            <div class="mock-sidebar">动作入口</div>
+          </div>
+          <div class="placeholder">基础资料和入场信息下沉</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>B. 运维优先</h3>
+        <p>先看异常和动作，适合值班排障，但普通运营第一次进来可能还是会觉得信息偏技术。</p>
+      </div>
+    </div>
+
+    <div class="card" data-choice="hybrid" onclick="toggleSelect(this)">
+      <div class="card-image">
+        <div style="display:grid;gap:8px">
+          <div class="mock-nav">概览 / 运维</div>
+          <div style="display:grid;grid-template-columns:1fr;gap:8px">
+            <div class="mock-content">概览模式：信息简洁</div>
+            <div class="mock-content">运维模式：动作与记录更完整</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3>C. 双模式</h3>
+        <p>把“普通人看”和“运维处理”拆成两个视图，最清晰，但实现和维护成本也更高。</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+{"type":"server-started","port":52748,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:52748","screen_dir":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563"}
+{"type":"screen-added","file":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563/01-device-detail-priority.html"}
+{"type":"screen-added","file":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563/02-device-detail-layouts.html"}
+{"type":"screen-added","file":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563/03-waiting.html"}
+{"type":"screen-added","file":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563/04-device-detail-final-preview.html"}
+{"type":"screen-added","file":"/Users/mac/Documents/New project 4/.superpowers/brainstorm/19627-1774575563/05-device-detail-final-preview-v2.html"}
+{"type":"server-stopped","reason":"idle timeout"}

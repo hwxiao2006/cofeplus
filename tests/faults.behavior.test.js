@@ -55,12 +55,24 @@ function loadFaultContext(options = {}) {
   }
 
   const sessionStore = {};
+  const defaultStaffAccessHelper = {
+    resolveCurrentStaffAccess() {
+      return { isScoped: false, currentStaff: null };
+    },
+    hasModulePermission() {
+      return false;
+    },
+    getModuleVisibleDeviceIds() {
+      return [];
+    }
+  };
   const context = {
     console,
     window: {
       location: { href: '', pathname: '/faults.html', search: '' },
       innerWidth: options.innerWidth || 1280,
-      addEventListener() {}
+      addEventListener() {},
+      CofeAdminStaffAccess: options.staffAccessHelper || defaultStaffAccessHelper
     },
     document: {
       getElementById: getElement,
@@ -98,6 +110,10 @@ function test(name, fn) {
   }
 }
 
+test('故障页应显式引入共享员工权限脚本', () => {
+  assert.ok(/<script src="shared\/admin-staff-access\.js"><\/script>/.test(faultsHtml));
+});
+
 test('故障列表：卡片中应仅保留远程操作按钮', () => {
   const ctx = loadFaultContext();
   ctx.renderList();
@@ -117,6 +133,52 @@ test('故障列表：应只展示故障设备', () => {
   const listHtml = ctx.document.getElementById('list').innerHTML;
   assert.ok(listHtml.includes('RCK019'));
   assert.ok(!listHtml.includes('RCK021'));
+});
+
+test('故障列表：应按当前员工故障页设备范围裁剪数据', () => {
+  const ctx = loadFaultContext({
+    staffAccessHelper: {
+      resolveCurrentStaffAccess() {
+        return { isScoped: true, currentStaff: { username: '王运维' } };
+      },
+      hasModulePermission() {
+        return true;
+      },
+      getModuleVisibleDeviceIds() {
+        return ['RCK073'];
+      }
+    }
+  });
+
+  ctx.renderSummary();
+  ctx.renderList();
+
+  const listHtml = ctx.document.getElementById('list').innerHTML;
+  assert.ok(listHtml.includes('RCK073'));
+  assert.ok(!listHtml.includes('RCK019'));
+  assert.strictEqual(ctx.document.getElementById('summary').textContent, '故障设备 1 台');
+});
+
+test('故障列表：无故障页权限时应展示清晰空状态', () => {
+  const ctx = loadFaultContext({
+    staffAccessHelper: {
+      resolveCurrentStaffAccess() {
+        return { isScoped: true, currentStaff: { username: '李财务' } };
+      },
+      hasModulePermission() {
+        return false;
+      },
+      getModuleVisibleDeviceIds() {
+        return [];
+      }
+    }
+  });
+
+  ctx.renderSummary();
+  ctx.renderList();
+
+  assert.strictEqual(ctx.document.getElementById('summary').textContent, '故障设备 0 台');
+  assert.ok(ctx.document.getElementById('list').innerHTML.includes('当前账号暂未开通故障页面权限'));
 });
 
 test('故障列表：操作按钮应只绑定远程操作动作', () => {
@@ -155,6 +217,28 @@ test('远程操作：点击后应显示图一菜单弹层', () => {
   assert.ok(panel.innerHTML.includes('音量调节'));
 });
 
+test('远程操作：超出当前员工故障页设备范围时不应打开弹层', () => {
+  const ctx = loadFaultContext({
+    staffAccessHelper: {
+      resolveCurrentStaffAccess() {
+        return { isScoped: true, currentStaff: { username: '王运维' } };
+      },
+      hasModulePermission() {
+        return true;
+      },
+      getModuleVisibleDeviceIds() {
+        return ['RCK073'];
+      }
+    }
+  });
+
+  ctx.openRemoteActions('RCK019');
+
+  const panel = ctx.document.getElementById('remoteActionSheet');
+  assert.strictEqual(panel.classList.contains('active'), false);
+  assert.strictEqual(panel.innerHTML, '');
+});
+
 test('编辑状态：点击后应显示图二菜单弹层', () => {
   const ctx = loadFaultContext();
   assert.strictEqual(typeof ctx.openEditStatus, 'function');
@@ -177,6 +261,28 @@ test('状态记录：点击后应显示图三列表', () => {
   assert.ok(page.innerHTML.includes('异常记录'));
   assert.ok(page.innerHTML.includes('运维记录'));
   assert.ok(page.innerHTML.includes('废料记录'));
+});
+
+test('状态记录：超出当前员工故障页设备范围时不应打开记录页', () => {
+  const ctx = loadFaultContext({
+    staffAccessHelper: {
+      resolveCurrentStaffAccess() {
+        return { isScoped: true, currentStaff: { username: '王运维' } };
+      },
+      hasModulePermission() {
+        return true;
+      },
+      getModuleVisibleDeviceIds() {
+        return ['RCK073'];
+      }
+    }
+  });
+
+  ctx.openStatusRecords('RCK019');
+
+  const page = ctx.document.getElementById('statusRecordPage');
+  assert.strictEqual(page.classList.contains('active'), false);
+  assert.strictEqual(page.innerHTML, '');
 });
 
 test('状态记录：点击异常记录后应显示图四详情', () => {

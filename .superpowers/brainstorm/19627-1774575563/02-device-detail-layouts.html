@@ -1,0 +1,98 @@
+<h2>设备详情页布局方案</h2>
+<p class="subtitle">方向已锁定为 <strong>运营优先</strong>。下面 3 个方案都遵守同一原则：首屏先回答“这台设备是谁的、现在是否正常、最常用动作是什么”，深层信息后置。</p>
+
+<div class="section">
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>推荐目标</h4>
+      <ul>
+        <li>普通运营第一次进来也能 5 秒内看懂</li>
+        <li>远程操作仍保留为设备级通用动作</li>
+        <li>故障、入场、图片、记录都存在，但不抢首屏</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>必须避免</h4>
+      <ul>
+        <li>一打开就出现 5 个大块卡片并列竞争注意力</li>
+        <li>目录导航和内容本身同时抢用户眼睛</li>
+        <li>动作入口散落在多个区域</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="layout-a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A. 概览首屏 + 动作侧栏</div>
+        <div class="mockup-body">
+          <div class="mock-nav">设备编号 / 商户 / 点位 / 当前状态</div>
+          <div style="display:grid;grid-template-columns:1.5fr 0.9fr;gap:10px;margin-top:10px">
+            <div style="display:grid;gap:8px">
+              <div class="mock-content">首屏概览卡：设备状态 / 停卖 / 最近心跳 / 入场状态</div>
+              <div class="mock-content">当前异常摘要：只有异常时才高亮</div>
+              <div class="mock-content">可折叠区：入场核心 / 入场详情 / 图片 / 完整记录</div>
+            </div>
+            <div style="display:grid;gap:8px">
+              <div class="mock-sidebar">统一设备操作</div>
+              <div class="mock-sidebar">远程操作 / 编辑状态 / 状态记录 / 物料页面</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 概览首屏 + 动作侧栏</h3>
+      <p><strong>推荐。</strong> 最像一个“人人看得懂”的设备名片页。先看概要，再决定是否展开故障或入场细节。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="layout-b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B. 三段式主内容</div>
+        <div class="mockup-body">
+          <div style="display:grid;gap:8px">
+            <div class="mock-content">第一段：设备名片 + 关键状态 + 常用动作</div>
+            <div class="mock-content">第二段：异常与运维信息</div>
+            <div class="mock-content">第三段：入场、图片、技术细节</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 三段式主内容</h3>
+      <p>没有明显侧栏，阅读路径更顺，但动作区会往下沉一点，桌面端“操作感”略弱。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="layout-c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C. 概览首屏 + 二级 Tab</div>
+        <div class="mockup-body">
+          <div class="mock-nav">设备概览</div>
+          <div class="mock-content">首屏固定：基础信息 + 状态 + 动作</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="mock-button">故障</button>
+            <button class="mock-button">入场</button>
+            <button class="mock-button">图片</button>
+            <button class="mock-button">记录</button>
+          </div>
+          <div class="placeholder">点 Tab 才切换对应内容</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 概览首屏 + 二级 Tab</h3>
+      <p>最干净，但会把信息藏得比较深，适合重度使用者，不太适合第一次进入的普通运营。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>我的推荐</h3>
+  <p class="subtitle">我推荐 <strong>A</strong>。因为它既保留设备级统一动作入口，又把“看信息”和“做动作”拆清楚了，而且不需要做双模式，后续从故障页跳进来时也最自然。</p>
+</div>

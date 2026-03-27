@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>设备管理 - 运营控制台</title>
     <meta name="format-detection" content="telephone=no">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4ECDC4;
@@ -729,19 +730,13 @@
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
-        .detail-card-entry-all {
-            grid-column: 1 / -1;
-        }
-
-        .detail-card-entry-images {
-            grid-column: 1 / -1;
-        }
-
+        .detail-card-basic,
+        .detail-card-status,
+        .detail-card-entry,
+        .detail-card-ad-screen,
+        .detail-card-technical,
+        .detail-card-records,
         .detail-card-maintenance {
-            grid-column: 1 / -1;
-        }
-
-        .detail-card-fault-control {
             grid-column: 1 / -1;
         }
 
@@ -749,7 +744,7 @@
             grid-column: 1 / -1;
         }
 
-        .detail-card-entry-core {
+        .detail-card-status {
             grid-column: 1 / -1;
         }
 
@@ -791,7 +786,7 @@
             font-weight: 500;
         }
 
-        .detail-entry-all {
+        .detail-disclosure {
             margin-top: 10px;
             border: 1px solid var(--border-light);
             border-radius: 10px;
@@ -799,7 +794,7 @@
             overflow: hidden;
         }
 
-        .detail-entry-all summary {
+        .detail-disclosure summary {
             list-style: none;
             cursor: pointer;
             padding: 10px 12px;
@@ -809,22 +804,26 @@
             user-select: none;
         }
 
-        .detail-entry-all summary::-webkit-details-marker {
+        .detail-disclosure summary::-webkit-details-marker {
             display: none;
         }
 
-        .detail-entry-all summary::after {
+        .detail-disclosure summary::after {
             content: '▼';
             float: right;
             color: var(--text-tertiary);
             font-size: 11px;
         }
 
-        .detail-entry-all[open] summary::after {
+        .detail-disclosure[open] summary::after {
             content: '▲';
         }
 
-        .detail-entry-all .detail-row {
+        .detail-disclosure-content {
+            padding: 0 12px 12px;
+        }
+
+        .detail-disclosure .detail-row {
             padding: 10px 12px;
             background: #fff;
         }
@@ -840,6 +839,35 @@
         .maintenance-record summary {
             color: var(--text-primary);
             font-weight: 600;
+        }
+
+        .detail-section-meta {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .detail-subsection {
+            margin-top: 10px;
+        }
+
+        .detail-subsection:first-child {
+            margin-top: 0;
+        }
+
+        .detail-subsection-title {
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .detail-status-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
 
         .detail-aside {
@@ -868,70 +896,6 @@
             margin-bottom: 8px;
         }
 
-        .detail-anchor-list {
-            display: grid;
-            gap: 6px;
-        }
-
-        .detail-anchor-btn {
-            width: 100%;
-            border: 1px solid transparent;
-            background: #f8fafc;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 10px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .detail-anchor-btn:hover {
-            color: var(--text-primary);
-            border-color: #dbeafe;
-        }
-
-        .detail-anchor-btn.active {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            color: #1d4ed8;
-        }
-
-        .detail-side-state-list {
-            display: grid;
-            gap: 8px;
-        }
-
-        .detail-side-state-chip {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            border-radius: 999px;
-            border: 1px solid var(--border-light);
-            background: #f8fafc;
-            padding: 6px 10px;
-            line-height: 1.2;
-        }
-
-        .detail-side-state-chip.ok {
-            border-color: #86efac;
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        .detail-side-state-chip.warn {
-            border-color: #fcd34d;
-            background: #fffbeb;
-            color: #92400e;
-        }
-
-        .detail-side-state-chip.danger {
-            border-color: #fca5a5;
-            background: #fef2f2;
-            color: #991b1b;
-        }
-
         .detail-side-action-list {
             display: grid;
             gap: 8px;
@@ -954,6 +918,18 @@
         .detail-side-action-btn:hover {
             border-color: #bfdbfe;
             background: #f8fafc;
+        }
+
+        .detail-side-action-btn.primary {
+            border-color: #1d4ed8;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .detail-side-action-btn.primary:hover {
+            border-color: #1e40af;
+            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
         }
 
 
@@ -1142,6 +1118,137 @@
             max-height: 88vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .detail-temperature-modal {
+            width: min(880px, 100%);
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-temperature-modal-body {
+            padding: 18px;
+            background: #f8fafc;
+            overflow-y: auto;
+            display: grid;
+            gap: 16px;
+        }
+
+        .detail-temperature-context {
+            border: 1px solid rgba(37, 99, 235, 0.14);
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(248, 250, 252, 0.98));
+        }
+
+        .detail-temperature-context-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-temperature-context-subtitle {
+            margin-top: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .detail-temperature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .detail-temperature-zone-card {
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            background: #fff;
+            padding: 14px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-temperature-zone-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .detail-temperature-zone-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6bbf7f;
+            line-height: 1.2;
+        }
+
+        .detail-temperature-zone-meta {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8cbf7a;
+        }
+
+        .detail-temperature-zone-action {
+            flex: none;
+            min-width: 72px;
+            height: 34px;
+            border: none;
+            border-radius: 10px;
+            background: #9ca3af;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .detail-temperature-zone-action:hover {
+            background: #6b7280;
+        }
+
+        .detail-temperature-zone-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-temperature-zone-row {
+            display: grid;
+            grid-template-columns: 104px minmax(0, 1fr);
+            gap: 10px;
+            align-items: start;
+        }
+
+        .detail-temperature-zone-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ef6b63;
+            line-height: 1.55;
+        }
+
+        .detail-temperature-zone-label.is-warm {
+            color: #e7855b;
+        }
+
+        .detail-temperature-zone-label.is-muted {
+            color: #d3b85f;
+        }
+
+        .detail-temperature-zone-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #4559d3;
+            line-height: 1.55;
+            text-align: right;
+            word-break: break-word;
         }
 
         .detail-fault-record-header {
@@ -2091,15 +2198,12 @@
                 font-size: 13px;
             }
 
-            .detail-card-entry-all {
-                grid-column: auto;
-            }
-
-            .detail-card-entry-images {
-                grid-column: auto;
-            }
-
-            .detail-card-fault-control {
+            .detail-card-basic,
+            .detail-card-status,
+            .detail-card-entry,
+            .detail-card-ad-screen,
+            .detail-card-technical,
+            .detail-card-records {
                 grid-column: auto;
             }
 
@@ -2157,6 +2261,39 @@
                 border-right: none;
                 border-bottom: none;
                 max-height: 92vh;
+            }
+
+            .detail-temperature-modal {
+                width: 100%;
+                border-radius: 14px 14px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+                max-height: 92vh;
+            }
+
+            .detail-temperature-modal-body {
+                padding: 12px;
+            }
+
+            .detail-temperature-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .detail-temperature-zone-card {
+                padding: 12px;
+                box-shadow: none;
+            }
+
+            .detail-temperature-zone-row {
+                grid-template-columns: 92px minmax(0, 1fr);
+                gap: 8px;
+            }
+
+            .detail-temperature-zone-label,
+            .detail-temperature-zone-value {
+                font-size: 13px;
             }
 
             .detail-fault-record-body {
@@ -2379,13 +2516,800 @@
                 box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
             }
         }
+
+        /* Devices page redesign */
+        :root {
+            --bg-page: #FAFAFA;
+            --bg-sidebar: #0b132b;
+            --bg-surface: #F5F5F5;
+            --border: #E5E5E5;
+            --text-primary: #000000;
+            --text-secondary: #5E5E5E;
+            --text-tertiary: #999999;
+            --accent-red: #DC2626;
+            --accent-green: #22C55E;
+            --accent-blue: #3B82F6;
+            --text-on-dark: #FAFAFA;
+            --font-ui: 'Sora', sans-serif;
+            --font-data: 'IBM Plex Mono', monospace;
+            --primary: #111827;
+            --primary-light: #F3F4F6;
+            --primary-dark: #000000;
+            --secondary: #E5E5E5;
+            --danger: #DC2626;
+            --danger-light: #FEE2E2;
+            --success: #22C55E;
+            --success-light: #DCFCE7;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --info: #3B82F6;
+            --info-light: #DBEAFE;
+            --bg-body: var(--bg-page);
+            --bg-card: #FFFFFF;
+            --border-light: #EFEFEF;
+            --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.04);
+            --shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.12);
+            --radius-sm: 0;
+            --radius: 0;
+            --radius-lg: 0;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        .layout {
+            background: var(--bg-page);
+        }
+
+        .sidebar {
+            --sidebar-header-padding-x: 24px;
+            --sidebar-nav-padding-x: 12px;
+            --sidebar-section-title-padding-x: 14px;
+            width: 240px;
+            background: var(--bg-sidebar);
+            color: #dbeafe;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0;
+            gap: 0;
+            align-items: stretch;
+        }
+
+        .sidebar-nav {
+            width: auto;
+            padding: 8px var(--sidebar-nav-padding-x);
+            display: block;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            width: auto;
+            height: auto;
+            margin-bottom: 2px;
+            padding: 11px 14px;
+            justify-content: flex-start;
+            border-radius: var(--radius);
+            color: rgba(219, 234, 254, 0.88);
+            position: static;
+        }
+
+        .nav-item:hover {
+            background: rgba(46, 196, 182, 0.14);
+            color: var(--text-on-dark);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(130deg, rgba(46, 196, 182, 0.38), rgba(56, 189, 248, 0.38));
+            color: var(--text-on-dark);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .main {
+            margin-left: 240px;
+            background: var(--bg-page);
+        }
+
+        .mobile-header {
+            display: none;
+        }
+
+        .content {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 24px 28px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 20px 28px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            gap: 8px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-actions {
+            gap: 12px;
+        }
+
+        .page-primary-btn {
+            border: 1px solid #4ECDC4;
+            background: #4ECDC4;
+            color: #fff;
+            padding: 10px 20px;
+            font-family: var(--font-ui);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .page-primary-btn:hover {
+            background: #3dbdb4;
+            border-color: #3dbdb4;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.28);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-card {
+            min-height: 108px;
+            border: none;
+            border-right: 1px solid var(--border);
+            background: transparent;
+            padding: 20px 24px;
+            align-items: flex-end;
+            box-shadow: none;
+        }
+
+        .stat-card:last-child {
+            border-right: none;
+        }
+
+        .stat-icon {
+            display: none;
+        }
+
+        .stat-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-tertiary);
+        }
+
+        .stat-value {
+            margin: 0;
+            font-family: var(--font-data);
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .stat-card.is-online .stat-value {
+            color: var(--accent-green);
+        }
+
+        .stat-card.is-fault .stat-value {
+            color: var(--accent-red);
+        }
+
+        .stat-card.is-stopped .stat-value {
+            color: var(--text-tertiary);
+        }
+
+        .main-filter-bar {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            gap: 12px;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+
+        .main-filter-bar .filter-label {
+            display: none;
+        }
+
+        .main-search-box {
+            flex: 0 0 320px;
+            min-width: 320px;
+            max-width: 320px;
+            margin-top: 0;
+        }
+
+        .main-filter-item {
+            width: 160px;
+        }
+
+        .main-filter-bar .search-input,
+        .main-filter-item .filter-select {
+            height: auto;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-primary);
+            background: #fff;
+            box-shadow: none;
+        }
+
+        .main-filter-bar .search-input {
+            padding-left: 40px;
+        }
+
+        .main-filter-bar .search-input:focus,
+        .main-filter-item .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .main-filter-bar .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .main-filter-bar .search-icon {
+            left: 14px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .main-filter-item .filter-select {
+            padding: 10px 36px 10px 14px;
+            background-image: linear-gradient(45deg, transparent 50%, #999999 50%), linear-gradient(135deg, #999999 50%, transparent 50%);
+            background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .device-table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: collapse;
+        }
+
+        .device-table thead {
+            background: transparent;
+        }
+
+        .device-table th {
+            padding: 16px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: #94a3b8;
+            background: rgba(15, 23, 42, 0.04);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            white-space: nowrap;
+        }
+
+        .device-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 13px;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .device-table tbody tr:hover {
+            background: rgba(46, 196, 182, 0.08);
+        }
+
+        .device-info,
+        .device-details {
+            display: block;
+        }
+
+        .device-id {
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            font-weight: 800;
+            color: #334155;
+        }
+
+        .merchant-name,
+        .location-text {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            line-height: 1.5;
+        }
+
+        .location-text.muted {
+            color: var(--text-tertiary);
+        }
+
+        .status-badge {
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 600;
+            gap: 8px;
+        }
+
+        .status-badge::before {
+            width: 8px;
+            height: 8px;
+        }
+
+        .status-operational {
+            color: var(--accent-green);
+            background: transparent;
+        }
+
+        .status-operational::before {
+            background: var(--accent-green);
+        }
+
+        .status-faulted {
+            color: var(--accent-red);
+            background: transparent;
+        }
+
+        .status-faulted::before {
+            background: var(--accent-red);
+        }
+
+        .status-disabled {
+            color: var(--text-tertiary);
+            background: transparent;
+        }
+
+        .status-disabled::before {
+            background: var(--text-tertiary);
+        }
+
+        .sales-state {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .sales-state.disabled {
+            color: var(--accent-red);
+        }
+
+        .heartbeat-time {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .table-link-btn {
+            border: none;
+            padding: 0;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .table-link-btn.muted {
+            color: var(--text-secondary);
+        }
+
+        .table-link-btn.danger {
+            color: var(--accent-red);
+        }
+
+        .pagination-wrapper {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .pagination-btn {
+            padding: 8px 20px;
+            border: 1px solid rgba(15, 23, 42, 0.14);
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .pagination-btn-primary {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(15, 23, 42, 0.14);
+            color: var(--text-secondary);
+        }
+
+        .pagination-btn-primary:hover:not(:disabled) {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .device-mobile-list {
+            display: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        .device-mobile-card {
+            position: relative;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            background: #fff;
+            padding: 16px 16px 16px 18px;
+            overflow: hidden;
+        }
+
+        .device-mobile-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .device-mobile-status-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--text-tertiary);
+        }
+
+        .device-mobile-card.status-operational .device-mobile-status-bar {
+            background: var(--accent-green);
+        }
+
+        .device-mobile-card.status-faulted .device-mobile-status-bar {
+            background: var(--accent-red);
+        }
+
+        .device-mobile-card.status-disabled .device-mobile-status-bar {
+            background: var(--text-tertiary);
+        }
+
+        .device-mobile-head {
+            margin-bottom: 16px;
+        }
+
+        .device-mobile-id {
+            font-family: var(--font-data);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .device-mobile-meta {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .device-mobile-meta-item {
+            border: none;
+            border-radius: 0;
+            background: var(--bg-surface);
+            padding: 10px 12px;
+        }
+
+        .device-mobile-label {
+            margin-bottom: 4px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .device-mobile-value {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .device-mobile-heartbeat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+            font-family: var(--font-data);
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .device-mobile-heartbeat svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex: none;
+        }
+
+        .device-mobile-actions {
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .device-mobile-toggle {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .mobile-fab {
+            display: none;
+        }
+
+        .toast {
+            border-radius: 0;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state {
+            padding: 56px 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                padding: 24px 24px 108px;
+                gap: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+                padding: 0;
+                align-items: stretch;
+                gap: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-nav {
+                display: block;
+            }
+
+            .nav-item {
+                width: auto;
+                height: auto;
+                justify-content: flex-start;
+                padding: 11px 14px;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 12px 16px;
+                background: #fff;
+                border-bottom: 1px solid var(--border);
+                gap: 12px;
+            }
+
+            .mobile-header-title {
+                font-size: 17px;
+                font-weight: 700;
+            }
+
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                font-size: 20px;
+                border: none;
+                background: transparent;
+                color: var(--text-secondary);
+                cursor: pointer;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-actions {
+                display: none;
+            }
+
+            .content {
+                padding: 16px 16px 96px;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                gap: 8px;
+                border: none;
+            }
+
+            .stat-card {
+                min-height: auto;
+                padding: 12px;
+                border: 1px solid var(--border);
+                align-items: flex-start;
+            }
+
+            .stat-card:last-child {
+                border-right: 1px solid var(--border);
+            }
+
+            .stat-content {
+                gap: 8px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .main-filter-bar {
+                gap: 8px;
+            }
+
+            .main-search-box {
+                flex: 1 1 100%;
+                min-width: 0;
+                max-width: none;
+            }
+
+            .main-filter-item {
+                width: calc(50% - 4px);
+            }
+
+            .table-wrapper {
+                display: none;
+            }
+
+            .device-mobile-list {
+                display: block;
+                padding: 0;
+            }
+
+            .device-mobile-meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .pagination-wrapper {
+                padding: 16px 0 0;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .mobile-fab {
+                position: fixed;
+                right: 20px;
+                bottom: 24px;
+                width: 56px;
+                height: 56px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                border-radius: 28px;
+                background: var(--accent-red);
+                color: var(--text-on-dark);
+                font-family: var(--font-ui);
+                font-size: 28px;
+                line-height: 1;
+                box-shadow: 0 16px 32px rgba(220, 38, 38, 0.22);
+                cursor: pointer;
+                z-index: 120;
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 99;
+            }
+
+            .overlay.show {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header,
+            .overlay {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="layout">
         <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-        <!-- 侧边栏 -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="brand">
@@ -2405,7 +3329,7 @@
                     <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
                 </div>
             </div>
-            
+
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">运营管理</div>
@@ -2433,7 +3357,10 @@
                         <span class="nav-icon">🛠️</span>
                         <span>故障列表</span>
                     </a>
-                    <a href="staff-management.html" class="nav-item"><span class="nav-icon">👥</span><span>人员管理</span></a>
+                    <a href="staff-management.html" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        <span>人员管理</span>
+                    </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
@@ -2449,95 +3376,80 @@
             </nav>
         </aside>
 
-        <!-- 主内容 -->
         <main class="main">
             <div class="mobile-header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                <span style="font-weight: 700; font-size: 17px;">运营控制台</span>
+                <span class="mobile-header-title">设备管理</span>
             </div>
 
             <header class="header">
                 <div class="header-left">
                     <h1 class="header-title">设备管理</h1>
-                    <span class="header-desc">管理设备状态与售卖开关</span>
+                    <span class="header-desc">管理和监控所有咖啡设备</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-icon" onclick="window.location.href='faults.html'">🛠️ 故障列表</button>
-                    <button class="btn-icon">📖 只读</button>
+                    <button class="page-primary-btn" type="button" onclick="openDeviceEntryPage()">+ 设备录入</button>
                 </div>
             </header>
 
             <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalDevices">18</div>
+                            <div class="stat-label">设备总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card is-online">
+                        <div class="stat-content">
+                            <div class="stat-value" id="onlineDevices">15</div>
+                            <div class="stat-label">运行中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card is-fault">
+                        <div class="stat-content">
+                            <div class="stat-value" id="faultDevices">1</div>
+                            <div class="stat-label">故障</div>
+                        </div>
+                    </div>
+                    <div class="stat-card is-stopped">
+                        <div class="stat-content">
+                            <div class="stat-value" id="stoppedDevices">2</div>
+                            <div class="stat-label">停用</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="main-filter-bar">
                     <div class="search-box main-search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" class="search-input" id="deviceSearch" placeholder="搜索设备编号..." oninput="filterDevices()">
+                        <span class="search-icon">⌕</span>
+                        <input type="text" class="search-input" id="deviceSearch" placeholder="搜索设备编号或点位..." oninput="filterDevices()">
                     </div>
                     <div class="main-filter-item">
-                        <label class="filter-label">设备状态</label>
+                        <label class="filter-label">状态筛选</label>
                         <select class="filter-select" id="deviceFilter" onchange="filterDevices()">
-                            <option value="all">全部设备</option>
+                            <option value="all">全部状态</option>
                             <option value="operational">运行中</option>
-                            <option value="faulted">故障中</option>
+                            <option value="faulted">故障</option>
                         </select>
                     </div>
                     <div class="main-filter-item">
-                        <label class="filter-label">点位分类</label>
+                        <label class="filter-label">点位筛选</label>
                         <select class="filter-select" id="locationCategoryFilter" onchange="filterDevices()">
-                            <option value="all">全部点位分类</option>
+                            <option value="all">全部点位</option>
                             <option value="exhibition">展会点位</option>
                             <option value="operation">运营点位</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- 统计卡片 -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">📱</div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="totalDevices">15</div>
-                            <div class="stat-label">设备总数</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">✅</div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="onlineDevices">13</div>
-                            <div class="stat-label">运行中</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon orange">⚠️</div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="faultDevices">2</div>
-                            <div class="stat-label">故障中</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon purple">🛑</div>
-                        <div class="stat-content">
-                            <div class="stat-value" id="stoppedDevices">2</div>
-                            <div class="stat-label">已停卖</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 设备表格 -->
                 <div class="table-container">
-                    <div class="table-header">
-                        <span class="table-title">设备列表</span>
-                        <div class="table-actions">
-                            <button class="btn btn-success" onclick="window.location.href='device-entry.html'">+ 设备入场</button>
-                            <button class="btn btn-ghost" onclick="showToast('导出功能开发中...')">📥 导出</button>
-                        </div>
-                    </div>
                     <div class="table-wrapper">
                         <table class="device-table">
                             <thead>
                                 <tr>
-                                    <th>设备信息</th>
-                                    <th>所属商户</th>
+                                    <th>设备编号</th>
+                                    <th>商户</th>
                                     <th>点位</th>
                                     <th>状态</th>
                                     <th>停卖</th>
@@ -2553,7 +3465,7 @@
                     <div class="device-mobile-list" id="deviceMobileList"></div>
                     <div class="pagination-wrapper">
                         <div class="pagination-info">
-                            显示 <span id="showingStart">1</span>-<span id="showingEnd">12</span> 条，共 <span id="totalCount">15</span> 条
+                            显示 <span id="showingStart">1</span>-<span id="showingEnd">15</span> 条，共 <span id="totalCount">18</span> 条
                         </div>
                         <div class="pagination">
                             <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">上一页</button>
@@ -2562,6 +3474,8 @@
                     </div>
                 </div>
             </div>
+
+            <button class="mobile-fab" type="button" onclick="openDeviceEntryPage()" aria-label="设备录入">+</button>
         </main>
     </div>
 
@@ -2736,6 +3650,16 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="detailTemperatureAlarmModal" onclick="if (event.target === this) closeDetailTemperatureAlarmModal()">
+        <div class="detail-temperature-modal">
+            <div class="detail-modal-header">
+                <h3 class="detail-modal-title" id="detailTemperatureAlarmModalTitle">温度报警设置</h3>
+                <button class="detail-modal-close" onclick="closeDetailTemperatureAlarmModal()">×</button>
+            </div>
+            <div class="detail-temperature-modal-body" id="detailTemperatureAlarmModalBody"></div>
+        </div>
+    </div>
+
     <div class="image-preview-overlay" id="imagePreviewModal">
         <div class="image-preview-modal">
             <button class="image-preview-close" onclick="closeImagePreview()" aria-label="关闭图片预览">×</button>
@@ -2754,6 +3678,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/admin-staff-access.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2995,8 +3920,8 @@
         };
 
         const salesMap = {
-            'enabled': '正常售卖',
-            'disabled': '已停卖'
+            'enabled': '否',
+            'disabled': '是'
         };
 
         const merchantMap = cloneSharedDeviceData((sharedAdminMockData.maps && sharedAdminMockData.maps.merchantMap) || {});
@@ -3018,15 +3943,20 @@
         // 设备数据
         let devicesData = [];
         let currentPage = 1;
-        const pageSize = 12;
+        const pageSize = 15;
         let filteredData = [];
+        let currentStaffDeviceAccess = {
+            isScoped: false,
+            visibleDeviceIds: [],
+            scopeMessage: ''
+        };
         let detailPreviewImages = [];
         let currentPreviewIndex = 0;
         let currentDetailDeviceId = '';
         let entryEditImageDraft = { display: [], location: [] };
         let activeFaultActionDeviceId = '';
+        let currentTemperatureAlarmDeviceId = '';
         let detailStatusRecordTab = 'abnormal';
-        let detailSectionSpyHandler = null;
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -3070,6 +4000,96 @@
                 }
             });
             return map;
+        }
+
+        function resolveCurrentStaffDeviceAccess() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'devices')) {
+                return {
+                    ...access,
+                    visibleDeviceIds: [],
+                    scopeMessage: '当前账号暂未开通设备页面权限'
+                };
+            }
+
+            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
+                ? helper.getModuleVisibleDeviceIds(access.currentStaff, 'devices')
+                : [];
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+
+            return {
+                ...access,
+                visibleDeviceIds: normalizedVisibleDeviceIds,
+                scopeMessage: normalizedVisibleDeviceIds.length
+                    ? `当前可查看设备：${normalizedVisibleDeviceIds.length} 台`
+                    : '你已拥有设备页面权限，但当前未分配可查看的设备，请联系管理员调整页面设备范围'
+            };
+        }
+
+        function applyScopedDeviceList(deviceList, staffAccess = currentStaffDeviceAccess) {
+            const source = Array.isArray(deviceList) ? deviceList : [];
+            if (!staffAccess || !staffAccess.isScoped) {
+                return source;
+            }
+
+            const visibleDeviceSet = new Set((Array.isArray(staffAccess.visibleDeviceIds) ? staffAccess.visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean));
+
+            return source.filter((device) => visibleDeviceSet.has(String(device?.id || '').trim()));
+        }
+
+        function getScopedDeviceEmptyText(staffAccess = currentStaffDeviceAccess) {
+            return staffAccess && staffAccess.isScoped && staffAccess.scopeMessage
+                ? staffAccess.scopeMessage
+                : '暂无匹配的设备';
+        }
+
+        function formatHeartbeatLabel(value) {
+            const raw = String(value || '-').trim();
+            const matched = raw.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日\s+(\d{1,2}:\d{2})$/);
+            if (!matched) return raw || '-';
+            const [, year, month, day, time] = matched;
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${time}`;
+        }
+
+        function getStatusDisplay(device) {
+            if (device.status === 'faulted') {
+                return { label: statusMap.faulted, className: 'status-faulted' };
+            }
+            if (device.sales === 'disabled') {
+                return { label: '停用', className: 'status-disabled' };
+            }
+            return { label: statusMap.operational, className: 'status-operational' };
+        }
+
+        function getDeviceLocationText(device, runtimeLocationMap) {
+            return device.entered === false || !device.location
+                ? '未入场'
+                : (runtimeLocationMap[device.location] || device.location);
+        }
+
+        function openDeviceEntryPage() {
+            window.location.href = 'device-entry.html';
         }
 
         function ensureUnenteredDevices(data) {
@@ -3234,17 +4254,19 @@
             seedMockEntryInfoForPreview(devicesData, runtimeLocationMap);
             hydrateEntryInfoForPreview(devicesData, runtimeLocationMap);
             saveDevicesData();
-            filteredData = [...devicesData];
+            currentStaffDeviceAccess = resolveCurrentStaffDeviceAccess();
+            filteredData = applyScopedDeviceList(devicesData, currentStaffDeviceAccess);
             updateStats();
             renderTable();
             updatePagination();
         }
 
         function updateStats() {
-            const total = devicesData.length;
-            const online = devicesData.filter(d => d.status === 'operational').length;
-            const faulted = devicesData.filter(d => d.status === 'faulted').length;
-            const stopped = devicesData.filter(d => d.sales === 'disabled').length;
+            const visibleDevices = applyScopedDeviceList(devicesData, currentStaffDeviceAccess);
+            const total = visibleDevices.length;
+            const online = visibleDevices.filter(d => d.status === 'operational').length;
+            const faulted = visibleDevices.filter(d => d.status === 'faulted').length;
+            const stopped = visibleDevices.filter(d => d.sales === 'disabled').length;
 
             document.getElementById('totalDevices').textContent = total;
             document.getElementById('onlineDevices').textContent = online;
@@ -3259,14 +4281,16 @@
             const end = start + pageSize;
             const pageData = filteredData.slice(start, end);
             const runtimeLocationMap = buildLocationMap();
+            const scopedTotal = applyScopedDeviceList(devicesData, currentStaffDeviceAccess).length;
 
             if (pageData.length === 0) {
+                const emptyText = scopedTotal === 0 ? getScopedDeviceEmptyText(currentStaffDeviceAccess) : '暂无匹配的设备';
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7">
                             <div class="empty-state">
                                 <div class="empty-icon">📭</div>
-                                <div class="empty-text">暂无匹配的设备</div>
+                                <div class="empty-text">${emptyText}</div>
                             </div>
                         </td>
                     </tr>
@@ -3274,7 +4298,7 @@
                 mobileList.innerHTML = `
                     <div class="empty-state" style="padding: 40px 20px;">
                         <div class="empty-icon">📭</div>
-                        <div class="empty-text">暂无匹配的设备</div>
+                        <div class="empty-text">${emptyText}</div>
                     </div>
                 `;
                 return;
@@ -3282,9 +4306,10 @@
 
             tbody.innerHTML = pageData.map(device => {
                 const isSalesEnabled = device.sales === 'enabled';
-                const statusClass = device.status === 'operational' ? 'status-operational' : 'status-faulted';
-                const salesClass = isSalesEnabled ? 'status-enabled' : 'status-disabled';
-                
+                const statusDisplay = getStatusDisplay(device);
+                const locationText = getDeviceLocationText(device, runtimeLocationMap);
+                const heartbeatText = formatHeartbeatLabel(device.heartbeat);
+
                 return `
                 <tr>
                     <td>
@@ -3295,16 +4320,14 @@
                         </div>
                     </td>
                     <td><span class="merchant-name">${merchantMap[device.merchant] || device.merchant}</span></td>
-                    <td><span class="location-tag">${device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location)}</span></td>
-                    <td><span class="status-badge ${statusClass}">${statusMap[device.status] || device.status}</span></td>
-                    <td><span class="status-badge ${salesClass}">${salesMap[device.sales] || device.sales}</span></td>
-                    <td><span class="heartbeat-time">${device.heartbeat}</span></td>
+                    <td><span class="location-text ${locationText === '未入场' ? 'muted' : ''}">${locationText}</span></td>
+                    <td><span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span></td>
+                    <td><span class="sales-state ${isSalesEnabled ? 'active' : 'disabled'}">${salesMap[device.sales] || device.sales}</span></td>
+                    <td><span class="heartbeat-time">${heartbeatText}</span></td>
                     <td>
                         <div class="action-group">
-                            <button class="btn ${isSalesEnabled ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleSales('${device.id}')">
-                                ${isSalesEnabled ? '🛑 下架' : '✅ 上架'}
-                            </button>
-                            <button class="btn btn-ghost btn-sm" onclick="viewDetail('${device.id}')">详情</button>
+                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">查看</button>
+                            <button class="table-link-btn muted ${isSalesEnabled ? 'danger' : ''}" type="button" onclick="toggleSales('${device.id}')">${isSalesEnabled ? '停卖' : '恢复'}</button>
                         </div>
                     </td>
                 </tr>
@@ -3313,15 +4336,16 @@
 
             mobileList.innerHTML = pageData.map(device => {
                 const isSalesEnabled = device.sales === 'enabled';
-                const statusClass = device.status === 'operational' ? 'status-operational' : 'status-faulted';
-                const salesClass = isSalesEnabled ? 'status-enabled' : 'status-disabled';
+                const statusDisplay = getStatusDisplay(device);
                 const merchantName = merchantMap[device.merchant] || device.merchant;
-                const locationText = device.entered === false || !device.location ? '未入场' : (runtimeLocationMap[device.location] || device.location);
+                const locationText = getDeviceLocationText(device, runtimeLocationMap);
+                const heartbeatText = formatHeartbeatLabel(device.heartbeat);
                 return `
-                    <article class="device-mobile-card">
+                    <article class="device-mobile-card ${statusDisplay.className}">
+                        <span class="device-mobile-status-bar"></span>
                         <div class="device-mobile-head">
                             <div class="device-mobile-id">${device.id}</div>
-                            <span class="status-badge ${statusClass}">${statusMap[device.status] || device.status}</span>
+                            <span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span>
                         </div>
                         <div class="device-mobile-meta">
                             <div class="device-mobile-meta-item">
@@ -3333,19 +4357,21 @@
                                 <div class="device-mobile-value">${locationText}</div>
                             </div>
                             <div class="device-mobile-meta-item">
-                                <div class="device-mobile-label">停卖状态</div>
-                                <div class="device-mobile-value"><span class="status-badge ${salesClass}">${salesMap[device.sales] || device.sales}</span></div>
+                                <div class="device-mobile-label">停卖</div>
+                                <div class="device-mobile-value">${salesMap[device.sales] || device.sales}</div>
                             </div>
                             <div class="device-mobile-meta-item">
-                                <div class="device-mobile-label">最近心跳</div>
-                                <div class="device-mobile-value">${device.heartbeat}</div>
+                                <div class="device-mobile-label">状态</div>
+                                <div class="device-mobile-value">${statusDisplay.label}</div>
                             </div>
                         </div>
+                        <div class="device-mobile-heartbeat">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                            <span>${heartbeatText}</span>
+                        </div>
                         <div class="device-mobile-actions">
-                            <button class="btn ${isSalesEnabled ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleSales('${device.id}')">
-                                ${isSalesEnabled ? '🛑 下架' : '✅ 上架'}
-                            </button>
-                            <button class="btn btn-ghost btn-sm" onclick="viewDetail('${device.id}')">详情</button>
+                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">查看详情 →</button>
+                            <button class="table-link-btn muted ${isSalesEnabled ? 'danger' : ''}" type="button" onclick="toggleSales('${device.id}')">${isSalesEnabled ? '停卖' : '恢复'}</button>
                         </div>
                     </article>
                 `;
@@ -3356,14 +4382,16 @@
             const filter = document.getElementById('deviceFilter').value;
             const locationCategoryFilter = document.getElementById('locationCategoryFilter').value;
             const searchKeyword = document.getElementById('deviceSearch').value.trim().toLowerCase();
+            const runtimeLocationMap = buildLocationMap();
             const runtimeLocationCategoryMap = buildLocationCategoryMap();
+            const scopedDevices = applyScopedDeviceList(devicesData, currentStaffDeviceAccess);
             
             if (filter === 'all') {
-                filteredData = [...devicesData];
+                filteredData = [...scopedDevices];
             } else if (filter === 'operational') {
-                filteredData = devicesData.filter(d => d.status === 'operational');
+                filteredData = scopedDevices.filter(d => d.status === 'operational');
             } else if (filter === 'faulted') {
-                filteredData = devicesData.filter(d => d.status === 'faulted');
+                filteredData = scopedDevices.filter(d => d.status === 'faulted');
             }
 
             if (locationCategoryFilter !== 'all') {
@@ -3375,9 +4403,13 @@
             }
             
             if (searchKeyword) {
-                filteredData = filteredData.filter(d => 
-                    d.id.toLowerCase().includes(searchKeyword)
-                );
+                filteredData = filteredData.filter(d => {
+                    const searchableText = [ d.id, runtimeLocationMap[d.location], d.location ]
+                        .filter(Boolean)
+                        .join(' ')
+                        .toLowerCase();
+                    return searchableText.includes(searchKeyword);
+                });
             }
             
             currentPage = 1;
@@ -3558,23 +4590,67 @@
             };
         }
 
-        function renderFaultActionButtons(snapshot) {
-            return `
-                <div class="detail-fault-actions">
-                    <button type="button" class="detail-fault-action-btn" onclick="openDetailRemoteActions('${escapeHtml(snapshot.deviceId)}')">远程操作</button>
-                    <button type="button" class="detail-fault-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(snapshot.deviceId)}')">编辑状态</button>
-                    <button type="button" class="detail-fault-action-btn" onclick="goToDeviceMaterials('${escapeHtml(snapshot.deviceId)}')">物料</button>
-                    <button type="button" class="detail-fault-action-btn" onclick="openDetailStatusRecords('${escapeHtml(snapshot.deviceId)}')">状态记录</button>
-                </div>
-            `;
+        function getDeviceEntryStatusLabel(base) {
+            return base?.locationName === '未入场' ? '未入场' : '已入场';
         }
 
-        function renderFaultControlCard(faultData) {
+        function buildDeviceAbnormalSummary(faultData) {
+            const snapshot = faultData || {};
+            const abnormalParts = Array.isArray(snapshot.orgStatus)
+                ? snapshot.orgStatus.filter(part => part?.status === 'fault' || part?.status === 'lost')
+                : [];
+            if (!abnormalParts.length && !snapshot.hasFault) {
+                return '当前无异常';
+            }
+            if (!abnormalParts.length) {
+                return '检测到设备状态波动，请关注最近状态记录';
+            }
+            const labels = abnormalParts
+                .slice(0, 3)
+                .map(part => `${part.name}${part.status === 'lost' ? '失联' : '故障'}`);
+            const suffix = abnormalParts.length > 3 ? ' 等' : '';
+            return `检测到 ${abnormalParts.length} 项异常：${labels.join('、')}${suffix}`;
+        }
+
+        function renderDeviceOverviewCard(base) {
+            const summary = base || {};
+            const rows = [
+                renderDetailRow('设备编号', summary.deviceId || '-'),
+                renderDetailRow('所属商户', summary.merchantName || '-'),
+                renderDetailRow('点位', summary.locationName === '未入场' ? '未分配点位' : (summary.locationName || '-')),
+                renderDetailRow('设备类别', summary.categoryName || '-'),
+                renderDetailRow('部署类型', summary.deploymentName || '-')
+            ].join('');
+            return renderDetailCard('设备概览', rows, 'detail-card-basic');
+        }
+
+        function renderDeviceStatusCard(base, fault, counts) {
+            const summary = base || {};
+            const snapshot = fault || {};
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
+            const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
+            const rows = [
+                renderDetailRow('设备状态', summary.statusName || '-'),
+                renderDetailRow('停卖状态', summary.salesName || '-'),
+                renderDetailRow('最近心跳', summary.heartbeat || '-'),
+                renderDetailRow('入场状态', getDeviceEntryStatusLabel(summary)),
+                renderDetailRow('当前异常摘要', abnormalSummary)
+            ].join('');
+            const noteParts = [];
+            if (snapshot.hasFault && snapshot.updatedAt && snapshot.updatedAt !== '-') {
+                noteParts.push(`最近异常时间：${snapshot.updatedAt}`);
+            }
+            if (abnormalCount > 0) {
+                noteParts.push(`历史异常记录：${abnormalCount} 条`);
+            }
+            const note = noteParts.length
+                ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
+                : '';
+            return renderDetailCard('设备状态', `${rows}${note}`, 'detail-card-status');
+        }
+
+        function renderTechnicalStatusCard(faultData) {
             const snapshot = faultData || {
-                deviceId: '-',
-                siteName: '-',
-                deviceStatus: '-',
-                sellStatus: '-',
                 fridgeTemp: '-',
                 beanTemp: '-',
                 craftTemp: '-',
@@ -3611,15 +4687,160 @@
             const chipHtml = snapshot.orgStatus.map(part => `
                 <span class="detail-fault-chip ${escapeHtml(part.status)}">${escapeHtml(`${part.label} ${part.name}`)}</span>
             `).join('');
-            const summary = snapshot.hasFault ? '检测到故障项，建议尽快远程排查或派单处理。' : '当前机构状态正常，可在右侧设备操作区执行维护。';
-            return renderDetailCard('故障处理', `
-                <div class="detail-fault-summary">${escapeHtml(summary)}</div>
-                <div class="detail-fault-grid">${rowHtml}</div>
-                <div class="detail-fault-org">
-                    <div class="detail-fault-org-title">机构状态</div>
-                    <div class="detail-fault-chip-list">${chipHtml}</div>
-                </div>
-            `, 'detail-card-fault-control');
+            const summary = snapshot.hasFault
+                ? '检测到技术异常，可结合机构状态与版本信息进一步排查。'
+                : '技术指标正常，只有需要深度排查时再展开查看。';
+            const body = `
+                <details class="detail-disclosure">
+                    <summary>展开技术状态</summary>
+                    <div class="detail-disclosure-content">
+                        <div class="detail-fault-summary">${escapeHtml(summary)}</div>
+                        <div class="detail-fault-grid">${rowHtml}</div>
+                        <div class="detail-fault-org">
+                            <div class="detail-fault-org-title">机构状态</div>
+                            <div class="detail-fault-chip-list">${chipHtml}</div>
+                        </div>
+                    </div>
+                </details>
+            `;
+            return renderDetailCard('技术状态', body, 'detail-card-technical');
+        }
+
+        function getDetailTemperatureAlarmContext(deviceId) {
+            const fallbackDeviceId = String(deviceId || currentTemperatureAlarmDeviceId || currentDetailDeviceId || '').trim();
+            const device = Array.isArray(devicesData)
+                ? devicesData.find(item => String(item?.id || '').trim() === fallbackDeviceId)
+                : null;
+            const locationName = String(
+                device?.entryInfo?.locationName
+                || device?.location
+                || '未分配点位'
+            ).trim() || '未分配点位';
+            return {
+                deviceId: fallbackDeviceId || '-',
+                locationName
+            };
+        }
+
+        function buildDetailTemperatureAlarmZones(deviceId) {
+            const targetDeviceId = String(deviceId || currentTemperatureAlarmDeviceId || currentDetailDeviceId || '').trim();
+            const seed = getDeviceFaultSeed(targetDeviceId || 'RCK001');
+            const device = Array.isArray(devicesData)
+                ? devicesData.find(item => String(item?.id || '').trim() === targetDeviceId)
+                : null;
+            const savedSettings = Array.isArray(device?.temperatureAlarmSettings) ? device.temperatureAlarmSettings : [];
+            const presets = [
+                {
+                    key: 'fridge',
+                    title: '冰箱',
+                    locationCode: '1',
+                    tempAlarm: '8度',
+                    humidityAlarm: '%',
+                    tempStop: '度',
+                    storageTemp: '2~4 °C',
+                    normalHumidity: '-'
+                },
+                {
+                    key: 'bean-bin',
+                    title: '豆仓',
+                    locationCode: '2',
+                    tempAlarm: '50度',
+                    humidityAlarm: '80%',
+                    tempStop: '度',
+                    storageTemp: '15~25 °C',
+                    normalHumidity: '30~60%'
+                },
+                {
+                    key: 'craft-bin',
+                    title: '制作仓',
+                    locationCode: '3',
+                    tempAlarm: '50度',
+                    humidityAlarm: '80%',
+                    tempStop: '度',
+                    storageTemp: '-',
+                    normalHumidity: '-'
+                },
+                {
+                    key: 'clean-water',
+                    title: '净水区温度最低点',
+                    locationCode: '4',
+                    tempAlarm: '度',
+                    humidityAlarm: '-',
+                    tempStop: '度',
+                    storageTemp: '-',
+                    normalHumidity: '-'
+                },
+                {
+                    key: 'waste-water',
+                    title: '废水区温度最低点',
+                    locationCode: '5',
+                    tempAlarm: '度',
+                    humidityAlarm: '-',
+                    tempStop: '度',
+                    storageTemp: '-',
+                    normalHumidity: '-'
+                }
+            ];
+            return presets.map((preset, index) => {
+                const offset = (seed + index) % 3;
+                const matchedSetting = savedSettings.find(item => item?.key === preset.key) || {};
+                return {
+                    ...preset,
+                    ...matchedSetting,
+                    locationCode: String(matchedSetting.locationCode || preset.locationCode || index + 1),
+                    tempAlarm: matchedSetting.tempAlarm || preset.tempAlarm,
+                    humidityAlarm: matchedSetting.humidityAlarm || preset.humidityAlarm,
+                    tempStop: matchedSetting.tempStop || preset.tempStop,
+                    storageTemp: matchedSetting.storageTemp || preset.storageTemp,
+                    normalHumidity: matchedSetting.normalHumidity || preset.normalHumidity,
+                    visualIndex: offset
+                };
+            });
+        }
+
+        function renderDetailTemperatureAlarmModalBody(deviceId) {
+            const context = getDetailTemperatureAlarmContext(deviceId);
+            const zones = buildDetailTemperatureAlarmZones(context.deviceId);
+            const zoneRows = [
+                ['温度报警值', 'tempAlarm', ''],
+                ['湿度告警值', 'humidityAlarm', 'is-warm'],
+                ['温度停售值', 'tempStop', 'is-muted'],
+                ['贮藏温度', 'storageTemp', ''],
+                ['正常湿度', 'normalHumidity', '']
+            ];
+            const cardsHtml = zones.map(zone => {
+                const rowsHtml = zoneRows.map(([label, key, extraClass]) => `
+                    <div class="detail-temperature-zone-row">
+                        <div class="detail-temperature-zone-label ${extraClass}">${escapeHtml(label)}</div>
+                        <div class="detail-temperature-zone-value">${escapeHtml(zone[key] || '-')}</div>
+                    </div>
+                `).join('');
+                return `
+                    <article class="detail-temperature-zone-card">
+                        <div class="detail-temperature-zone-head">
+                            <div>
+                                <div class="detail-temperature-zone-title">${escapeHtml(zone.title)}</div>
+                                <div class="detail-temperature-zone-meta">位置标识：${escapeHtml(zone.locationCode)}</div>
+                            </div>
+                            <button type="button" class="detail-temperature-zone-action" onclick="editDetailTemperatureAlarmZone('${escapeHtml(zone.key)}')">修改</button>
+                        </div>
+                        <div class="detail-temperature-zone-list">
+                            ${rowsHtml}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            return `
+                <section class="detail-temperature-context">
+                    <div class="detail-temperature-context-title">${escapeHtml(context.deviceId)}</div>
+                    <div class="detail-temperature-context-subtitle">
+                        当前点位：${escapeHtml(context.locationName)}，以下配置只在当前设备上下文中查看，不在详情正文重复展示。
+                    </div>
+                </section>
+                <section class="detail-temperature-grid">
+                    ${cardsHtml}
+                </section>
+            `;
         }
 
         function getFaultRecordList(storageKey) {
@@ -4085,6 +5306,45 @@
             renderDetailStatusRecordBody();
         }
 
+        function openDetailTemperatureAlarmModal(deviceId) {
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            const modal = document.getElementById('detailTemperatureAlarmModal');
+            const title = document.getElementById('detailTemperatureAlarmModalTitle');
+            const body = document.getElementById('detailTemperatureAlarmModalBody');
+            if (!modal || !body) return;
+            currentTemperatureAlarmDeviceId = targetDeviceId;
+            if (title) {
+                title.textContent = targetDeviceId
+                    ? `温度报警设置 · ${targetDeviceId}`
+                    : '温度报警设置';
+            }
+            body.innerHTML = renderDetailTemperatureAlarmModalBody(targetDeviceId);
+            modal.classList.add('active');
+        }
+
+        function closeDetailTemperatureAlarmModal() {
+            const modal = document.getElementById('detailTemperatureAlarmModal');
+            const title = document.getElementById('detailTemperatureAlarmModalTitle');
+            const body = document.getElementById('detailTemperatureAlarmModalBody');
+            currentTemperatureAlarmDeviceId = '';
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            if (title) {
+                title.textContent = '温度报警设置';
+            }
+            if (body) {
+                body.innerHTML = '';
+            }
+        }
+
+        function editDetailTemperatureAlarmZone(zoneKey) {
+            const deviceId = currentTemperatureAlarmDeviceId || currentDetailDeviceId || '-';
+            const zone = buildDetailTemperatureAlarmZones(deviceId).find(item => item.key === zoneKey);
+            if (!zone) return;
+            showToast(`设备 ${deviceId} 的 ${zone.title} 编辑入口待接入`);
+        }
+
         function openDetailRemoteActions(deviceId) {
             activeFaultActionDeviceId = deviceId;
             const panel = document.getElementById('detailRemoteActionSheet');
@@ -4222,26 +5482,21 @@
             if (!entryData?.info) return '';
             const info = entryData.info;
             const rows = [
-                ['入场时间', info.entryAt || '-'],
                 ['运维人员', info.operatorName || '未选择'],
                 ['运维电话', info.operatorPhone || '-'],
-                ['点位名称', entryData.locationName || '-'],
-                ['点位地址', info.locationAddress || '-'],
                 ['GPS定位', info.gpsAction || '未获取'],
                 ['经度', info.longitude || '手动输入'],
                 ['纬度', info.latitude || '手动输入'],
                 ['网络信号', info.networkSignal || '-'],
-                ['节能模式', info.energyMode || '-'],
                 ['设备开始日期', info.deviceStartDate || '-'],
                 ['设备结束日期', info.deviceEndDate || '-'],
                 ['第五代终端', info.terminalGeneration5 || '-'],
                 ['订单并行制作', info.parallelProduction || '-'],
                 ['维护时段', info.maintenanceWindow || '-'],
-                ['支付方式', entryData.paymentMethods || resolvePaymentMethods(info)],
                 ['备注', info.notes || '-']
             ];
             if (isEnergyModeEnabled(info.energyMode)) {
-                rows.splice(10, 0, ['开启节能模式', info.energyStartTime || '-'], ['关闭节能模式', info.energyEndTime || '-']);
+                rows.splice(6, 0, ['开启节能模式', info.energyStartTime || '-'], ['关闭节能模式', info.energyEndTime || '-']);
             }
             return rows.map(([label, value]) => renderDetailRow(label, value)).join('');
         }
@@ -4262,27 +5517,30 @@
             return [];
         }
 
-        function collectEntryPreviewImages(device) {
+        function collectDetailPreviewImages(device, group = 'all') {
             if (!device.entryInfo) return [];
             const info = device.entryInfo;
-            const displayImages = normalizePreviewImageList(info.displayImageUrls, '显示器画面').map(item => ({
-                ...item,
-                group: '显示器画面'
-            }));
             const locationImages = normalizePreviewImageList(info.locationImageUrls, '点位照片').map(item => ({
                 ...item,
-                group: '点位照片'
+                group: 'location'
             }));
-            return [...displayImages, ...locationImages];
+            const displayImages = normalizePreviewImageList(info.displayImageUrls, '广告屏画面').map(item => ({
+                ...item,
+                group: 'display'
+            }));
+            if (group === 'location') return locationImages;
+            if (group === 'display') return displayImages;
+            return [...locationImages, ...displayImages];
         }
 
-        function renderEntryImageGallery(device) {
-            const images = collectEntryPreviewImages(device);
+        function renderEntryImageGallery(device, group = 'all', emptyText = '暂无可预览图片') {
+            const images = collectDetailPreviewImages(device, group);
             if (!images.length) {
-                return '<div class="entry-image-empty">暂无可预览图片</div>';
+                return `<div class="entry-image-empty">${escapeHtml(emptyText)}</div>`;
             }
+            const previewOffset = group === 'display' ? collectDetailPreviewImages(device, 'location').length : 0;
             const thumbs = images.map((item, index) => `
-                <button type="button" class="entry-image-thumb" data-index="${index}">
+                <button type="button" class="entry-image-thumb" data-index="${previewOffset + index}">
                     <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.label)}" loading="lazy">
                     <span>${escapeHtml(item.label)}</span>
                 </button>
@@ -4291,6 +5549,71 @@
                 <div class="entry-image-grid">${thumbs}</div>
                 <div class="entry-image-tip">点击图片可预览，支持左右切换</div>
             `;
+        }
+
+        function renderEntryInfoCard(entryData, device) {
+            const coreRows = renderEntryCoreRows(entryData);
+            const extendedRows = renderEntryAllRows(entryData);
+            const locationImages = renderEntryImageGallery(device, 'location', '暂无点位图片');
+            const body = `
+                <details class="detail-disclosure">
+                    <summary>展开入场信息</summary>
+                    <div class="detail-disclosure-content">
+                        <div class="detail-section-meta">包含入场基础信息、补充配置以及点位图片，默认折叠以减少首屏干扰。</div>
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">基础信息</div>
+                            ${coreRows}
+                        </div>
+                        ${extendedRows ? `
+                            <div class="detail-subsection">
+                                <div class="detail-subsection-title">补充信息</div>
+                                ${extendedRows}
+                            </div>
+                        ` : ''}
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">点位图片</div>
+                            ${locationImages}
+                        </div>
+                    </div>
+                </details>
+            `;
+            return renderDetailCard('入场信息', body, 'detail-card-entry');
+        }
+
+        function renderAdScreenInfoCard(device) {
+            const screenImages = renderEntryImageGallery(device, 'display', '暂无广告屏画面');
+            const body = `
+                <details class="detail-disclosure">
+                    <summary>展开广告屏信息</summary>
+                    <div class="detail-disclosure-content">
+                        <div class="detail-section-meta">广告屏画面单独归类，避免与入场资料混在一起。</div>
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">广告屏画面</div>
+                            ${screenImages}
+                        </div>
+                    </div>
+                </details>
+            `;
+            return renderDetailCard('广告屏信息', body, 'detail-card-ad-screen');
+        }
+
+        function renderStatusRecordsCard(counts, deviceId) {
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
+            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
+            const body = `
+                <details class="detail-disclosure">
+                    <summary>展开状态记录</summary>
+                    <div class="detail-disclosure-content">
+                        <div class="detail-section-meta">历史异常和远程/运维操作仍保留在统一记录弹层里，需要时再展开查看。</div>
+                        ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
+                        ${renderDetailRow('运维记录', `${operationCount} 条`)}
+                        <div class="detail-subsection">
+                            <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
+                        </div>
+                    </div>
+                </details>
+            `;
+            return renderDetailCard('状态记录', body, 'detail-card-records');
         }
 
         function bindEntryImageThumbEvents() {
@@ -4479,7 +5802,7 @@
                 return renderDetailRow('运维记录', '暂无运维记录');
             }
             return normalizedRecords.slice(0, 10).map((record, index) => `
-                <details class="detail-entry-all maintenance-record" ${index === 0 ? 'open' : ''}>
+                <details class="detail-disclosure maintenance-record" ${index === 0 ? 'open' : ''}>
                     <summary>${escapeHtml(`${normalizeRecordTime(record.time)} · ${record.type || '运维'}`)}</summary>
                     ${renderDetailRow('时间', normalizeRecordTime(record.time))}
                     ${renderDetailRow('类型(清洁/补料)', record.type || '-')}
@@ -4695,133 +6018,24 @@
             showToast('入场信息已更新');
         }
 
-        function getDetailSectionConfig() {
-            return [
-                { id: 'detail-section-overview', label: '设备概览' },
-                { id: 'detail-section-fault', label: '故障处理' },
-                { id: 'detail-section-entry-core', label: '入场核心' },
-                { id: 'detail-section-entry-all', label: '入场详情' },
-                { id: 'detail-section-entry-images', label: '图片信息' }
-            ];
-        }
-
-        function getDetailStateChipClass(type, value) {
-            const text = normalizeEditableValue(value, '-');
-            if (type === 'status') {
-                if (text.includes('故障') || text.includes('离线')) return 'danger';
-                return 'ok';
-            }
-            if (type === 'sales') {
-                if (text.includes('停卖')) return 'warn';
-                return 'ok';
-            }
-            if (type === 'entry') {
-                if (text.includes('未入场')) return 'warn';
-                return 'ok';
-            }
-            return 'ok';
-        }
-
-        function renderDetailAside(detailData, counts) {
-            const sectionItems = getDetailSectionConfig();
+        function renderDetailAside(detailData) {
             const summary = detailData?.base || {};
-            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
-            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
-            const entryStatus = summary.locationName === '未入场' ? '未入场' : '已入场';
             return `
                 <aside class="detail-aside">
                     <div class="detail-aside-stack">
                         <section class="detail-side-card">
-                            <div class="detail-side-title">目录导航</div>
-                            <div class="detail-anchor-list">
-                                ${sectionItems.map((item, index) => `
-                                    <button
-                                        type="button"
-                                        class="detail-anchor-btn ${index === 0 ? 'active' : ''}"
-                                        data-detail-anchor="${item.id}"
-                                        onclick="scrollDetailToSection('${item.id}')"
-                                    >${escapeHtml(item.label)}</button>
-                                `).join('')}
-                            </div>
-                        </section>
-                        <section class="detail-side-card">
-                            <div class="detail-side-title">状态摘要</div>
-                            <div class="detail-side-state-list">
-                                <span class="detail-side-state-chip ${getDetailStateChipClass('status', summary.statusName)}">设备状态：${escapeHtml(summary.statusName || '-')}</span>
-                                <span class="detail-side-state-chip ${getDetailStateChipClass('sales', summary.salesName)}">停卖状态：${escapeHtml(summary.salesName || '-')}</span>
-                                <span class="detail-side-state-chip ${getDetailStateChipClass('entry', entryStatus)}">入场状态：${escapeHtml(entryStatus)}</span>
-                                <span class="detail-side-state-chip">异常记录：${abnormalCount} 条</span>
-                                <span class="detail-side-state-chip">运维记录：${operationCount} 条</span>
-                            </div>
-                        </section>
-                        <section class="detail-side-card">
                             <div class="detail-side-title">设备操作</div>
                             <div class="detail-side-action-list">
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
+                                <button type="button" class="detail-side-action-btn primary" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailTemperatureAlarmModal('${escapeHtml(summary.deviceId || '')}')">温度报警设置</button>
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
                                 <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
                             </div>
                         </section>
                     </div>
                 </aside>
             `;
-        }
-
-        function setActiveDetailAnchor(sectionId) {
-            document.querySelectorAll('[data-detail-anchor]').forEach(button => {
-                const anchorId = button.getAttribute('data-detail-anchor');
-                button.classList.toggle('active', anchorId === sectionId);
-            });
-        }
-
-        function scrollDetailToSection(sectionId) {
-            const container = document.getElementById('detailModalBody');
-            const section = document.getElementById(sectionId);
-            if (!container || !section) return;
-            const containerRect = container.getBoundingClientRect();
-            const sectionRect = section.getBoundingClientRect();
-            const nextTop = container.scrollTop + sectionRect.top - containerRect.top - 6;
-            container.scrollTo({
-                top: Math.max(nextTop, 0),
-                behavior: 'smooth'
-            });
-            setActiveDetailAnchor(sectionId);
-        }
-
-        function updateActiveDetailAnchorByScroll() {
-            const container = document.getElementById('detailModalBody');
-            if (!container) return;
-            const sections = getDetailSectionConfig()
-                .map(item => ({ ...item, element: document.getElementById(item.id) }))
-                .filter(item => item.element);
-            if (!sections.length) return;
-            const containerRect = container.getBoundingClientRect();
-            let nearest = sections[0];
-            let minDistance = Number.POSITIVE_INFINITY;
-            sections.forEach(item => {
-                const distance = Math.abs(item.element.getBoundingClientRect().top - containerRect.top - 14);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = item;
-                }
-            });
-            if (nearest?.id) {
-                setActiveDetailAnchor(nearest.id);
-            }
-        }
-
-        function bindDetailSectionSpy() {
-            const container = document.getElementById('detailModalBody');
-            if (!container) return;
-            if (detailSectionSpyHandler) {
-                container.removeEventListener('scroll', detailSectionSpyHandler);
-            }
-            detailSectionSpyHandler = function() {
-                updateActiveDetailAnchorByScroll();
-            };
-            container.addEventListener('scroll', detailSectionSpyHandler, { passive: true });
-            updateActiveDetailAnchorByScroll();
         }
 
         function viewDetail(deviceId) {
@@ -4839,71 +6053,50 @@
             const detailData = splitDeviceDetailData(device, runtimeLocationMap);
             const entryCoreRows = renderEntryCoreRows(detailData.entry);
             const entryAllRows = renderEntryAllRows(detailData.entry);
-            const entryImageGallery = renderEntryImageGallery(device);
-            const faultControlCard = renderFaultControlCard(detailData.fault);
             const abnormalRecords = getFaultAbnormalRecords(deviceId);
             const operationRecords = getMaintenanceRecordsByDevice(deviceId);
             const detailRecordCounts = {
                 abnormal: abnormalRecords.length,
                 operation: operationRecords.length
             };
-            const basicRows = [
-                renderDetailRow('设备编号', detailData.base.deviceId),
-                renderDetailRow('所属商户', detailData.base.merchantName),
-                renderDetailRow('点位', detailData.base.locationName),
-                renderDetailRow('设备类别', detailData.base.categoryName),
-                renderDetailRow('部署类型', detailData.base.deploymentName),
-                renderDetailRow('设备状态', detailData.base.statusName),
-                renderDetailRow('停卖状态', detailData.base.salesName),
-                renderDetailRow('最近心跳', detailData.base.heartbeat)
-            ].join('');
-            const entryAllSectionRows = entryAllRows
-                ? `
-                <details class="detail-entry-all">
-                    <summary>查看全部入场信息</summary>
-                    ${entryAllRows}
-                </details>
-                `
-                : renderDetailRow('入场记录', '暂无入场记录');
             document.getElementById('detailModalBody').innerHTML = `
                 <div class="detail-layout">
                     <div class="detail-main">
                         <div class="detail-grid">
                             <section class="detail-section" id="detail-section-overview">
-                                ${renderDetailCard('设备信息', basicRows, 'detail-card-basic')}
+                                ${renderDeviceOverviewCard(detailData.base)}
                             </section>
-                            <section class="detail-section" id="detail-section-fault">
-                                ${faultControlCard}
+                            <section class="detail-section" id="detail-section-status">
+                                ${renderDeviceStatusCard(detailData.base, detailData.fault, detailRecordCounts)}
                             </section>
-                            <section class="detail-section" id="detail-section-entry-core">
-                                ${renderDetailCard('入场核心信息', entryCoreRows, 'detail-card-entry-core')}
+                            <section class="detail-section" id="detail-section-entry">
+                                ${renderEntryInfoCard(detailData.entry, device)}
                             </section>
-                            <section class="detail-section" id="detail-section-entry-all">
-                                ${renderDetailCard('入场全部信息', entryAllSectionRows, 'detail-card-entry-all')}
+                            <section class="detail-section" id="detail-section-ad-screen">
+                                ${renderAdScreenInfoCard(device)}
                             </section>
-                            <section class="detail-section" id="detail-section-entry-images">
-                                ${renderDetailCard('入场图片', entryImageGallery, 'detail-card-entry-images')}
+                            <section class="detail-section" id="detail-section-technical">
+                                ${renderTechnicalStatusCard(detailData.fault)}
+                            </section>
+                            <section class="detail-section" id="detail-section-records">
+                                ${renderStatusRecordsCard(detailRecordCounts, detailData.base.deviceId)}
                             </section>
                         </div>
                     </div>
-                    ${renderDetailAside(detailData, detailRecordCounts)}
+                    ${renderDetailAside(detailData)}
                 </div>
             `;
-            detailPreviewImages = collectEntryPreviewImages(device);
+            detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
-            bindDetailSectionSpy();
             document.getElementById('detailModal').classList.add('active');
         }
 
         function closeDetailModal() {
             const detailBody = document.getElementById('detailModalBody');
-            if (detailBody && detailSectionSpyHandler) {
-                detailBody.removeEventListener('scroll', detailSectionSpyHandler);
-                detailSectionSpyHandler = null;
-            }
             document.getElementById('detailModal').classList.remove('active');
             closeEntryEditModal();
             closeDetailRemoteActions();
+            closeDetailTemperatureAlarmModal();
             closeDetailEditFaultStatus();
             closeDetailStatusRecords();
             if (detailBody) {

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品配方修改说明</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #17b8b0;
+      --accent-soft: #e8fbf9;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #eef7f7 0%, var(--bg) 220px);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    .hero,
+    .section {
+      background: var(--card);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px 32px;
+      margin-bottom: 22px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #0f766e;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      margin: 14px 0 10px;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .section {
+      padding: 28px 32px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    p,
+    ol,
+    ul {
+      margin: 0 0 14px;
+    }
+
+    ol,
+    ul {
+      padding-left: 22px;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .note {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .shot {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .shot figcaption {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+      background: #fcfcfd;
+    }
+
+    .annotated-shot {
+      position: relative;
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .annotated-shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .annotated-shot .hotspot {
+      position: absolute;
+      left: 21.5%;
+      top: 61.2%;
+      width: 12.8%;
+      height: 13.4%;
+      border: 4px solid #ff8a3d;
+      border-radius: 16px;
+      box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.12);
+    }
+
+    .annotated-shot .callout {
+      position: absolute;
+      left: 39%;
+      top: 57.5%;
+      max-width: 320px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 2px solid #ff8a3d;
+      color: #8a3c00;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 12px 28px rgba(255, 138, 61, 0.18);
+    }
+
+    .annotated-shot .callout::before {
+      content: "";
+      position: absolute;
+      left: -42px;
+      top: 42px;
+      width: 42px;
+      height: 3px;
+      background: #ff8a3d;
+      transform: rotate(-12deg);
+      transform-origin: right center;
+    }
+
+    .annotated-shot figcaption {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+      background: #fcfcfd;
+    }
+
+    .speech {
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #f0fdfa, #f8fafc);
+      border: 1px solid #ccefed;
+      font-size: 15px;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: #f3f4f6;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 20px, 980px);
+        padding: 20px 0 32px;
+      }
+
+      .hero,
+      .section {
+        padding: 22px 18px;
+        border-radius: 16px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="badge">商品详情 · 配方配置</div>
+      <h1>商品配方修改说明</h1>
+      <p>这份文档可以直接发给同事，用来介绍如何从桌面端商品管理首页进入商品编辑，再调整配方并完成保存。</p>
+    </section>
+
+    <section class="section">
+      <h2>一、先从桌面端商品管理首页进入编辑</h2>
+      <ol>
+        <li>在左侧导航点击 <code>商品管理</code>。</li>
+        <li>进入页面后，先不要停留在顶部统计卡、设备搜索和语言设置区域。</li>
+        <li>继续往下找到 <code>商品区域 / 商品卡片区域</code>。</li>
+        <li>当前页面没有单独的 <code>编辑</code> 按钮，直接点击目标商品卡片进入编辑。</li>
+      </ol>
+      <div class="note">
+        很多人进入 <code>商品管理</code> 后，会停在顶部基础设置区。真正进入商品编辑的入口，在页面下方的商品区域，而且这里没有独立的 <code>编辑</code> 按钮。
+      </div>
+      <figure class="annotated-shot">
+        <img src="./menu-management-desktop.png" alt="桌面端商品管理首页">
+        <div class="hotspot" aria-hidden="true"></div>
+        <div class="callout">这里没有单独的“编辑”按钮，直接点击目标商品卡片进入编辑</div>
+        <figcaption>步骤 1：进入商品管理首页后，不要停在顶部基础设置区，继续到下方商品区域进入编辑</figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <h2>二、进入商品详情后切换到配方配置</h2>
+      <ol>
+        <li>进入商品详情页后，点击上方 <code>配方配置</code> 页签。</li>
+        <li>先选中你要调整的选项，例如咖啡豆、温度、糖浆、甜度或杯型。</li>
+        <li>点击右上角的 <code>修改配方</code>。</li>
+      </ol>
+      <figure class="shot">
+        <img src="../screenshots/prd-product-detail/us001.png" alt="进入商品详情后切换到配方配置并点击修改配方">
+        <figcaption>步骤 2：进入商品详情后切换到配方配置并点击修改配方</figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <h2>三、修改配方</h2>
+      <p>进入 <code>配方调整</code> 弹窗后，可以做下面几类操作：</p>
+      <ol>
+        <li>通过左侧拖拽手柄调整配方分组顺序。</li>
+        <li>点击每一行右侧的 <code>-10%</code> 或 <code>+10%</code> 调整比例。</li>
+        <li>查看当前原料名称，确认现在的制作内容是否正确。</li>
+      </ol>
+      <div class="note">
+        如果你要改的是前台展示名称，不要在这里处理，应改用 <code>标签配置</code>。这里负责的是机器制作配方。
+      </div>
+      <figure class="shot">
+        <img src="../screenshots/prd-product-detail/us003.png" alt="在配方调整弹窗中修改顺序和比例">
+        <figcaption>步骤 3：在配方调整弹窗中修改顺序和比例</figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <h2>四、可选操作</h2>
+      <p>如果不是手动微调，而是需要快速恢复或批量导入，也可以直接在弹窗顶部处理：</p>
+      <ul>
+        <li><code>恢复出厂设置</code>：把当前选项恢复到默认配方。</li>
+        <li><code>上传基底咖啡配方</code>：用文件批量导入“基底咖啡液”配方。</li>
+      </ul>
+      <div class="note">
+        需要回退到标准配方时，用恢复出厂设置；需要按模板批量导入时，用上传基底咖啡配方。
+      </div>
+      <figure class="shot">
+        <img src="../screenshots/prd-product-detail/us004.png" alt="恢复出厂设置或上传基底咖啡配方">
+        <figcaption>步骤 4：可选使用恢复出厂设置或上传基底咖啡配方</figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <h2>五、保存并确认影响范围</h2>
+      <p>点击 <code>保存配方</code> 后，系统会弹出 <code>影响商品确认</code> 弹窗。</p>
+      <ol>
+        <li>当前商品一定会保存，不需要额外勾选。</li>
+        <li>列表中的商品，是和当前配方有关联的其他商品。</li>
+        <li>默认是全选，表示这些商品也会一起更新为新配方。</li>
+        <li>如果某些商品不想一起改，就取消勾选。</li>
+        <li>最后点击 <code>确认保存</code>。</li>
+      </ol>
+      <div class="note">
+        只想改当前商品时，把关联商品全部取消勾选后再保存；想让一批商品一起更新时，保持勾选直接确认即可。
+      </div>
+      <figure class="shot">
+        <img src="../screenshots/prd-product-detail/us006.png" alt="确认哪些关联商品要一起更新">
+        <figcaption>步骤 5：确认哪些关联商品要一起更新</figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <h2>六、讲解话术</h2>
+      <div class="speech">
+        先在左侧打开商品管理。进入页面后不要停在顶部基础设置区，要继续往下找到商品区域。这里没有单独的编辑按钮，直接点击目标商品卡片进入编辑。进到商品详情以后，切到配方配置，再点右上角的修改配方。进弹窗以后，可以拖动顺序，也可以用加减 10% 调整比例。改完点保存配方。最后系统会再问一次哪些关联商品要一起更新，如果你只想改当前商品，就把其他商品取消勾选后再确认保存。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>七、注意事项</h2>
+      <ul>
+        <li>进入 <code>商品管理</code> 后，不要停在顶部统计和基础设置区，真正的编辑入口在下方商品区域。</li>
+        <li>当前页面没有单独的 <code>编辑</code> 按钮，直接点击商品卡片本身即可进入商品详情。</li>
+        <li>修改前先确认自己选中的到底是哪一个选项组和哪个标签值。</li>
+        <li><code>修改配方</code> 是改制作规则，不是改前台展示文案。</li>
+        <li>取消勾选的关联商品不会跟随本次新配方。</li>
+        <li>如果需要批量导入，优先使用 <code>上传基底咖啡配方</code>，不要逐项手调。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

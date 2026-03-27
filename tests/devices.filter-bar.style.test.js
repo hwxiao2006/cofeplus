@@ -15,25 +15,34 @@ function test(name, fn) {
   }
 }
 
-test('主筛选栏标签应使用高对比文本颜色', () => {
-  assert.ok(/\.main-filter-bar\s+\.filter-label\s*\{[\s\S]*color:\s*var\(--text-secondary\)/.test(html));
+test('主筛选栏标签应保留隐藏策略，控件本身向订单页输入样式对齐', () => {
+  assert.ok(/\.main-filter-bar\s+\.filter-label\s*\{[\s\S]*display:\s*none/.test(html));
 });
 
-test('主筛选栏下拉应为白底并使用高对比文本', () => {
+test('主筛选栏下拉与搜索框应沿用订单页输入样式', () => {
+  assert.ok(/\.main-filter-bar\s+\.search-input\s*\{[\s\S]*padding:\s*10px 14px/.test(html));
+  assert.ok(/\.main-filter-bar\s+\.search-input\s*\{[\s\S]*border-radius:\s*var\(--radius-sm\)/.test(html));
+  assert.ok(/\.main-filter-bar\s+\.search-input\s*\{[\s\S]*font-size:\s*14px/.test(html));
+  assert.ok(/\.main-filter-bar\s+\.search-input:focus\s*\{[\s\S]*border-color:\s*var\(--primary\)/.test(html));
+  assert.ok(/\.main-filter-bar\s+\.search-input:focus\s*\{[\s\S]*box-shadow:\s*0 0 0 3px var\(--primary-light\)/.test(html));
   assert.ok(/\.main-filter-item\s+\.filter-select\s*\{[\s\S]*background:\s*#fff/.test(html));
+  assert.ok(/\.main-filter-item\s+\.filter-select\s*\{[\s\S]*padding:\s*10px 36px 10px 14px/.test(html));
+  assert.ok(/\.main-filter-item\s+\.filter-select\s*\{[\s\S]*border-radius:\s*var\(--radius-sm\)/.test(html));
+  assert.ok(/\.main-filter-item\s+\.filter-select\s*\{[\s\S]*font-size:\s*14px/.test(html));
   assert.ok(/\.main-filter-item\s+\.filter-select\s*\{[\s\S]*color:\s*var\(--text-primary\)/.test(html));
+  assert.ok(/\.main-filter-item\s+\.filter-select:focus\s*\{[\s\S]*border-color:\s*var\(--primary\)/.test(html));
 });
 
-test('设备管理页设备入场入口应只保留表格区按钮', () => {
+test('设备管理页设备录入跳转应通过单一页面入口函数实现', () => {
   const entryLinks = html.match(/device-entry\.html/g) || [];
   assert.strictEqual(entryLinks.length, 1);
-  assert.ok(/table-actions[\s\S]*device-entry\.html/.test(html));
+  assert.ok(/function\s+openDeviceEntryPage\s*\(\)\s*\{[\s\S]*window\.location\.href\s*=\s*'device-entry\.html'/.test(html));
 });
 
-test('设备管理主筛选栏应提供点位分类筛选', () => {
-  assert.ok(/<label class="filter-label">点位分类<\/label>/.test(html));
+test('设备管理主筛选栏应提供点位筛选', () => {
+  assert.ok(/<label class="filter-label">点位筛选<\/label>/.test(html));
   assert.ok(/<select class="filter-select" id="locationCategoryFilter" onchange="filterDevices\(\)">/.test(html));
-  assert.ok(/<option value="all">全部点位分类<\/option>/.test(html));
+  assert.ok(/<option value="all">全部点位<\/option>/.test(html));
   assert.ok(/<option value="exhibition">展会点位<\/option>/.test(html));
   assert.ok(/<option value="operation">运营点位<\/option>/.test(html));
 });

@@ -69,13 +69,28 @@ node --test tests/sidebar.admin-lang.test.js tests/sidebar.admin-lang.runtime.te
 - Runtime tests extract `<script>` blocks, replace `let` with `globalThis.`, and execute in VM context
 - Mock DOM objects (document, localStorage, window) are provided as needed
 
+## Deployment
+
+Deployed via Cloudflare Workers (see `wrangler.jsonc`). The entire repo root is served as static assets.
+
+```bash
+# Deploy to Cloudflare
+npx wrangler deploy
+```
+
+## Project Structure
+
+- `shared/admin-mock-data.js` - Shared mock data generation utilities used across pages
+- `docs/plans/` - Date-prefixed implementation and design plans (e.g. `2026-03-01-feature-name.md`)
+- `docs/superpowers/plans/` and `docs/superpowers/specs/` - Detailed feature specs and plans
+- `tasks/` - PRD documents (both `.md` and `.html` formats)
+- `figma-paste/` - Figma export HTML files for design reference
+- `test-results/` - Test execution results
+- `screenshots/` - UI screenshots
+
 ## Development Workflow
 
 **No build step**: Open HTML files directly in browser. Changes are immediately visible on refresh.
-
-**Design source**: Figma exports are in `figma-paste/` directory for reference.
-
-**Planning**: Design and implementation plans are stored in `docs/plans/` with date-prefixed filenames.
 
 **Commit conventions:**
 - Use descriptive commit messages in English
@@ -85,23 +100,21 @@ node --test tests/sidebar.admin-lang.test.js tests/sidebar.admin-lang.runtime.te
 ## Code Conventions
 
 **CSS:**
-- Use CSS custom properties for colors and spacing
-- Mobile-first responsive design
+- CSS custom properties for theming: `--primary: #4ECDC4`, `--danger: #ff6b6b`, `--warning: #ffa502`, `--success: #2ed573`
+- Sidebar background: `#0b132b`
 - Consistent sidebar width: 240px
-- Common breakpoint: `@media (max-width: 768px)`
+- Responsive breakpoints: desktop 1025px+, tablet 768px-1024px, mobile <768px
 
 **JavaScript:**
 - Vanilla JS, no frameworks
 - Global variables for page state
-- Functions defined in global scope
 - Use `localStorage.getItem/setItem` for persistence
 - Deterministic mock data generation using device IDs as seeds
 
 **HTML:**
-- Semantic markup
 - Chinese language content (`lang="zh-CN"`)
-- Inline styles and scripts (no external files)
-- Consistent sidebar structure across pages
+- Inline styles and scripts (no external files except `shared/admin-mock-data.js`)
+- Consistent sidebar structure across all admin pages
 
 ## Key Implementation Details
 
@@ -144,3 +157,44 @@ When modifying tests:
 1. Run affected tests immediately after changes
 2. Check both static and runtime test variants if both exist
 3. Verify test isolation (no cross-test state pollution)
+
+## gstack
+
+This repo vendors `gstack` at `.claude/skills/gstack` for teammates, and exposes project-local Codex skill entry points under `.agents/skills/`.
+
+Use gstack `/browse` for all web browsing and visual QA in this repo. Never use `mcp__claude-in-chrome__*` tools.
+
+Available skills:
+- `/autoplan`
+- `/benchmark`
+- `/office-hours`
+- `/plan-ceo-review`
+- `/plan-eng-review`
+- `/plan-design-review`
+- `/canary`
+- `/design-consultation`
+- `/cso`
+- `/review`
+- `/ship`
+- `/land-and-deploy`
+- `/browse`
+- `/qa`
+- `/qa-only`
+- `/design-review`
+- `/setup-browser-cookies`
+- `/setup-deploy`
+- `/retro`
+- `/investigate`
+- `/document-release`
+- `/codex`
+- `/careful`
+- `/freeze`
+- `/guard`
+- `/unfreeze`
+- `/gstack-upgrade`
+
+If gstack skills are missing or not working:
+- Claude: `cd .claude/skills/gstack && ./setup`
+- Codex: `cd .claude/skills/gstack && ./setup --host codex`
+
+These setup commands rebuild the local browser binary if needed and refresh the skill registration links.

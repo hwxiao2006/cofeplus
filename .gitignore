@@ -6,3 +6,8 @@
 !.dev.vars.example
 .env*
 !.env.example
+
+# vendored gstack local build artifacts
+.claude/.agents/
+.claude/skills/gstack/node_modules
+.claude/skills/gstack/browse/dist

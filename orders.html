@@ -631,6 +631,23 @@
             font-size: 12px;
         }
 
+        .order-empty-row {
+            padding: 28px 16px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .order-empty-card {
+            padding: 28px 20px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 14px;
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+        }
+
         .date-range {
             display: flex;
             align-items: center;
@@ -4408,6 +4425,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/admin-staff-access.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -4674,6 +4692,11 @@
         let currentPage = 1;
         const pageSize = 20;
         let filteredData = [];
+        let currentStaffOrderAccess = {
+            isScoped: false,
+            visibleDeviceIds: [],
+            scopeMessage: ''
+        };
         let deviceFilterOptions = [];
         let allDeviceOptions = [];
         let deviceFilterLocationMap = {};
@@ -5160,13 +5183,80 @@
             const runtimeDevices = loadRuntimeDevices();
             const runtimeProducts = loadRuntimeProducts();
             deviceContextMap = buildDeviceContextMap(runtimeDevices);
-            ordersData = mergeOrdersPrdDemoOrders(loadOrdersData(runtimeDevices, runtimeProducts), runtimeDevices, runtimeProducts, ordersPrdDemoState);
+            currentStaffOrderAccess = resolveCurrentStaffOrderAccess();
+            ordersData = applyScopedOrdersData(
+                mergeOrdersPrdDemoOrders(loadOrdersData(runtimeDevices, runtimeProducts), runtimeDevices, runtimeProducts, ordersPrdDemoState),
+                currentStaffOrderAccess
+            );
             filteredData = sortOrders(ordersData);
             initDeviceFilter();
             syncDesktopFiltersToMobile();
             renderTable();
             updatePagination();
             applyOrdersPrdDemoState();
+        }
+
+        function resolveCurrentStaffOrderAccess() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'orders')) {
+                return {
+                    ...access,
+                    visibleDeviceIds: [],
+                    scopeMessage: '当前账号暂未开通订单页面权限'
+                };
+            }
+
+            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
+                ? helper.getModuleVisibleDeviceIds(access.currentStaff, 'orders')
+                : [];
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+
+            return {
+                ...access,
+                visibleDeviceIds: normalizedVisibleDeviceIds,
+                scopeMessage: normalizedVisibleDeviceIds.length
+                    ? `当前可查看订单设备：${normalizedVisibleDeviceIds.length} 台`
+                    : '你已拥有订单页面权限，但当前未分配可查看的设备，请联系管理员调整页面设备范围'
+            };
+        }
+
+        function applyScopedOrdersData(orderList, staffAccess = currentStaffOrderAccess) {
+            const source = Array.isArray(orderList) ? orderList : [];
+            if (!staffAccess || !staffAccess.isScoped) {
+                return source;
+            }
+
+            const visibleDeviceSet = new Set((Array.isArray(staffAccess.visibleDeviceIds) ? staffAccess.visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean));
+
+            return source.filter(order => visibleDeviceSet.has(String(order?.deviceId || '').trim()));
+        }
+
+        function getScopedOrderEmptyText(staffAccess = currentStaffOrderAccess) {
+            if (staffAccess && staffAccess.isScoped && (!Array.isArray(staffAccess.visibleDeviceIds) || !staffAccess.visibleDeviceIds.length) && staffAccess.scopeMessage) {
+                return staffAccess.scopeMessage;
+            }
+            return '暂无匹配的订单';
         }
 
         function initDeviceFilter() {
@@ -5781,6 +5871,13 @@
 
             calculateTotal();
             renderTodayMetrics();
+
+            if (!pageData.length) {
+                const emptyText = getScopedOrderEmptyText(currentStaffOrderAccess);
+                tableBody.innerHTML = `<tr><td colspan="9" class="order-empty-row">${emptyText}</td></tr>`;
+                mobileList.innerHTML = `<div class="order-empty-card">${emptyText}</div>`;
+                return;
+            }
 
             tableBody.innerHTML = pageData.map(order => {
                 const deviceContext = deviceContextMap[order.deviceId] || { merchant: '-', location: '-' };

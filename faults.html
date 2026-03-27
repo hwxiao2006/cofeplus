@@ -1119,6 +1119,7 @@
     <div id="abnormalRecordPage" class="status-page-overlay"></div>
     <div id="operationRecordPage" class="status-page-overlay"></div>
 
+    <script src="shared/admin-staff-access.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1345,6 +1346,11 @@
 
         let searchKeyword = '';
         let activeFaultDeviceId = '';
+        let currentStaffFaultAccess = {
+            isScoped: false,
+            visibleDeviceIds: [],
+            scopeMessage: ''
+        };
 
         const faults = [
             {
@@ -1574,10 +1580,71 @@
             overlay.classList.toggle('show');
         }
 
+        function resolveCurrentStaffFaultAccess() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    scopeMessage: ''
+                };
+            }
+
+            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'faults')) {
+                return {
+                    ...access,
+                    visibleDeviceIds: [],
+                    scopeMessage: '当前账号暂未开通故障页面权限'
+                };
+            }
+
+            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
+                ? helper.getModuleVisibleDeviceIds(access.currentStaff, 'faults')
+                : [];
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+
+            return {
+                ...access,
+                visibleDeviceIds: normalizedVisibleDeviceIds,
+                scopeMessage: normalizedVisibleDeviceIds.length
+                    ? `当前可查看故障设备：${normalizedVisibleDeviceIds.length} 台`
+                    : '你已拥有故障页面权限，但当前未分配可查看的设备，请联系管理员调整页面设备范围'
+            };
+        }
+
+        function canAccessFaultDevice(deviceId, staffAccess = currentStaffFaultAccess) {
+            if (!staffAccess || !staffAccess.isScoped) {
+                return true;
+            }
+            const visibleDeviceSet = new Set((Array.isArray(staffAccess.visibleDeviceIds) ? staffAccess.visibleDeviceIds : [])
+                .map((item) => String(item || '').trim())
+                .filter(Boolean));
+            return visibleDeviceSet.has(String(deviceId || '').trim());
+        }
+
+        function getScopedFaultEmptyText(staffAccess = currentStaffFaultAccess) {
+            if (staffAccess && staffAccess.isScoped && (!Array.isArray(staffAccess.visibleDeviceIds) || !staffAccess.visibleDeviceIds.length) && staffAccess.scopeMessage) {
+                return staffAccess.scopeMessage;
+            }
+            return '暂无故障记录';
+        }
+
         function getFilteredFaults() {
             const keyword = searchKeyword.trim().toLowerCase();
             return faults.filter(item => {
                 if (item.status !== 'fault') return false;
+                if (!canAccessFaultDevice(item.id)) return false;
                 if (!keyword) return true;
                 return item.id.toLowerCase().includes(keyword) || item.siteName.toLowerCase().includes(keyword);
             });
@@ -1634,6 +1701,7 @@
         }
 
         function openRemoteActions(deviceId) {
+            if (!canAccessFaultDevice(deviceId)) return;
             activeFaultDeviceId = deviceId;
             const panel = document.getElementById('remoteActionSheet');
             if (!panel) return;
@@ -1677,6 +1745,7 @@
         }
 
         function openEditStatus(deviceId) {
+            if (!canAccessFaultDevice(deviceId)) return;
             activeFaultDeviceId = deviceId;
             const panel = document.getElementById('editStatusSheet');
             if (!panel) return;
@@ -1761,6 +1830,7 @@
         }
 
         function openStatusRecords(deviceId) {
+            if (!canAccessFaultDevice(deviceId)) return;
             activeFaultDeviceId = deviceId;
             const page = document.getElementById('statusRecordPage');
             if (!page) return;
@@ -1896,6 +1966,7 @@
         }
 
         function goToDeviceMaterials(deviceId) {
+            if (!canAccessFaultDevice(deviceId)) return;
             try {
                 sessionStorage.setItem('currentDevice', deviceId);
             } catch (error) {
@@ -1916,7 +1987,7 @@
             const container = document.getElementById('list');
             const data = getFilteredFaults();
             if (!data.length) {
-                container.innerHTML = '<div class="empty">暂无故障记录</div>';
+                container.innerHTML = `<div class="empty">${getScopedFaultEmptyText(currentStaffFaultAccess)}</div>`;
                 return;
             }
 
@@ -1946,6 +2017,7 @@
             `;
         }
 
+        currentStaffFaultAccess = resolveCurrentStaffFaultAccess();
         renderSidebarLoginProfile();
         renderSummary();
         renderList();
