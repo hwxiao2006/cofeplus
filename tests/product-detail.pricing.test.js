@@ -1,9 +1,143 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 const filePath = path.join(__dirname, '..', 'product-detail.html');
 const html = fs.readFileSync(filePath, 'utf8');
+
+function extractFunctionSource(name) {
+  const marker = `function ${name}(`;
+  const start = html.indexOf(marker);
+  if (start === -1) {
+    throw new Error(`未找到函数 ${name}`);
+  }
+
+  const bodyStart = html.indexOf('{', start);
+  if (bodyStart === -1) {
+    throw new Error(`函数 ${name} 缺少函数体`);
+  }
+
+  let depth = 0;
+  for (let index = bodyStart; index < html.length; index += 1) {
+    const char = html[index];
+    if (char === '{') depth += 1;
+    if (char === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        return html.slice(start, index + 1);
+      }
+    }
+  }
+
+  throw new Error(`函数 ${name} 未正常结束`);
+}
+
+function createClassList() {
+  const classNames = new Set();
+  return {
+    add(name) { classNames.add(name); },
+    remove(name) { classNames.delete(name); },
+    toggle(name, force) {
+      if (typeof force === 'boolean') {
+        if (force) classNames.add(name);
+        else classNames.delete(name);
+        return force;
+      }
+      if (classNames.has(name)) {
+        classNames.delete(name);
+        return false;
+      }
+      classNames.add(name);
+      return true;
+    },
+    contains(name) { return classNames.has(name); }
+  };
+}
+
+function createPreviewRuntimeContext() {
+  const queryElements = {
+    '.product-name-zh': { value: '临时商品名' },
+    '.product-name-en': { value: 'Draft Latte' },
+    '.product-desc-zh': { value: '临时描述文案' },
+    '.product-desc-en': { value: 'Draft description' }
+  };
+  const elements = {
+    embeddedOrderPreviewOverlay: {
+      classList: createClassList()
+    },
+    embeddedOrderPreviewFrame: {
+      src: '',
+      onload: null,
+      contentWindow: {
+        postMessageCalls: [],
+        postMessage(message, targetOrigin) {
+          this.postMessageCalls.push({ message, targetOrigin });
+        }
+      }
+    },
+    productImage: {
+      value: 'https://example.com/draft-image.png'
+    },
+    productPrice: {
+      value: '31.5'
+    },
+    productOriginalPrice: {
+      value: '39.9'
+    },
+    onSaleSwitch: {
+      checked: false
+    }
+  };
+
+  const context = {
+    currentDevice: 'RCK111',
+    URL,
+    URLSearchParams,
+    console,
+    saveProductCalls: 0,
+    productData: {
+      id: 101,
+      names: { zh: '已保存商品', en: 'Saved Latte' },
+      descs: { zh: '已保存描述', en: 'Saved description' },
+      image: 'https://example.com/saved-image.png',
+      price: 28,
+      originalPrice: 35,
+      onSale: true
+    },
+    getDeviceLangs() {
+      return ['zh', 'en'];
+    },
+    saveProduct() {
+      context.saveProductCalls += 1;
+      return true;
+    },
+    document: {
+      getElementById(id) {
+        return elements[id] || null;
+      },
+      querySelector(selector) {
+        return queryElements[selector] || null;
+      }
+    },
+    window: {
+      location: {
+        origin: 'http://127.0.0.1:4174',
+        href: 'http://127.0.0.1:4174/product-detail.html?id=101&device=RCK111'
+      }
+    }
+  };
+
+  vm.createContext(context);
+  vm.runInContext(extractFunctionSource('buildOrderPreviewUrl'), context);
+  vm.runInContext(extractFunctionSource('buildEmbeddedOrderPreviewUrl'), context);
+  vm.runInContext(extractFunctionSource('buildOrderPreviewDraftPayload'), context);
+  vm.runInContext(extractFunctionSource('openEmbeddedOrderPreviewModal'), context);
+  vm.runInContext(extractFunctionSource('closeEmbeddedOrderPreviewModal'), context);
+  vm.runInContext(extractFunctionSource('saveProductAndOpenOrderPreview'), context);
+  context.__elements = elements;
+  return context;
+}
 
 function test(name, fn) {
   try {
@@ -79,6 +213,82 @@ test('saveProduct 应持久化商品所属分类，并要求至少选择一个�
   assert.ok(html.includes("menuProductCategoryAssignments"));
   assert.ok(/function\s+persistProductCategoryAssignments\s*\(/.test(html));
   assert.ok(/showToast\('请至少选择一个所属分类'/.test(html));
+});
+
+test('商品详情头部操作区应改为取消、预览点单屏、保存编辑三按钮', () => {
+  assert.ok(/id="headerCancelBtn"[^>]*>取消<\/button>/.test(html));
+  assert.ok(/id="headerPreviewBtn"[^>]*onclick="saveProductAndOpenOrderPreview\(\)"[^>]*>[\s\S]*预览点单屏[\s\S]*<\/button>/.test(html));
+  assert.ok(/id="headerSaveBtn"[^>]*onclick="saveProduct\(\)"[^>]*>保存编辑<\/button>/.test(html));
+});
+
+test('商品详情头部三按钮应改为更紧凑的尺寸', () => {
+  assert.ok(/\.header-actions\s*\{[\s\S]*gap:\s*12px;[\s\S]*min-width:\s*min\(100%,\s*520px\);/.test(html));
+  assert.ok(/\.header-actions \.btn\s*\{[\s\S]*min-height:\s*56px;[\s\S]*border-radius:\s*16px;[\s\S]*font-size:\s*15px;/.test(html));
+  assert.ok(/@media \(max-width: 768px\)\s*\{[\s\S]*\.header-actions \.btn\s*\{[\s\S]*min-height:\s*48px;[\s\S]*font-size:\s*13px;/.test(html));
+});
+
+test('详情页应支持不保存当前草稿，并在弹层中打开点单屏预览', () => {
+  assert.ok(html.includes('id="embeddedOrderPreviewOverlay"'));
+  assert.ok(html.includes('id="embeddedOrderPreviewFrame"'));
+  assert.ok(/function\s+buildEmbeddedOrderPreviewUrl\s*\(\)\s*\{[\s\S]*embedOrderPreview[\s\S]*'1'/.test(html));
+  assert.ok(/function\s+buildOrderPreviewDraftPayload\s*\(\)\s*\{/.test(html));
+  assert.ok(/function\s+openEmbeddedOrderPreviewModal\s*\([^)]*\)\s*\{/.test(html));
+  assert.ok(/function\s+closeEmbeddedOrderPreviewModal\s*\(\)\s*\{/.test(html));
+  assert.ok(/function\s+saveProductAndOpenOrderPreview\s*\(\)\s*\{[\s\S]*openEmbeddedOrderPreviewModal\([\s\S]*buildOrderPreviewDraftPayload\(\)/.test(html));
+  assert.ok(!/setTimeout\(\(\)\s*=>\s*\{\s*goBack\(\);/.test(html));
+});
+
+test('详情页预览点单屏时应直接预览当前基础信息草稿而不触发保存', () => {
+  const context = createPreviewRuntimeContext();
+  const currentHref = context.window.location.href;
+
+  const result = context.saveProductAndOpenOrderPreview();
+
+  assert.strictEqual(result, true);
+  assert.strictEqual(context.saveProductCalls, 0);
+  assert.strictEqual(context.window.location.href, currentHref);
+  assert.ok(context.__elements.embeddedOrderPreviewOverlay.classList.contains('active'));
+  assert.strictEqual(
+    context.__elements.embeddedOrderPreviewFrame.src,
+    'http://127.0.0.1:4174/menu-management.html?tab=menu&innerTab=manage&device=RCK111&openOrderPreview=1&embedOrderPreview=1'
+  );
+  assert.strictEqual(typeof context.__elements.embeddedOrderPreviewFrame.onload, 'function');
+
+  context.__elements.embeddedOrderPreviewFrame.onload();
+
+  assert.deepStrictEqual(
+    JSON.parse(JSON.stringify(context.__elements.embeddedOrderPreviewFrame.contentWindow.postMessageCalls)),
+    [{
+      message: {
+        type: 'orderPreviewDraftPayload',
+        payload: {
+          productId: 101,
+          names: { zh: '临时商品名', en: 'Draft Latte' },
+          descs: { zh: '临时描述文案', en: 'Draft description' },
+          image: 'https://example.com/draft-image.png',
+          price: 31.5,
+          originalPrice: 39.9,
+          onSale: false
+        }
+      },
+      targetOrigin: 'http://127.0.0.1:4174'
+    }]
+  );
+});
+
+test('详情页预览点单屏应通过 iframe postMessage 发送草稿，而不是写入存储或触发保存', () => {
+  assert.ok(/contentWindow\.postMessage\(\{\s*type:\s*'orderPreviewDraftPayload'/.test(html));
+  assert.ok(!extractFunctionSource('saveProductAndOpenOrderPreview').includes('saveProduct()'));
+});
+
+test('详情页关闭点单屏预览时应收起弹层并清空 iframe', () => {
+  const context = createPreviewRuntimeContext();
+
+  context.openEmbeddedOrderPreviewModal();
+  context.closeEmbeddedOrderPreviewModal();
+
+  assert.ok(!context.__elements.embeddedOrderPreviewOverlay.classList.contains('active'));
+  assert.strictEqual(context.__elements.embeddedOrderPreviewFrame.src, '');
 });
 
 test('返回菜单页应默认定位到菜单管理内层tab', () => {

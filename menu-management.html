@@ -44,6 +44,15 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        body.embedded-order-preview-mode {
+            background: transparent;
+            overflow: hidden;
+        }
+
+        body.embedded-order-preview-mode .layout {
+            display: none;
+        }
+
         .layout {
             display: flex;
             min-height: 100vh;
@@ -3318,6 +3327,45 @@
             max-width: 1080px;
         }
 
+        body.embedded-order-preview-mode #orderPreviewModal {
+            padding: 0;
+            background: transparent;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal {
+            width: 100%;
+            max-width: none;
+            max-height: none;
+            height: 100vh;
+            border-radius: 0;
+            box-shadow: none;
+            animation: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-header {
+            padding: 18px 20px 0;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-close {
+            display: none;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-body {
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+            padding: 18px 20px 20px;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .order-preview-layout {
+            height: 100%;
+            min-height: 0;
+        }
+
         .order-preview-modal .modal-header {
             align-items: flex-start;
             gap: 12px;
@@ -6298,6 +6346,8 @@
         let currentMenuInnerTab = 'manage';
         let previewActiveCategory = '';
         let orderPreviewLang = '';
+        let orderPreviewDraftPayload = null;
+        let orderPreviewDraftListenerBound = false;
         let orderPreviewDetailState = {
             open: false,
             categoryKey: '',
@@ -6420,6 +6470,8 @@
         let menuSharedMobileSortTouchDragState = null;
         let menuSharedMobileSortTouchListenersBound = false;
         let pendingMenuManagementRestoreScrollY = null;
+        let shouldAutoOpenOrderPreviewFromUrl = false;
+        let isEmbeddedOrderPreviewMode = false;
         const BATCH_FIXED_PRICE_MOCK_FAILURE_MESSAGE = '模拟失败，请再次提交';
         const PLATFORM_LANG_STORAGE_KEY = 'platformLang';
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
@@ -6620,6 +6672,8 @@
             applySavedProductCategoryAssignments();
             applySavedProductEdits();
             applyInitialViewFromUrl();
+            applyEmbeddedOrderPreviewMode();
+            bindOrderPreviewDraftListener();
             applyQueuedCopiedProductsForDevice(currentDevice);
             applyMenuManagementReturnState();
             initDeviceSearch();
@@ -6636,6 +6690,7 @@
             initIconPicker();
             setViewByTab(currentTab);
             switchMenuInnerTab(currentMenuInnerTab);
+            consumeOrderPreviewUrlIntent();
             restoreMenuManagementScrollPosition();
             consumePendingCopyResults();
         }
@@ -6675,12 +6730,27 @@
             }
         }
 
+        function consumeOrderPreviewUrlIntent() {
+            if (!shouldAutoOpenOrderPreviewFromUrl) return;
+            shouldAutoOpenOrderPreviewFromUrl = false;
+            openOrderPreviewModal();
+        }
+
+        function applyEmbeddedOrderPreviewMode() {
+            if (!document || !document.body || !document.body.classList) return;
+            document.body.classList.toggle('embedded-order-preview-mode', isEmbeddedOrderPreviewMode);
+        }
+
         function applyInitialViewFromUrl() {
+            shouldAutoOpenOrderPreviewFromUrl = false;
+            isEmbeddedOrderPreviewMode = false;
             try {
                 const params = new URLSearchParams(window.location.search || '');
                 const tab = params.get('tab');
                 const innerTab = params.get('innerTab');
                 const device = params.get('device');
+                shouldAutoOpenOrderPreviewFromUrl = params.get('openOrderPreview') === '1';
+                isEmbeddedOrderPreviewMode = params.get('embedOrderPreview') === '1';
 
                 if (tab === 'overview' || tab === 'menu') {
                     currentTab = tab;
@@ -8122,12 +8192,89 @@
         }
 
         function getProductDescription(product, lang) {
+            if (product && product.__useDraftBasicInfo) {
+                const draftDesc = product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
+                if (draftDesc) return draftDesc;
+            }
             const spec = product.specs && product.specs[lang];
             if (spec) {
                 const parts = [spec.beans, spec.temperature, spec.strength, spec.note].filter(Boolean);
                 if (parts.length > 0) return parts.join('、');
             }
             return product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
+        }
+
+        function normalizeOrderPreviewDraftPayload(payload) {
+            if (!payload || typeof payload !== 'object') return null;
+            const productId = Number(payload.productId);
+            if (!Number.isFinite(productId)) return null;
+
+            return {
+                productId,
+                names: payload.names && typeof payload.names === 'object' ? cloneSharedMenuProducts(payload.names) : {},
+                descs: payload.descs && typeof payload.descs === 'object' ? cloneSharedMenuProducts(payload.descs) : {},
+                image: typeof payload.image === 'string' ? payload.image : '',
+                price: Number.isFinite(Number(payload.price)) ? Number(payload.price) : null,
+                originalPrice: payload.originalPrice === null
+                    ? null
+                    : (Number.isFinite(Number(payload.originalPrice)) ? Number(payload.originalPrice) : undefined),
+                onSale: typeof payload.onSale === 'boolean' ? payload.onSale : undefined
+            };
+        }
+
+        function applyOrderPreviewDraftPayload(payload) {
+            orderPreviewDraftPayload = normalizeOrderPreviewDraftPayload(payload);
+            refreshOrderPreviewIfOpen();
+        }
+
+        function bindOrderPreviewDraftListener() {
+            if (orderPreviewDraftListenerBound || !window || typeof window.addEventListener !== 'function') return;
+            window.addEventListener('message', function(event) {
+                const message = event && event.data;
+                if (!message || message.type !== 'orderPreviewDraftPayload') return;
+                if (event.origin && window.location && window.location.origin && event.origin !== window.location.origin) {
+                    return;
+                }
+                applyOrderPreviewDraftPayload(message.payload);
+            });
+            orderPreviewDraftListenerBound = true;
+        }
+
+        function getOrderPreviewDisplayProduct(product) {
+            const targetId = Number(product?.id);
+            if (!orderPreviewDraftPayload || !Number.isFinite(targetId) || targetId !== orderPreviewDraftPayload.productId) {
+                return product;
+            }
+
+            const merged = {
+                ...product,
+                names: {
+                    ...(product?.names || {}),
+                    ...(orderPreviewDraftPayload.names || {})
+                },
+                descs: {
+                    ...(product?.descs || {}),
+                    ...(orderPreviewDraftPayload.descs || {})
+                },
+                __useDraftBasicInfo: true
+            };
+
+            if (Object.prototype.hasOwnProperty.call(orderPreviewDraftPayload, 'image')) {
+                merged.image = orderPreviewDraftPayload.image || null;
+            }
+            if (Number.isFinite(orderPreviewDraftPayload.price)) {
+                merged.price = orderPreviewDraftPayload.price;
+            }
+            if (orderPreviewDraftPayload.originalPrice === null) {
+                merged.originalPrice = null;
+            } else if (Number.isFinite(orderPreviewDraftPayload.originalPrice)) {
+                merged.originalPrice = orderPreviewDraftPayload.originalPrice;
+            }
+            if (typeof orderPreviewDraftPayload.onSale === 'boolean') {
+                merged.onSale = orderPreviewDraftPayload.onSale;
+            }
+
+            return merged;
         }
 
         function normalizeProductCurrency(product) {
@@ -8376,16 +8523,16 @@
             const targetId = Number(productId);
             if (!Number.isFinite(targetId)) return null;
 
-            const catalogSnapshot = getMenuManagedCatalogSnapshot();
+            const previewEntries = getOrderPreviewCategoryEntries();
 
             if (categoryKey) {
-                const categoryEntry = catalogSnapshot.find(entry => entry.key === categoryKey);
-                const hit = (categoryEntry?.category?.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
+                const categoryEntry = previewEntries.find(entry => entry.key === categoryKey);
+                const hit = (categoryEntry?.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
                 if (hit) return { categoryKey, product: hit };
             }
 
-            for (const entry of catalogSnapshot) {
-                const hit = (entry.category?.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
+            for (const entry of previewEntries) {
+                const hit = (entry.items || []).find(item => Number(item.id) === targetId && isProductOnSale(item));
                 if (hit) return { categoryKey: entry.key, product: hit };
             }
             return null;
@@ -8867,7 +9014,11 @@
         function getOrderPreviewCategoryEntries() {
             const previewLang = getOrderPreviewLang();
             return getMenuManagedCatalogSnapshot().map(({ key: categoryKey, category: categoryData }) => {
-                const items = Array.isArray(categoryData.items) ? categoryData.items.filter(isProductOnSale) : [];
+                const items = Array.isArray(categoryData.items)
+                    ? categoryData.items
+                        .map(getOrderPreviewDisplayProduct)
+                        .filter(isProductOnSale)
+                    : [];
                 return {
                     key: categoryKey,
                     name: getCategoryNameByLang(categoryKey, previewLang),
