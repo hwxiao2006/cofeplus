@@ -803,6 +803,129 @@
             line-height: 1.5;
         }
 
+        .business-tag-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .business-tag-summary {
+            min-height: 48px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fbfcfd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .business-tag-chip,
+        .business-tag-order-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #cffafe;
+            color: #155e75;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .business-tag-empty {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .business-tag-editor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .business-tag-editor-panel {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+        }
+
+        .business-tag-editor-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .business-tag-editor-panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .business-tag-editor-panel-head .business-tag-editor-panel-title {
+            margin-bottom: 0;
+        }
+
+        .business-tag-editor-empty {
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .business-tag-editor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .business-tag-editor-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fbfcfd;
+        }
+
+        .business-tag-editor-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .business-tag-editor-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .business-tag-editor-item-label {
+            min-width: 0;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .business-tag-editor-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
         .multilang-sheet {
             background: linear-gradient(180deg, #fbfdfd 0%, #f4f8f8 100%);
             border: 1px solid #deeaeb;
@@ -2364,16 +2487,14 @@
                                     <span class="switch-label" id="onSaleLabel">在售</span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">功能开关</label>
-                                <div class="switch-group" style="margin-top: 8px;">
-                                    <label class="switch">
-                                        <input type="checkbox" id="featuredSwitch" checked>
-                                        <span class="slider"></span>
-                                    </label>
-                                    <span class="switch-label">推荐商品</span>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="business-tag-section-head">
+                                <label class="form-label">业务标签</label>
+                                <button type="button" class="btn btn-default" id="productBusinessTagEditBtn" onclick="openProductBusinessTagEditor()">编辑</button>
                             </div>
+                            <div class="business-tag-summary" id="productBusinessTagSummary"></div>
+                            <div class="product-category-hint">已选业务标签按顺序展示，靠前的标签拥有更高展示优先级。</div>
                         </div>
                     </div>
                 </section>
@@ -2672,8 +2793,40 @@
         </div>
     </div>
 
+    <div class="recipe-impact-overlay" id="productBusinessTagEditorModal">
+        <div class="recipe-impact-modal">
+            <div class="recipe-impact-header">
+                <div>
+                    <div class="recipe-impact-title">业务标签编辑</div>
+                    <div class="recipe-impact-subtitle">可多选、可排序，靠前标签拥有更高展示优先级</div>
+                </div>
+                <button class="modal-close" type="button" onclick="closeProductBusinessTagEditor()">×</button>
+            </div>
+            <div class="recipe-impact-body">
+                <div class="business-tag-editor-grid">
+                    <section class="business-tag-editor-panel">
+                        <div class="business-tag-editor-panel-title">已选标签</div>
+                        <div id="productBusinessTagSelectedList"></div>
+                    </section>
+                    <section class="business-tag-editor-panel">
+                        <div class="business-tag-editor-panel-head">
+                            <div class="business-tag-editor-panel-title">标签库</div>
+                            <button type="button" class="recipe-control-btn" onclick="createBusinessTag()">新建标签</button>
+                        </div>
+                        <div id="productBusinessTagOptionList"></div>
+                    </section>
+                </div>
+            </div>
+            <div class="recipe-impact-footer">
+                <button class="btn btn-default" type="button" onclick="closeProductBusinessTagEditor()">取消</button>
+                <button class="btn btn-primary" type="button" onclick="applyProductBusinessTagSelection()">确认标签</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-mock-data.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2947,6 +3100,7 @@
         const COPY_PRODUCT_DEVICE_QUEUE_KEY = 'menuCopyProductQueue';
         const COPY_PRODUCT_PENDING_RESULTS_KEY = 'menuCopyProductPendingResults';
         const NEXT_PRODUCT_ID_STORAGE_KEY = 'menuNextProductId';
+        const BUSINESS_TAG_LIBRARY_STORAGE_KEY = 'menuBusinessTagLibrary';
         const RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
@@ -2958,6 +3112,8 @@
             { key: 'decorToppings', title: '装饰颗粒名称', multi: true, defaultNames: [] }
         ];
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
+        const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
+        let selectedBusinessTagIds = [];
 
         function cloneProductValue(value) {
             if (value === null || value === undefined) return value;
@@ -2971,6 +3127,77 @@
                 }, {});
             }
             return value;
+        }
+
+        function normalizeBusinessTagIds(tagIds) {
+            return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
+                .map(tagId => String(tagId || '').trim())
+                .filter(Boolean)));
+        }
+
+        function normalizeBusinessTagEntry(tagId, tag) {
+            const normalizedId = String(tagId || tag?.id || '').trim();
+            if (!normalizedId) return null;
+            return {
+                id: normalizedId,
+                names: tag && typeof tag.names === 'object' ? cloneProductValue(tag.names) : {},
+                status: tag?.status === 'disabled' ? 'disabled' : 'active'
+            };
+        }
+
+        function normalizeBusinessTagLibrary(library) {
+            return Object.entries(library && typeof library === 'object' ? library : {}).reduce((acc, [tagId, tag]) => {
+                const normalized = normalizeBusinessTagEntry(tagId, tag);
+                if (normalized) acc[normalized.id] = normalized;
+                return acc;
+            }, {});
+        }
+
+        function getFallbackBusinessTagLibrary() {
+            return {
+                tag_signature: {
+                    id: 'tag_signature',
+                    names: { zh: '招牌', en: 'Signature' },
+                    status: 'active'
+                },
+                tag_new: {
+                    id: 'tag_new',
+                    names: { zh: '新品', en: 'New' },
+                    status: 'active'
+                }
+            };
+        }
+
+        function getStoredBusinessTagLibrary() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function getBusinessTagLibrary() {
+            return {
+                ...normalizeBusinessTagLibrary(getFallbackBusinessTagLibrary()),
+                ...normalizeBusinessTagLibrary(sharedAdminMockData.defaultBusinessTags || {}),
+                ...normalizeBusinessTagLibrary(getStoredBusinessTagLibrary())
+            };
+        }
+
+        function persistBusinessTagLibrary(library) {
+            localStorage.setItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY, JSON.stringify(normalizeBusinessTagLibrary(library)));
+        }
+
+        function getProductBusinessTagIds(product) {
+            const explicitIds = normalizeBusinessTagIds(product?.businessTagIds);
+            if (explicitIds.length) return explicitIds;
+            return product?.featured ? ['tag_signature'] : [];
+        }
+
+        function getBusinessTagLabel(tag, lang = currentLang) {
+            if (!tag) return '';
+            return tag.names?.[lang] || tag.names?.zh || tag.names?.en || tag.id || '';
         }
 
         function isCopyWorkflowActive() {
@@ -4756,6 +4983,158 @@
             }).join('');
         }
 
+        function renderProductBusinessTagSummary() {
+            const summary = document.getElementById('productBusinessTagSummary');
+            if (!summary) return;
+            const library = getBusinessTagLibrary();
+            const selectedTags = selectedBusinessTagIds
+                .map(tagId => library[tagId])
+                .filter(tag => tag && tag.status !== 'disabled');
+
+            summary.innerHTML = selectedTags.length
+                ? selectedTags.map(tag => `<span class="business-tag-chip">${escAttr(getBusinessTagLabel(tag, currentLang))}</span>`).join('')
+                : '<span class="business-tag-empty">未设置业务标签</span>';
+        }
+
+        function renderProductBusinessTagEditor() {
+            const selectedList = document.getElementById('productBusinessTagSelectedList');
+            const optionList = document.getElementById('productBusinessTagOptionList');
+            if (!selectedList || !optionList) return;
+
+            const library = getBusinessTagLibrary();
+            const selectedTags = selectedBusinessTagIds.map(tagId => library[tagId]).filter(Boolean);
+            const optionTags = Object.values(library)
+                .filter(tag => tag && tag.status !== 'disabled')
+                .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
+
+            selectedList.innerHTML = selectedTags.length
+                ? `<div class="business-tag-editor-list">
+                    ${selectedTags.map((tag, index) => `
+                        <div class="business-tag-editor-item">
+                            <div class="business-tag-editor-item-left">
+                                <span class="business-tag-order-chip">#${index + 1}</span>
+                                <div>
+                                    <div class="business-tag-editor-item-label">${escAttr(getBusinessTagLabel(tag, currentLang))}</div>
+                                    <div class="business-tag-editor-item-meta">${escAttr(tag.id)}</div>
+                                </div>
+                            </div>
+                            <div class="business-tag-editor-item-actions">
+                                <button type="button" class="recipe-control-btn" aria-label="上移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', -1)">↑</button>
+                                <button type="button" class="recipe-control-btn" aria-label="下移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', 1)">↓</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`
+                : '<div class="business-tag-editor-empty">尚未选择业务标签</div>';
+
+            optionList.innerHTML = optionTags.length
+                ? `<div class="business-tag-editor-list">
+                    ${optionTags.map(tag => {
+                        const checked = selectedBusinessTagIds.includes(tag.id);
+                        return `
+                            <label class="business-tag-editor-item" onclick="event.stopPropagation()">
+                                <div class="business-tag-editor-item-left">
+                                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleBusinessTagSelection('${escAttr(tag.id)}', this.checked)">
+                                    <div>
+                                        <div class="business-tag-editor-item-label">${escAttr(getBusinessTagLabel(tag, currentLang))}</div>
+                                        <div class="business-tag-editor-item-meta">${escAttr(tag.id)}</div>
+                                    </div>
+                                </div>
+                                <div class="business-tag-editor-item-actions">
+                                    <button type="button" class="recipe-control-btn" onclick="editBusinessTag('${escAttr(tag.id)}')">编辑</button>
+                                </div>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>`
+                : '<div class="business-tag-editor-empty">暂无可用业务标签</div>';
+        }
+
+        function openProductBusinessTagEditor() {
+            renderProductBusinessTagEditor();
+            const modal = document.getElementById('productBusinessTagEditorModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeProductBusinessTagEditor() {
+            const modal = document.getElementById('productBusinessTagEditorModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function toggleBusinessTagSelection(tagId, checked) {
+            const normalizedId = String(tagId || '').trim();
+            if (!normalizedId) return;
+            if (checked) {
+                if (!selectedBusinessTagIds.includes(normalizedId)) {
+                    selectedBusinessTagIds = [...selectedBusinessTagIds, normalizedId];
+                }
+            } else {
+                selectedBusinessTagIds = selectedBusinessTagIds.filter(id => id !== normalizedId);
+            }
+            renderProductBusinessTagSummary();
+            renderProductBusinessTagEditor();
+        }
+
+        function moveSelectedBusinessTag(tagId, delta) {
+            const normalizedId = String(tagId || '').trim();
+            const currentIndex = selectedBusinessTagIds.indexOf(normalizedId);
+            if (currentIndex === -1) return;
+            const nextIndex = currentIndex + Number(delta || 0);
+            if (nextIndex < 0 || nextIndex >= selectedBusinessTagIds.length) return;
+            const nextIds = selectedBusinessTagIds.slice();
+            const [movedId] = nextIds.splice(currentIndex, 1);
+            nextIds.splice(nextIndex, 0, movedId);
+            selectedBusinessTagIds = nextIds;
+            renderProductBusinessTagSummary();
+            renderProductBusinessTagEditor();
+        }
+
+        function createBusinessTag() {
+            const newLabel = String(prompt('请输入业务标签名称') || '').trim();
+            if (!newLabel) return;
+            const normalizedId = `tag_${Date.now()}`;
+            const library = getBusinessTagLibrary();
+            library[normalizedId] = {
+                id: normalizedId,
+                names: {
+                    zh: newLabel,
+                    en: newLabel
+                },
+                status: 'active'
+            };
+            persistBusinessTagLibrary(library);
+            if (!selectedBusinessTagIds.includes(normalizedId)) {
+                selectedBusinessTagIds = [...selectedBusinessTagIds, normalizedId];
+            }
+            renderProductBusinessTagSummary();
+            renderProductBusinessTagEditor();
+        }
+
+        function editBusinessTag(tagId) {
+            const normalizedId = String(tagId || '').trim();
+            const library = getBusinessTagLibrary();
+            const tag = library[normalizedId];
+            if (!tag) return;
+            const nextLabel = String(prompt('修改业务标签名称', getBusinessTagLabel(tag, currentLang)) || '').trim();
+            if (!nextLabel) return;
+            library[normalizedId] = {
+                ...tag,
+                names: {
+                    ...(tag.names || {}),
+                    [currentLang]: nextLabel
+                }
+            };
+            persistBusinessTagLibrary(library);
+            renderProductBusinessTagSummary();
+            renderProductBusinessTagEditor();
+        }
+
+        function applyProductBusinessTagSelection() {
+            selectedBusinessTagIds = normalizeBusinessTagIds(selectedBusinessTagIds);
+            renderProductBusinessTagSummary();
+            closeProductBusinessTagEditor();
+        }
+
         function formatCopyWorkflowCategoryLabels(categoryKeys = []) {
             const optionMap = new Map(productCategoryOptions.map(option => [option.key, resolveCategoryOptionLabel(option)]));
             return (categoryKeys || []).map(key => optionMap.get(key) || key).filter(Boolean).join('、') || '-';
@@ -4857,7 +5236,7 @@
                     image: document.getElementById('productImage').value.trim() || null,
                     price: Number.isFinite(price) ? price : null,
                     originalPrice,
-                    featured: document.getElementById('featuredSwitch').checked,
+                    businessTagIds: selectedBusinessTagIds,
                     onSale: document.getElementById('onSaleSwitch').checked,
                     specs: productData.specs || {},
                     defaultOptions: productData.defaultOptions || {},
@@ -5250,7 +5629,7 @@
                 tagExtraPrices: cloneProductValue(cloned.tagExtraPrices) || {},
                 optionRecipes: cloneProductValue(cloned.optionRecipes) || {},
                 optionRecipeLinks: cloneProductValue(cloned.optionRecipeLinks) || {},
-                featured: cloned.featured !== false,
+                businessTagIds: getProductBusinessTagIds(cloned),
                 onSale: cloned.onSale !== false
             };
         }
@@ -5528,6 +5907,13 @@
                 });
             }
 
+            const businessTagModal = document.getElementById('productBusinessTagEditorModal');
+            if (businessTagModal) {
+                businessTagModal.addEventListener('click', function(e) {
+                    if (e.target === businessTagModal) closeProductBusinessTagEditor();
+                });
+            }
+
             document.addEventListener('click', function(e) {
                 const selector = document.getElementById('productCategorySelector');
                 if (selector && !selector.contains(e.target)) {
@@ -5559,6 +5945,11 @@
                 const tagSync = document.getElementById('tagSyncModal');
                 if (tagSync && tagSync.classList.contains('active')) {
                     closeTagSyncModal();
+                    return;
+                }
+                const businessTagModal = document.getElementById('productBusinessTagEditorModal');
+                if (businessTagModal && businessTagModal.classList.contains('active')) {
+                    closeProductBusinessTagEditor();
                     return;
                 }
                 const modal = document.getElementById('recipeEditorModal');
@@ -5630,10 +6021,10 @@
             document.getElementById('productOriginalPrice').value = productData.originalPrice || '';
             updatePricePreview();
             
-            // 推荐开关
-            document.getElementById('featuredSwitch').checked = productData.featured !== false;
             document.getElementById('onSaleSwitch').checked = productData.onSale !== false;
             updateOnSaleLabel();
+            selectedBusinessTagIds = getProductBusinessTagIds(productData);
+            renderProductBusinessTagSummary();
 
             tagConfigs.forEach(meta => {
                 ensureTagI18n(meta.specKey);
@@ -5975,7 +6366,7 @@
                 image: image || null,
                 price: price,
                 originalPrice: originalPrice,
-                featured: document.getElementById('featuredSwitch').checked,
+                businessTagIds: selectedBusinessTagIds,
                 onSale: document.getElementById('onSaleSwitch').checked,
                 specs: productData.specs || {},
                 defaultOptions: productData.defaultOptions || {},

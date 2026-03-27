@@ -10,14 +10,59 @@
         lid: '倡导环保 不使用杯盖',
         latteArt: '无'
     };
+    const SHARED_DEFAULT_BUSINESS_TAGS = {
+        tag_signature: {
+            id: 'tag_signature',
+            names: {
+                zh: '招牌',
+                en: 'Signature'
+            },
+            status: 'active'
+        },
+        tag_new: {
+            id: 'tag_new',
+            names: {
+                zh: '新品',
+                en: 'New'
+            },
+            status: 'active'
+        },
+        tag_breakfast: {
+            id: 'tag_breakfast',
+            names: {
+                zh: '早餐搭配',
+                en: 'Breakfast'
+            },
+            status: 'active'
+        },
+        tag_hidden: {
+            id: 'tag_hidden',
+            names: {
+                zh: '隐藏标签',
+                en: 'Hidden tag'
+            },
+            status: 'disabled'
+        }
+    };
+
+    function normalizeBusinessTagIds(tagIds) {
+        return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
+            .map(tagId => String(tagId || '').trim())
+            .filter(Boolean)));
+    }
 
     function normalizeMockProduct(product) {
+        const sourceProduct = product || {};
+        const derivedBusinessTagIds = Array.isArray(sourceProduct.businessTagIds)
+            ? sourceProduct.businessTagIds
+            : (sourceProduct.featured ? ['tag_signature'] : []);
         return {
-            ...product,
+            ...sourceProduct,
             defaultOptions: {
                 ...SHARED_PRODUCT_DEFAULT_OPTIONS,
-                ...(product && product.defaultOptions ? product.defaultOptions : {})
-            }
+                ...(sourceProduct.defaultOptions || {})
+            },
+            businessTagIds: normalizeBusinessTagIds(derivedBusinessTagIds)
         };
     }
 
@@ -69,6 +114,7 @@
             { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
             { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
         ],
+        defaultBusinessTags: SHARED_DEFAULT_BUSINESS_TAGS,
         defaultProducts: normalizeMockCategories({
             '3D拉花': {
                 icon: '🎨',

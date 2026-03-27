@@ -2,6 +2,22 @@
 
 ## Context
 
+## Implementation Status
+
+- Date: 2026-03-25
+- Status: Approved scope is now reflected in the local implementation branch
+- Landed behaviors:
+  - `推荐商品` editing, stats, and badge display have been removed from active and legacy menu surfaces
+  - customer-facing recommendation display is replaced by business tags in menu-management previews and product detail flows
+  - current-category product ordering is implemented for desktop and mobile menu-management flows
+  - legacy mock pages stay aligned with the new semantics through a dedicated regression test
+- Verification:
+  - `node --test tests/legacy-featured-cleanup.test.js`
+  - `node --test tests/menu-management.behavior.test.js`
+  - `node --test tests/menu-management.category-reorder.test.js`
+  - `node --test tests/product-detail.pricing.test.js`
+  - `node --test tests/shared.admin-mock-data.test.js`
+
 菜单管理当前已经支持分类排序、商品多分类归属、商品详情多语言编辑和点单屏预览，但缺少两项运营侧高频能力：
 
 - 不能在单个分类内调整商品顺序。

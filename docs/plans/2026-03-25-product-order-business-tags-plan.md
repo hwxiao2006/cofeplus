@@ -8,6 +8,22 @@
 
 **Tech Stack:** Static HTML pages, vanilla JavaScript state/rendering, shared mock data, Node behavior tests.
 
+## Implementation Status
+
+- Date: 2026-03-25
+- Status: Implemented in the local feature branch
+- Delivered scope:
+  - menu-management business-tag workflow and current-category product ordering
+  - product-detail business-tag editing and ordered `businessTagIds` persistence
+  - legacy `menu.html` and `overview.html` cleanup for removed featured-product stats, controls, and badges
+  - regression coverage for legacy featured cleanup in `tests/legacy-featured-cleanup.test.js`
+- Verified with:
+  - `node --test tests/legacy-featured-cleanup.test.js`
+  - `node --test tests/menu-management.behavior.test.js`
+  - `node --test tests/menu-management.category-reorder.test.js`
+  - `node --test tests/product-detail.pricing.test.js`
+  - `node --test tests/shared.admin-mock-data.test.js`
+
 ---
 
 ### Task 1: Lock the new scope with failing tests

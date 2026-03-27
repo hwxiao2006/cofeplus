@@ -20,8 +20,20 @@ test('商品编辑表单不应包含单商品币种输入项', () => {
   assert.ok(!html.includes('id="productCurrency"'));
 });
 
+test('商品编辑表单不应再包含推荐商品开关', () => {
+  assert.ok(!html.includes('id="featuredSwitch"'));
+  assert.ok(!html.includes('推荐商品'));
+});
+
 test('商品编辑表单应包含原价输入项', () => {
   assert.ok(html.includes('id="productOriginalPrice"'));
+});
+
+test('商品编辑表单应包含业务标签编辑区', () => {
+  assert.ok(html.includes('业务标签'));
+  assert.ok(html.includes('id="productBusinessTagSummary"'));
+  assert.ok(html.includes('id="productBusinessTagEditBtn"'));
+  assert.ok(html.includes('id="productBusinessTagEditorModal"'));
 });
 
 test('商品编辑表单应将所属分类改为可编辑多分类选择', () => {
@@ -54,6 +66,13 @@ test('saveProduct 不应读取或覆盖单商品币种字段', () => {
 
 test('saveProduct 应持久化 originalPrice 字段', () => {
   assert.ok(/originalPrice:\s*originalPrice/.test(html));
+});
+
+test('saveProduct 应持久化有序 businessTagIds，而不是布尔推荐开关', () => {
+  assert.ok(/let\s+selectedBusinessTagIds\s*=\s*\[\]/.test(html));
+  assert.ok(/function\s+moveSelectedBusinessTag\s*\(/.test(html));
+  assert.ok(/businessTagIds:\s*selectedBusinessTagIds/.test(html));
+  assert.ok(!/featured:\s*document\.getElementById\('featuredSwitch'\)\.checked/.test(html));
 });
 
 test('saveProduct 应持久化商品所属分类，并要求至少选择一个分类', () => {
