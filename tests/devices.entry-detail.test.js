@@ -122,6 +122,11 @@ test('设备详情移动端应回退为单列卡片布局', () => {
   assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.detail-grid\s*\{[\s\S]*grid-template-columns:\s*1fr/.test(devicesHtml));
 });
 
+test('设备详情移动端不应隐藏设备操作区', () => {
+  assert.ok(!/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*none/.test(devicesHtml));
+  assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*block/.test(devicesHtml));
+});
+
 test('设备详情图片应支持点击预览与左右切换', () => {
   assert.ok(/id="imagePreviewModal"/.test(devicesHtml));
   assert.ok(/class="entry-image-thumb"/.test(devicesHtml));

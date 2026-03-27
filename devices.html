@@ -1121,43 +1121,127 @@
         }
 
         .detail-temperature-modal {
-            width: min(880px, 100%);
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow-lg);
+            width: min(980px, 100%);
+            background: #f8fbff;
+            border-radius: 22px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 28px 64px rgba(15, 23, 42, 0.22);
             overflow: hidden;
             max-height: 88vh;
             display: flex;
             flex-direction: column;
         }
 
+        .detail-temperature-modal .detail-modal-header {
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+            background: linear-gradient(135deg, #ffffff, #f1f6fe);
+        }
+
+        .detail-temperature-modal .detail-modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: #0f172a;
+        }
+
+        .detail-temperature-modal .detail-modal-close {
+            background: #eef2f7;
+            color: #64748b;
+            transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .detail-temperature-modal .detail-modal-close:hover {
+            transform: rotate(90deg);
+            background: #dbe4f1;
+            color: #1e293b;
+        }
+
         .detail-temperature-modal-body {
-            padding: 18px;
-            background: #f8fafc;
+            padding: 20px;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(125, 211, 192, 0.18), transparent 48%),
+                radial-gradient(circle at 0% 100%, rgba(78, 205, 196, 0.12), transparent 52%),
+                #f5f8fc;
             overflow-y: auto;
             display: grid;
             gap: 16px;
         }
 
         .detail-temperature-context {
-            border: 1px solid rgba(37, 99, 235, 0.14);
-            border-radius: 14px;
-            padding: 14px 16px;
-            background: linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(248, 250, 252, 0.98));
+            position: relative;
+            border: 1px solid rgba(14, 165, 233, 0.18);
+            border-radius: 18px;
+            padding: 16px 18px;
+            background: linear-gradient(130deg, #ffffff 0%, #f0f9ff 48%, #ecfeff 100%);
+            display: grid;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .detail-temperature-context::after {
+            content: '';
+            position: absolute;
+            right: -44px;
+            top: -54px;
+            width: 170px;
+            height: 170px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.26), rgba(56, 189, 248, 0));
+            pointer-events: none;
+        }
+
+        .detail-temperature-context-head {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
         }
 
         .detail-temperature-context-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #0f172a;
+            line-height: 1.2;
+            letter-spacing: 0.3px;
         }
 
         .detail-temperature-context-subtitle {
             margin-top: 6px;
+            max-width: 560px;
             font-size: 13px;
-            line-height: 1.6;
-            color: var(--text-secondary);
+            line-height: 1.58;
+            color: #475569;
+        }
+
+        .detail-temperature-context-metrics {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .detail-temperature-context-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 30px;
+            border-radius: 999px;
+            padding: 0 12px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(255, 255, 255, 0.86);
+            color: #1e293b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .detail-temperature-context-pill strong {
+            font-size: 13px;
+            color: #0f172a;
         }
 
         .detail-temperature-grid {
@@ -1167,52 +1251,114 @@
         }
 
         .detail-temperature-zone-card {
-            border: 1px solid var(--border-light);
-            border-radius: 14px;
-            background: #fff;
+            position: relative;
+            border: 1px solid #dde6f1;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
             padding: 14px;
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
             display: grid;
             gap: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .detail-temperature-zone-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 16px 16px 0 0;
+            background: linear-gradient(90deg, #0ea5e9, #22c55e);
+        }
+
+        .detail-temperature-zone-card.tone-cool::before {
+            background: linear-gradient(90deg, #38bdf8, #14b8a6);
+        }
+
+        .detail-temperature-zone-card.tone-amber::before {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
+
+        .detail-temperature-zone-card.tone-neutral::before {
+            background: linear-gradient(90deg, #4ecdc4, #22c55e);
+        }
+
+        .detail-temperature-zone-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(15, 23, 42, 0.1);
         }
 
         .detail-temperature-zone-head {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        .detail-temperature-zone-head-main {
+            min-width: 0;
+            display: grid;
+            gap: 6px;
+        }
+
+        .detail-temperature-zone-badge {
+            width: fit-content;
+            max-width: 100%;
+            border-radius: 999px;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            padding: 5px 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .detail-temperature-zone-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            color: #6bbf7f;
-            line-height: 1.2;
+            color: #0f172a;
+            line-height: 1.24;
+            word-break: break-word;
         }
 
         .detail-temperature-zone-meta {
-            margin-top: 6px;
+            width: fit-content;
+            max-width: 100%;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 24px;
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            padding: 0 10px;
             font-size: 12px;
             font-weight: 600;
-            color: #8cbf7a;
+            color: #475569;
         }
 
         .detail-temperature-zone-action {
             flex: none;
-            min-width: 72px;
-            height: 34px;
-            border: none;
-            border-radius: 10px;
-            background: #9ca3af;
-            color: #fff;
+            min-width: 74px;
+            height: 32px;
+            border: 1px solid #c9d6e8;
+            border-radius: 9px;
+            background: #f8fbff;
+            color: #1e40af;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.15s ease;
+            transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
         }
 
         .detail-temperature-zone-action:hover {
-            background: #6b7280;
+            border-color: #93c5fd;
+            background: #eff6ff;
+            color: #1d4ed8;
         }
 
         .detail-temperature-zone-list {
@@ -1222,33 +1368,188 @@
 
         .detail-temperature-zone-row {
             display: grid;
-            grid-template-columns: 104px minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
             gap: 10px;
-            align-items: start;
+            min-height: 36px;
+            border-radius: 10px;
+            border: 1px solid #edf2f9;
+            background: #f9fbfe;
+            padding: 6px 10px;
         }
 
         .detail-temperature-zone-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: #ef6b63;
-            line-height: 1.55;
+            color: #475569;
+            line-height: 1.4;
         }
 
         .detail-temperature-zone-label.is-warm {
-            color: #e7855b;
+            color: #b45309;
         }
 
         .detail-temperature-zone-label.is-muted {
-            color: #d3b85f;
+            color: #64748b;
         }
 
         .detail-temperature-zone-value {
             font-size: 14px;
             font-weight: 700;
-            color: #4559d3;
-            line-height: 1.55;
+            color: #0f172a;
+            line-height: 1.4;
             text-align: right;
             word-break: break-word;
+        }
+
+        .detail-temperature-edit-overlay {
+            z-index: 1300;
+            backdrop-filter: blur(4px);
+        }
+
+        .detail-temperature-edit-modal {
+            width: min(560px, calc(100% - 28px));
+            background: linear-gradient(165deg, #ffffff, #f8fbff);
+            border-radius: 22px;
+            border: 1px solid #dce6f4;
+            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24);
+            padding: 18px 20px 20px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .detail-temperature-edit-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .detail-temperature-edit-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .detail-temperature-edit-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 999px;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 27px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background-color 0.18s ease, color 0.18s ease;
+        }
+
+        .detail-temperature-edit-close:hover {
+            color: #334155;
+            background: #e2e8f0;
+        }
+
+        .detail-temperature-edit-form {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail-temperature-edit-row {
+            display: grid;
+            grid-template-columns: 108px minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 8px 10px;
+        }
+
+        .detail-temperature-edit-label {
+            font-size: 14px;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .detail-temperature-edit-input-wrap {
+            display: flex;
+            align-items: center;
+            min-height: 42px;
+            border-radius: 10px;
+            border: 1px solid #dbe4f0;
+            background: #fff;
+            padding: 0 12px;
+            gap: 8px;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .detail-temperature-edit-input-wrap:focus-within {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.16);
+        }
+
+        .detail-temperature-edit-input-wrap input {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .detail-temperature-edit-input-wrap input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .detail-temperature-edit-unit {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .detail-temperature-edit-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .detail-temperature-edit-cancel,
+        .detail-temperature-edit-confirm {
+            width: 100%;
+            height: 44px;
+            border-radius: 11px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .detail-temperature-edit-cancel {
+            border: 1px solid #d0dbe8;
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .detail-temperature-edit-cancel:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+            color: #1e3a8a;
+        }
+
+        .detail-temperature-edit-confirm {
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, #4ecdc4, #22c55e);
+            color: #fff;
+        }
+
+        .detail-temperature-edit-confirm:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #43beb6, #16a34a);
         }
 
         .detail-fault-record-header {
@@ -2106,7 +2407,11 @@
             }
 
             .detail-aside {
-                display: none;
+                display: block;
+            }
+
+            .detail-aside-stack {
+                position: static;
             }
         }
 
@@ -2276,6 +2581,35 @@
                 padding: 12px;
             }
 
+            .detail-temperature-context {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .detail-temperature-context-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .detail-temperature-context-title {
+                font-size: 16px;
+            }
+
+            .detail-temperature-context-subtitle {
+                font-size: 12px;
+                line-height: 1.55;
+            }
+
+            .detail-temperature-context-metrics {
+                gap: 6px;
+            }
+
+            .detail-temperature-context-pill {
+                height: 28px;
+                padding: 0 10px;
+                font-size: 11px;
+            }
+
             .detail-temperature-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
@@ -2286,14 +2620,70 @@
                 box-shadow: none;
             }
 
-            .detail-temperature-zone-row {
-                grid-template-columns: 92px minmax(0, 1fr);
+            .detail-temperature-zone-head {
                 gap: 8px;
+            }
+
+            .detail-temperature-zone-head-main {
+                gap: 4px;
+            }
+
+            .detail-temperature-zone-title {
+                font-size: 15px;
+            }
+
+            .detail-temperature-zone-meta {
+                min-height: 22px;
+                font-size: 11px;
+            }
+
+            .detail-temperature-zone-row {
+                padding: 6px 8px;
+                min-height: 34px;
             }
 
             .detail-temperature-zone-label,
             .detail-temperature-zone-value {
                 font-size: 13px;
+            }
+
+            .detail-temperature-edit-modal {
+                width: calc(100% - 20px);
+                border-radius: 16px;
+                padding: 14px 14px 16px;
+                gap: 12px;
+            }
+
+            .detail-temperature-edit-title {
+                font-size: 17px;
+            }
+
+            .detail-temperature-edit-row {
+                grid-template-columns: 96px minmax(0, 1fr);
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .detail-temperature-edit-label {
+                font-size: 13px;
+            }
+
+            .detail-temperature-edit-input-wrap {
+                min-height: 42px;
+            }
+
+            .detail-temperature-edit-input-wrap input,
+            .detail-temperature-edit-unit {
+                font-size: 14px;
+            }
+
+            .detail-temperature-edit-actions {
+                gap: 8px;
+            }
+
+            .detail-temperature-edit-confirm {
+                height: 44px;
+                font-size: 14px;
             }
 
             .detail-fault-record-body {
@@ -3660,6 +4050,48 @@
         </div>
     </div>
 
+    <div class="modal-overlay detail-temperature-edit-overlay" id="detailTemperatureZoneEditModal" onclick="if (event.target === this) closeDetailTemperatureAlarmZoneEditModal()">
+        <div class="detail-temperature-edit-modal">
+            <div class="detail-temperature-edit-head">
+                <h4 class="detail-temperature-edit-title" id="detailTemperatureZoneEditTitle">温区参数</h4>
+                <button class="detail-temperature-edit-close" onclick="closeDetailTemperatureAlarmZoneEditModal()">×</button>
+            </div>
+            <div class="detail-temperature-edit-form">
+                <label class="detail-temperature-edit-row">
+                    <span class="detail-temperature-edit-label">位置标识</span>
+                    <span class="detail-temperature-edit-input-wrap">
+                        <input id="detailTemperatureEditLocationCode" type="text" placeholder="请输入">
+                    </span>
+                </label>
+                <label class="detail-temperature-edit-row">
+                    <span class="detail-temperature-edit-label">温度告警值</span>
+                    <span class="detail-temperature-edit-input-wrap">
+                        <input id="detailTemperatureEditTempAlarm" type="text" inputmode="decimal" placeholder="请输入">
+                        <span class="detail-temperature-edit-unit">度</span>
+                    </span>
+                </label>
+                <label class="detail-temperature-edit-row">
+                    <span class="detail-temperature-edit-label">湿度告警值</span>
+                    <span class="detail-temperature-edit-input-wrap">
+                        <input id="detailTemperatureEditHumidityAlarm" type="text" inputmode="decimal" placeholder="请输入">
+                        <span class="detail-temperature-edit-unit">%</span>
+                    </span>
+                </label>
+                <label class="detail-temperature-edit-row">
+                    <span class="detail-temperature-edit-label">温度停售值</span>
+                    <span class="detail-temperature-edit-input-wrap">
+                        <input id="detailTemperatureEditTempStop" type="text" inputmode="decimal" placeholder="请输入">
+                        <span class="detail-temperature-edit-unit">度</span>
+                    </span>
+                </label>
+            </div>
+            <div class="detail-temperature-edit-actions">
+                <button type="button" class="detail-temperature-edit-cancel" onclick="closeDetailTemperatureAlarmZoneEditModal()">取消</button>
+                <button type="button" class="detail-temperature-edit-confirm" onclick="saveDetailTemperatureAlarmZoneEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
     <div class="image-preview-overlay" id="imagePreviewModal">
         <div class="image-preview-modal">
             <button class="image-preview-close" onclick="closeImagePreview()" aria-label="关闭图片预览">×</button>
@@ -3956,6 +4388,7 @@
         let entryEditImageDraft = { display: [], location: [] };
         let activeFaultActionDeviceId = '';
         let currentTemperatureAlarmDeviceId = '';
+        let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
 
         function saveDevicesData() {
@@ -4808,7 +5241,32 @@
                 ['贮藏温度', 'storageTemp', ''],
                 ['正常湿度', 'normalHumidity', '']
             ];
+            const customizedCount = zones.filter(zone => {
+                const tempAlarm = String(zone?.tempAlarm || '').trim();
+                const humidityAlarm = String(zone?.humidityAlarm || '').trim();
+                const tempStop = String(zone?.tempStop || '').trim();
+                const hasTempAlarm = tempAlarm && tempAlarm !== '-' && tempAlarm !== '度';
+                const hasHumidityAlarm = humidityAlarm && humidityAlarm !== '-' && humidityAlarm !== '%';
+                const hasTempStop = tempStop && tempStop !== '-' && tempStop !== '度';
+                return hasTempAlarm || hasHumidityAlarm || hasTempStop;
+            }).length;
             const cardsHtml = zones.map(zone => {
+                const zoneKey = String(zone?.key || '').toLowerCase();
+                let toneClass = 'tone-neutral';
+                let zoneTag = '常规区';
+                if (zoneKey.includes('fridge')) {
+                    toneClass = 'tone-cool';
+                    zoneTag = '冷链区';
+                } else if (zoneKey.includes('clean-water') || zoneKey.includes('waste-water')) {
+                    toneClass = 'tone-cool';
+                    zoneTag = '水路区';
+                } else if (zoneKey.includes('bean')) {
+                    toneClass = 'tone-amber';
+                    zoneTag = '原料区';
+                } else if (zoneKey.includes('craft')) {
+                    toneClass = 'tone-neutral';
+                    zoneTag = '制作区';
+                }
                 const rowsHtml = zoneRows.map(([label, key, extraClass]) => `
                     <div class="detail-temperature-zone-row">
                         <div class="detail-temperature-zone-label ${extraClass}">${escapeHtml(label)}</div>
@@ -4816,9 +5274,10 @@
                     </div>
                 `).join('');
                 return `
-                    <article class="detail-temperature-zone-card">
+                    <article class="detail-temperature-zone-card ${toneClass}">
                         <div class="detail-temperature-zone-head">
-                            <div>
+                            <div class="detail-temperature-zone-head-main">
+                                <span class="detail-temperature-zone-badge">${escapeHtml(zoneTag)}</span>
                                 <div class="detail-temperature-zone-title">${escapeHtml(zone.title)}</div>
                                 <div class="detail-temperature-zone-meta">位置标识：${escapeHtml(zone.locationCode)}</div>
                             </div>
@@ -4832,15 +5291,45 @@
             }).join('');
             return `
                 <section class="detail-temperature-context">
-                    <div class="detail-temperature-context-title">${escapeHtml(context.deviceId)}</div>
-                    <div class="detail-temperature-context-subtitle">
-                        当前点位：${escapeHtml(context.locationName)}，以下配置只在当前设备上下文中查看，不在详情正文重复展示。
+                    <div class="detail-temperature-context-head">
+                        <div>
+                            <div class="detail-temperature-context-title">${escapeHtml(context.deviceId)}</div>
+                            <div class="detail-temperature-context-subtitle">
+                                当前点位：${escapeHtml(context.locationName)}，以下配置仅对当前设备生效，可按温区逐项调整告警阈值。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-temperature-context-metrics">
+                        <span class="detail-temperature-context-pill">温区总数 <strong>${escapeHtml(String(zones.length))}</strong></span>
+                        <span class="detail-temperature-context-pill">已配置温区 <strong>${escapeHtml(String(customizedCount))}</strong></span>
+                        <span class="detail-temperature-context-pill">${escapeHtml(context.locationName)}</span>
                     </div>
                 </section>
                 <section class="detail-temperature-grid">
                     ${cardsHtml}
                 </section>
             `;
+        }
+
+        function parseDetailTemperatureThresholdInput(rawValue, unit) {
+            const normalizedValue = String(rawValue || '').trim();
+            const normalizedUnit = String(unit || '').trim();
+            if (!normalizedValue || normalizedValue === '-') return '';
+            if (normalizedUnit && normalizedValue === normalizedUnit) return '';
+            if (normalizedUnit && normalizedValue.endsWith(normalizedUnit)) {
+                return normalizedValue.slice(0, -normalizedUnit.length).trim();
+            }
+            return normalizedValue;
+        }
+
+        function formatDetailTemperatureThresholdValue(rawValue, unit) {
+            const normalizedValue = String(rawValue || '').trim();
+            const normalizedUnit = String(unit || '').trim();
+            if (!normalizedValue) return normalizedUnit || '-';
+            if (normalizedUnit && normalizedValue.endsWith(normalizedUnit)) {
+                return normalizedValue;
+            }
+            return normalizedUnit ? `${normalizedValue}${normalizedUnit}` : normalizedValue;
         }
 
         function getFaultRecordList(storageKey) {
@@ -5313,6 +5802,7 @@
             const body = document.getElementById('detailTemperatureAlarmModalBody');
             if (!modal || !body) return;
             currentTemperatureAlarmDeviceId = targetDeviceId;
+            currentTemperatureAlarmZoneKey = '';
             if (title) {
                 title.textContent = targetDeviceId
                     ? `温度报警设置 · ${targetDeviceId}`
@@ -5327,6 +5817,7 @@
             const title = document.getElementById('detailTemperatureAlarmModalTitle');
             const body = document.getElementById('detailTemperatureAlarmModalBody');
             currentTemperatureAlarmDeviceId = '';
+            currentTemperatureAlarmZoneKey = '';
             if (modal) {
                 modal.classList.remove('active');
             }
@@ -5336,13 +5827,105 @@
             if (body) {
                 body.innerHTML = '';
             }
+            closeDetailTemperatureAlarmZoneEditModal();
         }
 
         function editDetailTemperatureAlarmZone(zoneKey) {
-            const deviceId = currentTemperatureAlarmDeviceId || currentDetailDeviceId || '-';
+            const deviceId = String(currentTemperatureAlarmDeviceId || currentDetailDeviceId || '').trim();
             const zone = buildDetailTemperatureAlarmZones(deviceId).find(item => item.key === zoneKey);
             if (!zone) return;
-            showToast(`设备 ${deviceId} 的 ${zone.title} 编辑入口待接入`);
+            const modal = document.getElementById('detailTemperatureZoneEditModal');
+            const title = document.getElementById('detailTemperatureZoneEditTitle');
+            const locationCodeInput = document.getElementById('detailTemperatureEditLocationCode');
+            const tempAlarmInput = document.getElementById('detailTemperatureEditTempAlarm');
+            const humidityAlarmInput = document.getElementById('detailTemperatureEditHumidityAlarm');
+            const tempStopInput = document.getElementById('detailTemperatureEditTempStop');
+            if (!modal) return;
+            currentTemperatureAlarmZoneKey = zone.key;
+            if (title) {
+                title.textContent = zone.title || '温区参数';
+            }
+            if (locationCodeInput) {
+                locationCodeInput.value = String(zone.locationCode || '').trim();
+            }
+            if (tempAlarmInput) {
+                tempAlarmInput.value = parseDetailTemperatureThresholdInput(zone.tempAlarm, '度');
+            }
+            if (humidityAlarmInput) {
+                humidityAlarmInput.value = parseDetailTemperatureThresholdInput(zone.humidityAlarm, '%');
+            }
+            if (tempStopInput) {
+                tempStopInput.value = parseDetailTemperatureThresholdInput(zone.tempStop, '度');
+            }
+            modal.classList.add('active');
+        }
+
+        function closeDetailTemperatureAlarmZoneEditModal() {
+            const modal = document.getElementById('detailTemperatureZoneEditModal');
+            const title = document.getElementById('detailTemperatureZoneEditTitle');
+            const locationCodeInput = document.getElementById('detailTemperatureEditLocationCode');
+            const tempAlarmInput = document.getElementById('detailTemperatureEditTempAlarm');
+            const humidityAlarmInput = document.getElementById('detailTemperatureEditHumidityAlarm');
+            const tempStopInput = document.getElementById('detailTemperatureEditTempStop');
+            currentTemperatureAlarmZoneKey = '';
+            if (modal) {
+                modal.classList.remove('active');
+            }
+            if (title) {
+                title.textContent = '温区参数';
+            }
+            if (locationCodeInput) locationCodeInput.value = '';
+            if (tempAlarmInput) tempAlarmInput.value = '';
+            if (humidityAlarmInput) humidityAlarmInput.value = '';
+            if (tempStopInput) tempStopInput.value = '';
+        }
+
+        function saveDetailTemperatureAlarmZoneEdit() {
+            const deviceId = String(currentTemperatureAlarmDeviceId || currentDetailDeviceId || '').trim();
+            const zoneKey = String(currentTemperatureAlarmZoneKey || '').trim();
+            if (!deviceId || !zoneKey) return;
+
+            const device = Array.isArray(devicesData)
+                ? devicesData.find(item => String(item?.id || '').trim() === deviceId)
+                : null;
+            const zone = buildDetailTemperatureAlarmZones(deviceId).find(item => item.key === zoneKey);
+            if (!device || !zone) return;
+
+            const locationCodeInput = document.getElementById('detailTemperatureEditLocationCode');
+            const tempAlarmInput = document.getElementById('detailTemperatureEditTempAlarm');
+            const humidityAlarmInput = document.getElementById('detailTemperatureEditHumidityAlarm');
+            const tempStopInput = document.getElementById('detailTemperatureEditTempStop');
+
+            const nextSetting = {
+                key: zone.key,
+                title: zone.title,
+                locationCode: String(locationCodeInput?.value || '').trim() || String(zone.locationCode || '').trim() || '-',
+                tempAlarm: formatDetailTemperatureThresholdValue(tempAlarmInput?.value, '度'),
+                humidityAlarm: formatDetailTemperatureThresholdValue(humidityAlarmInput?.value, '%'),
+                tempStop: formatDetailTemperatureThresholdValue(tempStopInput?.value, '度')
+            };
+
+            const currentSettings = Array.isArray(device.temperatureAlarmSettings)
+                ? device.temperatureAlarmSettings.map(item => ({ ...item }))
+                : [];
+            const existingIndex = currentSettings.findIndex(item => item?.key === zone.key);
+            if (existingIndex >= 0) {
+                currentSettings[existingIndex] = {
+                    ...currentSettings[existingIndex],
+                    ...nextSetting
+                };
+            } else {
+                currentSettings.push(nextSetting);
+            }
+            device.temperatureAlarmSettings = currentSettings;
+            saveDevicesData();
+
+            const body = document.getElementById('detailTemperatureAlarmModalBody');
+            if (body) {
+                body.innerHTML = renderDetailTemperatureAlarmModalBody(deviceId);
+            }
+            closeDetailTemperatureAlarmZoneEditModal();
+            showToast(`${zone.title} 参数已更新`);
         }
 
         function openDetailRemoteActions(deviceId) {
