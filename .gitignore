@@ -11,3 +11,8 @@
 .claude/.agents/
 .claude/skills/gstack/node_modules
 .claude/skills/gstack/browse/dist
+
+# local assistant/tooling state (keep local, do not commit)
+.agents/
+.claude/
+.superpowers/
