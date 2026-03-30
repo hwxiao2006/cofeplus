@@ -142,6 +142,16 @@ This makes hidden tags reversible without destructive data cleanup.
 
 Tag create/edit forms use the current device's enabled languages as the visible language fields.
 
+The source of truth is the same device-language configuration already used by 商品管理, resolved from the currently selected device context.
+
+In implementation terms, all tag forms must use the same shared language provider as the rest of 商品管理, equivalent to:
+
+```js
+getDeviceLangs(currentDevice)
+```
+
+The product detail page must consume the same device context passed from 商品管理 rather than independently deciding which languages to show.
+
 Examples:
 
 - if the current device has `zh / en`, show those two inputs
@@ -192,7 +202,26 @@ Rules:
 - saving a new inline-created tag both:
   - adds a record to the global tag library
   - appends or selects the tag for the current product
-- if a product already contains hidden tag IDs, normal product saves must preserve those hidden IDs unless the operator explicitly removes them from a tag-management flow that can see them
+- if a product already contains hidden tag IDs, normal product saves must preserve those hidden IDs
+
+Hidden-ID merge contract:
+
+- visible active IDs are the only IDs shown in normal product tag editing
+- hidden IDs remain stored but invisible
+- when the operator reorders visible active IDs, the stored result is:
+  - reordered active IDs first, in the user-selected order
+  - preserved hidden IDs appended after the active IDs, in their previous relative order
+
+Example:
+
+```js
+stored before: ['tag_hidden_a', 'tag_recommend', 'tag_hidden_b', 'tag_new']
+visible editor: ['tag_recommend', 'tag_new']
+user reorder:   ['tag_new', 'tag_recommend']
+stored after:  ['tag_new', 'tag_recommend', 'tag_hidden_a', 'tag_hidden_b']
+```
+
+Explicit removal of hidden tag IDs from a product is out of scope for this iteration.
 
 ## Data Model
 
@@ -226,6 +255,7 @@ Rules:
 
 - the library is stored as an object map keyed by tag ID
 - `status` must be one of `active` or `hidden`
+- legacy `disabled` values normalize to `hidden`
 - unknown status values normalize to `active`
 - tag IDs are system-generated, not manually entered by operators
 
@@ -326,6 +356,10 @@ Dual-write save rules:
 Failure behavior:
 
 - if tag validation fails, do not update the product binding
+- writes must use an atomic-or-rollback contract:
+  - stage both previous snapshots in memory first
+  - attempt to persist tag library and product binding as one logical transaction
+  - if either write fails, restore both in-memory snapshots and persisted snapshots before surfacing the error
 - if the combined product save fails, do not expose a tag-library-only success state in the visible UI
 - after a failed save, keep the draft open and show one retryable error
 - the user must not see a newly created tag as committed if the product binding save did not also succeed
@@ -389,16 +423,19 @@ At minimum:
 ### Unit / Runtime Coverage
 
 - tag library normalization
+- legacy `disabled` to `hidden` compatibility normalization
 - multilingual label fallback order
 - hidden tag filtering for all display helpers
 - compatibility fallback from `featured` to `tag_signature`
 - product tag order persistence
+- hidden-ID merge behavior during visible-tag reorder
 
 ### Flow Coverage
 
 - `基本设置` summary card shows only `启用中` and `已隐藏`
 - clicking `管理标签` opens the full tag-management layer
 - creating a tag from `基本设置` uses current device enabled languages
+- product-detail tag forms use the same current-device language set as 商品管理
 - creating a tag from product editing writes back to the global library
 - hiding a tag removes it from all already-bound products in every visible UI
 - restoring a hidden tag makes old bindings visible again
