@@ -152,6 +152,12 @@ Examples:
 - the current device primary language is required
 - other currently enabled languages are optional
 
+Edit rule:
+
+- when editing an existing tag from a device view, the current device primary-language field must be non-empty at save time
+- existing translations for languages not shown in the current device view remain untouched
+- if a tag was originally created from another device with a different primary language, editing it from the current device may require filling the current device primary-language field before save
+
 ### Preserving Existing Translations
 
 If a tag already has translations for languages not currently enabled on the device:
@@ -186,6 +192,7 @@ Rules:
 - saving a new inline-created tag both:
   - adds a record to the global tag library
   - appends or selects the tag for the current product
+- if a product already contains hidden tag IDs, normal product saves must preserve those hidden IDs unless the operator explicitly removes them from a tag-management flow that can see them
 
 ## Data Model
 
@@ -199,7 +206,7 @@ Each tag contains:
 - `names`
 - `status`
 
-Recommended normalized shape:
+Required canonical shape:
 
 ```js
 {
@@ -215,6 +222,30 @@ Recommended normalized shape:
 }
 ```
 
+Rules:
+
+- the library is stored as an object map keyed by tag ID
+- `status` must be one of `active` or `hidden`
+- unknown status values normalize to `active`
+- tag IDs are system-generated, not manually entered by operators
+
+### Tag ID Contract
+
+New tags use generated IDs in the form:
+
+```js
+tag_<slug>
+```
+
+Generation rules:
+
+- derive the slug from the primary-language label entered at creation time
+- normalize to lowercase ASCII with underscores
+- strip unsupported characters
+- if the generated ID already exists, append a numeric suffix until unique
+
+The exact transliteration helper may vary, but the stored ID format and uniqueness requirement are mandatory.
+
 ### Product Data
 
 Products continue using:
@@ -222,6 +253,30 @@ Products continue using:
 - `businessTagIds: string[]`
 
 No second ordering field is added.
+
+## Architecture Boundaries
+
+To avoid inconsistent hidden-tag and label-fallback behavior, the implementation should centralize tag resolution logic.
+
+Required shared responsibilities:
+
+- `resolveTagLabel(tag, lang)`
+  - applies the documented fallback order
+- `isTagRenderable(tag)`
+  - returns `true` only for active tags
+- `getRenderableProductTags(product, library, lang)`
+  - resolves ordered active tags for any render surface
+- `mergeProductTagIds(existingIds, editedVisibleIds, library)`
+  - preserves hidden IDs correctly during product save
+- `upsertBusinessTag(library, draftTag)`
+  - creates or updates canonical tag records
+
+All render surfaces must rely on the same tag-resolution pipeline:
+
+- 菜单管理商品卡
+- 商品详情
+- 点单屏商品卡
+- 点单屏商品详情
 
 ## Data Flow
 
@@ -261,6 +316,19 @@ Tag-library changes made from `基本设置` are saved together with other setti
 Tag-binding changes made during product editing are saved together with the rest of the product edits.
 
 Inline-created tags from product editing are part of that same save action. The implementation may write to both the tag library and product data internally, but the UI should present one product save action, not two separate saves.
+
+Dual-write save rules:
+
+- create or update the draft tag record in memory first
+- stage the updated product `businessTagIds` second
+- persist both changes as one logical save from the user perspective
+
+Failure behavior:
+
+- if tag validation fails, do not update the product binding
+- if the combined product save fails, do not expose a tag-library-only success state in the visible UI
+- after a failed save, keep the draft open and show one retryable error
+- the user must not see a newly created tag as committed if the product binding save did not also succeed
 
 ## Display Rules
 
@@ -310,6 +378,7 @@ This keeps old data stable while moving all new operations onto the tag library 
 At minimum:
 
 - tag ID must be non-empty and unique when a new tag is created
+- tag ID generation is automatic and collisions must be resolved before save
 - primary-language label must be non-empty
 - only active tags can be selected in product editing
 - hidden tags cannot be newly selected
