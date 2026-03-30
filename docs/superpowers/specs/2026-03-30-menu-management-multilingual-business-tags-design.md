@@ -157,6 +157,20 @@ Examples:
 - if the current device has `zh / en`, show those two inputs
 - if the current device has `zh / en / jp`, show those three inputs
 
+Device-language config validity:
+
+- normalize the device enabled-language list to unique non-empty language codes first
+- a valid tag-edit language context requires:
+  - at least one enabled language after normalization
+  - one non-empty primary language code
+  - the primary language code must exist in the enabled-language list
+- if the current device language config is invalid:
+  - `基本设置` tag create/edit actions enter a blocking config-error state instead of an editable form
+  - product editing may still select and reorder existing active tags, but inline `新建标签` is disabled
+  - any attempted create/edit save must fail before persistence with validation feedback
+  - do not silently fall back to `zh` or `en` for edit requirements
+  - display surfaces may still render existing tags through the normal label fallback order
+
 ### Required vs Optional
 
 - the current device primary language is required
@@ -167,6 +181,7 @@ Edit rule:
 - when editing an existing tag from a device view, the current device primary-language field must be non-empty at save time
 - existing translations for languages not shown in the current device view remain untouched
 - if a tag was originally created from another device with a different primary language, editing it from the current device may require filling the current device primary-language field before save
+- if the device language config is invalid, the form stays non-editable and returns a validation error rather than attempting any save
 
 ### Preserving Existing Translations
 
@@ -325,7 +340,7 @@ Required shared responsibilities:
 - `TagProductSaveCoordinator.commit(...)`
   - coordinates atomic-or-rollback persistence for inline tag create plus product binding save
 
-Pseudo-signatures:
+Canonical interface contracts:
 
 ```ts
 resolveTagLabel(tag: TagRecord, displayLang: string): string
@@ -334,8 +349,18 @@ getRenderableProductTags(product: ProductRecord, library: TagLibrary, displayLan
 mergeProductTagIds(existingIds: string[], editedVisibleIds: string[], library: TagLibrary): string[]
 generateBusinessTagId(primaryLabel: string, library: TagLibrary): string
 upsertBusinessTag(existing: TagRecord | null, tagId: string, visibleLangPatch: Record<string, string>, status: 'active' | 'hidden'): TagRecord
-commitTagAndProductSave(previousLibrary: TagLibrary, nextLibrary: TagLibrary, previousProduct: ProductRecord, nextProduct: ProductRecord): SaveResult
+TagProductSaveCoordinator.commit(input: {
+  previousLibrary: TagLibrary
+  nextLibrary: TagLibrary
+  previousProduct: ProductRecord
+  nextProduct: ProductRecord
+}): SaveResult
 ```
+
+Naming rule:
+
+- `TagProductSaveCoordinator.commit(...)` is the only allowed save-coordinator boundary name in this iteration
+- do not introduce a second alias such as `commitTagAndProductSave(...)`
 
 `upsertBusinessTag` merge rules:
 
@@ -434,7 +459,13 @@ UI handling:
 - `rolled_back`
   - keep the draft open and show retryable save error
 - `partial_rollback_failure`
-  - keep the draft open, show blocking error, and require manual recovery path
+  - keep the draft open in a blocked state
+  - show a blocking error explaining that save state may be inconsistent and the current draft can no longer be trusted
+  - disable save, retry, inline tag create, and further field editing in that draft session
+  - provide one explicit recovery path only:
+    - refresh the page or close and reopen the current drawer/modal to reload canonical data from storage
+  - after recovery, the UI must re-read both the product snapshot and tag-library snapshot before allowing edits again
+  - do not show success toast, committed tag chips, or any tag-library-only success state before recovery
 
 ## Display Rules
 
@@ -491,6 +522,7 @@ At minimum:
 - tag ID must be non-empty and unique when a new tag is created
 - tag ID generation is automatic and collisions must be resolved before save
 - primary-language label must be non-empty
+- invalid device primary-language config blocks tag create/edit save before any persistence attempt
 - only active tags can be selected in product editing
 - hidden tags cannot be newly selected
 - product save preserves selected tag order exactly
@@ -508,6 +540,8 @@ At minimum:
 - product tag order persistence
 - hidden-ID merge behavior during visible-tag reorder
 - unknown existing tag ID preservation during product save
+- invalid device-language config produces validation failure with no writes
+- `partial_rollback_failure` enters blocked recovery state and forbids a second save attempt from the stale draft
 
 ### Flow Coverage
 
@@ -522,6 +556,8 @@ At minimum:
 - product page only offers active tags for selection
 - `featured` compatibility products still render the fallback tag where applicable
 - `基本设置` save failure restores the previous tag-library state
+- invalid device language config blocks tag create/edit but still allows existing-tag selection and display fallback
+- if a tag is hidden or restored while a product edit drawer is already open, the next render/save path re-resolves the current library state before commit
 
 ## Verification
 
