@@ -289,6 +289,13 @@ Generation rules:
 
 The exact transliteration helper may vary, but the stored ID format and uniqueness requirement are mandatory.
 
+ID generation ownership:
+
+- only `generateBusinessTagId(primaryLabel, existingLibrary)` may create a new tag ID
+- `upsertBusinessTag(...)` never generates IDs internally
+- on create, the caller generates the ID first and passes it into `upsertBusinessTag(...)`
+- on edit, the existing ID is reused unchanged
+
 ### Product Data
 
 Products continue using:
@@ -311,7 +318,9 @@ Required shared responsibilities:
   - resolves ordered active tags for any render surface
 - `mergeProductTagIds(existingIds, editedVisibleIds, library)`
   - preserves hidden IDs correctly during product save
-- `upsertBusinessTag(existingTag, visibleLangPatch, status)`
+- `generateBusinessTagId(primaryLabel, library)`
+  - generates the unique canonical ID for new tags
+- `upsertBusinessTag(existingTag, tagId, visibleLangPatch, status)`
   - creates or updates canonical tag records
 - `TagProductSaveCoordinator.commit(...)`
   - coordinates atomic-or-rollback persistence for inline tag create plus product binding save
@@ -323,7 +332,8 @@ resolveTagLabel(tag: TagRecord, displayLang: string): string
 isTagRenderable(tag: TagRecord): boolean
 getRenderableProductTags(product: ProductRecord, library: TagLibrary, displayLang: string): TagRecord[]
 mergeProductTagIds(existingIds: string[], editedVisibleIds: string[], library: TagLibrary): string[]
-upsertBusinessTag(existing: TagRecord | null, visibleLangPatch: Record<string, string>, status: 'active' | 'hidden'): TagRecord
+generateBusinessTagId(primaryLabel: string, library: TagLibrary): string
+upsertBusinessTag(existing: TagRecord | null, tagId: string, visibleLangPatch: Record<string, string>, status: 'active' | 'hidden'): TagRecord
 commitTagAndProductSave(previousLibrary: TagLibrary, nextLibrary: TagLibrary, previousProduct: ProductRecord, nextProduct: ProductRecord): SaveResult
 ```
 
@@ -364,7 +374,7 @@ The product page edits:
 If the operator creates a new tag inline from the product page:
 
 - the new tag is written into the global tag library
-- the new tag is added to the product's `businessTagIds`
+- the new tag is automatically appended to the end of the product's visible active tag order
 
 For the operator, this remains a single save flow.
 
@@ -404,6 +414,27 @@ Failure behavior:
 - if the combined product save fails, do not expose a tag-library-only success state in the visible UI
 - after a failed save, keep the draft open and show one retryable error
 - the user must not see a newly created tag as committed if the product binding save did not also succeed
+
+`SaveResult` contract:
+
+```ts
+type SaveResult =
+  | { ok: true; status: 'committed' }
+  | { ok: false; status: 'validation_failed'; retryable: true }
+  | { ok: false; status: 'rolled_back'; retryable: true }
+  | { ok: false; status: 'partial_rollback_failure'; retryable: false }
+```
+
+UI handling:
+
+- `committed`
+  - close the draft and show success
+- `validation_failed`
+  - keep the draft open and show validation feedback
+- `rolled_back`
+  - keep the draft open and show retryable save error
+- `partial_rollback_failure`
+  - keep the draft open, show blocking error, and require manual recovery path
 
 ## Display Rules
 
@@ -445,6 +476,11 @@ Rules:
 - products without explicit `businessTagIds` may still derive `['tag_signature']` from `featured === true`
 - new editing flows should write `businessTagIds`
 - `featured` remains ignored by new UI except for compatibility fallback
+
+First-save materialization rule:
+
+- if a product is saved through a new edit flow with `featured === true` and no explicit `businessTagIds`, the save flow must materialize `businessTagIds = ['tag_signature']` before persistence
+- after that first save, explicit `businessTagIds` becomes the only source of truth for tag rendering
 
 This keeps old data stable while moving all new operations onto the tag library plus ID binding model.
 
