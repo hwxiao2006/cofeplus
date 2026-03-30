@@ -90,7 +90,7 @@ The summary card must stay visually short. It should not inline-expand the full 
 
 ### B. 标签管理二级层
 
-Clicking `管理标签` opens a secondary layer such as a drawer or modal.
+Clicking `管理标签` opens a right-side drawer.
 
 This secondary layer contains:
 
@@ -179,12 +179,17 @@ If a tag already has translations for languages not currently enabled on the dev
 
 When rendering a tag label in UI:
 
-1. current language
+1. the surface's active display language
 2. `zh`
 3. `en`
 4. `tag id`
 
 This avoids blank chips when a translation is missing.
+
+Active display language source:
+
+- 菜单管理 / 商品详情 use the current 商品管理 language context
+- 点单屏商品卡 / 点单屏商品详情 use the current point-order preview language context
 
 ## Product Binding Rules
 
@@ -208,6 +213,11 @@ Hidden-ID merge contract:
 
 - visible active IDs are the only IDs shown in normal product tag editing
 - hidden IDs remain stored but invisible
+- edited visible IDs are normalized to unique known active IDs only
+- duplicate edited IDs are collapsed to first occurrence
+- unknown edited IDs are discarded
+- new active IDs selected by the operator are inserted into the visible ordered set
+- active IDs removed by the operator are removed from stored `businessTagIds`
 - when the operator reorders visible active IDs, the stored result is:
   - reordered active IDs first, in the user-selected order
   - preserved hidden IDs appended after the active IDs, in their previous relative order
@@ -272,6 +282,7 @@ Generation rules:
 - derive the slug from the primary-language label entered at creation time
 - normalize to lowercase ASCII with underscores
 - strip unsupported characters
+- if normalization produces an empty slug, use `custom`
 - if the generated ID already exists, append a numeric suffix until unique
 
 The exact transliteration helper may vary, but the stored ID format and uniqueness requirement are mandatory.
@@ -300,6 +311,23 @@ Required shared responsibilities:
   - preserves hidden IDs correctly during product save
 - `upsertBusinessTag(library, draftTag)`
   - creates or updates canonical tag records
+
+Pseudo-signatures:
+
+```ts
+resolveTagLabel(tag: TagRecord, displayLang: string): string
+isTagRenderable(tag: TagRecord): boolean
+getRenderableProductTags(product: ProductRecord, library: TagLibrary, displayLang: string): TagRecord[]
+mergeProductTagIds(existingIds: string[], editedVisibleIds: string[], library: TagLibrary): string[]
+upsertBusinessTag(existing: TagRecord | null, visibleLangPatch: Record<string, string>, status: 'active' | 'hidden'): TagRecord
+```
+
+`upsertBusinessTag` merge rules:
+
+- preserve unseen-language translations already stored on the tag
+- overwrite only the language fields visible and edited in the current form
+- blank visible values remove only that visible language field when the field is optional
+- blank primary-language value is rejected by validation and cannot be saved
 
 All render surfaces must rely on the same tag-resolution pipeline:
 
@@ -340,6 +368,13 @@ For the operator, this remains a single save flow.
 ### 基本设置保存
 
 Tag-library changes made from `基本设置` are saved together with other settings changes via the existing `保存基础设置` flow.
+
+Failure behavior for `基本设置` save:
+
+- if tag-library validation fails, no settings changes are persisted
+- if persistence fails, restore the pre-save settings snapshot and pre-save tag-library snapshot
+- keep the management drawer open
+- show one retryable save error
 
 ### 商品保存
 
@@ -424,6 +459,7 @@ At minimum:
 
 - tag library normalization
 - legacy `disabled` to `hidden` compatibility normalization
+- empty-slug tag ID fallback to `tag_custom` with uniqueness suffixing
 - multilingual label fallback order
 - hidden tag filtering for all display helpers
 - compatibility fallback from `featured` to `tag_signature`
@@ -441,6 +477,7 @@ At minimum:
 - restoring a hidden tag makes old bindings visible again
 - product page only offers active tags for selection
 - `featured` compatibility products still render the fallback tag where applicable
+- `基本设置` save failure restores the previous tag-library state
 
 ## Verification
 
