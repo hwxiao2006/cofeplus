@@ -292,8 +292,10 @@
         }
 
         .header-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 12px;
+            min-width: min(100%, 520px);
         }
 
         .btn {
@@ -304,6 +306,20 @@
             transition: all 0.2s;
             border: 1px solid transparent;
             font-weight: 500;
+        }
+
+        .header-actions .btn {
+            min-height: 56px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 14px;
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
         }
 
         .btn-default {
@@ -324,6 +340,39 @@
 
         .btn-primary:hover {
             background: var(--primary-dark);
+        }
+
+        .header-btn-cancel {
+            background: #fff;
+            border-color: #d6dce5;
+            color: #64748b;
+        }
+
+        .header-btn-cancel:hover {
+            border-color: #c3ccd8;
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .header-btn-preview {
+            background: #f8fafc;
+            border-color: #eef2f7;
+            color: #475569;
+        }
+
+        .header-btn-preview:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .header-btn-save {
+            border: none;
+        }
+
+        .header-btn-icon {
+            font-size: 16px;
+            line-height: 1;
         }
 
         .content {
@@ -845,6 +894,69 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 16px;
+        }
+
+        .embedded-order-preview-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.48);
+            z-index: 1280;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .embedded-order-preview-overlay.active {
+            display: flex;
+        }
+
+        .embedded-order-preview-shell {
+            width: min(1180px, 100%);
+            height: min(860px, calc(100vh - 36px));
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .embedded-order-preview-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #f8fffd 0%, #f5fbfb 100%);
+        }
+
+        .embedded-order-preview-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .embedded-order-preview-subtitle {
+            margin-top: 6px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .embedded-order-preview-body {
+            flex: 1;
+            min-height: 0;
+            background: #eef4f7;
+        }
+
+        .embedded-order-preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #fff;
         }
 
         .business-tag-editor-panel {
@@ -2015,7 +2127,16 @@
 
             .header-actions {
                 width: 100%;
-                justify-content: flex-end;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .header-actions .btn {
+                min-height: 48px;
+                font-size: 13px;
+                padding: 0 8px;
+                border-radius: 14px;
             }
 
             .content {
@@ -2255,6 +2376,29 @@
                 border-radius: 16px 16px 0 0;
             }
 
+            .embedded-order-preview-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .embedded-order-preview-shell {
+                width: 100%;
+                height: min(88vh, calc(100vh - 8px));
+                border-radius: 18px 18px 0 0;
+            }
+
+            .embedded-order-preview-header {
+                padding: 16px 16px 12px;
+            }
+
+            .embedded-order-preview-title {
+                font-size: 18px;
+            }
+
+            .embedded-order-preview-subtitle {
+                font-size: 12px;
+            }
+
             .recipe-impact-header,
             .recipe-impact-toolbar,
             .recipe-impact-body,
@@ -2413,8 +2557,9 @@
                     <span class="header-title" id="productId">--</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-default" id="headerCancelBtn" onclick="goBack()">取消</button>
-                    <button class="btn btn-primary" id="headerSaveBtn" onclick="saveProduct()">保存</button>
+                    <button type="button" class="btn btn-default header-btn-cancel" id="headerCancelBtn" onclick="goBack()">取消</button>
+                    <button type="button" class="btn btn-default header-btn-preview" id="headerPreviewBtn" onclick="saveProductAndOpenOrderPreview()"><span class="header-btn-icon" aria-hidden="true">🖥️</span><span>预览点单屏</span></button>
+                    <button type="button" class="btn btn-primary header-btn-save" id="headerSaveBtn" onclick="saveProduct()">保存</button>
                 </div>
             </header>
 
@@ -2811,7 +2956,7 @@
                     <section class="business-tag-editor-panel">
                         <div class="business-tag-editor-panel-head">
                             <div class="business-tag-editor-panel-title">标签库</div>
-                            <button type="button" class="recipe-control-btn" onclick="createBusinessTag()">新建标签</button>
+                            <button type="button" class="recipe-control-btn" id="productBusinessTagCreateBtn" onclick="createBusinessTag()">新建标签</button>
                         </div>
                         <div id="productBusinessTagOptionList"></div>
                     </section>
@@ -2824,10 +2969,28 @@
         </div>
     </div>
 
+    <div class="embedded-order-preview-overlay" id="embeddedOrderPreviewOverlay" onclick="if(event.target === this) closeEmbeddedOrderPreviewModal()">
+        <div class="embedded-order-preview-shell">
+            <div class="embedded-order-preview-header">
+                <div>
+                    <div class="embedded-order-preview-title">点单屏预览</div>
+                    <div class="embedded-order-preview-subtitle">基于当前未保存的基础信息草稿生成，关闭后可继续停留在商品编辑页。</div>
+                </div>
+                <button class="modal-close" type="button" onclick="closeEmbeddedOrderPreviewModal()">×</button>
+            </div>
+            <div class="embedded-order-preview-body">
+                <iframe id="embeddedOrderPreviewFrame" class="embedded-order-preview-frame" title="点单屏预览"></iframe>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/business-tag-library.js"></script>
     <script>
+
+        const BusinessTags = window.CofeBusinessTags || (typeof globalThis !== 'undefined' ? globalThis.CofeBusinessTags : null);
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
@@ -3114,6 +3277,9 @@
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         let selectedBusinessTagIds = [];
+        let productBusinessTagDraft = null;
+        let productBusinessTagLibraryDraft = {};
+        let productBusinessTagEditorSaveState = 'idle';
 
         function cloneProductValue(value) {
             if (value === null || value === undefined) return value;
@@ -3130,27 +3296,19 @@
         }
 
         function normalizeBusinessTagIds(tagIds) {
-            return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
-                .map(tagId => String(tagId || '').trim())
-                .filter(Boolean)));
+            return BusinessTags.normalizeBusinessTagIds(tagIds);
         }
 
         function normalizeBusinessTagEntry(tagId, tag) {
-            const normalizedId = String(tagId || tag?.id || '').trim();
-            if (!normalizedId) return null;
-            return {
-                id: normalizedId,
-                names: tag && typeof tag.names === 'object' ? cloneProductValue(tag.names) : {},
-                status: tag?.status === 'disabled' ? 'disabled' : 'active'
-            };
+            return BusinessTags.normalizeBusinessTagEntry(tagId, tag);
         }
 
         function normalizeBusinessTagLibrary(library) {
-            return Object.entries(library && typeof library === 'object' ? library : {}).reduce((acc, [tagId, tag]) => {
-                const normalized = normalizeBusinessTagEntry(tagId, tag);
-                if (normalized) acc[normalized.id] = normalized;
-                return acc;
-            }, {});
+            return BusinessTags.normalizeBusinessTagLibrary(library);
+        }
+
+        function cloneBusinessTagLibrary(library) {
+            return cloneProductValue(normalizeBusinessTagLibrary(library));
         }
 
         function getFallbackBusinessTagLibrary() {
@@ -3178,15 +3336,17 @@
         }
 
         function getBusinessTagLibrary() {
-            return {
+            return normalizeBusinessTagLibrary({
                 ...normalizeBusinessTagLibrary(getFallbackBusinessTagLibrary()),
                 ...normalizeBusinessTagLibrary(sharedAdminMockData.defaultBusinessTags || {}),
                 ...normalizeBusinessTagLibrary(getStoredBusinessTagLibrary())
-            };
+            });
         }
 
         function persistBusinessTagLibrary(library) {
-            localStorage.setItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY, JSON.stringify(normalizeBusinessTagLibrary(library)));
+            const normalized = normalizeBusinessTagLibrary(library);
+            localStorage.setItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
         }
 
         function getProductBusinessTagIds(product) {
@@ -3196,8 +3356,63 @@
         }
 
         function getBusinessTagLabel(tag, lang = currentLang) {
-            if (!tag) return '';
-            return tag.names?.[lang] || tag.names?.zh || tag.names?.en || tag.id || '';
+            return BusinessTags.resolveTagLabel(tag, lang);
+        }
+
+        function getBusinessTagLanguageContext(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            const storedDeviceConfig = normalizedDeviceId ? readStoredDeviceLanguageConfig(normalizedDeviceId) : null;
+            const rawDevice = normalizedDeviceId
+                ? (storedDeviceConfig || deviceConfig[normalizedDeviceId] || { langs: [], hiddenLangs: [] })
+                : { langs: [], hiddenLangs: [] };
+            return BusinessTags.validateDeviceTagLanguageContext(rawDevice);
+        }
+
+        function collectProductBusinessTagLibraryDraft() {
+            return cloneBusinessTagLibrary(productBusinessTagLibraryDraft);
+        }
+
+        function getDraftAwareBusinessTagLibrary() {
+            return normalizeBusinessTagLibrary({
+                ...getBusinessTagLibrary(),
+                ...collectProductBusinessTagLibraryDraft()
+            });
+        }
+
+        function isProductBusinessTagEditorBlocked() {
+            return productBusinessTagEditorSaveState === 'blocked';
+        }
+
+        function setProductBusinessTagEditorSaveState(state = 'idle') {
+            productBusinessTagEditorSaveState = state === 'blocked' ? 'blocked' : 'idle';
+            const modal = document.getElementById('productBusinessTagEditorModal');
+            const headerSaveBtn = document.getElementById('headerSaveBtn');
+            const editBtn = document.getElementById('productBusinessTagEditBtn');
+            if (modal) {
+                modal.dataset.saveState = productBusinessTagEditorSaveState;
+            }
+            if (headerSaveBtn) {
+                headerSaveBtn.disabled = productBusinessTagEditorSaveState === 'blocked';
+            }
+            if (editBtn) {
+                editBtn.disabled = productBusinessTagEditorSaveState === 'blocked';
+            }
+        }
+
+        function resetProductBusinessTagDraftState() {
+            productBusinessTagDraft = null;
+            productBusinessTagLibraryDraft = {};
+            setProductBusinessTagEditorSaveState('idle');
+        }
+
+        function syncVisibleSelectedBusinessTags(library = getDraftAwareBusinessTagLibrary()) {
+            selectedBusinessTagIds = normalizeBusinessTagIds(selectedBusinessTagIds)
+                .filter(tagId => BusinessTags.isTagRenderable(library[tagId]));
+            return selectedBusinessTagIds;
+        }
+
+        function canCreateBusinessTag() {
+            return getBusinessTagLanguageContext().ok && !isProductBusinessTagEditorBlocked();
         }
 
         function isCopyWorkflowActive() {
@@ -3667,6 +3882,7 @@
             const editRecipeBtn = document.getElementById('copyWorkflowEditRecipeBtn');
             const headerSaveBtn = document.getElementById('headerSaveBtn');
             const headerCancelBtn = document.getElementById('headerCancelBtn');
+            const headerPreviewBtn = document.getElementById('headerPreviewBtn');
             const defaultTabs = document.querySelector('.product-detail-tabs');
             const copySteps = document.getElementById('productCopyFlowSteps');
             const summary = document.getElementById('copyFlowSummary');
@@ -3677,6 +3893,7 @@
             if (summary) summary.classList.toggle('active', active);
             if (defaultTabs) defaultTabs.style.display = active ? 'none' : '';
             if (headerSaveBtn) headerSaveBtn.style.display = active ? 'none' : '';
+            if (headerPreviewBtn) headerPreviewBtn.style.display = active ? 'none' : '';
             if (headerCancelBtn) headerCancelBtn.textContent = active ? '取消复制' : '取消';
             if (!active) return;
 
@@ -3690,6 +3907,104 @@
             if (primaryBtn) {
                 primaryBtn.textContent = isBasic ? '下一步：配方配置' : (isRecipe ? '下一步：确认复制' : '确认复制');
             }
+        }
+
+        function buildOrderPreviewUrl() {
+            const params = new URLSearchParams();
+            params.set('tab', 'menu');
+            params.set('innerTab', 'manage');
+            if (currentDevice) {
+                params.set('device', currentDevice);
+            }
+            params.set('openOrderPreview', '1');
+            return `menu-management.html?${params.toString()}`;
+        }
+
+        function buildEmbeddedOrderPreviewUrl() {
+            try {
+                const previewUrl = new URL(buildOrderPreviewUrl(), window.location.href);
+                previewUrl.searchParams.set('embedOrderPreview', '1');
+                return previewUrl.toString();
+            } catch (e) {
+                return buildOrderPreviewUrl();
+            }
+        }
+
+        function buildOrderPreviewDraftPayload() {
+            if (!productData) return null;
+
+            const langs = typeof getDeviceLangs === 'function' ? getDeviceLangs() : [];
+            const names = { ...(productData.names || {}) };
+            const descs = { ...(productData.descs || {}) };
+
+            langs.forEach(lang => {
+                const nameEl = document.querySelector('.product-name-' + lang);
+                const descEl = document.querySelector('.product-desc-' + lang);
+                if (nameEl) {
+                    names[lang] = String(nameEl.value || '');
+                }
+                if (descEl) {
+                    descs[lang] = String(descEl.value || '');
+                }
+            });
+
+            const imageEl = document.getElementById('productImage');
+            const priceEl = document.getElementById('productPrice');
+            const originalPriceEl = document.getElementById('productOriginalPrice');
+            const onSaleEl = document.getElementById('onSaleSwitch');
+
+            const parsedPrice = Number(priceEl?.value);
+            const parsedOriginalPrice = Number(originalPriceEl?.value);
+
+            return {
+                productId: Number(productData.id) || null,
+                names,
+                descs,
+                image: imageEl ? String(imageEl.value || '').trim() : (productData.image || ''),
+                price: Number.isFinite(parsedPrice) ? parsedPrice : Number(productData.price || 0),
+                originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
+                    ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
+                    : null,
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+            };
+        }
+
+        function openEmbeddedOrderPreviewModal(draftPayload = null) {
+            const overlay = document.getElementById('embeddedOrderPreviewOverlay');
+            const frame = document.getElementById('embeddedOrderPreviewFrame');
+            if (!overlay || !frame) return false;
+
+            frame.onload = function() {
+                try {
+                    if (frame.contentWindow && typeof frame.contentWindow.postMessage === 'function' && draftPayload) {
+                        frame.contentWindow.postMessage({
+                            type: 'orderPreviewDraftPayload',
+                            payload: draftPayload
+                        }, window.location.origin || '*');
+                    }
+                } catch (e) {
+                    // ignore cross-window messaging failures
+                }
+            };
+            frame.src = buildEmbeddedOrderPreviewUrl();
+            overlay.classList.add('active');
+            return true;
+        }
+
+        function closeEmbeddedOrderPreviewModal() {
+            const overlay = document.getElementById('embeddedOrderPreviewOverlay');
+            const frame = document.getElementById('embeddedOrderPreviewFrame');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            if (frame) {
+                frame.onload = null;
+                frame.src = '';
+            }
+        }
+
+        function saveProductAndOpenOrderPreview() {
+            return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
         }
 
         function goToCopyWorkflowStep(stepKey) {
@@ -4986,10 +5301,10 @@
         function renderProductBusinessTagSummary() {
             const summary = document.getElementById('productBusinessTagSummary');
             if (!summary) return;
-            const library = getBusinessTagLibrary();
-            const selectedTags = selectedBusinessTagIds
+            const library = getDraftAwareBusinessTagLibrary();
+            const selectedTags = syncVisibleSelectedBusinessTags(library)
                 .map(tagId => library[tagId])
-                .filter(tag => tag && tag.status !== 'disabled');
+                .filter(tag => BusinessTags.isTagRenderable(tag));
 
             summary.innerHTML = selectedTags.length
                 ? selectedTags.map(tag => `<span class="business-tag-chip">${escAttr(getBusinessTagLabel(tag, currentLang))}</span>`).join('')
@@ -4999,16 +5314,62 @@
         function renderProductBusinessTagEditor() {
             const selectedList = document.getElementById('productBusinessTagSelectedList');
             const optionList = document.getElementById('productBusinessTagOptionList');
+            const modal = document.getElementById('productBusinessTagEditorModal');
+            const createBtn = document.getElementById('productBusinessTagCreateBtn');
             if (!selectedList || !optionList) return;
 
-            const library = getBusinessTagLibrary();
-            const selectedTags = selectedBusinessTagIds.map(tagId => library[tagId]).filter(Boolean);
+            const library = getDraftAwareBusinessTagLibrary();
+            const langContext = getBusinessTagLanguageContext();
+            const selectedTags = syncVisibleSelectedBusinessTags(library)
+                .map(tagId => library[tagId])
+                .filter(tag => BusinessTags.isTagRenderable(tag));
             const optionTags = Object.values(library)
-                .filter(tag => tag && tag.status !== 'disabled')
+                .filter(tag => BusinessTags.isTagRenderable(tag))
                 .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
 
+            if (modal) {
+                modal.dataset.configState = langContext.ok ? 'valid' : 'invalid';
+                modal.dataset.saveState = productBusinessTagEditorSaveState;
+            }
+            if (createBtn) {
+                createBtn.disabled = !canCreateBusinessTag();
+            }
+
+            let selectedHtml = '';
+            if (productBusinessTagDraft && langContext.ok) {
+                const langs = langContext.value.langs;
+                const primaryLang = langContext.value.primaryLang;
+                selectedHtml += `
+                    <div class="business-tag-editor-empty" style="margin-bottom:12px;text-align:left;">
+                        <div style="font-weight:600;margin-bottom:10px;">${productBusinessTagDraft.mode === 'create' ? '新建标签' : '编辑标签'}</div>
+                        <div style="display:grid;gap:10px;">
+                            ${langs.map(lang => `
+                                <label class="settings-contact-field">
+                                    <span>${escAttr(getLangName(lang))}${lang === primaryLang ? ' *' : ''}</span>
+                                    <input
+                                        type="text"
+                                        class="form-input"
+                                        ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''}
+                                        value="${escAttr(productBusinessTagDraft.names?.[lang] || '')}"
+                                        placeholder="请输入${escAttr(getLangName(lang))}标签名称"
+                                        oninput="updateBusinessTagDraftField('${escAttr(lang)}', this.value)"
+                                    >
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">当前设备主语言必填，其余已启用语言选填。</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+                            <button type="button" class="recipe-control-btn" onclick="submitBusinessTagDraft()" ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''}>保存标签</button>
+                            <button type="button" class="recipe-control-btn" onclick="cancelBusinessTagDraft()" ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''}>取消</button>
+                        </div>
+                    </div>
+                `;
+            } else if (!langContext.ok) {
+                selectedHtml += '<div class="business-tag-editor-empty" style="margin-bottom:12px;text-align:left;">当前设备暂无可用语言，仍可调整已有可见标签顺序，但暂时不能新建或编辑标签。</div>';
+            }
+
             selectedList.innerHTML = selectedTags.length
-                ? `<div class="business-tag-editor-list">
+                ? `${selectedHtml}<div class="business-tag-editor-list">
                     ${selectedTags.map((tag, index) => `
                         <div class="business-tag-editor-item">
                             <div class="business-tag-editor-item-left">
@@ -5019,13 +5380,13 @@
                                 </div>
                             </div>
                             <div class="business-tag-editor-item-actions">
-                                <button type="button" class="recipe-control-btn" aria-label="上移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', -1)">↑</button>
-                                <button type="button" class="recipe-control-btn" aria-label="下移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', 1)">↓</button>
+                                <button type="button" class="recipe-control-btn" aria-label="上移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', -1)" ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''}>↑</button>
+                                <button type="button" class="recipe-control-btn" aria-label="下移业务标签" onclick="moveSelectedBusinessTag('${escAttr(tag.id)}', 1)" ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''}>↓</button>
                             </div>
                         </div>
                     `).join('')}
                 </div>`
-                : '<div class="business-tag-editor-empty">尚未选择业务标签</div>';
+                : `${selectedHtml}<div class="business-tag-editor-empty">尚未选择业务标签</div>`;
 
             optionList.innerHTML = optionTags.length
                 ? `<div class="business-tag-editor-list">
@@ -5034,14 +5395,14 @@
                         return `
                             <label class="business-tag-editor-item" onclick="event.stopPropagation()">
                                 <div class="business-tag-editor-item-left">
-                                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleBusinessTagSelection('${escAttr(tag.id)}', this.checked)">
+                                    <input type="checkbox" ${checked ? 'checked' : ''} ${isProductBusinessTagEditorBlocked() ? 'disabled' : ''} onchange="toggleBusinessTagSelection('${escAttr(tag.id)}', this.checked)">
                                     <div>
                                         <div class="business-tag-editor-item-label">${escAttr(getBusinessTagLabel(tag, currentLang))}</div>
                                         <div class="business-tag-editor-item-meta">${escAttr(tag.id)}</div>
                                     </div>
                                 </div>
                                 <div class="business-tag-editor-item-actions">
-                                    <button type="button" class="recipe-control-btn" onclick="editBusinessTag('${escAttr(tag.id)}')">编辑</button>
+                                    <button type="button" class="recipe-control-btn" onclick="editBusinessTag('${escAttr(tag.id)}')" ${canCreateBusinessTag() ? '' : 'disabled'}>编辑</button>
                                 </div>
                             </label>
                         `;
@@ -5058,12 +5419,20 @@
 
         function closeProductBusinessTagEditor() {
             const modal = document.getElementById('productBusinessTagEditorModal');
+            if (isProductBusinessTagEditorBlocked()) {
+                resetProductBusinessTagDraftState();
+                syncVisibleSelectedBusinessTags(getBusinessTagLibrary());
+                renderProductBusinessTagSummary();
+            }
             if (modal) modal.classList.remove('active');
         }
 
         function toggleBusinessTagSelection(tagId, checked) {
+            if (isProductBusinessTagEditorBlocked()) return;
             const normalizedId = String(tagId || '').trim();
             if (!normalizedId) return;
+            const library = getDraftAwareBusinessTagLibrary();
+            if (!BusinessTags.isTagRenderable(library[normalizedId])) return;
             if (checked) {
                 if (!selectedBusinessTagIds.includes(normalizedId)) {
                     selectedBusinessTagIds = [...selectedBusinessTagIds, normalizedId];
@@ -5076,6 +5445,7 @@
         }
 
         function moveSelectedBusinessTag(tagId, delta) {
+            if (isProductBusinessTagEditorBlocked()) return;
             const normalizedId = String(tagId || '').trim();
             const currentIndex = selectedBusinessTagIds.indexOf(normalizedId);
             if (currentIndex === -1) return;
@@ -5090,47 +5460,99 @@
         }
 
         function createBusinessTag() {
-            const newLabel = String(prompt('请输入业务标签名称') || '').trim();
-            if (!newLabel) return;
-            const normalizedId = `tag_${Date.now()}`;
-            const library = getBusinessTagLibrary();
-            library[normalizedId] = {
-                id: normalizedId,
-                names: {
-                    zh: newLabel,
-                    en: newLabel
-                },
-                status: 'active'
-            };
-            persistBusinessTagLibrary(library);
-            if (!selectedBusinessTagIds.includes(normalizedId)) {
-                selectedBusinessTagIds = [...selectedBusinessTagIds, normalizedId];
-            }
-            renderProductBusinessTagSummary();
-            renderProductBusinessTagEditor();
+            return openBusinessTagDraft('create');
         }
 
         function editBusinessTag(tagId) {
+            return openBusinessTagDraft('edit', tagId);
+        }
+
+        function openBusinessTagDraft(mode, tagId = '') {
+            if (isProductBusinessTagEditorBlocked()) {
+                return { ok: false, status: 'blocked' };
+            }
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                renderProductBusinessTagEditor();
+                showToast(langContext.message, 'error');
+                return { ok: false, status: 'invalid_context' };
+            }
+
+            const normalizedMode = mode === 'edit' ? 'edit' : 'create';
             const normalizedId = String(tagId || '').trim();
-            const library = getBusinessTagLibrary();
-            const tag = library[normalizedId];
-            if (!tag) return;
-            const nextLabel = String(prompt('修改业务标签名称', getBusinessTagLabel(tag, currentLang)) || '').trim();
-            if (!nextLabel) return;
-            library[normalizedId] = {
-                ...tag,
-                names: {
-                    ...(tag.names || {}),
-                    [currentLang]: nextLabel
-                }
+            const library = getDraftAwareBusinessTagLibrary();
+            const existing = normalizedMode === 'edit' ? library[normalizedId] : null;
+            if (normalizedMode === 'edit' && !existing) {
+                return { ok: false, status: 'missing_tag' };
+            }
+
+            productBusinessTagDraft = {
+                mode: normalizedMode,
+                tagId: normalizedMode === 'edit' ? normalizedId : '',
+                names: cloneProductValue(existing?.names || {}),
+                status: 'active'
             };
-            persistBusinessTagLibrary(library);
-            renderProductBusinessTagSummary();
+            renderProductBusinessTagEditor();
+            return { ok: true, status: 'opened' };
+        }
+
+        function cancelBusinessTagDraft() {
+            productBusinessTagDraft = null;
             renderProductBusinessTagEditor();
         }
 
+        function updateBusinessTagDraftField(lang, value) {
+            if (!productBusinessTagDraft || isProductBusinessTagEditorBlocked()) return;
+            productBusinessTagDraft.names[String(lang || '').trim()] = String(value || '');
+        }
+
+        function submitBusinessTagDraft(options = {}) {
+            if (!productBusinessTagDraft) {
+                return { ok: true, status: 'no_draft' };
+            }
+            if (isProductBusinessTagEditorBlocked()) {
+                return { ok: false, status: 'blocked' };
+            }
+
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                if (!options.silent) showToast(langContext.message, 'error');
+                if (options.render !== false) renderProductBusinessTagEditor();
+                return { ok: false, status: 'validation_failed' };
+            }
+
+            const primaryLang = langContext.value.primaryLang;
+            const primaryLabel = String(productBusinessTagDraft.names?.[primaryLang] || '').trim();
+            if (!primaryLabel) {
+                if (!options.silent) showToast(`请填写${getLangName(primaryLang)}名称`, 'error');
+                if (options.render !== false) renderProductBusinessTagEditor();
+                return { ok: false, status: 'validation_failed' };
+            }
+
+            const nextLibrary = getDraftAwareBusinessTagLibrary();
+            const tagId = productBusinessTagDraft.mode === 'create'
+                ? BusinessTags.generateBusinessTagId(primaryLabel, nextLibrary)
+                : productBusinessTagDraft.tagId;
+            productBusinessTagLibraryDraft[tagId] = BusinessTags.upsertBusinessTag(
+                nextLibrary[tagId] || null,
+                tagId,
+                productBusinessTagDraft.names || {},
+                'active'
+            );
+            if (productBusinessTagDraft.mode === 'create' && !selectedBusinessTagIds.includes(tagId)) {
+                selectedBusinessTagIds = [...selectedBusinessTagIds, tagId];
+            }
+            productBusinessTagDraft = null;
+            syncVisibleSelectedBusinessTags(getDraftAwareBusinessTagLibrary());
+            if (options.render !== false) {
+                renderProductBusinessTagSummary();
+                renderProductBusinessTagEditor();
+            }
+            return { ok: true, status: 'draft_saved', tagId };
+        }
+
         function applyProductBusinessTagSelection() {
-            selectedBusinessTagIds = normalizeBusinessTagIds(selectedBusinessTagIds);
+            syncVisibleSelectedBusinessTags(getDraftAwareBusinessTagLibrary());
             renderProductBusinessTagSummary();
             closeProductBusinessTagEditor();
         }
@@ -5587,6 +6009,28 @@
             localStorage.setItem('menuProductEdits', JSON.stringify(edits));
         }
 
+        function persistEditedProduct(product) {
+            persistSingleProductEdit(product);
+        }
+
+        const TagProductSaveCoordinator = {
+            commit({ previousLibrary, nextLibrary, previousProduct, nextProduct }) {
+                try {
+                    persistBusinessTagLibrary(nextLibrary);
+                    persistEditedProduct(nextProduct);
+                    return { ok: true, status: 'committed', retryable: false };
+                } catch (error) {
+                    try {
+                        persistBusinessTagLibrary(previousLibrary);
+                        persistEditedProduct(previousProduct);
+                        return { ok: false, status: 'rolled_back', retryable: true };
+                    } catch (rollbackError) {
+                        return { ok: false, status: 'partial_rollback_failure', retryable: false };
+                    }
+                }
+            }
+        };
+
         function collectKnownProductIds() {
             const ids = new Set();
             if (Number.isFinite(Number(productData?.id))) ids.add(Number(productData.id));
@@ -6023,7 +6467,11 @@
             
             document.getElementById('onSaleSwitch').checked = productData.onSale !== false;
             updateOnSaleLabel();
-            selectedBusinessTagIds = getProductBusinessTagIds(productData);
+            resetProductBusinessTagDraftState();
+            selectedBusinessTagIds = BusinessTags.getRenderableProductTags({
+                ...(productData || {}),
+                businessTagIds: getProductBusinessTagIds(productData)
+            }, getBusinessTagLibrary()).map(tag => tag.id);
             renderProductBusinessTagSummary();
 
             tagConfigs.forEach(meta => {
@@ -6300,99 +6748,88 @@
         }
 
         function saveProduct() {
-            if (!productData) return;
-
-            const langs = getDeviceLangs();
-            const firstLang = langs[0];
-            const selectedCategories = collectSelectedProductCategories();
-
-            if (!selectedCategories.length) {
-                showToast('请至少选择一个所属分类', 'error');
-                return;
+            if (!productData) return false;
+            if (isProductBusinessTagEditorBlocked()) {
+                showToast('业务标签保存状态异常，请关闭标签弹窗后重试', 'error');
+                return false;
             }
 
-            // 验证主语言名称
-            const firstName = document.querySelector('.product-name-' + firstLang).value.trim();
-            if (!firstName) {
-                showToast(`请输入${getLangName(firstLang)}商品名称`, 'error');
-                return;
+            const draft = collectProductDraftForSave({ validate: true });
+            if (!draft) return false;
+
+            const previousLibrary = cloneBusinessTagLibrary(getStoredBusinessTagLibrary());
+            const previousProduct = cloneProductValue(productData);
+            const previousSelectedIds = normalizeBusinessTagIds(selectedBusinessTagIds);
+            const previousDraft = cloneProductValue(productBusinessTagDraft);
+            const previousDraftLibrary = collectProductBusinessTagLibraryDraft();
+            const currentLibrary = getBusinessTagLibrary();
+
+            if (productBusinessTagDraft) {
+                const draftSaveResult = submitBusinessTagDraft({ render: false });
+                if (!draftSaveResult.ok) {
+                    openProductBusinessTagEditor();
+                    return false;
+                }
             }
 
-            const price = parseFloat(document.getElementById('productPrice').value);
-            if (!price || price <= 0) {
-                showToast('请输入有效的价格', 'error');
-                return;
-            }
-
-            const originalPriceRaw = document.getElementById('productOriginalPrice').value.trim();
-            let originalPrice = null;
-            if (originalPriceRaw) {
-                const parsedOriginalPrice = parseFloat(originalPriceRaw);
-                if (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice <= 0) {
-                    showToast('请输入有效的原价', 'error');
-                    return;
-                }
-                if (parsedOriginalPrice <= price) {
-                    showToast('原价需大于商品价格', 'error');
-                    return;
-                }
-                originalPrice = parsedOriginalPrice;
-            }
-
-            // 收集多语言数据
-            const names = {};
-            const descs = {};
-            
-            langs.forEach(lang => {
-                const nameEl = document.querySelector('.product-name-' + lang);
-                const descEl = document.querySelector('.product-desc-' + lang);
-                
-                if (nameEl && nameEl.value.trim()) {
-                    names[lang] = nameEl.value.trim();
-                }
-                if (descEl && descEl.value.trim()) {
-                    descs[lang] = descEl.value.trim();
-                }
+            const nextLibrary = normalizeBusinessTagLibrary({
+                ...currentLibrary,
+                ...collectProductBusinessTagLibraryDraft()
             });
-
-            // 图片
-            const image = document.getElementById('productImage').value.trim();
-
-            // 更新商品数据
+            syncVisibleSelectedBusinessTags(nextLibrary);
+            const existingIds = getProductBusinessTagIds(productData);
+            let nextVisibleIds = BusinessTags.normalizeBusinessTagIds(selectedBusinessTagIds);
+            if (!normalizeBusinessTagIds(productData?.businessTagIds).length && productData?.featured && !nextVisibleIds.length) {
+                nextVisibleIds = BusinessTags.getRenderableProductTags({
+                    ...(productData || {}),
+                    businessTagIds: existingIds
+                }, nextLibrary).map(tag => tag.id);
+            }
+            const mergedBusinessTagIds = BusinessTags.mergeProductTagIds(existingIds, nextVisibleIds, nextLibrary);
             const updatedProduct = {
-                ...productData,
-                names: names,
-                descs: descs,
-                image: image || null,
-                price: price,
-                originalPrice: originalPrice,
-                businessTagIds: selectedBusinessTagIds,
-                onSale: document.getElementById('onSaleSwitch').checked,
-                specs: productData.specs || {},
-                defaultOptions: productData.defaultOptions || {},
-                tagExtraPrices: productData.tagExtraPrices || {},
-                optionRecipes: productData.optionRecipes || {},
-                optionRecipeLinks: productData.optionRecipeLinks || {},
-                options: getSelectedOptions()
+                ...draft.updatedProduct,
+                businessTagIds: mergedBusinessTagIds
             };
 
-            const primaryCategory = productCategoryOptions.find(option => option.key === selectedCategories[0]);
+            const primaryCategory = productCategoryOptions.find(option => option.key === draft.selectedCategories[0]);
+            const commitResult = TagProductSaveCoordinator.commit({
+                previousLibrary,
+                nextLibrary,
+                previousProduct,
+                nextProduct: updatedProduct
+            });
+
+            if (!commitResult.ok) {
+                selectedBusinessTagIds = previousSelectedIds;
+                productBusinessTagDraft = cloneProductValue(previousDraft);
+                productBusinessTagLibraryDraft = cloneBusinessTagLibrary(previousDraftLibrary);
+                if (commitResult.status === 'partial_rollback_failure') {
+                    setProductBusinessTagEditorSaveState('blocked');
+                    renderProductBusinessTagEditor();
+                    showToast('业务标签保存失败且回滚不完整，请关闭标签弹窗后重新进入', 'error');
+                    return false;
+                }
+                renderProductBusinessTagSummary();
+                renderProductBusinessTagEditor();
+                showToast('业务标签保存失败，请重试', 'error');
+                return false;
+            }
+
+            productData = cloneProductValue(updatedProduct);
             if (primaryCategory) {
                 currentCategoryKey = primaryCategory.key;
                 categoryNames = { ...(primaryCategory.names || {}) };
             }
 
-            const edits = JSON.parse(localStorage.getItem('menuProductEdits') || '{}');
-            edits[updatedProduct.id] = updatedProduct;
-            localStorage.setItem('menuProductEdits', JSON.stringify(edits));
-            persistProductCategoryAssignments(updatedProduct.id, selectedCategories);
-
+            persistProductCategoryAssignments(updatedProduct.id, draft.selectedCategories);
+            resetProductBusinessTagDraftState();
+            renderProductBusinessTagSummary();
             showToast('商品配置已保存');
 
-            // 返回菜单页
             setTimeout(() => {
                 goBack();
             }, 800);
+            return true;
         }
 
         function showToast(message, type = 'success') {

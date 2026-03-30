@@ -43,12 +43,15 @@ function createElement(id) {
 }
 
 function createRuntime(storageSeed = {}) {
+  const helperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
+  const helperScript = fs.readFileSync(helperPath, 'utf8');
   const html = fs.readFileSync(path.join(__dirname, '..', 'product-detail.html'), 'utf8');
   const script = `${extractInlineScript(html)}
 this.__test = {
   ensureDeviceLanguageConfig,
   getDeviceLangs,
   getLangName,
+  getBusinessTagLanguageContext,
   setCurrentDevice(value) { currentDevice = value; }
 };`;
 
@@ -100,6 +103,8 @@ this.__test = {
     prompt() { return null; }
   };
 
+  vm.runInNewContext(helperScript, context);
+  context.BusinessTags = context.window.CofeBusinessTags || context.globalThis?.CofeBusinessTags || context.CofeBusinessTags;
   vm.runInNewContext(script, context);
   return context.__test;
 }
@@ -138,4 +143,19 @@ test('商品详情页在没有持久化设备语言配置时应回退默认语�
   assert.deepStrictEqual(Array.from(runtime.getDeviceLangs()), ['zh', 'en']);
   assert.strictEqual(runtime.getLangName('zh'), '中文');
   assert.strictEqual(runtime.getLangName('en'), 'English');
+});
+
+test('商品详情页业务标签编辑在设备无可见语言时应进入阻断态', () => {
+  const runtime = createRuntime({
+    deviceLanguageConfig_RCK111: JSON.stringify({
+      langs: [],
+      hiddenLangs: [],
+      langNames: {}
+    })
+  });
+
+  runtime.setCurrentDevice('RCK111');
+
+  const result = runtime.getBusinessTagLanguageContext();
+  assert.strictEqual(result.ok, false);
 });

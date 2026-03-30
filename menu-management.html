@@ -44,6 +44,15 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        body.embedded-order-preview-mode {
+            background: transparent;
+            overflow: hidden;
+        }
+
+        body.embedded-order-preview-mode .layout {
+            display: none;
+        }
+
         .layout {
             display: flex;
             min-height: 100vh;
@@ -1245,6 +1254,217 @@
             background: var(--primary-light);
         }
 
+        .settings-card-business-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .settings-inline-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .settings-inline-stat {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #fcfefe 0%, #f6fbfb 100%);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .settings-inline-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .settings-inline-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-drawer {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: stretch;
+            justify-content: flex-end;
+            z-index: 1200;
+        }
+
+        .business-tag-manager-drawer.active {
+            display: flex;
+        }
+
+        .business-tag-manager-backdrop {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.32);
+        }
+
+        .business-tag-manager-panel {
+            width: min(480px, 100%);
+            background: #fff;
+            box-shadow: -18px 0 48px rgba(15, 23, 42, 0.16);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .business-tag-manager-head {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .business-tag-manager-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .business-tag-manager-close {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-secondary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .business-tag-manager-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .business-tag-manager-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .business-tag-manager-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .business-tag-manager-item {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .business-tag-manager-item-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .business-tag-manager-item-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .business-tag-manager-item-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .business-tag-manager-empty,
+        .business-tag-manager-warning {
+            border: 1px dashed rgba(14, 35, 52, 0.14);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: #f8fafc;
+        }
+
+        .business-tag-manager-warning {
+            border-color: rgba(194, 65, 12, 0.24);
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .business-tag-manager-form {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .business-tag-manager-form-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-form-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .business-tag-manager-form-note {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .settings-select {
             min-height: 34px;
         }
@@ -2397,6 +2617,16 @@
             margin-bottom: 8px;
         }
 
+        .product-business-tag-list-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+            justify-content: flex-end;
+            max-width: calc(100% - 24px);
+            margin-bottom: 0;
+        }
+
         .product-business-tag,
         .product-business-tag-more {
             display: inline-flex;
@@ -3306,6 +3536,45 @@
 
         .order-preview-modal {
             max-width: 1080px;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal {
+            padding: 0;
+            background: transparent;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal {
+            width: 100%;
+            max-width: none;
+            max-height: none;
+            height: 100vh;
+            border-radius: 0;
+            box-shadow: none;
+            animation: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-header {
+            padding: 18px 20px 0;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-close {
+            display: none;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .modal-body {
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+            padding: 18px 20px 20px;
+        }
+
+        body.embedded-order-preview-mode #orderPreviewModal .order-preview-layout {
+            height: 100%;
+            min-height: 0;
         }
 
         .order-preview-modal .modal-header {
@@ -4596,9 +4865,17 @@
                 width: 100%;
             }
 
+            .settings-inline-stats {
+                grid-template-columns: 1fr;
+            }
+
             .settings-footer {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .business-tag-manager-panel {
+                width: 100%;
             }
 
             .header-lang-panel {
@@ -5181,6 +5458,16 @@
                                 </div>
                                 <div class="settings-contact-status" id="orderContactStatusText">当前设备暂未配置联系信息</div>
                             </section>
+                            <section class="settings-card settings-card-business-tags">
+                                <div class="settings-card-head">
+                                    <div class="settings-card-copy">
+                                        <h3 class="settings-title">业务标签管理</h3>
+                                        <p class="settings-desc">统一维护商品标签的多语言名称与显示状态</p>
+                                    </div>
+                                    <button class="add-lang-mini-btn add-lang-inline-btn settings-card-action" type="button" onclick="openBusinessTagManagerDrawer()">管理标签</button>
+                                </div>
+                                <div class="settings-inline-stats" id="businessTagSettingsSummary"></div>
+                            </section>
                             <section class="settings-card">
                                 <h3 class="settings-title">售价币种</h3>
                                 <p class="settings-desc">全局生效，统一菜单商品显示币种</p>
@@ -5200,6 +5487,20 @@
                                 <button type="button" class="btn btn-primary" onclick="saveMenuBasicSettings()">保存基础设置</button>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="business-tag-manager-drawer" id="businessTagManagerDrawer">
+                        <div class="business-tag-manager-backdrop" onclick="closeBusinessTagManagerDrawer()"></div>
+                        <section class="business-tag-manager-panel" aria-modal="true" role="dialog" aria-labelledby="businessTagManagerTitle">
+                            <div class="business-tag-manager-head">
+                                <div>
+                                    <div class="business-tag-manager-title" id="businessTagManagerTitle">业务标签管理</div>
+                                    <div class="business-tag-manager-desc">标签改动会在点击“保存基础设置”后统一生效。</div>
+                                </div>
+                                <button type="button" class="business-tag-manager-close" onclick="closeBusinessTagManagerDrawer()">×</button>
+                            </div>
+                            <div class="business-tag-manager-body" id="businessTagManagerBody"></div>
+                        </section>
                     </div>
 
                     <div id="menuManagePanel" class="menu-inner-panel active">
@@ -5677,6 +5978,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/business-tag-library.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -6242,6 +6544,7 @@
 
         // ==================== 商品数据（多语言结构） ====================
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
+        const BusinessTags = window.CofeBusinessTags || globalThis.CofeBusinessTags;
         const cloneSharedMenuProducts = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
             ? sharedAdminMockData.helpers.clone
             : function(value) { return JSON.parse(JSON.stringify(value)); };
@@ -6286,8 +6589,11 @@
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
         let currentMenuInnerTab = 'manage';
+        let businessTagManagerDraft = null;
         let previewActiveCategory = '';
         let orderPreviewLang = '';
+        let orderPreviewDraftPayload = null;
+        let orderPreviewDraftListenerBound = false;
         let orderPreviewDetailState = {
             open: false,
             categoryKey: '',
@@ -6298,29 +6604,19 @@
         };
 
         function normalizeBusinessTagIds(tagIds) {
-            return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
-                .map(tagId => String(tagId || '').trim())
-                .filter(Boolean)));
+            return BusinessTags.normalizeBusinessTagIds(tagIds);
         }
 
         function normalizeBusinessTagEntry(tagId, tag) {
-            const normalizedId = String(tagId || tag?.id || '').trim();
-            if (!normalizedId) return null;
-            return {
-                id: normalizedId,
-                names: tag && typeof tag.names === 'object' ? cloneSharedMenuProducts(tag.names) : {},
-                status: tag?.status === 'disabled' ? 'disabled' : 'active'
-            };
+            return BusinessTags.normalizeBusinessTagEntry(tagId, tag);
         }
 
         function normalizeBusinessTagLibrary(library) {
-            return Object.entries(library && typeof library === 'object' ? library : {}).reduce((acc, [tagId, tag]) => {
-                const normalized = normalizeBusinessTagEntry(tagId, tag);
-                if (normalized) {
-                    acc[normalized.id] = normalized;
-                }
-                return acc;
-            }, {});
+            return BusinessTags.normalizeBusinessTagLibrary(library);
+        }
+
+        function cloneBusinessTagLibrary(library) {
+            return cloneSharedMenuProducts(normalizeBusinessTagLibrary(library));
         }
 
         function getStoredBusinessTagLibrary() {
@@ -6332,11 +6628,25 @@
             }
         }
 
+        function writeBusinessTagLibraryToStorage(library) {
+            const normalized = normalizeBusinessTagLibrary(library);
+            localStorage.setItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
+        }
+
+        function persistBusinessTagLibrary(library) {
+            const normalized = writeBusinessTagLibraryToStorage(library);
+            if (businessTagManagerDraft) {
+                businessTagManagerDraft.library = cloneBusinessTagLibrary(normalized);
+            }
+            return normalized;
+        }
+
         function getBusinessTagLibrary() {
-            return {
-                ...normalizeBusinessTagLibrary(sharedAdminMockData.defaultBusinessTags || {}),
-                ...normalizeBusinessTagLibrary(getStoredBusinessTagLibrary())
-            };
+            return normalizeBusinessTagLibrary({
+                ...sharedAdminMockData.defaultBusinessTags,
+                ...getStoredBusinessTagLibrary()
+            });
         }
 
         function getProductBusinessTagIds(product) {
@@ -6346,15 +6656,271 @@
         }
 
         function getActiveProductBusinessTags(product) {
-            const library = getBusinessTagLibrary();
-            return getProductBusinessTagIds(product)
-                .map(tagId => library[tagId])
-                .filter(tag => tag && tag.status !== 'disabled');
+            return BusinessTags.getRenderableProductTags({
+                ...(product || {}),
+                businessTagIds: getProductBusinessTagIds(product)
+            }, getBusinessTagLibrary());
         }
 
         function getBusinessTagLabel(tag, lang) {
-            if (!tag) return '';
-            return tag.names?.[lang] || tag.names?.zh || tag.names?.en || tag.id || '';
+            return BusinessTags.resolveTagLabel(tag, lang);
+        }
+
+        function getBusinessTagLanguageContext(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            const rawDevice = normalizedDeviceId
+                ? (deviceConfig[normalizedDeviceId] || readStoredDeviceLanguageConfig(normalizedDeviceId) || { langs: [], hiddenLangs: [] })
+                : { langs: [], hiddenLangs: [] };
+            return BusinessTags.validateDeviceTagLanguageContext(rawDevice);
+        }
+
+        function ensureBusinessTagManagerDraft() {
+            if (!businessTagManagerDraft || !businessTagManagerDraft.library) {
+                businessTagManagerDraft = {
+                    library: cloneBusinessTagLibrary(getBusinessTagLibrary()),
+                    form: null
+                };
+            }
+            return businessTagManagerDraft;
+        }
+
+        function collectBusinessTagLibraryDraft() {
+            return cloneBusinessTagLibrary((businessTagManagerDraft && businessTagManagerDraft.library) || getBusinessTagLibrary());
+        }
+
+        function getBusinessTagSettingsStats(library = collectBusinessTagLibraryDraft()) {
+            const tags = Object.values(normalizeBusinessTagLibrary(library));
+            return {
+                active: tags.filter(tag => BusinessTags.isTagRenderable(tag)).length,
+                hidden: tags.filter(tag => tag.status === 'hidden').length
+            };
+        }
+
+        function renderBusinessTagSettingsSummary() {
+            const summary = document.getElementById('businessTagSettingsSummary');
+            if (!summary) return;
+            const stats = getBusinessTagSettingsStats();
+            summary.innerHTML = `
+                <div class="settings-inline-stat">
+                    <span class="settings-inline-stat-label">启用中</span>
+                    <span class="settings-inline-stat-value">${stats.active}</span>
+                </div>
+                <div class="settings-inline-stat">
+                    <span class="settings-inline-stat-label">已隐藏</span>
+                    <span class="settings-inline-stat-value">${stats.hidden}</span>
+                </div>
+            `;
+        }
+
+        function startCreateBusinessTagDraft() {
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return;
+            }
+            ensureBusinessTagManagerDraft().form = {
+                mode: 'create',
+                tagId: '',
+                names: {},
+                status: 'active'
+            };
+            renderBusinessTagManagerDrawer();
+        }
+
+        function startEditBusinessTagDraft(tagId) {
+            const normalizedId = String(tagId || '').trim();
+            const langContext = getBusinessTagLanguageContext();
+            if (!normalizedId || !langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return;
+            }
+            const library = collectBusinessTagLibraryDraft();
+            const tag = library[normalizedId];
+            if (!tag) return;
+            ensureBusinessTagManagerDraft().form = {
+                mode: 'edit',
+                tagId: normalizedId,
+                names: cloneSharedMenuProducts(tag.names || {}),
+                status: tag.status === 'hidden' ? 'hidden' : 'active'
+            };
+            renderBusinessTagManagerDrawer();
+        }
+
+        function cancelBusinessTagDraft() {
+            if (!businessTagManagerDraft) return;
+            businessTagManagerDraft.form = null;
+            renderBusinessTagManagerDrawer();
+        }
+
+        function updateBusinessTagDraftField(lang, value) {
+            if (!businessTagManagerDraft || !businessTagManagerDraft.form) return;
+            businessTagManagerDraft.form.names[String(lang || '').trim()] = String(value || '');
+        }
+
+        function submitBusinessTagDraft() {
+            const draft = ensureBusinessTagManagerDraft();
+            if (!draft.form) return false;
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return false;
+            }
+
+            const primaryLang = langContext.value.primaryLang;
+            const primaryLabel = String(draft.form.names?.[primaryLang] || '').trim();
+            if (!primaryLabel) {
+                showToast(`请填写${getLangName(primaryLang)}名称`, 'error');
+                return false;
+            }
+
+            const nextLibrary = collectBusinessTagLibraryDraft();
+            const tagId = draft.form.mode === 'create'
+                ? BusinessTags.generateBusinessTagId(primaryLabel, nextLibrary)
+                : draft.form.tagId;
+            nextLibrary[tagId] = BusinessTags.upsertBusinessTag(
+                nextLibrary[tagId] || null,
+                tagId,
+                draft.form.names || {},
+                draft.form.status || 'active'
+            );
+
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+            return true;
+        }
+
+        function setBusinessTagDraftStatus(tagId, status) {
+            const normalizedId = String(tagId || '').trim();
+            if (!normalizedId) return;
+            const nextLibrary = collectBusinessTagLibraryDraft();
+            const tag = nextLibrary[normalizedId];
+            if (!tag) return;
+            nextLibrary[normalizedId] = BusinessTags.upsertBusinessTag(tag, normalizedId, {}, status);
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+        }
+
+        function hideBusinessTagFromSettings(tagId) {
+            setBusinessTagDraftStatus(tagId, 'hidden');
+        }
+
+        function restoreBusinessTagFromSettings(tagId) {
+            setBusinessTagDraftStatus(tagId, 'active');
+        }
+
+        function renderBusinessTagManagerDrawer() {
+            const drawer = document.getElementById('businessTagManagerDrawer');
+            const body = document.getElementById('businessTagManagerBody');
+            if (!drawer || !body) return;
+
+            const draft = ensureBusinessTagManagerDraft();
+            const library = collectBusinessTagLibraryDraft();
+            const langContext = getBusinessTagLanguageContext();
+            const activeTags = Object.values(library)
+                .filter(tag => BusinessTags.isTagRenderable(tag))
+                .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
+            const hiddenTags = Object.values(library)
+                .filter(tag => tag.status === 'hidden')
+                .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
+
+            drawer.dataset.configState = langContext.ok ? 'valid' : 'invalid';
+            let formHtml = '';
+            if (draft.form && langContext.ok) {
+                const langs = langContext.value.langs;
+                const primaryLang = langContext.value.primaryLang;
+                formHtml = `
+                    <section class="business-tag-manager-form">
+                        <div class="business-tag-manager-form-head">
+                            <div class="business-tag-manager-form-title">${draft.form.mode === 'create' ? '新建标签' : '编辑标签'}</div>
+                            <button type="button" class="btn btn-default" onclick="cancelBusinessTagDraft()">取消</button>
+                        </div>
+                        <div class="business-tag-manager-form-grid">
+                            ${langs.map(lang => `
+                                <label class="settings-contact-field">
+                                    <span>${escapePreviewText(getLangName(lang))}${lang === primaryLang ? ' *' : ''}</span>
+                                    <input
+                                        type="text"
+                                        class="form-input"
+                                        value="${escapePreviewText(draft.form.names?.[lang] || '')}"
+                                        placeholder="请输入${escapePreviewText(getLangName(lang))}标签名称"
+                                        oninput="updateBusinessTagDraftField('${escapePreviewText(lang)}', this.value)"
+                                    >
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div class="business-tag-manager-form-note">当前设备主语言必填，其余已启用语言选填。</div>
+                        <button type="button" class="btn btn-primary" onclick="submitBusinessTagDraft()">保存草稿</button>
+                    </section>
+                `;
+            }
+
+            const renderTagItem = (tag, mode) => `
+                <div class="business-tag-manager-item">
+                    <div class="business-tag-manager-item-copy">
+                        <div class="business-tag-manager-item-title">${escapePreviewText(getBusinessTagLabel(tag, currentLang))}</div>
+                        <div class="business-tag-manager-item-meta">${escapePreviewText(tag.id)}</div>
+                    </div>
+                    <div class="business-tag-manager-item-actions">
+                        ${mode === 'active'
+                            ? `
+                                <button type="button" class="btn btn-default" ${langContext.ok ? `onclick="startEditBusinessTagDraft('${escapePreviewText(tag.id)}')"` : 'disabled'}>编辑</button>
+                                <button type="button" class="btn btn-default" onclick="hideBusinessTagFromSettings('${escapePreviewText(tag.id)}')">隐藏</button>
+                            `
+                            : `<button type="button" class="btn btn-default" onclick="restoreBusinessTagFromSettings('${escapePreviewText(tag.id)}')">恢复</button>`
+                        }
+                    </div>
+                </div>
+            `;
+
+            body.innerHTML = `
+                ${!langContext.ok ? '<div class="business-tag-manager-warning">当前设备暂无可用语言，请先在“设备语言”中启用至少一种语言后再编辑标签。</div>' : ''}
+                ${formHtml}
+                <section class="business-tag-manager-section">
+                    <div class="business-tag-manager-section-head">
+                        <div class="business-tag-manager-section-title">启用标签</div>
+                        <button type="button" class="btn btn-default" onclick="startCreateBusinessTagDraft()" ${langContext.ok ? '' : 'disabled'}>新建标签</button>
+                    </div>
+                    <div class="business-tag-manager-list">
+                        ${activeTags.length
+                            ? activeTags.map(tag => renderTagItem(tag, 'active')).join('')
+                            : '<div class="business-tag-manager-empty">暂无启用中的业务标签</div>'}
+                    </div>
+                </section>
+                <section class="business-tag-manager-section">
+                    <div class="business-tag-manager-section-head">
+                        <div class="business-tag-manager-section-title">已隐藏标签</div>
+                    </div>
+                    <div class="business-tag-manager-list">
+                        ${hiddenTags.length
+                            ? hiddenTags.map(tag => renderTagItem(tag, 'hidden')).join('')
+                            : '<div class="business-tag-manager-empty">暂无隐藏标签</div>'}
+                    </div>
+                </section>
+            `;
+        }
+
+        function openBusinessTagManagerDrawer(options = {}) {
+            if (!options.preserveDraft || !businessTagManagerDraft) {
+                businessTagManagerDraft = {
+                    library: cloneBusinessTagLibrary(getBusinessTagLibrary()),
+                    form: null
+                };
+            }
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+            document.getElementById('businessTagManagerDrawer')?.classList.add('active');
+        }
+
+        function closeBusinessTagManagerDrawer() {
+            document.getElementById('businessTagManagerDrawer')?.classList.remove('active');
         }
 
         function renderBusinessTagList(product, lang, options = {}) {
@@ -6410,6 +6976,8 @@
         let menuSharedMobileSortTouchDragState = null;
         let menuSharedMobileSortTouchListenersBound = false;
         let pendingMenuManagementRestoreScrollY = null;
+        let shouldAutoOpenOrderPreviewFromUrl = false;
+        let isEmbeddedOrderPreviewMode = false;
         const BATCH_FIXED_PRICE_MOCK_FAILURE_MESSAGE = '模拟失败，请再次提交';
         const PLATFORM_LANG_STORAGE_KEY = 'platformLang';
         const MENU_BASIC_SETTINGS_KEY = 'menuBasicSettings';
@@ -6610,6 +7178,8 @@
             applySavedProductCategoryAssignments();
             applySavedProductEdits();
             applyInitialViewFromUrl();
+            applyEmbeddedOrderPreviewMode();
+            bindOrderPreviewDraftListener();
             applyQueuedCopiedProductsForDevice(currentDevice);
             applyMenuManagementReturnState();
             initDeviceSearch();
@@ -6626,6 +7196,7 @@
             initIconPicker();
             setViewByTab(currentTab);
             switchMenuInnerTab(currentMenuInnerTab);
+            consumeOrderPreviewUrlIntent();
             restoreMenuManagementScrollPosition();
             consumePendingCopyResults();
         }
@@ -6665,12 +7236,27 @@
             }
         }
 
+        function consumeOrderPreviewUrlIntent() {
+            if (!shouldAutoOpenOrderPreviewFromUrl) return;
+            shouldAutoOpenOrderPreviewFromUrl = false;
+            openOrderPreviewModal();
+        }
+
+        function applyEmbeddedOrderPreviewMode() {
+            if (!document || !document.body || !document.body.classList) return;
+            document.body.classList.toggle('embedded-order-preview-mode', isEmbeddedOrderPreviewMode);
+        }
+
         function applyInitialViewFromUrl() {
+            shouldAutoOpenOrderPreviewFromUrl = false;
+            isEmbeddedOrderPreviewMode = false;
             try {
                 const params = new URLSearchParams(window.location.search || '');
                 const tab = params.get('tab');
                 const innerTab = params.get('innerTab');
                 const device = params.get('device');
+                shouldAutoOpenOrderPreviewFromUrl = params.get('openOrderPreview') === '1';
+                isEmbeddedOrderPreviewMode = params.get('embedOrderPreview') === '1';
 
                 if (tab === 'overview' || tab === 'menu') {
                     currentTab = tab;
@@ -6798,14 +7384,23 @@
             updateProductPricingRuleHint();
         }
 
+        function cloneMenuBasicSettings(settings) {
+            return {
+                currency: normalizeProductCurrency({ currency: settings?.currency || menuBasicSettings.currency })
+            };
+        }
+
+        function writeMenuBasicSettingsToStorage(settings) {
+            const normalized = cloneMenuBasicSettings(settings);
+            localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify(normalized));
+            return normalized;
+        }
+
         function persistMenuBasicSettings() {
-            try {
-                localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify({
-                    currency: menuBasicSettings.currency
-                }));
-            } catch (e) {
-                // ignore localStorage errors
-            }
+            const normalized = cloneMenuBasicSettings(menuBasicSettings);
+            menuBasicSettings = normalized;
+            writeMenuBasicSettingsToStorage(normalized);
+            return normalized;
         }
 
         function applyGlobalPricingSettingsToProducts() {
@@ -6829,6 +7424,8 @@
             orderContactEmailInput.value = orderContact.email;
             updatePricingSummary();
             updateOrderContactCardState();
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
         }
 
         function updatePricingSummary() {
@@ -6858,11 +7455,44 @@
                 return false;
             }
 
-            menuBasicSettings.currency = currency;
+            const businessTagLanguageContext = getBusinessTagLanguageContext();
+            if (!businessTagLanguageContext.ok) {
+                openBusinessTagManagerDrawer({ preserveDraft: true });
+                showToast(businessTagLanguageContext.message, 'error');
+                return false;
+            }
 
-            applyGlobalPricingSettingsToProducts();
-            persistMenuBasicSettings();
-            persistDeviceOrderContactConfig(currentDevice, orderContactValidation.value);
+            const previousSettings = cloneMenuBasicSettings(menuBasicSettings);
+            const previousProducts = cloneSharedMenuProducts(productsData);
+            const previousOrderContact = normalizeDeviceOrderContactConfig(ensureDeviceOrderContactConfig(currentDevice));
+            const previousStoredLibrary = cloneBusinessTagLibrary(getStoredBusinessTagLibrary());
+            const nextLibrary = collectBusinessTagLibraryDraft();
+
+            try {
+                menuBasicSettings.currency = currency;
+                applyGlobalPricingSettingsToProducts();
+                persistMenuBasicSettings();
+                persistDeviceOrderContactConfig(currentDevice, orderContactValidation.value);
+                persistBusinessTagLibrary(nextLibrary);
+            } catch (error) {
+                menuBasicSettings = cloneMenuBasicSettings(previousSettings);
+                productsData = cloneSharedMenuProducts(previousProducts);
+                writeMenuBasicSettingsToStorage(previousSettings);
+                persistDeviceOrderContactConfig(currentDevice, previousOrderContact);
+                writeBusinessTagLibraryToStorage(previousStoredLibrary);
+                openBusinessTagManagerDrawer({ preserveDraft: true });
+                renderMenuBasicSettingsForm();
+                updateProductPricingRuleHint();
+                renderMenu();
+                refreshOrderPreviewIfOpen();
+                showToast('业务标签保存失败，请重试', 'error');
+                return false;
+            }
+
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
             renderMenuBasicSettingsForm();
             updatePricingSummary();
             updateProductPricingRuleHint();
@@ -8112,12 +8742,88 @@
         }
 
         function getProductDescription(product, lang) {
+            if (product && product.__useDraftBasicInfo) {
+                const draftDesc = product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
+                if (draftDesc) return draftDesc;
+            }
             const spec = product.specs && product.specs[lang];
             if (spec) {
                 const parts = [spec.beans, spec.temperature, spec.strength, spec.note].filter(Boolean);
                 if (parts.length > 0) return parts.join('、');
             }
             return product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
+        }
+
+        function normalizeOrderPreviewDraftPayload(payload) {
+            const normalized = payload && typeof payload === 'object' ? payload : {};
+            return {
+                productId: Number.isFinite(Number(normalized.productId)) ? Number(normalized.productId) : null,
+                names: normalized.names && typeof normalized.names === 'object' ? cloneSharedMenuProducts(normalized.names) : {},
+                descs: normalized.descs && typeof normalized.descs === 'object' ? cloneSharedMenuProducts(normalized.descs) : {},
+                image: Object.prototype.hasOwnProperty.call(normalized, 'image')
+                    ? String(normalized.image || '').trim()
+                    : undefined,
+                price: Number.isFinite(Number(normalized.price)) ? Number(normalized.price) : undefined,
+                originalPrice: normalized.originalPrice === null
+                    ? null
+                    : (Number.isFinite(Number(normalized.originalPrice)) ? Number(normalized.originalPrice) : undefined),
+                onSale: typeof normalized.onSale === 'boolean' ? normalized.onSale : undefined
+            };
+        }
+
+        function applyOrderPreviewDraftPayload(payload) {
+            orderPreviewDraftPayload = normalizeOrderPreviewDraftPayload(payload);
+            refreshOrderPreviewIfOpen();
+        }
+
+        function bindOrderPreviewDraftListener() {
+            if (orderPreviewDraftListenerBound || !window || typeof window.addEventListener !== 'function') return;
+            window.addEventListener('message', function(event) {
+                const message = event && event.data;
+                if (!message || message.type !== 'orderPreviewDraftPayload') return;
+                if (event.origin && window.location && window.location.origin && event.origin !== window.location.origin) {
+                    return;
+                }
+                applyOrderPreviewDraftPayload(message.payload);
+            });
+            orderPreviewDraftListenerBound = true;
+        }
+
+        function getOrderPreviewDisplayProduct(product) {
+            const targetId = Number(product?.id);
+            if (!orderPreviewDraftPayload || !Number.isFinite(targetId) || targetId !== orderPreviewDraftPayload.productId) {
+                return product;
+            }
+
+            const merged = {
+                ...product,
+                names: {
+                    ...(product?.names || {}),
+                    ...(orderPreviewDraftPayload.names || {})
+                },
+                descs: {
+                    ...(product?.descs || {}),
+                    ...(orderPreviewDraftPayload.descs || {})
+                },
+                __useDraftBasicInfo: true
+            };
+
+            if (Object.prototype.hasOwnProperty.call(orderPreviewDraftPayload, 'image')) {
+                merged.image = orderPreviewDraftPayload.image || null;
+            }
+            if (Number.isFinite(orderPreviewDraftPayload.price)) {
+                merged.price = orderPreviewDraftPayload.price;
+            }
+            if (orderPreviewDraftPayload.originalPrice === null) {
+                merged.originalPrice = null;
+            } else if (Number.isFinite(orderPreviewDraftPayload.originalPrice)) {
+                merged.originalPrice = orderPreviewDraftPayload.originalPrice;
+            }
+            if (typeof orderPreviewDraftPayload.onSale === 'boolean') {
+                merged.onSale = orderPreviewDraftPayload.onSale;
+            }
+
+            return merged;
         }
 
         function normalizeProductCurrency(product) {
@@ -8857,7 +9563,11 @@
         function getOrderPreviewCategoryEntries() {
             const previewLang = getOrderPreviewLang();
             return getMenuManagedCatalogSnapshot().map(({ key: categoryKey, category: categoryData }) => {
-                const items = Array.isArray(categoryData.items) ? categoryData.items.filter(isProductOnSale) : [];
+                const items = Array.isArray(categoryData.items)
+                    ? categoryData.items
+                        .map(getOrderPreviewDisplayProduct)
+                        .filter(isProductOnSale)
+                    : [];
                 return {
                     key: categoryKey,
                     name: getCategoryNameByLang(categoryKey, previewLang),
@@ -10566,6 +11276,13 @@
             const saleActionLabel = isOnSale ? '下架' : '上架';
             const saleStatusLabel = isOnSale ? '在售' : '已下架';
             const saleActionClass = isOnSale ? 'product-action-btn-sale-off' : 'product-action-btn-sale-on';
+            const businessTagHtml = renderBusinessTagList(product, currentLang, {
+                max: 2,
+                listClass: 'product-business-tag-list product-business-tag-list-overlay',
+                tagClass: 'product-business-tag',
+                overflowMode: 'count',
+                overflowClass: 'product-business-tag-more'
+            });
 
             return `
                 <div class="product-card product-row">
@@ -10577,18 +11294,12 @@
                                 <span>暂无图片</span>
                             </div>`
                         }
+                        ${businessTagHtml}
                     </div>
                     <div class="product-content">
                         <div class="product-card-header">
                             <div class="product-name">${escapePreviewText(productName)}</div>
                         </div>
-                        ${renderBusinessTagList(product, currentLang, {
-                            max: 2,
-                            listClass: 'product-business-tag-list',
-                            tagClass: 'product-business-tag',
-                            overflowMode: 'count',
-                            overflowClass: 'product-business-tag-more'
-                        })}
                         <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
                         <div class="product-footer">
                             <div class="product-meta">

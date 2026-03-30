@@ -65,14 +65,43 @@ test('saveProduct 不应读取或覆盖单商品币种字段', () => {
 });
 
 test('saveProduct 应持久化 originalPrice 字段', () => {
-  assert.ok(/originalPrice:\s*originalPrice/.test(html));
+  assert.ok(/originalPrice\s*,/.test(html) || /originalPrice:\s*originalPrice/.test(html));
 });
 
 test('saveProduct 应持久化有序 businessTagIds，而不是布尔推荐开关', () => {
   assert.ok(/let\s+selectedBusinessTagIds\s*=\s*\[\]/.test(html));
   assert.ok(/function\s+moveSelectedBusinessTag\s*\(/.test(html));
-  assert.ok(/businessTagIds:\s*selectedBusinessTagIds/.test(html));
+  assert.ok(/mergeProductTagIds\(/.test(html));
+  assert.ok(/businessTagIds:\s*mergedBusinessTagIds/.test(html));
   assert.ok(!/featured:\s*document\.getElementById\('featuredSwitch'\)\.checked/.test(html));
+});
+
+test('商品详情页应加载共享业务标签 helper，并移除 prompt 式单语标签编辑', () => {
+  assert.ok(html.includes('shared/business-tag-library.js'));
+  assert.ok(/const\s+BusinessTags\s*=\s*window\.CofeBusinessTags/.test(html));
+  assert.ok(!/prompt\('请输入业务标签名称'\)/.test(html));
+  assert.ok(!/prompt\('修改业务标签名称'/.test(html));
+  assert.ok(/const\s+TagProductSaveCoordinator\s*=\s*\{/.test(html));
+});
+
+test('商品详情页应提供点单屏预览按钮与内嵌预览弹层', () => {
+  assert.ok(html.includes('id="headerPreviewBtn"'));
+  assert.ok(html.includes('预览点单屏'));
+  assert.ok(html.includes('id="embeddedOrderPreviewOverlay"'));
+  assert.ok(html.includes('id="embeddedOrderPreviewFrame"'));
+  assert.ok(/function\s+saveProductAndOpenOrderPreview\s*\(/.test(html));
+  assert.ok(/function\s+openEmbeddedOrderPreviewModal\s*\(/.test(html));
+  assert.ok(/function\s+closeEmbeddedOrderPreviewModal\s*\(/.test(html));
+});
+
+test('商品详情页预览点单屏应带当前设备和 openOrderPreview 参数', () => {
+  assert.ok(/params\.set\('openOrderPreview',\s*'1'\)/.test(html));
+  assert.ok(/params\.set\('device',\s*currentDevice\)/.test(html));
+  assert.ok(/embedOrderPreview/.test(html));
+});
+
+test('saveProduct 应兼容首次保存 legacy featured 商品时物化 tag_signature', () => {
+  assert.ok(/const\s+existingIds\s*=\s*getProductBusinessTagIds\(productData\)/.test(html));
 });
 
 test('saveProduct 应持久化商品所属分类，并要求至少选择一个分类', () => {

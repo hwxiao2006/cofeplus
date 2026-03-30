@@ -64,3 +64,23 @@ test('共享 mock 商品应预设原默认选中项', () => {
     });
   });
 });
+
+test('共享 mock 业务标签应保持 disabled 兼容输入并可被 helper 规范化为 hidden', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const helperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const helperJs = fs.readFileSync(helperPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+  vm.runInContext(helperJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  const api = context.window.CofeBusinessTags || context.globalThis.CofeBusinessTags;
+
+  assert.strictEqual(data.defaultBusinessTags.tag_hidden.status, 'disabled');
+  assert.strictEqual(
+    api.normalizeBusinessTagEntry('tag_hidden', data.defaultBusinessTags.tag_hidden).status,
+    'hidden'
+  );
+});
