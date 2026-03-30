@@ -206,13 +206,14 @@ Rules:
 - the product page can reorder IDs
 - saving a new inline-created tag both:
   - adds a record to the global tag library
-  - appends or selects the tag for the current product
+  - automatically appends the new active tag ID to the end of the current product's visible active tag list
 - if a product already contains hidden tag IDs, normal product saves must preserve those hidden IDs
 
 Hidden-ID merge contract:
 
 - visible active IDs are the only IDs shown in normal product tag editing
 - hidden IDs remain stored but invisible
+- unknown existing stored IDs remain preserved after hidden IDs, in their previous relative order
 - edited visible IDs are normalized to unique known active IDs only
 - duplicate edited IDs are collapsed to first occurrence
 - unknown edited IDs are discarded
@@ -221,6 +222,7 @@ Hidden-ID merge contract:
 - when the operator reorders visible active IDs, the stored result is:
   - reordered active IDs first, in the user-selected order
   - preserved hidden IDs appended after the active IDs, in their previous relative order
+  - preserved unknown existing IDs appended after hidden IDs, in their previous relative order
 
 Example:
 
@@ -309,8 +311,10 @@ Required shared responsibilities:
   - resolves ordered active tags for any render surface
 - `mergeProductTagIds(existingIds, editedVisibleIds, library)`
   - preserves hidden IDs correctly during product save
-- `upsertBusinessTag(library, draftTag)`
+- `upsertBusinessTag(existingTag, visibleLangPatch, status)`
   - creates or updates canonical tag records
+- `TagProductSaveCoordinator.commit(...)`
+  - coordinates atomic-or-rollback persistence for inline tag create plus product binding save
 
 Pseudo-signatures:
 
@@ -320,6 +324,7 @@ isTagRenderable(tag: TagRecord): boolean
 getRenderableProductTags(product: ProductRecord, library: TagLibrary, displayLang: string): TagRecord[]
 mergeProductTagIds(existingIds: string[], editedVisibleIds: string[], library: TagLibrary): string[]
 upsertBusinessTag(existing: TagRecord | null, visibleLangPatch: Record<string, string>, status: 'active' | 'hidden'): TagRecord
+commitTagAndProductSave(previousLibrary: TagLibrary, nextLibrary: TagLibrary, previousProduct: ProductRecord, nextProduct: ProductRecord): SaveResult
 ```
 
 `upsertBusinessTag` merge rules:
@@ -393,6 +398,7 @@ Failure behavior:
 - if tag validation fails, do not update the product binding
 - writes must use an atomic-or-rollback contract:
   - stage both previous snapshots in memory first
+  - route persistence through one save coordinator interface
   - attempt to persist tag library and product binding as one logical transaction
   - if either write fails, restore both in-memory snapshots and persisted snapshots before surfacing the error
 - if the combined product save fails, do not expose a tag-library-only success state in the visible UI
@@ -465,6 +471,7 @@ At minimum:
 - compatibility fallback from `featured` to `tag_signature`
 - product tag order persistence
 - hidden-ID merge behavior during visible-tag reorder
+- unknown existing tag ID preservation during product save
 
 ### Flow Coverage
 
@@ -473,6 +480,7 @@ At minimum:
 - creating a tag from `基本设置` uses current device enabled languages
 - product-detail tag forms use the same current-device language set as 商品管理
 - creating a tag from product editing writes back to the global library
+- inline-created tags append to the end of the visible active tag order for the current product
 - hiding a tag removes it from all already-bound products in every visible UI
 - restoring a hidden tag makes old bindings visible again
 - product page only offers active tags for selection
