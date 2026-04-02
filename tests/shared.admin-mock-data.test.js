@@ -83,6 +83,31 @@ test('共享 mock 订单基线应至少提供 20 笔订单', () => {
   assert.ok(data.defaultOrders.length >= 20);
 });
 
+test('共享 mock 设备 helper 应在本地设备数据残缺时补齐默认 18 台设备', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  assert.ok(data.helpers);
+  assert.strictEqual(typeof data.helpers.resolveDevices, 'function');
+
+  const resolved = data.helpers.resolveDevices([
+    { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '自定义心跳', customNote: 'keep-me' },
+    { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'faulted', sales: 'enabled', heartbeat: '自定义心跳-2' }
+  ]);
+
+  assert.ok(Array.isArray(resolved));
+  assert.strictEqual(resolved.length, data.defaultDevices.length);
+  assert.strictEqual(resolved[0].id, 'RCK386');
+  assert.strictEqual(resolved[0].customNote, 'keep-me');
+  assert.strictEqual(resolved[0].heartbeat, '自定义心跳');
+  assert.ok(resolved.some((device) => device.id === 'RCK410'));
+  assert.ok(resolved.some((device) => device.id === 'RCK497'));
+});
+
 test('共享 mock 业务标签应保持 disabled 兼容输入并可被 helper 规范化为 hidden', () => {
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const helperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
