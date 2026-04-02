@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>产品需求文档索引：商品管理标签管理与印花图片设置</title>
+<style>
+  :root {
+    --bg: #edf2f7;
+    --page: #ffffff;
+    --card: #f8fbfd;
+    --text: #162033;
+    --muted: #667085;
+    --line: #d7e2ee;
+    --accent: #109c93;
+    --accent-soft: rgba(16, 156, 147, 0.12);
+    --shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #f7fbff 0%, var(--bg) 58%, #e7edf5 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.68;
+  }
+  a { color: inherit; }
+  code {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: #eef3f8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.92em;
+  }
+  .page {
+    max-width: 1120px;
+    margin: 28px auto 56px;
+    padding: 0 20px;
+  }
+  .shell {
+    background: var(--page);
+    border: 1px solid rgba(215, 226, 238, 0.9);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .hero {
+    padding: 42px 48px 28px;
+    background: linear-gradient(135deg, #ffffff 0%, #f4fbfb 46%, #eef6fb 100%);
+    border-bottom: 1px solid var(--line);
+  }
+  .kicker {
+    display: inline-flex;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: #0a6d67;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 16px 0 10px;
+    font-size: 38px;
+    line-height: 1.18;
+  }
+  .meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .note {
+    margin-top: 18px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(248, 251, 253, 0.9);
+    color: #344054;
+    font-size: 14px;
+  }
+  .content {
+    padding: 32px 48px 48px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    padding: 24px;
+    border: 1px solid rgba(16, 156, 147, 0.16);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(16, 156, 147, 0.04) 0%, rgba(255, 255, 255, 0.98) 26%);
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+  }
+  p { margin: 10px 0; }
+  ul {
+    margin: 10px 0 0 20px;
+    padding: 0;
+  }
+  li { margin: 7px 0; }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #ffffff;
+    text-decoration: none;
+    color: #475467;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .section {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 900px) {
+    .page { padding: 0 12px; }
+    .hero { padding: 28px 20px 20px; }
+    .content { padding: 24px 20px 28px; }
+    .grid { grid-template-columns: 1fr; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="shell">
+      <header class="hero">
+        <div class="kicker">Split PRD Index</div>
+        <h1>产品需求文档索引：商品管理标签管理与印花图片设置</h1>
+        <p class="meta">原合并版已经拆分为两份独立 PRD，方便分别评审、迭代和交付。</p>
+        <div class="note"><strong>说明：</strong> 当前文件是拆分后的导航页。源 markdown 位于 <code>tasks/prd-menu-management-tag-imprint-settings.md</code>。</div>
+      </header>
+
+      <div class="content">
+        <section class="grid">
+          <article class="card">
+            <h2>商品管理业务标签管理</h2>
+            <p>聚焦标签库维护、多语言名称、隐藏恢复和标签可见范围规则，适合单独做产品评审和实现排期。</p>
+            <ul>
+              <li>维护对象：业务标签库</li>
+              <li>核心议题：多语言、隐藏恢复、启用范围</li>
+              <li>入口位置：<code>商品管理 &gt; 基本设置</code></li>
+            </ul>
+            <div class="links">
+              <a class="link-pill" href="./prd-menu-management-business-tag-management.html">HTML 预览</a>
+              <a class="link-pill" href="./prd-menu-management-business-tag-management.md">Markdown 源文</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h2>商品管理印花图片设置</h2>
+            <p>聚焦当前设备素材管理、上传删除和跨设备复制能力，适合单独推进设备素材配置能力的设计与验收。</p>
+            <ul>
+              <li>维护对象：设备级印花素材</li>
+              <li>核心议题：上传、删除、复制、覆盖规则</li>
+              <li>入口位置：<code>商品管理 &gt; 印花图片设置</code></li>
+            </ul>
+            <div class="links">
+              <a class="link-pill" href="./prd-menu-management-imprint-image-settings.html">HTML 预览</a>
+              <a class="link-pill" href="./prd-menu-management-imprint-image-settings.md">Markdown 源文</a>
+            </div>
+          </article>
+        </section>
+
+        <section class="section">
+          <h2>拆分原则</h2>
+          <ul>
+            <li>两块能力同属 <code>商品管理</code>，但配置对象不同：前者维护标签库，后者维护设备级图片素材。</li>
+            <li>评审关注点不同：标签管理更偏规则和多语言，印花图片设置更偏素材操作和设备分发。</li>
+            <li>后续需求变更应优先更新对应的单独文档，不再回到合并版正文里混写。</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
