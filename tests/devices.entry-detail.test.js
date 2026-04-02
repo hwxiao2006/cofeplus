@@ -143,12 +143,17 @@ test('mock 入场数据应包含更丰富字段与可区分示例图', () => {
   assert.ok(/notes/.test(devicesHtml));
 });
 
-test('当入场图片原数据为空时应自动补充预览图', () => {
-  assert.ok(/function\s+ensurePreviewImageUrls\s*\(/.test(devicesHtml));
+test('广告屏 mock 占位图应按左右屏目标比例生成', () => {
+  assert.ok(/buildMockImageDataUrl\('左侧菜单',\s*seedIndex\s*\*\s*10\s*\+\s*1,\s*1320,\s*1080\)/.test(devicesHtml));
+  assert.ok(/buildMockImageDataUrl\('右侧排队号背景',\s*seedIndex\s*\*\s*10\s*\+\s*2,\s*800,\s*1080\)/.test(devicesHtml));
+});
+
+test('当点位图片原数据为空时应自动补充预览图，广告屏不再回填旧显示器数组', () => {
+  assert.ok(/function\s+ensureLocationPreviewImageUrls\s*\(/.test(devicesHtml));
   assert.ok(/function\s+hydrateEntryInfoForPreview\s*\(/.test(devicesHtml));
-  assert.ok(/if\s*\(!displayImages\.length\)/.test(devicesHtml));
   assert.ok(/if\s*\(!locationImages\.length\)/.test(devicesHtml));
   assert.ok(/hydrateEntryInfoForPreview\(devicesData,\s*runtimeLocationMap\)/.test(devicesHtml));
+  assert.ok(!/entryInfo\.displayImageUrls\s*=/.test(devicesHtml));
 });
 
 test('入场图片改为卡片展示后，详情表格中不再重复显示图片统计行', () => {
@@ -170,7 +175,15 @@ test('详情页应提供编辑入场信息入口并支持保存', () => {
   assert.ok(/id="editGpsAction"/.test(devicesHtml));
   assert.ok(/id="editLongitude"/.test(devicesHtml));
   assert.ok(/id="editLatitude"/.test(devicesHtml));
-  assert.ok(/id="editDisplayImagesInput"/.test(devicesHtml));
+  assert.ok(/广告屏设置/.test(devicesHtml));
+  assert.ok(/左侧菜单/.test(devicesHtml));
+  assert.ok(/右侧排队号背景/.test(devicesHtml));
+  assert.ok(/id="editAdScreenLeftImageInput"/.test(devicesHtml));
+  assert.ok(/id="editAdScreenLeftVideoInput"/.test(devicesHtml));
+  assert.ok(/id="editAdScreenRightImageInput"/.test(devicesHtml));
+  assert.ok(/id="editAdScreenLeftPreview"/.test(devicesHtml));
+  assert.ok(/id="editAdScreenRightPreview"/.test(devicesHtml));
+  assert.ok(!/id="editDisplayImagesInput"/.test(devicesHtml));
   assert.ok(/id="editLocationImagesInput"/.test(devicesHtml));
   assert.ok(/id="editDeviceStartDate"/.test(devicesHtml));
   assert.ok(/id="editDeviceEndDate"/.test(devicesHtml));
@@ -179,9 +192,43 @@ test('详情页应提供编辑入场信息入口并支持保存', () => {
   assert.ok(/function\s+openEntryEditModal\s*\(/.test(devicesHtml));
   assert.ok(/function\s+saveEntryInfoEdit\s*\(/.test(devicesHtml));
   assert.ok(/function\s+handleEntryImageUpload\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+handleEntryAdScreenUpload\s*\(/.test(devicesHtml));
+  assert.ok(/handleEntryAdScreenUpload\('leftMenu',\s*'image'/.test(devicesHtml));
+  assert.ok(/handleEntryAdScreenUpload\('leftMenu',\s*'video'/.test(devicesHtml));
+  assert.ok(/handleEntryAdScreenUpload\('rightQueueBackground',\s*'image'/.test(devicesHtml));
   assert.ok(/new FileReader\(\)/.test(devicesHtml));
   assert.ok(/currentDetailDeviceId/.test(devicesHtml));
-  assert.ok(/entryInfo\s*=\s*\{[\s\S]*operatorName[\s\S]*displayImageUrls[\s\S]*locationImageUrls/.test(devicesHtml));
+  assert.ok(/entryInfo\s*=\s*\{[\s\S]*operatorName[\s\S]*adScreen[\s\S]*locationImageUrls/.test(devicesHtml));
+});
+
+test('广告屏保存应写入 adScreen 并保留旧数据兼容读取', () => {
+  assert.ok(/function\s+normalizeEntryAdScreen\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+serializeEntryAdScreenDraft\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+validateAdScreenDraftAsset\s*\(/.test(devicesHtml));
+  assert.ok(/displayImageUrls/.test(devicesHtml));
+});
+
+test('广告屏信息应拆成左右固定分组展示', () => {
+  assert.ok(/renderDetailCard\('广告屏信息'/.test(devicesHtml));
+  assert.ok(/detail-ad-screen-stage/.test(devicesHtml));
+  assert.ok(/detail-ad-screen-pane/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-pane\.left/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-pane\.right/.test(devicesHtml));
+  assert.ok(/detail-subsection-title">左侧菜单/.test(devicesHtml));
+  assert.ok(/detail-subsection-title">右侧排队号背景/.test(devicesHtml));
+  assert.ok(!/detail-subsection-title">广告屏画面/.test(devicesHtml));
+  assert.ok(/renderDetailRow\('更新时间'/.test(devicesHtml));
+  assert.ok(!/renderDetailRow\('素材类型'/.test(devicesHtml));
+  assert.ok(!/renderDetailRow\('文件名'/.test(devicesHtml));
+  assert.ok(!/renderDetailRow\('分辨率'/.test(devicesHtml));
+});
+
+test('广告屏合成预览应移除缩略图堆叠文案并铺满左右画布', () => {
+  assert.ok(/\.detail-ad-screen-stage\s+\.entry-image-thumb\s*\{[^}]*display:\s*block/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-stage\s+\.entry-image-thumb\s*\{[^}]*gap:\s*0/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-stage\s+\.entry-image-thumb\s*\{[^}]*overflow:\s*hidden/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-stage\s+\.entry-image-thumb\s*\{[^}]*line-height:\s*0/.test(devicesHtml));
+  assert.ok(/\.detail-ad-screen-stage\s+\.entry-image-thumb\s+span\s*\{[^}]*display:\s*none/.test(devicesHtml));
 });
 
 test('节能模式关闭时编辑弹窗与详情应隐藏节能时间字段', () => {

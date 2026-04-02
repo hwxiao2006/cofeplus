@@ -1254,6 +1254,217 @@
             background: var(--primary-light);
         }
 
+        .settings-card-business-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .settings-inline-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .settings-inline-stat {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #fcfefe 0%, #f6fbfb 100%);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .settings-inline-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .settings-inline-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-drawer {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: stretch;
+            justify-content: flex-end;
+            z-index: 1200;
+        }
+
+        .business-tag-manager-drawer.active {
+            display: flex;
+        }
+
+        .business-tag-manager-backdrop {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.32);
+        }
+
+        .business-tag-manager-panel {
+            width: min(480px, 100%);
+            background: #fff;
+            box-shadow: -18px 0 48px rgba(15, 23, 42, 0.16);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .business-tag-manager-head {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .business-tag-manager-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .business-tag-manager-close {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-secondary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .business-tag-manager-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .business-tag-manager-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .business-tag-manager-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .business-tag-manager-item {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .business-tag-manager-item-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .business-tag-manager-item-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .business-tag-manager-item-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .business-tag-manager-empty,
+        .business-tag-manager-warning {
+            border: 1px dashed rgba(14, 35, 52, 0.14);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: #f8fafc;
+        }
+
+        .business-tag-manager-warning {
+            border-color: rgba(194, 65, 12, 0.24);
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .business-tag-manager-form {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .business-tag-manager-form-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .business-tag-manager-form-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .business-tag-manager-form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .business-tag-manager-form-note {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .settings-select {
             min-height: 34px;
         }
@@ -4654,9 +4865,17 @@
                 width: 100%;
             }
 
+            .settings-inline-stats {
+                grid-template-columns: 1fr;
+            }
+
             .settings-footer {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .business-tag-manager-panel {
+                width: 100%;
             }
 
             .header-lang-panel {
@@ -5239,6 +5458,16 @@
                                 </div>
                                 <div class="settings-contact-status" id="orderContactStatusText">当前设备暂未配置联系信息</div>
                             </section>
+                            <section class="settings-card settings-card-business-tags">
+                                <div class="settings-card-head">
+                                    <div class="settings-card-copy">
+                                        <h3 class="settings-title">业务标签管理</h3>
+                                        <p class="settings-desc">统一维护商品标签的多语言名称与显示状态</p>
+                                    </div>
+                                    <button class="add-lang-mini-btn add-lang-inline-btn settings-card-action" type="button" onclick="openBusinessTagManagerDrawer()">管理标签</button>
+                                </div>
+                                <div class="settings-inline-stats" id="businessTagSettingsSummary"></div>
+                            </section>
                             <section class="settings-card">
                                 <h3 class="settings-title">售价币种</h3>
                                 <p class="settings-desc">全局生效，统一菜单商品显示币种</p>
@@ -5258,6 +5487,20 @@
                                 <button type="button" class="btn btn-primary" onclick="saveMenuBasicSettings()">保存基础设置</button>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="business-tag-manager-drawer" id="businessTagManagerDrawer">
+                        <div class="business-tag-manager-backdrop" onclick="closeBusinessTagManagerDrawer()"></div>
+                        <section class="business-tag-manager-panel" aria-modal="true" role="dialog" aria-labelledby="businessTagManagerTitle">
+                            <div class="business-tag-manager-head">
+                                <div>
+                                    <div class="business-tag-manager-title" id="businessTagManagerTitle">业务标签管理</div>
+                                    <div class="business-tag-manager-desc">标签改动会在点击“保存基础设置”后统一生效。</div>
+                                </div>
+                                <button type="button" class="business-tag-manager-close" onclick="closeBusinessTagManagerDrawer()">×</button>
+                            </div>
+                            <div class="business-tag-manager-body" id="businessTagManagerBody"></div>
+                        </section>
                     </div>
 
                     <div id="menuManagePanel" class="menu-inner-panel active">
@@ -5735,6 +5978,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/business-tag-library.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -6300,6 +6544,7 @@
 
         // ==================== 商品数据（多语言结构） ====================
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
+        const BusinessTags = window.CofeBusinessTags || globalThis.CofeBusinessTags;
         const cloneSharedMenuProducts = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
             ? sharedAdminMockData.helpers.clone
             : function(value) { return JSON.parse(JSON.stringify(value)); };
@@ -6344,6 +6589,7 @@
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
         let currentMenuInnerTab = 'manage';
+        let businessTagManagerDraft = null;
         let previewActiveCategory = '';
         let orderPreviewLang = '';
         let orderPreviewDraftPayload = null;
@@ -6358,29 +6604,19 @@
         };
 
         function normalizeBusinessTagIds(tagIds) {
-            return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
-                .map(tagId => String(tagId || '').trim())
-                .filter(Boolean)));
+            return BusinessTags.normalizeBusinessTagIds(tagIds);
         }
 
         function normalizeBusinessTagEntry(tagId, tag) {
-            const normalizedId = String(tagId || tag?.id || '').trim();
-            if (!normalizedId) return null;
-            return {
-                id: normalizedId,
-                names: tag && typeof tag.names === 'object' ? cloneSharedMenuProducts(tag.names) : {},
-                status: tag?.status === 'disabled' ? 'disabled' : 'active'
-            };
+            return BusinessTags.normalizeBusinessTagEntry(tagId, tag);
         }
 
         function normalizeBusinessTagLibrary(library) {
-            return Object.entries(library && typeof library === 'object' ? library : {}).reduce((acc, [tagId, tag]) => {
-                const normalized = normalizeBusinessTagEntry(tagId, tag);
-                if (normalized) {
-                    acc[normalized.id] = normalized;
-                }
-                return acc;
-            }, {});
+            return BusinessTags.normalizeBusinessTagLibrary(library);
+        }
+
+        function cloneBusinessTagLibrary(library) {
+            return cloneSharedMenuProducts(normalizeBusinessTagLibrary(library));
         }
 
         function getStoredBusinessTagLibrary() {
@@ -6392,11 +6628,25 @@
             }
         }
 
+        function writeBusinessTagLibraryToStorage(library) {
+            const normalized = normalizeBusinessTagLibrary(library);
+            localStorage.setItem(BUSINESS_TAG_LIBRARY_STORAGE_KEY, JSON.stringify(normalized));
+            return normalized;
+        }
+
+        function persistBusinessTagLibrary(library) {
+            const normalized = writeBusinessTagLibraryToStorage(library);
+            if (businessTagManagerDraft) {
+                businessTagManagerDraft.library = cloneBusinessTagLibrary(normalized);
+            }
+            return normalized;
+        }
+
         function getBusinessTagLibrary() {
-            return {
-                ...normalizeBusinessTagLibrary(sharedAdminMockData.defaultBusinessTags || {}),
-                ...normalizeBusinessTagLibrary(getStoredBusinessTagLibrary())
-            };
+            return normalizeBusinessTagLibrary({
+                ...sharedAdminMockData.defaultBusinessTags,
+                ...getStoredBusinessTagLibrary()
+            });
         }
 
         function getProductBusinessTagIds(product) {
@@ -6406,15 +6656,271 @@
         }
 
         function getActiveProductBusinessTags(product) {
-            const library = getBusinessTagLibrary();
-            return getProductBusinessTagIds(product)
-                .map(tagId => library[tagId])
-                .filter(tag => tag && tag.status !== 'disabled');
+            return BusinessTags.getRenderableProductTags({
+                ...(product || {}),
+                businessTagIds: getProductBusinessTagIds(product)
+            }, getBusinessTagLibrary());
         }
 
         function getBusinessTagLabel(tag, lang) {
-            if (!tag) return '';
-            return tag.names?.[lang] || tag.names?.zh || tag.names?.en || tag.id || '';
+            return BusinessTags.resolveTagLabel(tag, lang);
+        }
+
+        function getBusinessTagLanguageContext(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            const rawDevice = normalizedDeviceId
+                ? (deviceConfig[normalizedDeviceId] || readStoredDeviceLanguageConfig(normalizedDeviceId) || { langs: [], hiddenLangs: [] })
+                : { langs: [], hiddenLangs: [] };
+            return BusinessTags.validateDeviceTagLanguageContext(rawDevice);
+        }
+
+        function ensureBusinessTagManagerDraft() {
+            if (!businessTagManagerDraft || !businessTagManagerDraft.library) {
+                businessTagManagerDraft = {
+                    library: cloneBusinessTagLibrary(getBusinessTagLibrary()),
+                    form: null
+                };
+            }
+            return businessTagManagerDraft;
+        }
+
+        function collectBusinessTagLibraryDraft() {
+            return cloneBusinessTagLibrary((businessTagManagerDraft && businessTagManagerDraft.library) || getBusinessTagLibrary());
+        }
+
+        function getBusinessTagSettingsStats(library = collectBusinessTagLibraryDraft()) {
+            const tags = Object.values(normalizeBusinessTagLibrary(library));
+            return {
+                active: tags.filter(tag => BusinessTags.isTagRenderable(tag)).length,
+                hidden: tags.filter(tag => tag.status === 'hidden').length
+            };
+        }
+
+        function renderBusinessTagSettingsSummary() {
+            const summary = document.getElementById('businessTagSettingsSummary');
+            if (!summary) return;
+            const stats = getBusinessTagSettingsStats();
+            summary.innerHTML = `
+                <div class="settings-inline-stat">
+                    <span class="settings-inline-stat-label">启用中</span>
+                    <span class="settings-inline-stat-value">${stats.active}</span>
+                </div>
+                <div class="settings-inline-stat">
+                    <span class="settings-inline-stat-label">已隐藏</span>
+                    <span class="settings-inline-stat-value">${stats.hidden}</span>
+                </div>
+            `;
+        }
+
+        function startCreateBusinessTagDraft() {
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return;
+            }
+            ensureBusinessTagManagerDraft().form = {
+                mode: 'create',
+                tagId: '',
+                names: {},
+                status: 'active'
+            };
+            renderBusinessTagManagerDrawer();
+        }
+
+        function startEditBusinessTagDraft(tagId) {
+            const normalizedId = String(tagId || '').trim();
+            const langContext = getBusinessTagLanguageContext();
+            if (!normalizedId || !langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return;
+            }
+            const library = collectBusinessTagLibraryDraft();
+            const tag = library[normalizedId];
+            if (!tag) return;
+            ensureBusinessTagManagerDraft().form = {
+                mode: 'edit',
+                tagId: normalizedId,
+                names: cloneSharedMenuProducts(tag.names || {}),
+                status: tag.status === 'hidden' ? 'hidden' : 'active'
+            };
+            renderBusinessTagManagerDrawer();
+        }
+
+        function cancelBusinessTagDraft() {
+            if (!businessTagManagerDraft) return;
+            businessTagManagerDraft.form = null;
+            renderBusinessTagManagerDrawer();
+        }
+
+        function updateBusinessTagDraftField(lang, value) {
+            if (!businessTagManagerDraft || !businessTagManagerDraft.form) return;
+            businessTagManagerDraft.form.names[String(lang || '').trim()] = String(value || '');
+        }
+
+        function submitBusinessTagDraft() {
+            const draft = ensureBusinessTagManagerDraft();
+            if (!draft.form) return false;
+            const langContext = getBusinessTagLanguageContext();
+            if (!langContext.ok) {
+                renderBusinessTagManagerDrawer();
+                return false;
+            }
+
+            const primaryLang = langContext.value.primaryLang;
+            const primaryLabel = String(draft.form.names?.[primaryLang] || '').trim();
+            if (!primaryLabel) {
+                showToast(`请填写${getLangName(primaryLang)}名称`, 'error');
+                return false;
+            }
+
+            const nextLibrary = collectBusinessTagLibraryDraft();
+            const tagId = draft.form.mode === 'create'
+                ? BusinessTags.generateBusinessTagId(primaryLabel, nextLibrary)
+                : draft.form.tagId;
+            nextLibrary[tagId] = BusinessTags.upsertBusinessTag(
+                nextLibrary[tagId] || null,
+                tagId,
+                draft.form.names || {},
+                draft.form.status || 'active'
+            );
+
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+            return true;
+        }
+
+        function setBusinessTagDraftStatus(tagId, status) {
+            const normalizedId = String(tagId || '').trim();
+            if (!normalizedId) return;
+            const nextLibrary = collectBusinessTagLibraryDraft();
+            const tag = nextLibrary[normalizedId];
+            if (!tag) return;
+            nextLibrary[normalizedId] = BusinessTags.upsertBusinessTag(tag, normalizedId, {}, status);
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+        }
+
+        function hideBusinessTagFromSettings(tagId) {
+            setBusinessTagDraftStatus(tagId, 'hidden');
+        }
+
+        function restoreBusinessTagFromSettings(tagId) {
+            setBusinessTagDraftStatus(tagId, 'active');
+        }
+
+        function renderBusinessTagManagerDrawer() {
+            const drawer = document.getElementById('businessTagManagerDrawer');
+            const body = document.getElementById('businessTagManagerBody');
+            if (!drawer || !body) return;
+
+            const draft = ensureBusinessTagManagerDraft();
+            const library = collectBusinessTagLibraryDraft();
+            const langContext = getBusinessTagLanguageContext();
+            const activeTags = Object.values(library)
+                .filter(tag => BusinessTags.isTagRenderable(tag))
+                .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
+            const hiddenTags = Object.values(library)
+                .filter(tag => tag.status === 'hidden')
+                .sort((left, right) => getBusinessTagLabel(left, currentLang).localeCompare(getBusinessTagLabel(right, currentLang), 'zh-Hans-CN'));
+
+            drawer.dataset.configState = langContext.ok ? 'valid' : 'invalid';
+            let formHtml = '';
+            if (draft.form && langContext.ok) {
+                const langs = langContext.value.langs;
+                const primaryLang = langContext.value.primaryLang;
+                formHtml = `
+                    <section class="business-tag-manager-form">
+                        <div class="business-tag-manager-form-head">
+                            <div class="business-tag-manager-form-title">${draft.form.mode === 'create' ? '新建标签' : '编辑标签'}</div>
+                            <button type="button" class="btn btn-default" onclick="cancelBusinessTagDraft()">取消</button>
+                        </div>
+                        <div class="business-tag-manager-form-grid">
+                            ${langs.map(lang => `
+                                <label class="settings-contact-field">
+                                    <span>${escapePreviewText(getLangName(lang))}${lang === primaryLang ? ' *' : ''}</span>
+                                    <input
+                                        type="text"
+                                        class="form-input"
+                                        value="${escapePreviewText(draft.form.names?.[lang] || '')}"
+                                        placeholder="请输入${escapePreviewText(getLangName(lang))}标签名称"
+                                        oninput="updateBusinessTagDraftField('${escapePreviewText(lang)}', this.value)"
+                                    >
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div class="business-tag-manager-form-note">当前设备主语言必填，其余已启用语言选填。</div>
+                        <button type="button" class="btn btn-primary" onclick="submitBusinessTagDraft()">保存草稿</button>
+                    </section>
+                `;
+            }
+
+            const renderTagItem = (tag, mode) => `
+                <div class="business-tag-manager-item">
+                    <div class="business-tag-manager-item-copy">
+                        <div class="business-tag-manager-item-title">${escapePreviewText(getBusinessTagLabel(tag, currentLang))}</div>
+                        <div class="business-tag-manager-item-meta">${escapePreviewText(tag.id)}</div>
+                    </div>
+                    <div class="business-tag-manager-item-actions">
+                        ${mode === 'active'
+                            ? `
+                                <button type="button" class="btn btn-default" ${langContext.ok ? `onclick="startEditBusinessTagDraft('${escapePreviewText(tag.id)}')"` : 'disabled'}>编辑</button>
+                                <button type="button" class="btn btn-default" onclick="hideBusinessTagFromSettings('${escapePreviewText(tag.id)}')">隐藏</button>
+                            `
+                            : `<button type="button" class="btn btn-default" onclick="restoreBusinessTagFromSettings('${escapePreviewText(tag.id)}')">恢复</button>`
+                        }
+                    </div>
+                </div>
+            `;
+
+            body.innerHTML = `
+                ${!langContext.ok ? '<div class="business-tag-manager-warning">当前设备暂无可用语言，请先在“设备语言”中启用至少一种语言后再编辑标签。</div>' : ''}
+                ${formHtml}
+                <section class="business-tag-manager-section">
+                    <div class="business-tag-manager-section-head">
+                        <div class="business-tag-manager-section-title">启用标签</div>
+                        <button type="button" class="btn btn-default" onclick="startCreateBusinessTagDraft()" ${langContext.ok ? '' : 'disabled'}>新建标签</button>
+                    </div>
+                    <div class="business-tag-manager-list">
+                        ${activeTags.length
+                            ? activeTags.map(tag => renderTagItem(tag, 'active')).join('')
+                            : '<div class="business-tag-manager-empty">暂无启用中的业务标签</div>'}
+                    </div>
+                </section>
+                <section class="business-tag-manager-section">
+                    <div class="business-tag-manager-section-head">
+                        <div class="business-tag-manager-section-title">已隐藏标签</div>
+                    </div>
+                    <div class="business-tag-manager-list">
+                        ${hiddenTags.length
+                            ? hiddenTags.map(tag => renderTagItem(tag, 'hidden')).join('')
+                            : '<div class="business-tag-manager-empty">暂无隐藏标签</div>'}
+                    </div>
+                </section>
+            `;
+        }
+
+        function openBusinessTagManagerDrawer(options = {}) {
+            if (!options.preserveDraft || !businessTagManagerDraft) {
+                businessTagManagerDraft = {
+                    library: cloneBusinessTagLibrary(getBusinessTagLibrary()),
+                    form: null
+                };
+            }
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
+            document.getElementById('businessTagManagerDrawer')?.classList.add('active');
+        }
+
+        function closeBusinessTagManagerDrawer() {
+            document.getElementById('businessTagManagerDrawer')?.classList.remove('active');
         }
 
         function renderBusinessTagList(product, lang, options = {}) {
@@ -6878,14 +7384,23 @@
             updateProductPricingRuleHint();
         }
 
+        function cloneMenuBasicSettings(settings) {
+            return {
+                currency: normalizeProductCurrency({ currency: settings?.currency || menuBasicSettings.currency })
+            };
+        }
+
+        function writeMenuBasicSettingsToStorage(settings) {
+            const normalized = cloneMenuBasicSettings(settings);
+            localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify(normalized));
+            return normalized;
+        }
+
         function persistMenuBasicSettings() {
-            try {
-                localStorage.setItem(MENU_BASIC_SETTINGS_KEY, JSON.stringify({
-                    currency: menuBasicSettings.currency
-                }));
-            } catch (e) {
-                // ignore localStorage errors
-            }
+            const normalized = cloneMenuBasicSettings(menuBasicSettings);
+            menuBasicSettings = normalized;
+            writeMenuBasicSettingsToStorage(normalized);
+            return normalized;
         }
 
         function applyGlobalPricingSettingsToProducts() {
@@ -6909,6 +7424,8 @@
             orderContactEmailInput.value = orderContact.email;
             updatePricingSummary();
             updateOrderContactCardState();
+            renderBusinessTagSettingsSummary();
+            renderBusinessTagManagerDrawer();
         }
 
         function updatePricingSummary() {
@@ -6938,11 +7455,44 @@
                 return false;
             }
 
-            menuBasicSettings.currency = currency;
+            const businessTagLanguageContext = getBusinessTagLanguageContext();
+            if (!businessTagLanguageContext.ok) {
+                openBusinessTagManagerDrawer({ preserveDraft: true });
+                showToast(businessTagLanguageContext.message, 'error');
+                return false;
+            }
 
-            applyGlobalPricingSettingsToProducts();
-            persistMenuBasicSettings();
-            persistDeviceOrderContactConfig(currentDevice, orderContactValidation.value);
+            const previousSettings = cloneMenuBasicSettings(menuBasicSettings);
+            const previousProducts = cloneSharedMenuProducts(productsData);
+            const previousOrderContact = normalizeDeviceOrderContactConfig(ensureDeviceOrderContactConfig(currentDevice));
+            const previousStoredLibrary = cloneBusinessTagLibrary(getStoredBusinessTagLibrary());
+            const nextLibrary = collectBusinessTagLibraryDraft();
+
+            try {
+                menuBasicSettings.currency = currency;
+                applyGlobalPricingSettingsToProducts();
+                persistMenuBasicSettings();
+                persistDeviceOrderContactConfig(currentDevice, orderContactValidation.value);
+                persistBusinessTagLibrary(nextLibrary);
+            } catch (error) {
+                menuBasicSettings = cloneMenuBasicSettings(previousSettings);
+                productsData = cloneSharedMenuProducts(previousProducts);
+                writeMenuBasicSettingsToStorage(previousSettings);
+                persistDeviceOrderContactConfig(currentDevice, previousOrderContact);
+                writeBusinessTagLibraryToStorage(previousStoredLibrary);
+                openBusinessTagManagerDrawer({ preserveDraft: true });
+                renderMenuBasicSettingsForm();
+                updateProductPricingRuleHint();
+                renderMenu();
+                refreshOrderPreviewIfOpen();
+                showToast('业务标签保存失败，请重试', 'error');
+                return false;
+            }
+
+            businessTagManagerDraft = {
+                library: cloneBusinessTagLibrary(nextLibrary),
+                form: null
+            };
             renderMenuBasicSettingsForm();
             updatePricingSummary();
             updateProductPricingRuleHint();
@@ -8206,19 +8756,21 @@
 
         function normalizeOrderPreviewDraftPayload(payload) {
             if (!payload || typeof payload !== 'object') return null;
-            const productId = Number(payload.productId);
+            const normalized = payload && typeof payload === 'object' ? payload : {};
+            const productId = Number(normalized.productId);
             if (!Number.isFinite(productId)) return null;
-
             return {
                 productId,
-                names: payload.names && typeof payload.names === 'object' ? cloneSharedMenuProducts(payload.names) : {},
-                descs: payload.descs && typeof payload.descs === 'object' ? cloneSharedMenuProducts(payload.descs) : {},
-                image: typeof payload.image === 'string' ? payload.image : '',
-                price: Number.isFinite(Number(payload.price)) ? Number(payload.price) : null,
-                originalPrice: payload.originalPrice === null
+                names: normalized.names && typeof normalized.names === 'object' ? cloneSharedMenuProducts(normalized.names) : {},
+                descs: normalized.descs && typeof normalized.descs === 'object' ? cloneSharedMenuProducts(normalized.descs) : {},
+                image: Object.prototype.hasOwnProperty.call(normalized, 'image')
+                    ? String(normalized.image || '').trim()
+                    : undefined,
+                price: Number.isFinite(Number(normalized.price)) ? Number(normalized.price) : undefined,
+                originalPrice: normalized.originalPrice === null
                     ? null
-                    : (Number.isFinite(Number(payload.originalPrice)) ? Number(payload.originalPrice) : undefined),
-                onSale: typeof payload.onSale === 'boolean' ? payload.onSale : undefined
+                    : (Number.isFinite(Number(normalized.originalPrice)) ? Number(normalized.originalPrice) : undefined),
+                onSale: typeof normalized.onSale === 'boolean' ? normalized.onSale : undefined
             };
         }
 
