@@ -4683,6 +4683,11 @@
         const cloneSharedOrderData = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
             ? sharedAdminMockData.helpers.clone
             : function(value) { return JSON.parse(JSON.stringify(value)); };
+        const resolveRuntimeDevices = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices); }
+            : function(storedDevices) {
+                return storedDevices.length ? storedDevices : cloneSharedOrderData(sharedAdminMockData.defaultDevices || []);
+            };
         const ORDERS_PREVIEW_RECORDS_KEY = 'ordersPreviewRecords';
         const MIN_ORDER_RECORDS = 20;
         const FALLBACK_MULTI_ITEM_ORDER_COUNT = 5;
@@ -4801,7 +4806,7 @@
             } catch (error) {
                 storedDevices = [];
             }
-            const source = storedDevices.length ? storedDevices : cloneSharedOrderData(sharedAdminMockData.defaultDevices || []);
+            const source = resolveRuntimeDevices(storedDevices);
             return source
                 .filter(device => device && typeof device === 'object')
                 .filter(device => device.entered !== false && String(device.location || '').trim());

@@ -302,7 +302,7 @@
             ]
         }
     });
-    const SHARED_DEFAULT_ORDERS = buildSharedDefaultOrders([
+    const SHARED_DEFAULT_DEVICES = [
         { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
         { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
         { id: 'RCK384', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
@@ -321,7 +321,53 @@
         { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
         { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
         { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
-    ], buildSharedRuntimeProducts(SHARED_DEFAULT_PRODUCTS));
+    ];
+    const SHARED_DEFAULT_ORDERS = buildSharedDefaultOrders(SHARED_DEFAULT_DEVICES, buildSharedRuntimeProducts(SHARED_DEFAULT_PRODUCTS));
+
+    function resolveSharedDefaultDevices(storedDevices, fallbackDevices = SHARED_DEFAULT_DEVICES) {
+        const safeFallbackDevices = Array.isArray(fallbackDevices)
+            ? fallbackDevices.filter(device => device && typeof device === 'object')
+            : [];
+        const safeStoredDevices = Array.isArray(storedDevices)
+            ? storedDevices.filter(device => device && typeof device === 'object')
+            : [];
+
+        if (!safeStoredDevices.length) {
+            return JSON.parse(JSON.stringify(safeFallbackDevices));
+        }
+
+        const fallbackMap = safeFallbackDevices.reduce((map, device) => {
+            const deviceId = String(device?.id || '').trim();
+            if (!deviceId) return map;
+            map[deviceId] = JSON.parse(JSON.stringify(device));
+            return map;
+        }, {});
+        const storedIdSet = new Set();
+        const prioritizedStoredDevices = safeStoredDevices.reduce((list, device) => {
+            const deviceId = String(device?.id || '').trim();
+            if (!deviceId || storedIdSet.has(deviceId)) return list;
+            storedIdSet.add(deviceId);
+            const fallbackDevice = fallbackMap[deviceId];
+            if (fallbackDevice) {
+                list.push({
+                    ...fallbackDevice,
+                    ...JSON.parse(JSON.stringify(device))
+                });
+                return list;
+            }
+            list.push(JSON.parse(JSON.stringify(device)));
+            return list;
+        }, []);
+
+        const missingFallbackDevices = safeFallbackDevices
+            .filter(device => {
+                const deviceId = String(device?.id || '').trim();
+                return deviceId && !storedIdSet.has(deviceId);
+            })
+            .map(device => JSON.parse(JSON.stringify(device)));
+
+        return [...prioritizedStoredDevices, ...missingFallbackDevices];
+    }
 
     const COFE_SHARED_MOCK_DATA = {
         maps: {
@@ -338,32 +384,16 @@
             'mer004': 'Costa咖啡'
         }
         },
-        defaultDevices: [
-            { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK384', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK410', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK406', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
-            { id: 'RCK405', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月9日 11:13' },
-            { id: 'RCK408', merchant: 'mer003', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 09:54' },
-            { id: 'RCK407', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月7日 16:39' },
-            { id: 'RCK409', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月6日 10:42' },
-            { id: 'RCK404', merchant: 'mer002', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月5日 19:32' },
-            { id: 'RCB036', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月4日 16:38' },
-            { id: 'RCK403', merchant: 'mer004', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月10日 10:44' },
-            { id: 'RCK402', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'disabled', heartbeat: '2026年2月10日 09:30' },
-            { id: 'RCK401', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'disabled', heartbeat: '2026年2月9日 08:15' },
-            { id: 'RCK400', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 14:22' },
-            { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-            { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-            { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
-        ],
+        defaultDevices: SHARED_DEFAULT_DEVICES,
         defaultOrders: SHARED_DEFAULT_ORDERS,
         defaultBusinessTags: SHARED_DEFAULT_BUSINESS_TAGS,
         defaultProducts: SHARED_DEFAULT_PRODUCTS,
         helpers: {
             clone(value) {
                 return JSON.parse(JSON.stringify(value));
+            },
+            resolveDevices(storedDevices, fallbackDevices = SHARED_DEFAULT_DEVICES) {
+                return resolveSharedDefaultDevices(storedDevices, fallbackDevices);
             }
         }
     };
