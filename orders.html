@@ -4979,6 +4979,13 @@
             }
         }
 
+        function loadSharedDefaultOrders() {
+            const sharedDefaultOrders = Array.isArray(sharedAdminMockData.defaultOrders)
+                ? cloneSharedOrderData(sharedAdminMockData.defaultOrders)
+                : [];
+            return sharedDefaultOrders.map((order, index) => normalizeRuntimeOrder(order, index));
+        }
+
         function buildFallbackOrders(runtimeDevices, runtimeProducts) {
             return Array.from({ length: MIN_ORDER_RECORDS }, (_, index) =>
                 normalizeRuntimeOrder(buildFallbackOrderRecord(runtimeDevices, runtimeProducts, index), index)
@@ -4987,9 +4994,10 @@
 
         function loadOrdersData(runtimeDevices = loadRuntimeDevices(), runtimeProducts = loadRuntimeProducts()) {
             const previewOrders = loadPreviewOrders();
-            const fallbackOrders = buildFallbackOrders(runtimeDevices, runtimeProducts);
+            const sharedDefaultOrders = loadSharedDefaultOrders();
+            const fallbackOrders = sharedDefaultOrders.length ? [] : buildFallbackOrders(runtimeDevices, runtimeProducts);
             const seen = new Set();
-            return [...previewOrders, ...fallbackOrders].filter(order => {
+            return [...previewOrders, ...sharedDefaultOrders, ...fallbackOrders].filter(order => {
                 const key = String(order?.id || '');
                 if (!key || seen.has(key)) return false;
                 seen.add(key);

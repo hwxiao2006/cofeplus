@@ -20,15 +20,21 @@ test('共享 mock 数据源应存在并暴露设备与商品默认数据', () =>
 
   assert.ok(/COFE_SHARED_MOCK_DATA/.test(sharedJs));
   assert.ok(/defaultDevices/.test(sharedJs));
+  assert.ok(/defaultOrders/.test(sharedJs));
   assert.ok(/defaultProducts/.test(sharedJs));
 });
 
 test('共享 mock 数据源应包含设备页和商品管理页当前默认数据', () => {
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
 
   assert.ok(/RCK386/.test(sharedJs), 'shared devices should include default device ids');
   assert.ok(/3D拉花/.test(sharedJs), 'shared products should include default product categories');
+  assert.strictEqual(data.defaultOrders[0].transactionId, 'TXN202604021549590000');
 });
 
 test('设备页和商品管理页应显式引用共享 mock 数据源', () => {
@@ -63,6 +69,18 @@ test('共享 mock 商品应预设原默认选中项', () => {
       });
     });
   });
+});
+
+test('共享 mock 订单基线应至少提供 20 笔订单', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  assert.ok(Array.isArray(data.defaultOrders));
+  assert.ok(data.defaultOrders.length >= 20);
 });
 
 test('共享 mock 业务标签应保持 disabled 兼容输入并可被 helper 规范化为 hidden', () => {
