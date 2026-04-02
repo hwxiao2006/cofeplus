@@ -4573,6 +4573,14 @@
 
         // 默认设备数据
         const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
+        const resolveDeviceBaseline = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices); }
+            : function(storedDevices) {
+                if (Array.isArray(storedDevices) && storedDevices.length) {
+                    return cloneSharedDeviceData(storedDevices);
+                }
+                return cloneSharedDeviceData(defaultDevicesData);
+            };
 
         // 设备数据
         let devicesData = [];
@@ -4914,7 +4922,7 @@
             if (stored.length === 0) {
                 devicesData = normalizeDevices(defaultDevicesData);
             } else {
-                devicesData = normalizeDevices(stored);
+                devicesData = normalizeDevices(resolveDeviceBaseline(stored));
                 devicesData = ensureUnenteredDevices(devicesData);
                 devicesData = normalizeDevices(devicesData);
             }

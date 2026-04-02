@@ -6548,6 +6548,14 @@
         const cloneSharedMenuProducts = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
             ? sharedAdminMockData.helpers.clone
             : function(value) { return JSON.parse(JSON.stringify(value)); };
+        const resolveRuntimeMenuDevices = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices); }
+            : function(storedDevices) {
+                if (Array.isArray(storedDevices) && storedDevices.length) {
+                    return cloneSharedMenuProducts(storedDevices);
+                }
+                return cloneSharedMenuProducts(sharedAdminMockData.defaultDevices || []);
+            };
         const initialRuntimeDevices = loadRuntimeDeviceRecords();
 
         Object.assign(deviceConfig, buildRuntimeDeviceLanguageConfigSeed(initialRuntimeDevices));
@@ -8404,14 +8412,27 @@
 
         function loadRuntimeDeviceRecords() {
             const storedDevices = parseStoredDeviceSearchArray('devicesData');
-            const fallbackDevices = cloneSharedMenuProducts(sharedAdminMockData.defaultDevices || []);
-            const source = storedDevices.length ? storedDevices : fallbackDevices;
+            const source = resolveRuntimeMenuDevices(storedDevices);
 
             return source
                 .filter(device => device && typeof device === 'object')
                 .filter(device => normalizeDeviceSearchId(device.id))
                 .filter(device => device.entered !== false && normalizeDeviceSearchText(device.location))
                 .map(device => cloneSharedMenuProducts(device));
+        }
+
+        function loadStoredRuntimeDeviceIds() {
+            const seen = new Set();
+            return parseStoredDeviceSearchArray('devicesData')
+                .filter(device => device && typeof device === 'object')
+                .filter(device => device.entered !== false && normalizeDeviceSearchText(device.location))
+                .reduce((list, device) => {
+                    const id = normalizeDeviceSearchId(device.id);
+                    if (!id || seen.has(id)) return list;
+                    seen.add(id);
+                    list.push(id);
+                    return list;
+                }, []);
         }
 
         function buildRuntimeLocationMap() {
@@ -8557,7 +8578,10 @@
 
         function initDeviceSearch() {
             rebuildDeviceSearchData();
-            if (!allDeviceOptions.includes(currentDevice)) {
+            const storedPriorityDeviceIds = loadStoredRuntimeDeviceIds();
+            if (storedPriorityDeviceIds.length && !storedPriorityDeviceIds.includes(currentDevice)) {
+                currentDevice = storedPriorityDeviceIds[0];
+            } else if (!allDeviceOptions.includes(currentDevice)) {
                 currentDevice = allDeviceOptions[0] || currentDevice;
             }
             ensureDeviceLanguageConfig(currentDevice);
@@ -8589,7 +8613,15 @@
             });
             if (exact) return exact.id;
             const fuzzy = getDeviceSearchCandidates(raw);
-            return fuzzy.length === 1 ? fuzzy[0].id : null;
+            if (fuzzy.length === 1) return fuzzy[0].id;
+            if (fuzzy.length > 1) {
+                const storedPriorityDeviceIdSet = new Set(loadStoredRuntimeDeviceIds());
+                const storedPriorityMatches = fuzzy.filter(option => storedPriorityDeviceIdSet.has(option.id));
+                if (storedPriorityMatches.length === 1) {
+                    return storedPriorityMatches[0].id;
+                }
+            }
+            return null;
         }
 
         function renderDeviceDropdown(keyword = '') {
