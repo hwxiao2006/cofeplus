@@ -1108,6 +1108,124 @@
             background: #f8fafc;
         }
 
+        .detail-remote-volume-shell {
+            padding: 18px 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .detail-remote-volume-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .detail-remote-volume-back {
+            align-self: flex-start;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .detail-remote-volume-close {
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .detail-remote-volume-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .detail-remote-volume-icon {
+            width: 72px;
+            height: 72px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-remote-volume-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .detail-remote-volume-copy {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .detail-remote-volume-slider {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .detail-remote-volume-controls {
+            display: grid;
+            grid-template-columns: 56px minmax(72px, 1fr) 56px;
+            gap: 10px;
+            width: min(220px, 100%);
+        }
+
+        .detail-remote-volume-step,
+        .detail-remote-volume-value,
+        .detail-remote-volume-save {
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            background: #f8fafc;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .detail-remote-volume-step {
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .detail-remote-volume-step:disabled {
+            cursor: not-allowed;
+            color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .detail-remote-volume-value {
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .detail-remote-volume-save {
+            width: 100%;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
         .detail-fault-record-modal {
             width: min(940px, 100%);
             background: #fff;
@@ -4603,6 +4721,9 @@
         let currentTemperatureAlarmDeviceId = '';
         let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
+        const DETAIL_REMOTE_VOLUME_STORAGE_KEY = 'deviceRemoteVolumeSettings';
+        let detailRemoteActionMode = 'root';
+        let detailRemoteVolumeContext = null;
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -6171,11 +6292,8 @@
             showToast(`${zone.title} 参数已更新`);
         }
 
-        function openDetailRemoteActions(deviceId) {
-            activeFaultActionDeviceId = deviceId;
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!panel) return;
-            panel.innerHTML = `
+        function renderDetailRemoteActionPanel(deviceId) {
+            return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
@@ -6185,6 +6303,143 @@
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
                 </div>
             `;
+        }
+
+        function getDetailRemoteVolumeMeta(volumeType) {
+            if (volumeType === 'device') {
+                return {
+                    mode: 'volume-device',
+                    title: '设备音量',
+                    description: '待机背景音乐、饮品出品信息、排队号语音',
+                    actionName: '设备音量调节',
+                    storageKey: 'deviceVolume',
+                    icon: `
+                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                            <rect x="12" y="10" width="28" height="44" rx="4" stroke="currentColor" stroke-width="3"></rect>
+                            <path d="M20 22H32M20 30H32M20 38H26" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path d="M44 28C47 30 49 33 49 37C49 41 47 44 44 46" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path d="M48 22C53 25 56 30 56 37C56 44 53 49 48 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                        </svg>
+                    `
+                };
+            }
+            if (volumeType === 'order-screen') {
+                return {
+                    mode: 'volume-order-screen',
+                    title: '点单屏音量',
+                    description: '欢迎语音、下单提示语音、制作中音乐',
+                    actionName: '点单屏音量调节',
+                    storageKey: 'orderScreenVolume',
+                    icon: `
+                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                            <rect x="18" y="8" width="22" height="40" rx="4" stroke="currentColor" stroke-width="3"></rect>
+                            <path d="M25 16H33" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path d="M29 43H29.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path d="M43 24C46 26 48 29 48 33C48 37 46 40 43 42" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path d="M47 19C52 22 55 27 55 33C55 39 52 44 47 47" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                        </svg>
+                    `
+                };
+            }
+            return null;
+        }
+
+        function clampDetailRemoteVolumeValue(value) {
+            if (!Number.isFinite(Number(value))) return 0;
+            return Math.max(0, Math.min(15, Math.round(Number(value))));
+        }
+
+        function getStoredDetailRemoteVolumes() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY) || '{}');
+                return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function getDetailRemoteVolumeValue(deviceId, volumeType) {
+            const meta = getDetailRemoteVolumeMeta(volumeType);
+            if (!meta) return 0;
+            const stored = getStoredDetailRemoteVolumes();
+            const deviceConfig = stored[String(deviceId || '').trim()] || {};
+            return clampDetailRemoteVolumeValue(deviceConfig[meta.storageKey]);
+        }
+
+        function persistDetailRemoteVolumeValue(deviceId, volumeType, nextValue) {
+            const meta = getDetailRemoteVolumeMeta(volumeType);
+            if (!meta) return null;
+            const safeDeviceId = String(deviceId || '').trim();
+            if (!safeDeviceId) return null;
+            const clampedValue = clampDetailRemoteVolumeValue(nextValue);
+            try {
+                const stored = getStoredDetailRemoteVolumes();
+                stored[safeDeviceId] = {
+                    ...(stored[safeDeviceId] && typeof stored[safeDeviceId] === 'object' ? stored[safeDeviceId] : {}),
+                    [meta.storageKey]: clampedValue
+                };
+                localStorage.setItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY, JSON.stringify(stored));
+                return clampedValue;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function renderDetailRemoteVolumeMenu(deviceId) {
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">音量调节 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备音量')">设备音量</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('点单屏音量')">点单屏音量</button>
+                </div>
+            `;
+        }
+
+        function renderDetailRemoteVolumePanel(deviceId, volumeType) {
+            const meta = getDetailRemoteVolumeMeta(volumeType);
+            const currentValue = detailRemoteVolumeContext && detailRemoteVolumeContext.type === volumeType
+                ? clampDetailRemoteVolumeValue(detailRemoteVolumeContext.value)
+                : getDetailRemoteVolumeValue(deviceId, volumeType);
+            if (!meta) return renderDetailRemoteActionPanel(deviceId);
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">${escapeHtml(meta.title)} · ${escapeHtml(deviceId)}</div>
+                    <div class="detail-remote-volume-shell">
+                        <div class="detail-remote-volume-topbar">
+                            <button type="button" class="detail-remote-volume-back" onclick="handleDetailRemoteAction('音量调节')">返回音量调节</button>
+                            <button type="button" class="detail-remote-volume-close" onclick="closeDetailRemoteActions()">关闭</button>
+                        </div>
+                        <div class="detail-remote-volume-card">
+                            <div class="detail-remote-volume-icon">${meta.icon}</div>
+                            <div class="detail-remote-volume-copy">${escapeHtml(meta.description)}</div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="15"
+                                step="1"
+                                class="detail-remote-volume-slider"
+                                value="${currentValue}"
+                                oninput="setDetailRemoteVolumeDraftValue(this.value)"
+                            >
+                            <div class="detail-remote-volume-controls">
+                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(-1)" ${currentValue <= 0 ? 'disabled' : ''}>−</button>
+                                <div class="detail-remote-volume-value">${currentValue}</div>
+                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(1)" ${currentValue >= 15 ? 'disabled' : ''}>+</button>
+                            </div>
+                        </div>
+                        <button type="button" class="detail-remote-volume-save" onclick="saveDetailRemoteVolumeSetting()">保存</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openDetailRemoteActions(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            detailRemoteActionMode = 'root';
+            detailRemoteVolumeContext = null;
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+            panel.innerHTML = renderDetailRemoteActionPanel(deviceId);
             panel.classList.add('active');
         }
 
@@ -6193,10 +6448,83 @@
             if (!panel) return;
             panel.classList.remove('active');
             panel.innerHTML = '';
+            detailRemoteActionMode = 'root';
+            detailRemoteVolumeContext = null;
+        }
+
+        function openDetailRemoteVolumePanel(volumeType) {
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            const meta = getDetailRemoteVolumeMeta(volumeType);
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!deviceId || !meta || !panel) return;
+            detailRemoteActionMode = meta.mode;
+            detailRemoteVolumeContext = {
+                deviceId,
+                type: volumeType,
+                value: getDetailRemoteVolumeValue(deviceId, volumeType)
+            };
+            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, volumeType);
+            panel.classList.add('active');
+        }
+
+        function refreshDetailRemoteVolumePanel() {
+            const panel = document.getElementById('detailRemoteActionSheet');
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            if (!panel || !detailRemoteVolumeContext || !deviceId) return;
+            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, detailRemoteVolumeContext.type);
+            panel.classList.add('active');
+        }
+
+        function changeDetailRemoteVolumeDraftValue(delta) {
+            if (!detailRemoteVolumeContext) return;
+            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue((detailRemoteVolumeContext.value || 0) + Number(delta || 0));
+            refreshDetailRemoteVolumePanel();
+        }
+
+        function setDetailRemoteVolumeDraftValue(nextValue) {
+            if (!detailRemoteVolumeContext) return;
+            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue(nextValue);
+            refreshDetailRemoteVolumePanel();
+        }
+
+        function saveDetailRemoteVolumeSetting() {
+            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            if (!detailRemoteVolumeContext || !deviceId) return;
+            const meta = getDetailRemoteVolumeMeta(detailRemoteVolumeContext.type);
+            if (!meta) return;
+            const savedValue = persistDetailRemoteVolumeValue(deviceId, detailRemoteVolumeContext.type, detailRemoteVolumeContext.value);
+            if (savedValue === null) {
+                showToast('音量保存失败，请重试', 'error');
+                return;
+            }
+            appendFaultOperationRecord(deviceId, meta.actionName, '成功', `${deviceId} ${meta.title}已调整为 ${savedValue}`);
+            closeDetailRemoteActions();
+            showToast('已下发音量调节');
         }
 
         function handleDetailRemoteAction(actionName) {
             const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+
+            if (actionName === '音量调节') {
+                detailRemoteActionMode = 'volume-menu';
+                detailRemoteVolumeContext = null;
+                panel.innerHTML = renderDetailRemoteVolumeMenu(deviceId);
+                panel.classList.add('active');
+                return;
+            }
+
+            if (detailRemoteActionMode === 'volume-menu' && actionName === '设备音量') {
+                openDetailRemoteVolumePanel('device');
+                return;
+            }
+
+            if (detailRemoteActionMode === 'volume-menu' && actionName === '点单屏音量') {
+                openDetailRemoteVolumePanel('order-screen');
+                return;
+            }
+
             appendFaultOperationRecord(deviceId, actionName, '成功', `${deviceId} 已执行${actionName}`);
             closeDetailRemoteActions();
             showToast(`已向设备 ${deviceId} 下发指令：${actionName}`);
