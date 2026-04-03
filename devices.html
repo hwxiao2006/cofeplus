@@ -2611,11 +2611,6 @@
             font-size: 13px;
         }
 
-        .merchant-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
         .location-tag {
             display: inline-flex;
             align-items: center;
@@ -3711,7 +3706,6 @@
             color: #334155;
         }
 
-        .merchant-name,
         .location-text {
             font-size: 15px;
             font-weight: 800;
@@ -4292,7 +4286,6 @@
                             <thead>
                                 <tr>
                                     <th>设备编号</th>
-                                    <th>商户</th>
                                     <th>点位</th>
                                     <th>状态</th>
                                     <th>停卖</th>
@@ -4830,8 +4823,6 @@
             'disabled': '是'
         };
 
-        const merchantMap = cloneSharedDeviceData((sharedAdminMockData.maps && sharedAdminMockData.maps.merchantMap) || {});
-
         const categoryMap = {
             self: '自营',
             lease: '租赁',
@@ -5239,7 +5230,7 @@
                 const emptyText = scopedTotal === 0 ? getScopedDeviceEmptyText(currentStaffDeviceAccess) : '暂无匹配的设备';
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7">
+                        <td colspan="6">
                             <div class="empty-state">
                                 <div class="empty-icon">📭</div>
                                 <div class="empty-text">${emptyText}</div>
@@ -5271,7 +5262,6 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="merchant-name">${merchantMap[device.merchant] || device.merchant}</span></td>
                     <td><span class="location-text ${locationText === '未入场' ? 'muted' : ''}">${locationText}</span></td>
                     <td><span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span></td>
                     <td><span class="sales-state ${isSalesEnabled ? 'active' : 'disabled'}">${salesMap[device.sales] || device.sales}</span></td>
@@ -5289,7 +5279,6 @@
             mobileList.innerHTML = pageData.map(device => {
                 const isSalesEnabled = device.sales === 'enabled';
                 const statusDisplay = getStatusDisplay(device);
-                const merchantName = merchantMap[device.merchant] || device.merchant;
                 const locationText = getDeviceLocationText(device, runtimeLocationMap);
                 const heartbeatText = formatHeartbeatLabel(device.heartbeat);
                 return `
@@ -5300,10 +5289,6 @@
                             <span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span>
                         </div>
                         <div class="device-mobile-meta">
-                            <div class="device-mobile-meta-item">
-                                <div class="device-mobile-label">商户</div>
-                                <div class="device-mobile-value">${merchantName}</div>
-                            </div>
                             <div class="device-mobile-meta-item">
                                 <div class="device-mobile-label">点位</div>
                                 <div class="device-mobile-value">${locationText}</div>
@@ -5397,10 +5382,10 @@
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
 
-            const merchantName = merchantMap[device.merchant] || device.merchant;
             const action = device.sales === 'enabled' ? '下架' : '上架';
+            const locationText = buildLocationMap()[device.location] || device.location || '未入场';
             
-            if (confirm(`确定要${action}设备 ${deviceId} (${merchantName}) 吗？`)) {
+            if (confirm(`确定要${action}设备 ${deviceId}（${locationText}）吗？`)) {
                 device.sales = device.sales === 'enabled' ? 'disabled' : 'enabled';
                 saveDevicesData();
                 updateStats();
@@ -5455,7 +5440,6 @@
             return {
                 base: {
                     deviceId: device.id,
-                    merchantName: merchantMap[device.merchant] || device.merchant || '-',
                     locationName: device.entered === false || !device.location ? '未入场' : locationName,
                     categoryName: categoryMap[device.category] || device.category || '-',
                     deploymentName: deploymentMap[device.deployment] || device.deployment || '-',
@@ -5568,7 +5552,6 @@
             const summary = base || {};
             const rows = [
                 renderDetailRow('设备编号', summary.deviceId || '-'),
-                renderDetailRow('所属商户', summary.merchantName || '-'),
                 renderDetailRow('点位', summary.locationName === '未入场' ? '未分配点位' : (summary.locationName || '-')),
                 renderDetailRow('设备类别', summary.categoryName || '-'),
                 renderDetailRow('部署类型', summary.deploymentName || '-')
