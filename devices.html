@@ -1307,6 +1307,79 @@
             min-height: 46px;
         }
 
+        .detail-remote-restart-confirm-shell {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-remote-restart-confirm-primary,
+        .detail-remote-restart-confirm-helper {
+            width: 100%;
+            border-radius: 18px;
+            min-height: 54px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .detail-remote-restart-confirm-primary {
+            border: 1px solid rgba(78, 205, 196, 0.45);
+            background: rgba(78, 205, 196, 0.14);
+            color: #0f8f88;
+        }
+
+        .detail-remote-restart-confirm-helper {
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: #fffaf0;
+            color: #a16207;
+        }
+
+        .detail-remote-restart-confirm-primary:hover {
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .detail-remote-restart-confirm-helper:hover {
+            background: #fff3d6;
+        }
+
+        .detail-remote-restart-confirm-callout {
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            background: #f8fafc;
+            color: #666;
+            text-align: center;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .detail-remote-restart-confirm-arrow {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .detail-remote-restart-confirm-cancel {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            min-height: 40px;
+        }
+
+        .detail-remote-restart-confirm-cancel:hover {
+            color: var(--text-primary);
+        }
+
         .detail-fault-record-modal {
             width: min(940px, 100%);
             background: #fff;
@@ -6459,15 +6532,30 @@
 
         function renderDetailRemoteConfirmDialog(actionName) {
             const restartMeta = getDetailRemoteRestartMeta(actionName);
-            const helperAction = restartMeta
-                ? `<button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('查看机器按钮位置')">查看机器按钮位置</button>`
-                : '';
+            if (restartMeta) {
+                return `
+                    <div class="detail-fault-sheet-dialog">
+                        <div class="detail-fault-sheet-title">确认操作</div>
+                        <div class="detail-remote-restart-confirm-shell">
+                            <button type="button" class="detail-remote-restart-confirm-primary" onclick="handleDetailRemoteAction('确认软件重启')">
+                                <span>确认软件重启</span>
+                                <span class="detail-remote-restart-confirm-arrow">›</span>
+                            </button>
+                            <div class="detail-remote-restart-confirm-callout">确定要${escapeHtml(actionName)}？</div>
+                            <button type="button" class="detail-remote-restart-confirm-helper" onclick="handleDetailRemoteAction('无法远程处理？查看机器按钮位置')">
+                                <span>无法远程处理？查看机器按钮位置</span>
+                                <span class="detail-remote-restart-confirm-arrow">›</span>
+                            </button>
+                            <button type="button" class="detail-remote-restart-confirm-cancel" onclick="closeDetailRemoteActions()">取消</button>
+                        </div>
+                    </div>
+                `;
+            }
             return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">确认操作</div>
                     <div style="padding: 16px; text-align: center; color: #666;">确定要${escapeHtml(actionName)}？</div>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('确认执行')">确认执行</button>
-                    ${helperAction}
                     <button type="button" class="detail-fault-sheet-option" onclick="closeDetailRemoteActions()">取消</button>
                 </div>
             `;
@@ -6732,7 +6820,7 @@
                 return;
             }
 
-            if (detailRemoteActionMode === 'restart-confirm' && actionName === '查看机器按钮位置' && detailRemoteRestartContext?.target) {
+            if (detailRemoteActionMode === 'restart-confirm' && ['查看机器按钮位置', '无法远程处理？查看机器按钮位置'].includes(actionName) && detailRemoteRestartContext?.target) {
                 detailRemoteRestartContext.method = 'hardware';
                 detailRemoteActionMode = 'restart-hardware-guide';
                 panel.innerHTML = renderDetailRemoteHardwareGuidePanel(deviceId, detailRemoteRestartContext.target);
@@ -6740,7 +6828,7 @@
                 return;
             }
 
-            if (detailRemoteActionMode === 'restart-confirm' && actionName === '确认执行' && detailRemoteRestartContext?.target) {
+            if (detailRemoteActionMode === 'restart-confirm' && ['确认执行', '确认软件重启'].includes(actionName) && detailRemoteRestartContext?.target) {
                 const restartAction = detailRemoteRestartContext.target;
                 appendFaultOperationRecord(deviceId, restartAction, '成功', `${deviceId} 已执行${restartAction}`);
                 closeDetailRemoteActions();
