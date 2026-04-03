@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Keep `机构重启` as the grouped restart entry, send each restart target directly into the existing software-restart confirm flow, and expose `查看机器按钮位置` as a non-executing helper that opens a hardware guidance card.
+**Goal:** Keep `机构重启` as the grouped restart entry, send each restart target directly into the existing software-restart confirm flow, and expose `无法远程处理？查看机器按钮位置` as a non-executing helper that opens a hardware guidance card.
 
 **Architecture:** Keep the work inside `devices.html` and extend the existing remote-action modal state machine rather than introducing a new page shell. Drive hardware-guidance screens from a restart-target config object so the same template can render different images and steps now, and later swap assets by model without changing the flow.
 
@@ -38,8 +38,8 @@ Cover this path:
 - click `重启系统`
 - verify the panel now shows:
   - `确定要重启系统？`
-  - `确认执行`
-  - `查看机器按钮位置`
+  - `确认软件重启`
+  - `无法远程处理？查看机器按钮位置`
 
 - [ ] **Step 3: Add a failing test for the software restart branch**
 
@@ -47,8 +47,8 @@ Cover this path:
 - click `机构重启`
 - click `重启点单屏（左）`
 - verify confirmation copy stays in the current style, e.g. `确定要重启点单屏（左）？`
-- verify no operation record is written before `确认执行`
-- click `确认执行`
+- verify no operation record is written before `确认软件重启`
+- click `确认软件重启`
 - verify the operation record is written
 
 - [ ] **Step 4: Add a failing test for the hardware guidance helper**
@@ -56,7 +56,7 @@ Cover this path:
 Cover this path:
 - click `机构重启`
 - click `重启六轴机械臂（注意安全，谨慎使用）`
-- click `查看机器按钮位置`
+- click `无法远程处理？查看机器按钮位置`
 - verify the guidance card shows:
   - “系统无法远程执行”
   - target-specific title
@@ -137,8 +137,9 @@ This screen should list:
 
 This screen should:
 - show the selected restart target in the confirmation copy
-- reuse `确认执行`
-- add a helper action `查看机器按钮位置`
+- use `确认软件重启` as the primary action card
+- add a helper action `无法远程处理？查看机器按钮位置`
+- keep the confirmation copy as a separate middle card
 - keep `取消`
 
 - [ ] **Step 4: Keep the hardware guidance card**
@@ -150,14 +151,14 @@ This screen should:
 
 - [ ] **Step 5: Route confirm into the existing remote execution flow**
 
-When the user chooses `确认执行`:
+When the user chooses `确认软件重启`:
 - reuse the current confirm dialog style
 - keep confirm copy consistent with today’s wording
-- only write operation records after `确认执行`
+- only write operation records after `确认软件重启`
 
 - [ ] **Step 6: Route the helper action into the guidance flow**
 
-When the user chooses `查看机器按钮位置`:
+When the user chooses `无法远程处理？查看机器按钮位置`:
 - do not execute any command
 - do not write any success record
 - close only when the user taps `我知道了`
@@ -204,7 +205,8 @@ Expected: all PASS
 The written design should clearly describe:
 - target selection first
 - direct entry into the software-restart confirm page
-- `查看机器按钮位置` as a helper, not a second executable action
+- `无法远程处理？查看机器按钮位置` as a helper, not a second executable action
+- the confirm page visual hierarchy as primary action card + confirm copy card + helper card
 
 - [ ] **Step 2: Note implementation deviations explicitly**
 
