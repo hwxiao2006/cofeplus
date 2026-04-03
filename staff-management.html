@@ -2087,6 +2087,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-mock-data.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2361,6 +2362,10 @@
             { code: 'k9001', name: '广州天河店' },
             { code: 'k9002', name: '深圳南山店' }
         ];
+        const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
+        const cloneSharedStaffData = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
+            ? sharedAdminMockData.helpers.clone
+            : function(value) { return JSON.parse(JSON.stringify(value)); };
 
         const permissionTreeGroups = [
             {
@@ -3472,45 +3477,52 @@
             return labelParts.join(' · ') || '未配置点位';
         }
 
-        function getDeviceOptionsByMerchant(merchantId) {
-            const locationLookup = buildLocationLookup();
-            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
-            if (Array.isArray(devicesData) && devicesData.length) {
-                const merchantAliases = buildMerchantAliases(merchantId);
-                const matched = devicesData
-                    .filter((device) => {
-                        const merchantKey = device.merchant || device.merchantId || device.customerId || '';
-                        return merchantAliases.includes(String(merchantKey).toLowerCase());
-                    })
-                    .map((device) => {
-                        const deviceId = device.id || '';
-                        if (!deviceId) return null;
-                        const rawLocationCode = device.locationCode || device.location || '';
-                        const rawLocationName = device.locationName || '';
-                        const locationMeta = normalizeLocationMeta(rawLocationCode, rawLocationName, locationLookup);
-                        return {
-                            id: deviceId,
-                            locationCode: locationMeta.locationCode,
-                            locationName: locationMeta.locationName,
-                            locationLabel: buildLocationLabel(locationMeta.locationName, locationMeta.locationCode)
-                        };
-                    })
-                    .filter(Boolean);
-
-                if (matched.length) {
-                    return Array.from(new Map(matched.map((item) => [item.id, item])).values());
-                }
+        function resolveRuntimeManageableDevices(storedDevices) {
+            if (sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function') {
+                return sharedAdminMockData.helpers.resolveDevices(storedDevices);
             }
 
-            return (defaultDeviceMap[merchantId] || []).map((deviceId) => {
+            if (Array.isArray(storedDevices) && storedDevices.length) {
+                return cloneSharedStaffData(storedDevices);
+            }
+
+            const fallbackDeviceIds = Array.from(new Set(Object.values(defaultDeviceMap).flat()));
+            return fallbackDeviceIds.map((deviceId) => {
                 const locationMeta = defaultDeviceLocationMap[deviceId] || {};
                 return {
                     id: deviceId,
                     locationCode: locationMeta.locationCode || '',
                     locationName: locationMeta.locationName || '',
-                    locationLabel: buildLocationLabel(locationMeta.locationName || '', locationMeta.locationCode || '')
+                    location: locationMeta.locationCode || ''
                 };
             });
+        }
+
+        function getDeviceOptionsByMerchant(merchantId) {
+            const locationLookup = buildLocationLookup();
+            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            const sourceDevices = resolveRuntimeManageableDevices(devicesData);
+            const matched = sourceDevices
+                .map((device) => {
+                    const deviceId = device.id || '';
+                    if (!deviceId) return null;
+                    const rawLocationCode = device.locationCode || device.location || '';
+                    const rawLocationName = device.locationName || '';
+                    const locationMeta = normalizeLocationMeta(rawLocationCode, rawLocationName, locationLookup);
+                    return {
+                        id: deviceId,
+                        locationCode: locationMeta.locationCode,
+                        locationName: locationMeta.locationName,
+                        locationLabel: buildLocationLabel(locationMeta.locationName, locationMeta.locationCode)
+                    };
+                })
+                .filter(Boolean);
+
+            if (matched.length) {
+                return Array.from(new Map(matched.map((item) => [item.id, item])).values());
+            }
+
+            return [];
         }
 
         function renderDevicePicker(merchantId, selectedDevices = []) {
