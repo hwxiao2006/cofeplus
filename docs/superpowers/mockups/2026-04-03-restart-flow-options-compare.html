@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构重启交互方案对比</title>
+    <style>
+        :root {
+            --bg: #eef2f7;
+            --panel: #ffffff;
+            --ink: #162033;
+            --subtle: #61708a;
+            --line: #d8e0eb;
+            --accent: #4ecdc4;
+            --accent-soft: #e7fbf9;
+            --accent-deep: #12928a;
+            --warn: #f59e0b;
+            --good: #10b981;
+            --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(78, 205, 196, 0.18), transparent 28%),
+                radial-gradient(circle at top right, rgba(99, 102, 241, 0.10), transparent 22%),
+                var(--bg);
+            color: var(--ink);
+        }
+
+        .page {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 40px 28px 60px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(78, 205, 196, 0.16);
+            color: var(--accent-deep);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            line-height: 1.2;
+        }
+
+        .intro {
+            max-width: 920px;
+            color: var(--subtle);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            align-items: start;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+            display: grid;
+            gap: 18px;
+            min-height: 100%;
+        }
+
+        .option.recommended {
+            border: 2px solid rgba(78, 205, 196, 0.65);
+            background: linear-gradient(180deg, rgba(231, 251, 249, 0.88), rgba(255, 255, 255, 0.92));
+        }
+
+        .option-head {
+            display: grid;
+            gap: 10px;
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #edf2f7;
+            color: var(--subtle);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge.recommend {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .option h2 {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.25;
+        }
+
+        .summary {
+            color: var(--subtle);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: #f3f6fb;
+            border: 1px solid var(--line);
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .arrow {
+            color: #8b98ae;
+            font-size: 14px;
+            padding: 7px 0;
+        }
+
+        .phone {
+            margin: 0 auto;
+            width: min(100%, 330px);
+            background: #111827;
+            border-radius: 34px;
+            padding: 10px;
+            box-shadow: 0 24px 40px rgba(17, 24, 39, 0.18);
+        }
+
+        .screen {
+            background: #f8fafc;
+            border-radius: 26px;
+            min-height: 620px;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+        }
+
+        .screen-top {
+            padding: 18px 20px 12px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .screen-title {
+            padding: 0 20px 14px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 1px solid #e5edf5;
+        }
+
+        .screen-body {
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+
+        .item {
+            background: #ffffff;
+            border: 1px solid #e4ebf4;
+            border-radius: 18px;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .item.primary {
+            border-color: rgba(78, 205, 196, 0.55);
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+        }
+
+        .item.helper {
+            background: #fffaf0;
+            border-color: rgba(245, 158, 11, 0.35);
+            color: #8a5a00;
+        }
+
+        .subcopy {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .callout {
+            border-radius: 18px;
+            padding: 14px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            background: #f7fafc;
+            color: var(--subtle);
+            border: 1px solid var(--line);
+        }
+
+        .callout strong {
+            color: var(--ink);
+        }
+
+        .pros {
+            display: grid;
+            gap: 8px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .pro,
+        .con {
+            padding-left: 18px;
+            position: relative;
+            color: var(--subtle);
+        }
+
+        .pro::before,
+        .con::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+        }
+
+        .pro::before {
+            content: "+";
+            color: var(--good);
+        }
+
+        .con::before {
+            content: "−";
+            color: var(--warn);
+        }
+
+        .footer-note {
+            margin-top: 26px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(22, 32, 51, 0.04);
+            color: var(--subtle);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1220px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="hero">
+            <div class="eyebrow">机构重启 · 交互对比稿</div>
+            <h1>重点不是“能不能选机器按钮重启”，而是别把说明误写成一个系统动作</h1>
+            <div class="intro">
+                现在的问题不是流程太长，而是 <strong>“软件重启”</strong> 和 <strong>“机器按钮重启”</strong> 被放成了同级可执行选项。
+                这会让人误以为系统能替他完成两种重启。下面我把 3 种方案并排放出来，你可以直接看哪种最像真实心智。
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <section class="option">
+                <div class="option-head">
+                    <div class="badge-row">
+                        <div class="badge">方案 A</div>
+                        <div class="badge">当前思路</div>
+                    </div>
+                    <h2>并列二选一</h2>
+                    <div class="summary">
+                        先选重启对象，再让用户选 `软件重启` 或 `机器按钮重启`。问题是两者看起来像同等动作，但后者其实只是说明。
+                    </div>
+                </div>
+
+                <div class="flow">
+                    <div class="chip">远程操作</div><div class="arrow">→</div>
+                    <div class="chip">机构重启</div><div class="arrow">→</div>
+                    <div class="chip">重启对象</div><div class="arrow">→</div>
+                    <div class="chip">软件重启 / 机器按钮重启</div>
+                </div>
+
+                <div class="phone">
+                    <div class="screen">
+                        <div class="screen-top">14:43</div>
+                        <div class="screen-title">重启方式 · 重启系统</div>
+                        <div class="screen-body">
+                            <div class="item">软件重启 <span>›</span></div>
+                            <div class="item">机器按钮重启 <span>›</span></div>
+                            <div class="callout">
+                                用户会默认理解成：<strong>两种都是系统能帮我做的事</strong>，只是方式不同。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pros">
+                    <div class="pro">结构规整，对称。</div>
+                    <div class="con">把“动作”和“说明”放成同级，语义不准。</div>
+                    <div class="con">用户可能会问：为什么我还要自己去按按钮？</div>
+                </div>
+            </section>
+
+            <section class="option recommended">
+                <div class="option-head">
+                    <div class="badge-row">
+                        <div class="badge">方案 B</div>
+                        <div class="badge recommend">推荐</div>
+                    </div>
+                    <h2>主动作 + 辅助指引</h2>
+                    <div class="summary">
+                        先选重启对象，然后进入一个目标页。页面只有一个真正动作 `软件重启`，另一个入口改成 `查看机器按钮位置` 或 `查看现场重启指引`。
+                    </div>
+                </div>
+
+                <div class="flow">
+                    <div class="chip">远程操作</div><div class="arrow">→</div>
+                    <div class="chip">机构重启</div><div class="arrow">→</div>
+                    <div class="chip">重启对象</div><div class="arrow">→</div>
+                    <div class="chip">软件重启 + 现场指引</div>
+                </div>
+
+                <div class="phone">
+                    <div class="screen">
+                        <div class="screen-top">14:43</div>
+                        <div class="screen-title">重启系统 · RCK386</div>
+                        <div class="screen-body">
+                            <div class="item primary">
+                                软件重启
+                                <span>›</span>
+                            </div>
+                            <div class="item helper">
+                                查看机器按钮位置
+                                <span>›</span>
+                            </div>
+                            <div class="callout">
+                                <strong>系统可直接执行：</strong> 软件重启<br>
+                                <strong>系统仅提供帮助：</strong> 机器按钮位置与现场步骤
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pros">
+                    <div class="pro">把“执行”和“说明”清楚分层，语义最准确。</div>
+                    <div class="pro">用户一眼能看懂系统能做什么、只能说明什么。</div>
+                    <div class="pro">后续加图片、视频、机型差异都自然挂在“指引”里。</div>
+                </div>
+            </section>
+
+            <section class="option">
+                <div class="option-head">
+                    <div class="badge-row">
+                        <div class="badge">方案 C</div>
+                        <div class="badge">更短</div>
+                    </div>
+                    <h2>确认页内补充指引</h2>
+                    <div class="summary">
+                        先选重启对象后直接进入软件重启确认页，再在确认页下方放一个次级入口 `无法远程处理？查看机器按钮位置`。
+                    </div>
+                </div>
+
+                <div class="flow">
+                    <div class="chip">远程操作</div><div class="arrow">→</div>
+                    <div class="chip">机构重启</div><div class="arrow">→</div>
+                    <div class="chip">重启对象</div><div class="arrow">→</div>
+                    <div class="chip">确认软件重启</div>
+                </div>
+
+                <div class="phone">
+                    <div class="screen">
+                        <div class="screen-top">14:43</div>
+                        <div class="screen-title">确认操作</div>
+                        <div class="screen-body">
+                            <div class="item primary">确认软件重启 <span>›</span></div>
+                            <div class="callout">
+                                确定要重启系统？
+                            </div>
+                            <div class="item helper">
+                                无法远程处理？查看机器按钮位置
+                                <span>›</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pros">
+                    <div class="pro">路径最短，默认引导用户直接走远程动作。</div>
+                    <div class="con">现场指引入口会更隐蔽，像兜底帮助而不是明确分支。</div>
+                    <div class="con">如果用户本来就要看按钮位置，会多绕一步。</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="footer-note">
+            我当前更推荐 <strong>方案 B</strong>：保留 `机构重启 → 重启对象` 的结构，但把后一步从“二选一方式页”改成“一个主动作 + 一个说明入口”。
+            这样用户不会再被迫对一个自己无法执行的“机器按钮重启”做选择，而是会把它理解成系统提供的辅助指引。
+        </div>
+    </div>
+</body>
+</html>
