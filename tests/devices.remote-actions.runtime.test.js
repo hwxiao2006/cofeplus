@@ -196,7 +196,7 @@ test('运行时：点单屏音量页应读取独立的历史值与说明文案',
   assert.ok(panel.innerHTML.includes('>6<'));
 });
 
-test('运行时：保存音量后应持久化并停留在当前页面', () => {
+test('运行时：保存音量后应持久化、关闭弹层并提示统一文案', () => {
   const sandbox = buildSandbox();
 
   sandbox.openDetailRemoteActions('RCK088');
@@ -212,11 +212,26 @@ test('运行时：保存音量后应持久化并停留在当前页面', () => {
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   const saved = JSON.parse(sandbox.__localStorage.dump(REMOTE_VOLUME_STORAGE_KEY));
 
-  assert.strictEqual(panel.classList.contains('active'), true);
-  assert.ok(panel.innerHTML.includes('设备音量'));
+  assert.strictEqual(panel.classList.contains('active'), false);
+  assert.strictEqual(panel.innerHTML, '');
   assert.strictEqual(saved.RCK088.deviceVolume, 9);
   assert.strictEqual(sandbox.__operationRecords.length, 1);
   assert.strictEqual(sandbox.__operationRecords[0].action, '设备音量调节');
   assert.ok(sandbox.__operationRecords[0].note.includes('9'));
-  assert.ok(sandbox.__toasts[0].includes('9'));
+  assert.strictEqual(sandbox.__toasts[0], '已下发音量调节');
+});
+
+test('运行时：音量详情页应提供明确的关闭入口', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+  sandbox.handleDetailRemoteAction('设备音量');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('关闭'));
+  assert.ok(panel.innerHTML.includes('closeDetailRemoteActions()'));
+
+  sandbox.closeDetailRemoteActions();
+  assert.strictEqual(panel.classList.contains('active'), false);
 });

@@ -24,7 +24,7 @@ Cover these behaviors:
 - `音量调节` opens a volume menu instead of executing immediately
 - volume menu shows `设备音量` and `点单屏音量`
 - each detail page renders its own helper copy and current value
-- save persists the chosen value and keeps the panel open
+- save persists the chosen value, closes the panel, and shows the unified success toast
 
 - [ ] **Step 2: Run the test file and verify it fails**
 

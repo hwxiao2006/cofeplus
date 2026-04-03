@@ -1115,8 +1115,25 @@
             gap: 16px;
         }
 
+        .detail-remote-volume-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
         .detail-remote-volume-back {
             align-self: flex-start;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .detail-remote-volume-close {
             border: none;
             background: none;
             color: var(--text-secondary);
@@ -6388,7 +6405,10 @@
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">${escapeHtml(meta.title)} · ${escapeHtml(deviceId)}</div>
                     <div class="detail-remote-volume-shell">
-                        <button type="button" class="detail-remote-volume-back" onclick="handleDetailRemoteAction('音量调节')">返回音量调节</button>
+                        <div class="detail-remote-volume-topbar">
+                            <button type="button" class="detail-remote-volume-back" onclick="handleDetailRemoteAction('音量调节')">返回音量调节</button>
+                            <button type="button" class="detail-remote-volume-close" onclick="closeDetailRemoteActions()">关闭</button>
+                        </div>
                         <div class="detail-remote-volume-card">
                             <div class="detail-remote-volume-icon">${meta.icon}</div>
                             <div class="detail-remote-volume-copy">${escapeHtml(meta.description)}</div>
@@ -6477,10 +6497,9 @@
                 showToast('音量保存失败，请重试', 'error');
                 return;
             }
-            detailRemoteVolumeContext.value = savedValue;
-            refreshDetailRemoteVolumePanel();
             appendFaultOperationRecord(deviceId, meta.actionName, '成功', `${deviceId} ${meta.title}已调整为 ${savedValue}`);
-            showToast(`${meta.title}已保存为 ${savedValue}`);
+            closeDetailRemoteActions();
+            showToast('已下发音量调节');
         }
 
         function handleDetailRemoteAction(actionName) {
