@@ -151,7 +151,8 @@
         }
 
         .value input,
-        .value select {
+        .value select,
+        .value textarea {
             width: min(380px, 100%);
             border: 1px solid transparent;
             background: #f8fafc;
@@ -164,10 +165,17 @@
         }
 
         .value input:focus,
-        .value select:focus {
+        .value select:focus,
+        .value textarea:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.14);
             background: #fff;
+        }
+
+        .value textarea {
+            resize: vertical;
+            min-height: 72px;
+            line-height: 1.5;
         }
 
         .device-search-input {
@@ -303,6 +311,173 @@
 
         .camera {
             font-size: 24px;
+            line-height: 1;
+        }
+
+        .entry-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            background: #ecfbfa;
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .entry-upload-btn input {
+            display: none;
+        }
+
+        .entry-ad-screen-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .entry-ad-screen-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fbfefe;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .entry-ad-screen-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .entry-ad-screen-meta,
+        .entry-ad-screen-tip,
+        .entry-ad-screen-guidance,
+        .location-upload-count,
+        .location-upload-tip {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .entry-ad-screen-guidance {
+            color: #b7791f;
+        }
+
+        .entry-ad-screen-actions,
+        .location-upload-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .entry-ad-screen-actions {
+            justify-content: flex-start;
+        }
+
+        .entry-ad-screen-preview {
+            min-height: 188px;
+            border: 1px dashed #d1d5db;
+            border-radius: 12px;
+            background: #f8fafc;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .entry-ad-screen-empty,
+        .location-images-empty {
+            color: #9ca3af;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .entry-ad-screen-preview-media {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .entry-ad-screen-preview-media img,
+        .entry-ad-screen-preview-media video {
+            width: 100%;
+            max-height: 210px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            background: #0f172a;
+        }
+
+        .entry-ad-screen-preview-info {
+            margin-top: 10px;
+            display: grid;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .entry-ad-screen-preview-name {
+            color: var(--text-primary);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .location-upload-wrap {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .location-images-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+            gap: 10px;
+        }
+
+        .location-image-thumb {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            aspect-ratio: 1 / 1;
+        }
+
+        .location-image-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .location-image-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.72);
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
             line-height: 1;
         }
 
@@ -571,9 +746,24 @@
             }
 
             .value input,
-            .value select {
+            .value select,
+            .value textarea {
                 width: 100%;
                 text-align: left;
+            }
+
+            .entry-ad-screen-grid {
+                grid-template-columns: 1fr;
+                padding: 12px;
+            }
+
+            .location-upload-wrap {
+                padding: 12px;
+            }
+
+            .location-upload-head {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
             .device-search-wrap,
@@ -673,10 +863,6 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="label">所属客户</div>
-                                <div class="value"><span id="merchantName" class="readonly">自动带出</span></div>
-                            </div>
-                            <div class="row">
                                 <div class="label">点位名称</div>
                                 <div class="value">
                                     <div class="location-select-wrap">
@@ -696,6 +882,10 @@
                             <div class="row">
                                 <div class="label">选择员工</div>
                                 <div class="value"><span id="operatorNameDisplay" class="link">请选择 ›</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">运维电话</div>
+                                <div class="value"><input id="operatorPhoneInput" placeholder="请输入运维电话"></div>
                             </div>
                         </div>
                     </section>
@@ -768,6 +958,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="label">网络信号</div>
+                                <div class="value">
+                                    <select id="networkSignalInput">
+                                        <option value="优">优</option>
+                                        <option value="良">良</option>
+                                        <option value="中">中</option>
+                                        <option value="弱">弱</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="label">维护时段</div>
+                                <div class="value"><input id="maintenanceWindowInput" placeholder="例如 07:00-09:00"></div>
+                            </div>
+                            <div class="row">
+                                <div class="label">备注</div>
+                                <div class="value"><textarea id="notesInput" placeholder="可填写补充说明"></textarea></div>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -798,16 +1007,37 @@
                     </section>
 
                     <section class="form-section">
-                        <div class="section-title">显示器画面</div>
+                        <div class="section-title">广告屏设置</div>
                         <div class="rows">
-                            <div class="upload-grid">
-                                <div class="upload-box">
-                                    <div class="camera">📷</div>
-                                    <div>上传机内画面</div>
+                            <div class="entry-ad-screen-grid">
+                                <div class="entry-ad-screen-card">
+                                    <div class="entry-ad-screen-title">左侧菜单</div>
+                                    <div class="entry-ad-screen-meta">建议 1320×1080；支持 jpg、png、mp4(H.264)</div>
+                                    <div class="entry-ad-screen-tip">上传新文件即覆盖当前素材</div>
+                                    <div id="adScreenLeftPreview" class="entry-ad-screen-preview"></div>
+                                    <div class="entry-ad-screen-actions">
+                                        <label class="entry-upload-btn">
+                                            上传图片
+                                            <input id="adScreenLeftImageInput" type="file" accept="image/jpeg,image/png" onchange="handleEntryAdScreenUpload('leftMenu', 'image', event)">
+                                        </label>
+                                        <label class="entry-upload-btn">
+                                            上传视频
+                                            <input id="adScreenLeftVideoInput" type="file" accept="video/mp4" onchange="handleEntryAdScreenUpload('leftMenu', 'video', event)">
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="upload-box">
-                                    <div class="camera">📷</div>
-                                    <div>上传机外画面</div>
+                                <div class="entry-ad-screen-card">
+                                    <div class="entry-ad-screen-title">右侧排队号背景</div>
+                                    <div class="entry-ad-screen-meta">建议 800×1080；仅支持 jpg、png</div>
+                                    <div class="entry-ad-screen-tip">上传新文件即覆盖当前素材</div>
+                                    <div class="entry-ad-screen-guidance">请避免上传白色背景图</div>
+                                    <div id="adScreenRightPreview" class="entry-ad-screen-preview"></div>
+                                    <div class="entry-ad-screen-actions">
+                                        <label class="entry-upload-btn">
+                                            上传图片
+                                            <input id="adScreenRightImageInput" type="file" accept="image/jpeg,image/png" onchange="handleEntryAdScreenUpload('rightQueueBackground', 'image', event)">
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -816,11 +1046,16 @@
                     <section class="form-section">
                         <div class="section-title">点位照片</div>
                         <div class="rows">
-                            <div class="upload-grid">
-                                <div class="upload-box">
-                                    <div class="camera">📷</div>
-                                    <div>拍摄照片</div>
+                            <div class="location-upload-wrap">
+                                <div class="location-upload-head">
+                                    <label class="entry-upload-btn">
+                                        选择图片
+                                        <input id="locationImagesInput" type="file" accept="image/*" multiple onchange="handleEntryImageUpload(event)">
+                                    </label>
+                                    <span id="locationImagesCount" class="location-upload-count">0张</span>
                                 </div>
+                                <div id="locationImagesPreview" class="location-images-preview"></div>
+                                <div class="location-upload-tip">支持本地上传多张点位照片，提交后会同步到设备详情的点位图片区域。</div>
                             </div>
                         </div>
                     </section>
@@ -869,12 +1104,6 @@
                     </select>
                 </label>
                 <label class="quick-location-field">
-                    <span>所属商户（可选）</span>
-                    <select id="quickLocationCustomer">
-                        <option value="">不关联商户</option>
-                    </select>
-                </label>
-                <label class="quick-location-field">
                     <span>负责人（可选）</span>
                     <input id="quickLocationManager" placeholder="请输入负责人">
                 </label>
@@ -898,6 +1127,7 @@
         </div>
     </div>
 
+    <script src="shared/admin-mock-data.js"></script>
     <script>
         const merchantMap = {
             'mer001': '星巴克咖啡',
@@ -910,21 +1140,22 @@
 
         let devicesData = [];
         let locationsData = [];
-        let customersData = [];
         let selectedDevice = null;
         let unenteredDeviceOptions = [];
         let deviceSearchLocationMap = {};
+        let entryAdScreenDraft = createEmptyEntryAdScreenDraft();
+        let entryLocationImageDrafts = [];
 
         function initPage() {
-            devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            ensureEntryMockMerchantContext();
+            devicesData = resolveEntryRuntimeDevices(JSON.parse(localStorage.getItem('devicesData') || '[]'));
             locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
-            customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
             renderDeviceOptions();
             renderLocationOptions();
-            renderQuickLocationCustomerOptions();
             initSwitchGroups();
             setTodayAsDefaultDeviceStartDate();
             toggleEnergyTimeRowsVisibility();
+            renderEntryDraftAssets();
             document.getElementById('gpsActionDisplay').addEventListener('click', requestCurrentLocation);
             document.getElementById('quickCreateLocationModal').addEventListener('click', function(event) {
                 if (event.target === this) {
@@ -939,6 +1170,129 @@
 
         function normalizeDeviceSearchText(value) {
             return String(value || '').trim();
+        }
+
+        function ensureEntryMockMerchantContext() {
+            const storage = localStorage || (window && window.localStorage);
+            if (!storage || typeof storage.getItem !== 'function' || typeof storage.setItem !== 'function') {
+                return;
+            }
+
+            const sessionRaw = storage.getItem('cofeLoginSession');
+            const profileRaw = storage.getItem('sidebarLoginProfile');
+            if (sessionRaw || profileRaw) {
+                return;
+            }
+
+            storage.setItem('cofeLoginSession', JSON.stringify({
+                account: '13800138021',
+                theme: 'paper',
+                merchantId: 'C001',
+                merchantName: '星巴克咖啡',
+                loggedInAt: new Date().toISOString()
+            }));
+            storage.setItem('sidebarLoginProfile', JSON.stringify({
+                name: '王运维',
+                phone: '13800138021',
+                merchantId: 'C001',
+                merchantName: '星巴克咖啡'
+            }));
+        }
+
+        function resolveEntryRuntimeDevices(storedDevices) {
+            const sharedMockData = window.COFE_SHARED_MOCK_DATA;
+            if (sharedMockData?.helpers?.resolveDevices) {
+                return sharedMockData.helpers.resolveDevices(storedDevices, sharedMockData.defaultDevices);
+            }
+            return Array.isArray(storedDevices) ? storedDevices : [];
+        }
+
+        function resolveEntryCurrentMerchantContext() {
+            const storage = localStorage || (window && window.localStorage);
+            let session = {};
+            let profile = {};
+            try {
+                session = JSON.parse(storage?.getItem('cofeLoginSession') || '{}') || {};
+            } catch (error) {
+                session = {};
+            }
+            try {
+                profile = JSON.parse(storage?.getItem('sidebarLoginProfile') || '{}') || {};
+            } catch (error) {
+                profile = {};
+            }
+
+            const merchantId = String(session.merchantId || profile.merchantId || '').trim();
+            const merchantName = String(session.merchantName || profile.merchantName || '').trim();
+            const deviceMerchantKey = getCurrentEntryMerchantDeviceKey(merchantId, merchantName);
+
+            return {
+                merchantId,
+                customerId: merchantId,
+                merchantName,
+                customerName: merchantName,
+                deviceMerchantKey,
+                isResolved: !!(merchantId && merchantName && deviceMerchantKey)
+            };
+        }
+
+        function getCurrentEntryMerchantDeviceKey(inputMerchantId, inputMerchantName) {
+            let merchantId = String(inputMerchantId || '').trim();
+            let merchantName = String(inputMerchantName || '').trim();
+
+            if (!merchantId && !merchantName) {
+                const storage = localStorage || (window && window.localStorage);
+                let session = {};
+                let profile = {};
+                try {
+                    session = JSON.parse(storage?.getItem('cofeLoginSession') || '{}') || {};
+                } catch (error) {
+                    session = {};
+                }
+                try {
+                    profile = JSON.parse(storage?.getItem('sidebarLoginProfile') || '{}') || {};
+                } catch (error) {
+                    profile = {};
+                }
+                merchantId = String(session.merchantId || profile.merchantId || '').trim();
+                merchantName = String(session.merchantName || profile.merchantName || '').trim();
+            }
+
+            const availableMerchantMap = (typeof merchantMap === 'object' && merchantMap)
+                ? merchantMap
+                : {
+                    'mer001': '星巴克咖啡',
+                    'mer002': '瑞幸咖啡',
+                    'mer003': '太平洋咖啡',
+                    'mer004': 'Costa咖啡'
+                };
+
+            if (/^mer\d+$/i.test(merchantId)) {
+                return merchantId.toLowerCase();
+            }
+
+            const customerIdMatch = merchantId.match(/^c(\d+)$/i);
+            if (customerIdMatch) {
+                return `mer${customerIdMatch[1].padStart(3, '0')}`;
+            }
+
+            const matchedEntry = Object.entries(availableMerchantMap).find(([, name]) => String(name || '').trim() === merchantName);
+            return matchedEntry ? matchedEntry[0] : '';
+        }
+
+        function isDeviceInCurrentMerchantScope(device) {
+            const currentMerchantKey = getCurrentEntryMerchantDeviceKey();
+            if (!currentMerchantKey || !device || typeof device !== 'object') return false;
+            return String(device.merchant || '').trim().toLowerCase() === currentMerchantKey;
+        }
+
+        function isLocationInCurrentMerchantScope(location) {
+            if (!location || typeof location !== 'object') return false;
+            const merchantContext = resolveEntryCurrentMerchantContext();
+            if (!merchantContext.isResolved) return false;
+            const customerId = String(location.customerId || '').trim();
+            const customerName = String(location.customerName || '').trim();
+            return customerId === merchantContext.merchantId || (!!customerName && customerName === merchantContext.merchantName);
         }
 
         function buildRuntimeLocationMap() {
@@ -967,6 +1321,7 @@
             const runtimeLocationMap = buildRuntimeLocationMap();
             deviceSearchLocationMap = {};
             unenteredDeviceOptions = devicesData
+                .filter(device => isDeviceInCurrentMerchantScope(device))
                 .filter(device => device.entered === false || !device.location)
                 .map(device => {
                     const value = normalizeDeviceSearchId(device?.id);
@@ -1026,11 +1381,15 @@
 
         function renderLocationOptions() {
             const select = document.getElementById('locationSelect');
+            const currentValue = select ? String(select.value || '').trim() : '';
             let html = '<option value="">请选择</option>';
-            locationsData.forEach(l => {
+            locationsData.filter(location => isLocationInCurrentMerchantScope(location)).forEach(l => {
                 html += `<option value="${l.code}" data-address="${l.address || ''}">${l.name}（${l.code}）</option>`;
             });
             select.innerHTML = html;
+            if (currentValue && Array.from(select.options).some(option => option.value === currentValue)) {
+                select.value = currentValue;
+            }
         }
 
         function normalizePointCategory(value) {
@@ -1071,22 +1430,9 @@
             document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
         }
 
-        function renderQuickLocationCustomerOptions() {
-            const select = document.getElementById('quickLocationCustomer');
-            if (!select) return;
-            let html = '<option value="">不关联商户</option>';
-            customersData.forEach(customer => {
-                if (customer?.status === 'active') {
-                    html += `<option value="${customer.id}">${customer.name}</option>`;
-                }
-            });
-            select.innerHTML = html;
-        }
-
         function openQuickCreateLocationModal() {
             resetQuickCreateLocationForm();
             document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
-            renderQuickLocationCustomerOptions();
             document.getElementById('quickCreateLocationModal').classList.add('show');
         }
 
@@ -1099,7 +1445,6 @@
             document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
             document.getElementById('quickLocationCategory').value = 'operation';
             document.getElementById('quickLocationStatus').value = 'operational';
-            document.getElementById('quickLocationCustomer').value = '';
             document.getElementById('quickLocationManager').value = '';
             document.getElementById('quickLocationPhone').value = '';
             document.getElementById('quickLocationAddress').value = '';
@@ -1117,16 +1462,15 @@
         }
 
         function buildLocationPayloadForEntry() {
-            const customerId = document.getElementById('quickLocationCustomer').value;
-            const customer = customersData.find(item => item.id === customerId);
+            const merchantContext = resolveEntryCurrentMerchantContext();
             return {
                 id: buildNextLocationId(),
                 name: document.getElementById('quickLocationName').value.trim(),
                 code: document.getElementById('quickLocationCode').value.trim(),
                 pointCategory: normalizePointCategory(document.getElementById('quickLocationCategory').value),
                 status: document.getElementById('quickLocationStatus').value || 'operational',
-                customerId,
-                customerName: customer?.name || '',
+                customerId: merchantContext.customerId,
+                customerName: merchantContext.customerName,
                 manager: document.getElementById('quickLocationManager').value.trim(),
                 phone: document.getElementById('quickLocationPhone').value.trim(),
                 address: document.getElementById('quickLocationAddress').value.trim(),
@@ -1150,6 +1494,11 @@
         }
 
         function createLocationFromEntry() {
+            const merchantContext = resolveEntryCurrentMerchantContext();
+            if (!merchantContext.isResolved) {
+                alert('未识别当前商户，无法新增点位');
+                return;
+            }
             const location = buildLocationPayloadForEntry();
             const message = validateQuickCreateLocation(location);
             if (message) {
@@ -1167,7 +1516,6 @@
 
         function onDeviceInput() {
             selectedDevice = null;
-            document.getElementById('merchantName').textContent = '自动带出';
         }
 
         function renderDeviceDropdown(keyword = '') {
@@ -1220,13 +1568,22 @@
             const id = matchDeviceByInput(input.value);
             if (!id) {
                 selectedDevice = null;
-                document.getElementById('merchantName').textContent = '自动带出';
                 return;
             }
             input.value = getDeviceSearchDisplayLabel(id);
             selectedDevice = devicesData.find(d => d.id === id) || null;
-            const merchant = selectedDevice ? (merchantMap[selectedDevice.merchant] || selectedDevice.merchant || '未设置') : '自动带出';
-            document.getElementById('merchantName').textContent = merchant;
+            const operatorPhoneInput = document.getElementById('operatorPhoneInput');
+            if (operatorPhoneInput && !operatorPhoneInput.value && selectedDevice) {
+                const phone = normalizeEditableValue(
+                    selectedDevice.entryInfo?.operatorPhone
+                    || selectedDevice.operatorPhone
+                    || selectedDevice.maintainerPhone,
+                    ''
+                );
+                if (phone) {
+                    operatorPhoneInput.value = phone;
+                }
+            }
         }
 
         function onLocationChange() {
@@ -1289,6 +1646,319 @@
             const now = new Date();
             const pad = n => String(n).padStart(2, '0');
             input.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizeEditableValue(value, fallback = '-') {
+            const raw = value === undefined || value === null ? '' : String(value).trim();
+            if (!raw || raw === '-' || raw === '未选择' || raw === '未获取' || raw === '请选择' || raw === '手动输入') {
+                return fallback;
+            }
+            return raw;
+        }
+
+        function formatCurrentDateTime(dateValue = new Date()) {
+            const current = dateValue instanceof Date ? dateValue : new Date(dateValue);
+            if (Number.isNaN(current.getTime())) {
+                return '-';
+            }
+            const pad = n => String(n).padStart(2, '0');
+            return `${current.getFullYear()}-${pad(current.getMonth() + 1)}-${pad(current.getDate())} ${pad(current.getHours())}:${pad(current.getMinutes())}:${pad(current.getSeconds())}`;
+        }
+
+        function createEmptyEntryAdScreenDraft() {
+            return {
+                leftMenu: null,
+                rightQueueBackground: null
+            };
+        }
+
+        function normalizeEntryAdScreenAsset(asset) {
+            const source = asset && typeof asset === 'object' ? asset : null;
+            if (!source || !source.url) return null;
+            return {
+                kind: source.kind === 'video' ? 'video' : 'image',
+                url: String(source.url || ''),
+                fileName: String(source.fileName || ''),
+                mimeType: String(source.mimeType || ''),
+                width: Number.isFinite(Number(source.width)) ? Number(source.width) : 0,
+                height: Number.isFinite(Number(source.height)) ? Number(source.height) : 0,
+                durationSec: Number.isFinite(Number(source.durationSec)) ? Number(source.durationSec) : 0,
+                codec: String(source.codec || ''),
+                updatedAt: String(source.updatedAt || '')
+            };
+        }
+
+        function serializeEntryAdScreenDraft(adScreenDraft = {}) {
+            return {
+                leftMenu: normalizeEntryAdScreenAsset(adScreenDraft.leftMenu),
+                rightQueueBackground: normalizeEntryAdScreenAsset(adScreenDraft.rightQueueBackground)
+            };
+        }
+
+        function validateAdScreenDraftAsset(sideKey, asset) {
+            const errors = [];
+            const warnings = [];
+            const source = asset && typeof asset === 'object' ? asset : {};
+            const mimeType = String(source.mimeType || '').toLowerCase();
+            const fileName = String(source.fileName || '').toLowerCase();
+            const kind = source.kind === 'video' ? 'video' : 'image';
+            const width = Number(source.width) || 0;
+            const height = Number(source.height) || 0;
+            const durationSec = Number(source.durationSec) || 0;
+            const codec = String(source.codec || '').trim();
+            const isJpg = mimeType.includes('image/jpeg') || /\.jpe?g$/i.test(fileName);
+            const isPng = mimeType.includes('image/png') || /\.png$/i.test(fileName);
+            const isMp4 = mimeType.includes('video/mp4') || /\.mp4$/i.test(fileName);
+
+            if (sideKey === 'rightQueueBackground') {
+                if (kind !== 'image' || (!isJpg && !isPng)) {
+                    errors.push('右侧排队号背景仅支持 jpg、png');
+                }
+                if (width && height && (width !== 800 || height !== 1080)) {
+                    warnings.push('建议上传 800×1080 的右侧背景图');
+                }
+                warnings.push('请避免上传白色背景图');
+                return { errors, warnings };
+            }
+
+            if (kind === 'image') {
+                if (!isJpg && !isPng) {
+                    errors.push('左侧菜单仅支持 jpg、png、mp4(H.264)');
+                }
+            } else if (kind === 'video') {
+                if (!isMp4) {
+                    errors.push('左侧菜单仅支持 jpg、png、mp4(H.264)');
+                }
+                if (codec && codec !== 'H.264') {
+                    errors.push('左侧菜单视频仅支持 H.264 编码');
+                }
+            } else {
+                errors.push('左侧菜单仅支持 jpg、png、mp4(H.264)');
+            }
+
+            if (width && height && (width !== 1320 || height !== 1080)) {
+                warnings.push('建议上传 1320×1080 的左侧菜单素材');
+            }
+            if (kind === 'video' && durationSec > 240) {
+                warnings.push('左侧菜单视频时长建议不超过 4 分钟');
+            }
+            return { errors, warnings };
+        }
+
+        function getEntryAdScreenTitle(sideKey) {
+            return sideKey === 'rightQueueBackground' ? '右侧排队号背景' : '左侧菜单';
+        }
+
+        function renderEntryAdScreenDraftSlot(sideKey) {
+            const previewId = sideKey === 'rightQueueBackground' ? 'adScreenRightPreview' : 'adScreenLeftPreview';
+            const asset = normalizeEntryAdScreenAsset(entryAdScreenDraft?.[sideKey]);
+            const container = document.getElementById(previewId);
+            if (!container) return;
+            if (!asset) {
+                container.innerHTML = '<div class="entry-ad-screen-empty">暂无素材</div>';
+                return;
+            }
+            const title = getEntryAdScreenTitle(sideKey);
+            const resolution = asset.width && asset.height ? `${asset.width}×${asset.height}` : '-';
+            const media = asset.kind === 'video'
+                ? `<div class="entry-ad-screen-preview-media"><video controls preload="metadata" src="${escapeHtml(asset.url)}"></video></div>`
+                : `<div class="entry-ad-screen-preview-media"><img src="${escapeHtml(asset.url)}" alt="${escapeHtml(title)}"></div>`;
+            container.innerHTML = `
+                <div style="width:100%;">
+                    ${media}
+                    <div class="entry-ad-screen-preview-info">
+                        <div class="entry-ad-screen-preview-name">${escapeHtml(asset.fileName || title)}</div>
+                        <div>类型：${escapeHtml(asset.kind === 'video' ? '视频' : '图片')}</div>
+                        <div>分辨率：${escapeHtml(resolution)}</div>
+                        ${asset.kind === 'video' ? `<div>编码：${escapeHtml(asset.codec || '-')}</div>` : ''}
+                        ${asset.kind === 'video' ? `<div>时长：${escapeHtml(asset.durationSec ? `${Math.round(asset.durationSec)} 秒` : '-')}</div>` : ''}
+                        <div>更新时间：${escapeHtml(asset.updatedAt || '-')}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEntryAdScreenDraft() {
+            renderEntryAdScreenDraftSlot('leftMenu');
+            renderEntryAdScreenDraftSlot('rightQueueBackground');
+        }
+
+        function renderEntryLocationImageDrafts() {
+            const countNode = document.getElementById('locationImagesCount');
+            const previewNode = document.getElementById('locationImagesPreview');
+            if (!countNode || !previewNode) return;
+            countNode.textContent = `${entryLocationImageDrafts.length}张`;
+            if (!entryLocationImageDrafts.length) {
+                previewNode.innerHTML = '<div class="location-images-empty">暂无图片，可上传本地点位照片</div>';
+                return;
+            }
+            previewNode.innerHTML = entryLocationImageDrafts.map((src, index) => `
+                <div class="location-image-thumb">
+                    <img src="${escapeHtml(src)}" alt="点位照片 ${index + 1}">
+                    <button type="button" class="location-image-remove" onclick="removeEntryLocationImageDraft(${index}, event)">×</button>
+                </div>
+            `).join('');
+        }
+
+        function renderEntryDraftAssets() {
+            renderEntryAdScreenDraft();
+            renderEntryLocationImageDrafts();
+        }
+
+        function removeEntryLocationImageDraft(index, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (!Array.isArray(entryLocationImageDrafts)) return;
+            entryLocationImageDrafts.splice(index, 1);
+            renderEntryLocationImageDrafts();
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(reader.error || new Error('文件读取失败'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function readImageDimensionsFromDataUrl(dataUrl) {
+            return new Promise((resolve, reject) => {
+                const image = new Image();
+                image.onload = () => resolve({
+                    width: image.naturalWidth || image.width || 0,
+                    height: image.naturalHeight || image.height || 0
+                });
+                image.onerror = () => reject(new Error('图片尺寸读取失败'));
+                image.src = dataUrl;
+            });
+        }
+
+        function readVideoMetadataFromDataUrl(dataUrl) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = () => resolve({
+                    width: video.videoWidth || 0,
+                    height: video.videoHeight || 0,
+                    durationSec: Number.isFinite(video.duration) ? video.duration : 0
+                });
+                video.onerror = () => reject(new Error('视频信息读取失败'));
+                video.src = dataUrl;
+            });
+        }
+
+        async function detectMp4CodecName(file) {
+            if (!file || typeof file.arrayBuffer !== 'function') return '';
+            try {
+                const buffer = await file.arrayBuffer();
+                const bytes = new Uint8Array(buffer.slice(0, 1024 * 128));
+                let text = '';
+                bytes.forEach(byte => {
+                    text += byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : ' ';
+                });
+                if (text.includes('avc1') || text.includes('avc3')) return 'H.264';
+                if (text.includes('hev1') || text.includes('hvc1')) return 'HEVC';
+                if (text.includes('vp09')) return 'VP9';
+                if (text.includes('av01')) return 'AV1';
+            } catch (error) {
+                return '';
+            }
+            return '';
+        }
+
+        async function readEntryAdScreenImageAsset(file) {
+            const url = await readFileAsDataUrl(file);
+            const size = await readImageDimensionsFromDataUrl(url);
+            return {
+                kind: 'image',
+                url,
+                fileName: file?.name || '',
+                mimeType: file?.type || '',
+                width: size.width,
+                height: size.height,
+                durationSec: 0,
+                codec: ''
+            };
+        }
+
+        async function readEntryAdScreenVideoAsset(file) {
+            const url = await readFileAsDataUrl(file);
+            const metadata = await readVideoMetadataFromDataUrl(url);
+            const codec = await detectMp4CodecName(file);
+            return {
+                kind: 'video',
+                url,
+                fileName: file?.name || '',
+                mimeType: file?.type || '',
+                width: metadata.width,
+                height: metadata.height,
+                durationSec: metadata.durationSec,
+                codec
+            };
+        }
+
+        async function handleEntryAdScreenUpload(sideKey, uploadKind, event) {
+            const target = event?.target;
+            const file = target?.files?.[0];
+            if (!file) return;
+            try {
+                const asset = uploadKind === 'video'
+                    ? await readEntryAdScreenVideoAsset(file)
+                    : await readEntryAdScreenImageAsset(file);
+                const validation = validateAdScreenDraftAsset(sideKey, asset);
+                if (validation.errors.length) {
+                    alert(validation.errors[0]);
+                    return;
+                }
+                entryAdScreenDraft[sideKey] = {
+                    ...asset,
+                    updatedAt: formatCurrentDateTime()
+                };
+                renderEntryAdScreenDraft();
+                if (validation.warnings.length) {
+                    alert(validation.warnings[0]);
+                }
+            } catch (error) {
+                alert('素材读取失败，请重试');
+            } finally {
+                target.value = '';
+            }
+        }
+
+        async function handleEntryImageUpload(event) {
+            const target = event?.target;
+            const files = Array.from(target?.files || []).filter(file => file.type.startsWith('image/'));
+            if (!files.length) return;
+            const remains = Math.max(0, 12 - entryLocationImageDrafts.length);
+            if (!remains) {
+                alert('单组最多上传12张图片');
+                target.value = '';
+                return;
+            }
+            try {
+                const urls = await Promise.all(files.slice(0, remains).map(readFileAsDataUrl));
+                entryLocationImageDrafts = entryLocationImageDrafts.concat(urls);
+                renderEntryLocationImageDrafts();
+                if (files.length > remains) {
+                    alert('部分图片超出数量限制，已忽略');
+                }
+            } catch (error) {
+                alert('图片读取失败，请重试');
+            } finally {
+                target.value = '';
+            }
         }
 
         async function resolveAddressByCoordinates(latitude, longitude) {
@@ -1399,26 +2069,32 @@
         function buildEntryInfoPayload() {
             const energyMode = getSwitchGroupValue('energyModeGroup', '开启');
             const energyModeEnabled = isEnergyModeEnabled(energyMode);
+            const locationImageUrls = Array.isArray(entryLocationImageDrafts) ? [...entryLocationImageDrafts] : [];
             return {
                 entryAt: formatEntryTime(),
-                locationName: getSelectedLocationName(),
-                locationAddress: getInputValue('locationAddressInput'),
-                operatorName: getTextValue('operatorNameDisplay', '未选择'),
-                gpsAction: getTextValue('gpsActionDisplay', '未获取'),
-                longitude: getTextValue('longitudeDisplay', '手动输入'),
-                latitude: getTextValue('latitudeDisplay', '手动输入'),
+                locationName: normalizeEditableValue(getSelectedLocationName(), '-'),
+                locationAddress: normalizeEditableValue(getInputValue('locationAddressInput'), '-'),
+                operatorName: normalizeEditableValue(getTextValue('operatorNameDisplay', '未选择'), '未选择'),
+                operatorPhone: normalizeEditableValue(getInputValue('operatorPhoneInput', '-'), '-'),
+                gpsAction: normalizeEditableValue(getTextValue('gpsActionDisplay', '未获取'), '未获取'),
+                longitude: normalizeEditableValue(getTextValue('longitudeDisplay', '手动输入'), '手动输入'),
+                latitude: normalizeEditableValue(getTextValue('latitudeDisplay', '手动输入'), '手动输入'),
                 energyMode,
-                energyStartTime: energyModeEnabled ? getInputValue('energyStartInput') : '-',
-                energyEndTime: energyModeEnabled ? getInputValue('energyEndInput') : '-',
-                deviceStartDate: getInputValue('deviceStartDateInput'),
-                deviceEndDate: getInputValue('deviceEndDateInput'),
+                networkSignal: normalizeEditableValue(getInputValue('networkSignalInput', '优'), '优'),
+                energyStartTime: energyModeEnabled ? normalizeEditableValue(getInputValue('energyStartInput'), '-') : '-',
+                energyEndTime: energyModeEnabled ? normalizeEditableValue(getInputValue('energyEndInput'), '-') : '-',
+                deviceStartDate: normalizeEditableValue(getInputValue('deviceStartDateInput'), '-'),
+                deviceEndDate: normalizeEditableValue(getInputValue('deviceEndDateInput'), '-'),
                 terminalGeneration5: getSwitchGroupValue('terminalGenerationGroup', '开启'),
                 parallelProduction: getSwitchGroupValue('parallelProductionGroup', '开启'),
+                maintenanceWindow: normalizeEditableValue(getInputValue('maintenanceWindowInput', '-'), '-'),
+                notes: normalizeEditableValue(getInputValue('notesInput', '-'), '-'),
                 payQr: !!document.getElementById('payQrCheckbox')?.checked,
                 payDigitalRmb: !!document.getElementById('payDigitalRmbCheckbox')?.checked,
                 paymentMethods: getPaymentMethods(),
-                displayImages: '待上传',
-                locationImages: '待上传'
+                adScreen: serializeEntryAdScreenDraft(entryAdScreenDraft),
+                locationImageUrls,
+                locationImages: locationImageUrls.length ? `${locationImageUrls.length}张图片` : '-'
             };
         }
 
@@ -1435,12 +2111,19 @@
                 return;
             }
 
+            const merchantContext = resolveEntryCurrentMerchantContext();
+            if (!merchantContext.isResolved) {
+                alert('未识别当前商户，无法提交设备入场');
+                return;
+            }
+
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) {
                 alert('设备不存在');
                 return;
             }
 
+            device.merchant = merchantContext.deviceMerchantKey;
             device.location = locationCode;
             device.entered = true;
             device.entryInfo = buildEntryInfoPayload();

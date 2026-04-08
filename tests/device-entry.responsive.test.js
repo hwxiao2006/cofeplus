@@ -26,6 +26,21 @@ test('设备入场页应保留脚本依赖的关键字段ID', () => {
   assert.ok(html.includes('id="deviceSearchInput"'));
   assert.ok(html.includes('id="locationSelect"'));
   assert.ok(html.includes('id="locationAddressInput"'));
+  assert.ok(html.includes('id="operatorPhoneInput"'));
+  assert.ok(html.includes('id="networkSignalInput"'));
+  assert.ok(html.includes('id="maintenanceWindowInput"'));
+  assert.ok(html.includes('id="notesInput"'));
+  assert.ok(html.includes('id="adScreenLeftImageInput"'));
+  assert.ok(html.includes('id="adScreenLeftVideoInput"'));
+  assert.ok(html.includes('id="adScreenRightImageInput"'));
+  assert.ok(html.includes('id="adScreenLeftPreview"'));
+  assert.ok(html.includes('id="adScreenRightPreview"'));
+  assert.ok(html.includes('id="locationImagesInput"'));
+  assert.ok(html.includes('id="locationImagesPreview"'));
+  assert.ok(!html.includes('id="merchantName"'));
+  assert.ok(!html.includes('id="quickLocationCustomer"'));
+  assert.ok(!html.includes('所属客户'));
+  assert.ok(!html.includes('所属商户（可选）'));
 });
 
 test('设备入场页应包含移动端回退样式', () => {

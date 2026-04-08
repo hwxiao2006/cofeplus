@@ -24,11 +24,16 @@ test('设备入场：点位区应提供快速新增点位入口与弹窗', () =>
   assert.ok(/id="quickLocationAddress"/.test(html));
 });
 
-test('设备入场：快速新增点位应支持可选商户并复用点位分类', () => {
-  assert.ok(/id="quickLocationCustomer"/.test(html));
-  assert.ok(/<option value="">不关联商户<\/option>/.test(html));
+test('设备入场：快速新增点位应移除商户选择器并复用点位分类', () => {
+  assert.ok(!/id="quickLocationCustomer"/.test(html));
+  assert.ok(/function\s+resolveEntryCurrentMerchantContext\s*\(/.test(html));
   assert.ok(/<option value="exhibition">展会点位<\/option>/.test(html));
   assert.ok(/<option value="operation">运营点位<\/option>/.test(html));
+});
+
+test('设备入场：快速新增点位应默认写入当前商户', () => {
+  assert.ok(/customerId:\s*merchantContext\.customerId/.test(html));
+  assert.ok(/customerName:\s*merchantContext\.customerName/.test(html));
 });
 
 test('设备入场：新增后应刷新点位下拉并自动选中新点位', () => {
