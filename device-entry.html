@@ -856,10 +856,9 @@
                             <div class="row">
                                 <div class="label">选择设备</div>
                                 <div class="value">
-                                    <div class="device-search-wrap">
-                                        <input type="text" id="deviceSearchInput" class="device-search-input" placeholder="搜索设备编号或点位名称" onfocus="showDeviceDropdown()" oninput="onDeviceInputChange()" onchange="onDeviceChangeByInput()" onkeydown="handleDeviceInputEnter(event)">
-                                        <div id="deviceDropdown" class="device-dropdown"></div>
-                                    </div>
+                                    <select id="deviceSelect" onchange="onDeviceChange()">
+                                        <option value="">请选择</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
@@ -881,11 +880,11 @@
                         <div class="rows">
                             <div class="row">
                                 <div class="label">选择员工</div>
-                                <div class="value"><span id="operatorNameDisplay" class="link">请选择 ›</span></div>
-                            </div>
-                            <div class="row">
-                                <div class="label">运维电话</div>
-                                <div class="value"><input id="operatorPhoneInput" placeholder="请输入运维电话"></div>
+                                <div class="value">
+                                    <select id="operatorSelect" onchange="onOperatorChange()">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -1140,17 +1139,25 @@
 
         let devicesData = [];
         let locationsData = [];
+        let staffManagersData = [];
         let selectedDevice = null;
         let unenteredDeviceOptions = [];
         let deviceSearchLocationMap = {};
+        let entryOperatorOptions = [];
         let entryAdScreenDraft = createEmptyEntryAdScreenDraft();
         let entryLocationImageDrafts = [];
 
         function initPage() {
             ensureEntryMockMerchantContext();
+            ensureEntryMockStaffManagers();
             devicesData = resolveEntryRuntimeDevices(JSON.parse(localStorage.getItem('devicesData') || '[]'));
             locationsData = JSON.parse(localStorage.getItem('locationsData') || '[]');
+            staffManagersData = JSON.parse(localStorage.getItem('staffManagersData') || '[]');
+            if (typeof globalThis !== 'undefined') {
+                globalThis.staffManagersData = staffManagersData;
+            }
             renderDeviceOptions();
+            renderOperatorOptions();
             renderLocationOptions();
             initSwitchGroups();
             setTodayAsDefaultDeviceStartDate();
@@ -1197,6 +1204,78 @@
                 merchantId: 'C001',
                 merchantName: '星巴克咖啡'
             }));
+        }
+
+        function ensureEntryMockStaffManagers() {
+            const storage = localStorage || (window && window.localStorage);
+            if (!storage || typeof storage.getItem !== 'function' || typeof storage.setItem !== 'function') {
+                return;
+            }
+
+            let parsedStaff = [];
+            try {
+                parsedStaff = JSON.parse(storage.getItem('staffManagersData') || '[]') || [];
+            } catch (error) {
+                parsedStaff = [];
+            }
+            if (Array.isArray(parsedStaff) && parsedStaff.length) {
+                if (typeof staffManagersData !== 'undefined') {
+                    staffManagersData = parsedStaff;
+                }
+                if (typeof globalThis !== 'undefined') {
+                    globalThis.staffManagersData = parsedStaff;
+                }
+                return;
+            }
+
+            const merchantContext = resolveEntryCurrentMerchantContext();
+            if (!merchantContext.isResolved) {
+                return;
+            }
+
+            let session = {};
+            let profile = {};
+            try {
+                session = JSON.parse(storage.getItem('cofeLoginSession') || '{}') || {};
+            } catch (error) {
+                session = {};
+            }
+            try {
+                profile = JSON.parse(storage.getItem('sidebarLoginProfile') || '{}') || {};
+            } catch (error) {
+                profile = {};
+            }
+
+            const mockPhone = String(profile.phone || session.account || '').trim();
+            const mockName = String(profile.name || '王运维').trim();
+            if (!mockPhone) {
+                return;
+            }
+
+            const mockStaffManagers = [{
+                id: 'ENTRY_STAFF_MOCK_001',
+                merchantId: merchantContext.merchantId,
+                merchantName: merchantContext.merchantName,
+                username: mockName,
+                phone: mockPhone,
+                accountEnabled: true,
+                permissions: [],
+                devices: [],
+                moduleDeviceScopes: {
+                    devices: { mode: 'inherit', deviceIds: [] },
+                    orders: { mode: 'inherit', deviceIds: [] },
+                    faults: { mode: 'inherit', deviceIds: [] }
+                },
+                createdAt: new Date().toISOString().split('T')[0]
+            }];
+
+            storage.setItem('staffManagersData', JSON.stringify(mockStaffManagers));
+            if (typeof staffManagersData !== 'undefined') {
+                staffManagersData = mockStaffManagers;
+            }
+            if (typeof globalThis !== 'undefined') {
+                globalThis.staffManagersData = mockStaffManagers;
+            }
         }
 
         function resolveEntryRuntimeDevices(storedDevices) {
@@ -1295,6 +1374,44 @@
             return customerId === merchantContext.merchantId || (!!customerName && customerName === merchantContext.merchantName);
         }
 
+        function resolveEntryOperatorOptions() {
+            const merchantContext = resolveEntryCurrentMerchantContext();
+            if (!merchantContext.isResolved) return [];
+            const storage = localStorage || (window && window.localStorage);
+            let availableStaffManagers = [];
+            if (typeof staffManagersData !== 'undefined' && Array.isArray(staffManagersData)) {
+                availableStaffManagers = staffManagersData;
+            } else if (typeof globalThis !== 'undefined' && Array.isArray(globalThis.staffManagersData)) {
+                availableStaffManagers = globalThis.staffManagersData;
+            } else {
+                try {
+                    availableStaffManagers = JSON.parse(storage?.getItem('staffManagersData') || '[]') || [];
+                } catch (error) {
+                    availableStaffManagers = [];
+                }
+            }
+            if (typeof globalThis !== 'undefined') {
+                globalThis.staffManagersData = availableStaffManagers;
+            }
+            return availableStaffManagers
+                .filter((staff) => staff && typeof staff === 'object')
+                .filter((staff) => staff.accountEnabled !== false)
+                .filter((staff) => String(staff.merchantId || '').trim() === merchantContext.merchantId)
+                .map((staff) => {
+                    const id = String(staff.id || '').trim();
+                    const name = String(staff.username || '').trim();
+                    const phone = String(staff.phone || '').trim();
+                    if (!id || !name) return null;
+                    return {
+                        id,
+                        name,
+                        phone,
+                        label: phone ? `${name}（${phone}）` : name
+                    };
+                })
+                .filter(Boolean);
+        }
+
         function buildRuntimeLocationMap() {
             const locationMap = {};
             locationsData.forEach(location => {
@@ -1322,7 +1439,7 @@
             deviceSearchLocationMap = {};
             unenteredDeviceOptions = devicesData
                 .filter(device => isDeviceInCurrentMerchantScope(device))
-                .filter(device => device.entered === false || !device.location)
+                .filter(device => device.entered === false)
                 .map(device => {
                     const value = normalizeDeviceSearchId(device?.id);
                     if (!value) return null;
@@ -1364,19 +1481,74 @@
 
         function renderDeviceOptions() {
             rebuildDeviceSearchData();
-            renderDeviceDropdown('');
+            const select = document.getElementById('deviceSelect');
+            const currentValue = select ? String(select.value || '').trim() : '';
+            let html = '<option value="">请选择</option>';
+            if (!unenteredDeviceOptions.length) {
+                html = '<option value="">暂无可入场设备</option>';
+            } else {
+                html += unenteredDeviceOptions.map((option) => (
+                    `<option value="${option.value}">${formatDeviceSearchLabel(option)}</option>`
+                )).join('');
+            }
+            select.innerHTML = html;
+            select.options = unenteredDeviceOptions.length
+                ? [{ value: '', textContent: '请选择', dataset: {} }].concat(unenteredDeviceOptions.map((option) => ({
+                    value: option.value,
+                    textContent: formatDeviceSearchLabel(option),
+                    dataset: {}
+                })))
+                : [{ value: '', textContent: '暂无可入场设备', dataset: {} }];
+            if (currentValue && Array.from(select.options).some(option => option.value === currentValue)) {
+                select.value = currentValue;
+            } else {
+                select.value = '';
+            }
+            onDeviceChange();
         }
 
-        function matchDeviceByInput(raw) {
-            const keyword = normalizeDeviceSearchText(raw).toLowerCase();
-            if (!keyword) return null;
-            const exact = unenteredDeviceOptions.find(option => {
-                const candidates = [option.value, option.locationName, formatDeviceSearchLabel(option)];
-                return candidates.some(value => String(value || '').toLowerCase() === keyword);
-            });
-            if (exact) return exact.value;
-            const fuzzy = getDeviceSearchCandidates(raw);
-            return fuzzy.length === 1 ? fuzzy[0].value : null;
+        function renderOperatorOptions() {
+            const encodeHtml = typeof escapeHtml === 'function'
+                ? escapeHtml
+                : (value) => String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            const operatorOptions = resolveEntryOperatorOptions();
+            if (typeof entryOperatorOptions !== 'undefined') {
+                entryOperatorOptions = operatorOptions;
+            }
+            if (typeof globalThis !== 'undefined') {
+                globalThis.entryOperatorOptions = operatorOptions;
+            }
+            const select = document.getElementById('operatorSelect');
+            const currentValue = select ? String(select.value || '').trim() : '';
+            let html = '<option value="">请选择</option>';
+            if (!operatorOptions.length) {
+                html = '<option value="">暂无可选员工</option>';
+            } else {
+                html += operatorOptions.map((operator) => (
+                    `<option value="${operator.id}" data-name="${encodeHtml(operator.name)}" data-phone="${encodeHtml(operator.phone)}">${encodeHtml(operator.label)}</option>`
+                )).join('');
+            }
+            select.innerHTML = html;
+            select.options = operatorOptions.length
+                ? [{ value: '', textContent: '请选择', dataset: {} }].concat(operatorOptions.map((operator) => ({
+                    value: operator.id,
+                    textContent: operator.label,
+                    dataset: { name: operator.name, phone: operator.phone }
+                })))
+                : [{ value: '', textContent: '暂无可选员工', dataset: {} }];
+            if (currentValue && operatorOptions.some((operator) => operator.id === currentValue)) {
+                select.value = currentValue;
+                select.selectedIndex = operatorOptions.findIndex((operator) => operator.id === currentValue) + 1;
+            } else {
+                select.value = '';
+                select.selectedIndex = 0;
+            }
+            onOperatorChange();
         }
 
         function renderLocationOptions() {
@@ -1514,76 +1686,41 @@
             alert(`点位 ${location.name} 已创建并选中`);
         }
 
-        function onDeviceInput() {
-            selectedDevice = null;
-        }
-
-        function renderDeviceDropdown(keyword = '') {
-            const dropdown = document.getElementById('deviceDropdown');
-            const list = getDeviceSearchCandidates(keyword);
-            if (!list.length) {
-                dropdown.innerHTML = '<div class="device-option empty">无匹配设备</div>';
-                return;
-            }
-            dropdown.innerHTML = list.map(option => `<div class="device-option" onmousedown="selectDeviceFromDropdown('${option.value}')">${formatDeviceSearchLabel(option)}</div>`).join('');
-        }
-
-        function showDeviceDropdown() {
-            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
-            document.getElementById('deviceDropdown').classList.add('show');
-        }
-
-        function hideDeviceDropdown() {
-            document.getElementById('deviceDropdown').classList.remove('show');
-        }
-
-        function onDeviceInputChange() {
-            onDeviceInput();
-            renderDeviceDropdown(document.getElementById('deviceSearchInput').value);
-            showDeviceDropdown();
-        }
-
-        function selectDeviceFromDropdown(deviceId) {
-            const input = document.getElementById('deviceSearchInput');
-            input.value = getDeviceSearchDisplayLabel(deviceId);
-            onDeviceChangeByInput();
-            input.dataset.skipChange = '1';
-            hideDeviceDropdown();
-        }
-
-        function handleDeviceInputEnter(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                onDeviceChangeByInput();
-                hideDeviceDropdown();
-            }
-        }
-
-        function onDeviceChangeByInput() {
-            const input = document.getElementById('deviceSearchInput');
-            if (input.dataset.skipChange === '1') {
-                input.dataset.skipChange = '0';
-                return;
-            }
-            const id = matchDeviceByInput(input.value);
+        function onDeviceChange() {
+            const select = document.getElementById('deviceSelect');
+            const id = String(select?.value || '').trim();
             if (!id) {
                 selectedDevice = null;
                 return;
             }
-            input.value = getDeviceSearchDisplayLabel(id);
             selectedDevice = devicesData.find(d => d.id === id) || null;
-            const operatorPhoneInput = document.getElementById('operatorPhoneInput');
-            if (operatorPhoneInput && !operatorPhoneInput.value && selectedDevice) {
-                const phone = normalizeEditableValue(
-                    selectedDevice.entryInfo?.operatorPhone
-                    || selectedDevice.operatorPhone
-                    || selectedDevice.maintainerPhone,
-                    ''
-                );
-                if (phone) {
-                    operatorPhoneInput.value = phone;
-                }
+        }
+
+        function getSelectedOperatorMeta() {
+            const select = document.getElementById('operatorSelect');
+            const selectedId = String(select?.value || '').trim();
+            if (!selectedId) {
+                return { id: '', name: '', phone: '' };
             }
+            const operatorOptions = (typeof entryOperatorOptions !== 'undefined' && Array.isArray(entryOperatorOptions))
+                ? entryOperatorOptions
+                : ((typeof globalThis !== 'undefined' && Array.isArray(globalThis.entryOperatorOptions))
+                    ? globalThis.entryOperatorOptions
+                    : []);
+            const currentOption = operatorOptions.find((operator) => operator.id === selectedId);
+            if (currentOption) {
+                return { ...currentOption };
+            }
+            const selectedOption = select?.options?.[select.selectedIndex];
+            return {
+                id: selectedId,
+                name: String(selectedOption?.dataset?.name || '').trim(),
+                phone: String(selectedOption?.dataset?.phone || '').trim()
+            };
+        }
+
+        function onOperatorChange() {
+            return getSelectedOperatorMeta();
         }
 
         function onLocationChange() {
@@ -2070,12 +2207,13 @@
             const energyMode = getSwitchGroupValue('energyModeGroup', '开启');
             const energyModeEnabled = isEnergyModeEnabled(energyMode);
             const locationImageUrls = Array.isArray(entryLocationImageDrafts) ? [...entryLocationImageDrafts] : [];
+            const operatorMeta = getSelectedOperatorMeta();
             return {
                 entryAt: formatEntryTime(),
                 locationName: normalizeEditableValue(getSelectedLocationName(), '-'),
                 locationAddress: normalizeEditableValue(getInputValue('locationAddressInput'), '-'),
-                operatorName: normalizeEditableValue(getTextValue('operatorNameDisplay', '未选择'), '未选择'),
-                operatorPhone: normalizeEditableValue(getInputValue('operatorPhoneInput', '-'), '-'),
+                operatorName: normalizeEditableValue(operatorMeta.name, '未选择'),
+                operatorPhone: normalizeEditableValue(operatorMeta.phone, '-'),
                 gpsAction: normalizeEditableValue(getTextValue('gpsActionDisplay', '未获取'), '未获取'),
                 longitude: normalizeEditableValue(getTextValue('longitudeDisplay', '手动输入'), '手动输入'),
                 latitude: normalizeEditableValue(getTextValue('latitudeDisplay', '手动输入'), '手动输入'),
@@ -2099,8 +2237,7 @@
         }
 
         function submitEntry() {
-            const deviceInput = document.getElementById('deviceSearchInput').value;
-            const deviceId = matchDeviceByInput(deviceInput);
+            const deviceId = String(document.getElementById('deviceSelect')?.value || '').trim();
             const locationCode = document.getElementById('locationSelect').value;
             if (!deviceId) {
                 alert('请选择设备');
@@ -2138,14 +2275,6 @@
             alert(`设备 ${deviceId} 已完成入场`);
             window.location.href = 'devices.html';
         }
-
-        document.addEventListener('click', function(e) {
-            const wrap = document.querySelector('.device-search-wrap');
-            if (wrap && !wrap.contains(e.target)) {
-                hideDeviceDropdown();
-            }
-        });
-
         initPage();
     </script>
 </body>

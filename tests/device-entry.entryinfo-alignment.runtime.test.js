@@ -136,9 +136,6 @@ function buildSandbox() {
       }
     },
     entryLocationImageDrafts: ['location-1.png', 'location-2.png'],
-    matchDeviceByInput() {
-      return 'RCK001';
-    },
     alert(message) {
       alerts.push(message);
     },
@@ -154,6 +151,7 @@ function buildSandbox() {
     'normalizeEditableValue',
     'resolveEntryCurrentMerchantContext',
     'getCurrentEntryMerchantDeviceKey',
+    'getSelectedOperatorMeta',
     'normalizeEntryAdScreenAsset',
     'serializeEntryAdScreenDraft',
     'getTextValue',
@@ -163,6 +161,7 @@ function buildSandbox() {
     'formatEntryTime',
     'getSelectedLocationName',
     'getPaymentMethods',
+    'onDeviceChange',
     'buildEntryInfoPayload',
     'submitEntry'
   ].forEach((functionName) => {
@@ -178,13 +177,18 @@ function buildSandbox() {
 
 function seedBaseForm(sandbox, overrides = {}) {
   const { __elements: elements } = sandbox;
-  elements.operatorNameDisplay = {
-    id: 'operatorNameDisplay',
-    textContent: overrides.operatorNameDisplay || '李运维 ›'
-  };
-  elements.operatorPhoneInput = {
-    id: 'operatorPhoneInput',
-    value: overrides.operatorPhoneInput || '13912340000'
+  elements.operatorSelect = {
+    id: 'operatorSelect',
+    value: overrides.operatorId || 'S001',
+    options: [{
+      value: overrides.operatorId || 'S001',
+      textContent: overrides.operatorOptionLabel || '李运维（13912340000）',
+      dataset: {
+        name: overrides.operatorName || '李运维',
+        phone: overrides.operatorPhone || '13912340000'
+      }
+    }],
+    selectedIndex: 0
   };
   elements.gpsActionDisplay = {
     id: 'gpsActionDisplay',
@@ -210,9 +214,15 @@ function seedBaseForm(sandbox, overrides = {}) {
       textContent: overrides.locationOptionLabel || '静安大悦城（L001）'
     }]
   };
-  elements.deviceSearchInput = {
-    id: 'deviceSearchInput',
-    value: overrides.deviceSearchInput || 'RCK001'
+  elements.deviceSelect = {
+    id: 'deviceSelect',
+    value: overrides.deviceId || 'RCK001',
+    innerHTML: '',
+    options: [{
+      value: overrides.deviceId || 'RCK001',
+      textContent: overrides.deviceOptionLabel || 'RCK001'
+    }],
+    selectedIndex: 0
   };
   elements.energyModeGroup = createGroup(overrides.energyMode || '开启');
   elements.terminalGenerationGroup = createGroup(overrides.terminalGeneration5 || '开启');

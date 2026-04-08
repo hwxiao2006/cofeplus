@@ -23,10 +23,11 @@ test('设备入场页应使用桌面双栏容器结构', () => {
 });
 
 test('设备入场页应保留脚本依赖的关键字段ID', () => {
-  assert.ok(html.includes('id="deviceSearchInput"'));
+  assert.ok(html.includes('id="deviceSelect"'));
   assert.ok(html.includes('id="locationSelect"'));
   assert.ok(html.includes('id="locationAddressInput"'));
-  assert.ok(html.includes('id="operatorPhoneInput"'));
+  assert.ok(html.includes('id="operatorSelect"'));
+  assert.ok(!html.includes('id="operatorPhoneDisplay"'));
   assert.ok(html.includes('id="networkSignalInput"'));
   assert.ok(html.includes('id="maintenanceWindowInput"'));
   assert.ok(html.includes('id="notesInput"'));
@@ -39,8 +40,25 @@ test('设备入场页应保留脚本依赖的关键字段ID', () => {
   assert.ok(html.includes('id="locationImagesPreview"'));
   assert.ok(!html.includes('id="merchantName"'));
   assert.ok(!html.includes('id="quickLocationCustomer"'));
+  assert.ok(!html.includes('id="operatorNameDisplay"'));
+  assert.ok(!html.includes('id="operatorPhoneInput"'));
   assert.ok(!html.includes('所属客户'));
   assert.ok(!html.includes('所属商户（可选）'));
+  assert.ok(!html.includes('id="deviceSearchInput"'));
+  assert.ok(!html.includes('id="deviceDropdown"'));
+});
+
+test('设备入场页的设备选择应使用原生下拉而非搜索输入', () => {
+  assert.ok(/<select id="deviceSelect" onchange="onDeviceChange\(\)">/.test(html));
+  assert.ok(!/class="device-search-input"/.test(html));
+  assert.ok(!/function\s+showDeviceDropdown\s*\(/.test(html));
+  assert.ok(!/function\s+renderDeviceDropdown\s*\(/.test(html));
+});
+
+test('设备入场页的员工选择应使用人员数据下拉并自动展示电话', () => {
+  assert.ok(/<select id="operatorSelect" onchange="onOperatorChange\(\)">/.test(html));
+  assert.ok(!html.includes('运维电话'));
+  assert.ok(!/placeholder="请输入运维电话"/.test(html));
 });
 
 test('设备入场页应包含移动端回退样式', () => {

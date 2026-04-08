@@ -140,7 +140,10 @@ function buildSandbox(storageSeed = {}) {
     'normalizeDeviceSearchText',
     'ensureEntryMockMerchantContext',
     'resolveEntryRuntimeDevices',
+    'ensureEntryMockStaffManagers',
     'resolveEntryCurrentMerchantContext',
+    'resolveEntryOperatorOptions',
+    'getSelectedOperatorMeta',
     'getCurrentEntryMerchantDeviceKey',
     'isDeviceInCurrentMerchantScope',
     'isLocationInCurrentMerchantScope',
@@ -148,6 +151,10 @@ function buildSandbox(storageSeed = {}) {
     'resolveDeviceLocationName',
     'rebuildDeviceSearchData',
     'formatDeviceSearchLabel',
+    'renderDeviceOptions',
+    'renderOperatorOptions',
+    'onDeviceChange',
+    'onOperatorChange',
     'renderLocationOptions',
     'buildNextLocationId',
     'normalizePointCategory',
@@ -178,8 +185,17 @@ function buildSandbox(storageSeed = {}) {
 
 function seedSubmitForm(sandbox) {
   const { __elements: elements } = sandbox;
-  elements.operatorNameDisplay = { id: 'operatorNameDisplay', textContent: '李运维 ›' };
-  elements.operatorPhoneInput = { id: 'operatorPhoneInput', value: '13912340000' };
+  elements.operatorSelect = {
+    id: 'operatorSelect',
+    value: 'S001',
+    innerHTML: '',
+    options: [{
+      value: 'S001',
+      textContent: '李运维（13912340000）',
+      dataset: { name: '李运维', phone: '13912340000' }
+    }],
+    selectedIndex: 0
+  };
   elements.gpsActionDisplay = { id: 'gpsActionDisplay', textContent: '获取当前位置 ›' };
   elements.longitudeDisplay = { id: 'longitudeDisplay', textContent: '121.473700' };
   elements.latitudeDisplay = { id: 'latitudeDisplay', textContent: '31.230400' };
@@ -190,7 +206,13 @@ function seedSubmitForm(sandbox) {
     selectedIndex: 0,
     options: [{ textContent: '静安商圈点位（k1001）', dataset: { address: '上海市静安区测试地址 1 号' } }]
   };
-  elements.deviceSearchInput = { id: 'deviceSearchInput', value: 'RCK001' };
+  elements.deviceSelect = {
+    id: 'deviceSelect',
+    value: 'RCK001',
+    innerHTML: '',
+    options: [{ value: 'RCK001', textContent: 'RCK001' }],
+    selectedIndex: 0
+  };
   elements.energyModeGroup = createGroup('开启');
   elements.terminalGenerationGroup = createGroup('开启');
   elements.parallelProductionGroup = createGroup('开启');
@@ -215,6 +237,86 @@ test('运行时：设备录入候选应只保留当前商户的未入场设备',
     { id: 'RCK003', merchant: 'mer001', entered: true, location: 'k1001' }
   ];
   sandbox.locationsData = [];
+
+  sandbox.rebuildDeviceSearchData();
+
+  assert.deepStrictEqual(Array.from(sandbox.unenteredDeviceOptions.map(item => item.value)), ['RCK001']);
+});
+
+test('运行时：设备下拉应只渲染未入场设备并提供空状态文案', () => {
+  const sandbox = buildSandbox({
+    cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' })
+  });
+  sandbox.devicesData = [
+    { id: 'RCK001', merchant: 'mer001', entered: false, location: '' },
+    { id: 'RCK002', merchant: 'mer001', entered: true, location: '' }
+  ];
+
+  sandbox.renderDeviceOptions();
+
+  assert.ok(sandbox.__elements.deviceSelect.innerHTML.includes('RCK001'));
+  assert.ok(!sandbox.__elements.deviceSelect.innerHTML.includes('RCK002'));
+});
+
+test('运行时：员工下拉应只渲染当前商户下启用中的人员，并自动带出电话', () => {
+  const sandbox = buildSandbox({
+    cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' }),
+    staffManagersData: JSON.stringify([
+      { id: 'S001', merchantId: 'C001', merchantName: '星巴克咖啡', username: '李运维', phone: '13912340000', accountEnabled: true },
+      { id: 'S002', merchantId: 'C001', merchantName: '星巴克咖啡', username: '王店长', phone: '13800138002', accountEnabled: false },
+      { id: 'S003', merchantId: 'C002', merchantName: '瑞幸咖啡', username: '张维修', phone: '13800138003', accountEnabled: true }
+    ])
+  });
+
+  sandbox.renderOperatorOptions();
+  sandbox.__elements.operatorSelect.value = 'S001';
+  sandbox.__elements.operatorSelect.selectedIndex = 1;
+  sandbox.onOperatorChange();
+  const selectedOperator = sandbox.getSelectedOperatorMeta();
+
+  assert.ok(sandbox.__elements.operatorSelect.innerHTML.includes('李运维（13912340000）'));
+  assert.ok(!sandbox.__elements.operatorSelect.innerHTML.includes('王店长'));
+  assert.ok(!sandbox.__elements.operatorSelect.innerHTML.includes('张维修'));
+  assert.strictEqual(selectedOperator.phone, '13912340000');
+});
+
+test('运行时：没有人员数据时应给当前登录商户补最小 mock 员工', () => {
+  const sandbox = buildSandbox({
+    cofeLoginSession: JSON.stringify({ account: '13800138021', merchantId: 'C001', merchantName: '星巴克咖啡' }),
+    sidebarLoginProfile: JSON.stringify({ name: '王运维', phone: '13800138021', merchantId: 'C001', merchantName: '星巴克咖啡' })
+  });
+
+  sandbox.ensureEntryMockStaffManagers();
+  sandbox.renderOperatorOptions();
+
+  const storedStaff = JSON.parse(sandbox.__localStorage.dump('staffManagersData'));
+  assert.strictEqual(storedStaff.length, 1);
+  assert.strictEqual(storedStaff[0].merchantId, 'C001');
+  assert.strictEqual(storedStaff[0].username, '王运维');
+  assert.ok(sandbox.__elements.operatorSelect.innerHTML.includes('王运维（13800138021）'));
+});
+
+test('运行时：没有未入场设备时设备下拉应展示空状态文案', () => {
+  const sandbox = buildSandbox({
+    cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' })
+  });
+  sandbox.devicesData = [
+    { id: 'RCK001', merchant: 'mer001', entered: true, location: 'k1001' }
+  ];
+
+  sandbox.renderDeviceOptions();
+
+  assert.ok(sandbox.__elements.deviceSelect.innerHTML.includes('暂无可入场设备'));
+});
+
+test('运行时：已入场设备即使没有点位也不应出现在设备录入候选中', () => {
+  const sandbox = buildSandbox({
+    cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' })
+  });
+  sandbox.devicesData = [
+    { id: 'RCK001', merchant: 'mer001', entered: false, location: '' },
+    { id: 'RCK002', merchant: 'mer001', entered: true, location: '' }
+  ];
 
   sandbox.rebuildDeviceSearchData();
 
@@ -361,7 +463,6 @@ test('运行时：提交入场时设备商户应默认修正为当前商户', ()
     cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' })
   });
   seedSubmitForm(sandbox);
-  sandbox.matchDeviceByInput = () => 'RCK001';
   sandbox.devicesData = [{
     id: 'RCK001',
     merchant: '',
@@ -378,7 +479,6 @@ test('运行时：提交入场时设备商户应默认修正为当前商户', ()
 test('运行时：缺少当前商户时不应允许提交入场', () => {
   const sandbox = buildSandbox();
   seedSubmitForm(sandbox);
-  sandbox.matchDeviceByInput = () => 'RCK001';
   sandbox.devicesData = [{
     id: 'RCK001',
     merchant: '',
