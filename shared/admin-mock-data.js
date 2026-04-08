@@ -319,8 +319,8 @@
         { id: 'RCK401', merchant: 'mer002', location: 'k8298', status: 'faulted', sales: 'disabled', heartbeat: '2026年2月9日 08:15' },
         { id: 'RCK400', merchant: 'mer003', location: 'k8667', status: 'operational', sales: 'enabled', heartbeat: '2026年2月8日 14:22' },
         { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-        { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
-        { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
+        { id: 'RCK498', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false },
+        { id: 'RCK497', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false }
     ];
     const SHARED_DEFAULT_ORDERS = buildSharedDefaultOrders(SHARED_DEFAULT_DEVICES, buildSharedRuntimeProducts(SHARED_DEFAULT_PRODUCTS));
 
@@ -349,9 +349,17 @@
             storedIdSet.add(deviceId);
             const fallbackDevice = fallbackMap[deviceId];
             if (fallbackDevice) {
-                list.push({
+                const mergedDevice = {
                     ...fallbackDevice,
                     ...JSON.parse(JSON.stringify(device))
+                };
+                const isFallbackPlaceholder = !String(fallbackDevice.location || '').trim() && fallbackDevice.entered === false;
+                const isStoredPlaceholder = !String(device.location || '').trim() && device.entered === false;
+                if (isFallbackPlaceholder && isStoredPlaceholder) {
+                    mergedDevice.merchant = fallbackDevice.merchant;
+                }
+                list.push({
+                    ...mergedDevice
                 });
                 return list;
             }
