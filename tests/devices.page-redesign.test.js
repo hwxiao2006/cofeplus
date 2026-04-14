@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'devices.html'), 'utf8');
+const headerBlocks = html.match(/\.header\s*\{[^}]*\}/g) || [];
 
 function test(name, fn) {
   try {
@@ -47,7 +48,11 @@ test('设备页顶部 header 应恢复为与其他页面一致的白底间距样
   assert.ok(/\.header\s*\{[\s\S]*padding:\s*20px 28px/.test(html));
   assert.ok(/\.header\s*\{[\s\S]*border-bottom:\s*1px solid var\(--border\)/.test(html));
   assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.header\s*\{[\s\S]*padding:\s*16px/.test(html));
-  assert.ok(!/\.header\s*\{[\s\S]*padding:\s*0;\s*[\s\S]*background:\s*transparent;\s*[\s\S]*border-bottom:\s*none;/.test(html));
+  assert.ok(!headerBlocks.some(block =>
+    /padding:\s*0;/.test(block)
+    && /background:\s*transparent;/.test(block)
+    && /border-bottom:\s*none;/.test(block)
+  ));
 });
 
 test('设备页表格应使用新的列头结构', () => {

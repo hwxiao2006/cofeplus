@@ -4573,6 +4573,11 @@
 
         // 默认设备数据
         const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
+        const resolveDeviceBaseline = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices, defaultDevicesData); }
+            : function(storedDevices) {
+                return storedDevices.length ? storedDevices : cloneSharedDeviceData(defaultDevicesData);
+            };
 
         // 设备数据
         let devicesData = [];
@@ -4592,6 +4597,8 @@
             location: []
         };
         let activeFaultActionDeviceId = '';
+        let detailRemoteActionMode = 'root';
+        let detailRemotePendingCommand = '';
         let currentTemperatureAlarmDeviceId = '';
         let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
@@ -4914,7 +4921,7 @@
             if (stored.length === 0) {
                 devicesData = normalizeDevices(defaultDevicesData);
             } else {
-                devicesData = normalizeDevices(stored);
+                devicesData = normalizeDevices(resolveDeviceBaseline(stored));
                 devicesData = ensureUnenteredDevices(devicesData);
                 devicesData = normalizeDevices(devicesData);
             }
@@ -6163,11 +6170,8 @@
             showToast(`${zone.title} 参数已更新`);
         }
 
-        function openDetailRemoteActions(deviceId) {
-            activeFaultActionDeviceId = deviceId;
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!panel) return;
-            panel.innerHTML = `
+        function renderDetailRemoteActionPanel(deviceId) {
+            return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
@@ -6177,6 +6181,38 @@
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
                 </div>
             `;
+        }
+
+        function renderDetailRemoteRestartPanel(deviceId) {
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">机构重启 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启系统')">重启系统</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（左）')">重启点单屏（左）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（右）')">重启点单屏（右）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启六轴机械臂（注意安全，谨慎使用）')">重启六轴机械臂（注意安全，谨慎使用）</button>
+                </div>
+            `;
+        }
+
+        function renderDetailRemoteConfirmDialog(actionName) {
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">确认操作</div>
+                    <div style="padding: 16px; text-align: center; color: #666;">确定要${escapeHtml(actionName)}？</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('确认执行')">确认执行</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="closeDetailRemoteActions()">取消</button>
+                </div>
+            `;
+        }
+
+        function openDetailRemoteActions(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            detailRemoteActionMode = 'root';
+            detailRemotePendingCommand = '';
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+            panel.innerHTML = renderDetailRemoteActionPanel(deviceId);
             panel.classList.add('active');
         }
 
@@ -6185,10 +6221,40 @@
             if (!panel) return;
             panel.classList.remove('active');
             panel.innerHTML = '';
+            detailRemoteActionMode = 'root';
+            detailRemotePendingCommand = '';
         }
 
         function handleDetailRemoteAction(actionName) {
             const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+
+            // Root menu: 机构重启 enters sub-panel
+            if (actionName === '机构重启') {
+                detailRemoteActionMode = 'restart';
+                panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
+                return;
+            }
+
+            // Restart sub-panel items show confirmation
+            if (detailRemoteActionMode === 'restart' && actionName !== '确认执行') {
+                detailRemotePendingCommand = actionName;
+                detailRemoteActionMode = 'confirm';
+                panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
+                return;
+            }
+
+            // Confirmation: execute the pending command
+            if (actionName === '确认执行' && detailRemotePendingCommand) {
+                const cmd = detailRemotePendingCommand;
+                appendFaultOperationRecord(deviceId, cmd, '成功', `${deviceId} 已执行${cmd}`);
+                closeDetailRemoteActions();
+                showToast(`已向设备 ${deviceId} 下发指令：${cmd}`);
+                return;
+            }
+
+            // Direct actions (non-restart items)
             appendFaultOperationRecord(deviceId, actionName, '成功', `${deviceId} 已执行${actionName}`);
             closeDetailRemoteActions();
             showToast(`已向设备 ${deviceId} 下发指令：${actionName}`);
