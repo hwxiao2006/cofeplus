@@ -688,6 +688,86 @@
             white-space: nowrap;
         }
 
+        .materials-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .materials-category-section {
+            border: 1px solid #e7edf5;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .materials-category-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .materials-category-copy {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        .materials-category-title {
+            font-size: 16px;
+            line-height: 1.1;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .materials-category-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .materials-category-count,
+        .materials-category-critical {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            padding: 0 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .materials-category-count {
+            background: #eaf2f9;
+            color: #475569;
+        }
+
+        .materials-category-critical {
+            background: #fff1f2;
+            color: #dc2626;
+        }
+
+        .materials-category-empty {
+            border: 1px dashed #d5deea;
+            border-radius: 14px;
+            background: #f8fbfd;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 14px 16px;
+        }
+
         .materials-grid {
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -696,40 +776,48 @@
 
         .material-card {
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 8px 8px 6px;
-            background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+            border-radius: 20px;
+            padding: 12px 12px 10px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbfe 100%);
             min-height: 144px;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
             transition: all 0.2s ease, transform 0.2s ease;
         }
 
         .material-card:hover {
             border-color: rgba(78, 205, 196, 0.5);
-            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.1);
             transform: translateY(-1px);
         }
 
         .material-card.healthy {
-            box-shadow: inset 0 0 0 1px rgba(78, 205, 196, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(78, 205, 196, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
         }
 
         .material-card.critical {
-            box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.1);
+            box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
         }
 
         .material-card-head {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 6px;
-            margin-bottom: 6px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .material-card-copy {
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
+        }
+
+        .material-card-tools {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .material-card-title-row {
@@ -747,39 +835,49 @@
             flex-wrap: wrap;
         }
 
-        .material-meta-chip,
         .material-code-chip {
             display: inline-flex;
             align-items: center;
-            min-height: 18px;
-            padding: 0 6px;
-            border-radius: 999px;
+            min-height: 22px;
+            padding: 0 8px;
+            border-radius: 12px;
             font-size: 10px;
             font-weight: 600;
             line-height: 1;
         }
 
-        .material-meta-chip {
-            color: #475569;
-            background: #f1f5f9;
+        .material-code-chip {
+            color: #334155;
+            background: #f4f8fb;
+            border: 1px solid #e1eaf2;
         }
 
-        .material-code-chip {
-            color: #0f172a;
-            background: #e8f4f7;
+        .material-lane-edit-btn {
+            border: 1px solid #d9e3ee;
+            background: #fff;
+            color: #64748b;
+            border-radius: 10px;
+            min-height: 28px;
+            padding: 0 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .material-lane-edit-btn:hover {
+            border-color: rgba(78, 205, 196, 0.55);
+            color: var(--primary-dark);
+            background: #f2fffd;
         }
 
         .material-card-body {
-            padding: 0 0 8px;
+            padding: 0 0 12px;
         }
 
         .material-card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #edf2f7;
+            padding-top: 12px;
+            border-top: 1px solid #e7eef5;
         }
 
         .material-name {
@@ -799,81 +897,75 @@
             line-height: 1.35;
         }
 
+        .material-associated-name {
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .material-associated-code {
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
         .card-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex-wrap: nowrap;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
-        .material-card-footer .card-actions {
-            margin-left: auto;
-        }
-
-        .material-card-footer .ship-btn span:first-child,
-        .material-card-footer .refill-btn span:first-child {
-            display: none;
-        }
-
-        .detail-mini-btn {
-            border: 1px solid var(--border);
-            background: #fff;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            color: var(--text-secondary);
-            cursor: pointer;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .detail-mini-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: var(--primary-light);
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            width: 100%;
         }
 
         .ship-btn,
         .refill-btn {
-            padding: 0 9px;
+            width: 100%;
+            padding: 0 10px;
             min-height: 28px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 600;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
             white-space: nowrap;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
         }
 
         .ship-btn {
-            border: 1px solid var(--primary);
-            background: var(--primary-light);
-            color: var(--primary-dark);
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #475569;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
         }
 
         .ship-btn:hover {
-            background: var(--primary);
-            color: #fff;
+            border-color: #94a3b8;
+            background: #eef2f7;
         }
 
         .refill-btn {
-            border: 1px solid #d4dde8;
-            background: #fff;
-            color: #334155;
+            border: 1px solid var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #6adbd3 100%);
+            color: #fff;
+            box-shadow: 0 10px 18px rgba(78, 205, 196, 0.28);
         }
 
         .refill-btn:hover {
-            border-color: #94a3b8;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #36cbbf 0%, #57d9cf 100%);
+            box-shadow: 0 12px 22px rgba(78, 205, 196, 0.34);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .ship-btn span:first-child,
+        .refill-btn span:first-child {
+            font-size: 12px;
+            line-height: 1;
         }
 
         .stock-metrics {
@@ -957,12 +1049,6 @@
             justify-content: space-between;
             color: var(--text-tertiary);
             font-size: 10px;
-            font-weight: 600;
-        }
-
-        .use-text {
-            color: var(--text-secondary);
-            font-size: 11px;
             font-weight: 600;
         }
 
@@ -1342,14 +1428,40 @@
                 min-width: 0;
             }
 
+            .materials-sections {
+                gap: 12px;
+            }
+
+            .materials-category-section {
+                border-radius: 16px;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .materials-category-head,
+            .materials-category-copy,
+            .materials-category-meta {
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
+
+            .materials-category-title {
+                font-size: 15px;
+            }
+
             .material-card-head {
                 flex-direction: column;
                 align-items: stretch;
             }
 
             .card-actions {
-                flex-wrap: wrap;
-                justify-content: flex-start;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .ship-btn,
+            .refill-btn {
+                min-height: 40px;
+                font-size: 12px;
             }
 
             .materials-grid {
@@ -1470,7 +1582,6 @@
                     <div class="toolbar-device-switcher">
                         <div class="toolbar-switcher-copy">
                             <span class="toolbar-eyebrow">设备切换</span>
-                            <span class="toolbar-switcher-hint">支持设备编号 / 点位搜索</span>
                         </div>
                         <div class="device-search-wrap">
                             <div class="search-box">
@@ -1489,7 +1600,6 @@
                             <span>➕</span>
                             <span>补充物料</span>
                         </button>
-                        <button class="lang-btn">只读</button>
                     </div>
                 </div>
 
@@ -1500,11 +1610,11 @@
                                 <span class="board-device-code" id="boardDeviceCode">RCK111</span>
                                 <span class="board-device-location" id="boardDeviceLocation">徐汇区 漕河泾创新园</span>
                             </div>
-                            <div class="board-subtitle" id="boardSubtitle">已选料仓</div>
+                            <div class="board-subtitle" id="boardSubtitle">已选货道看板</div>
                         </div>
                         <div class="board-summary-stats">
                             <div class="summary-stat">
-                                <span class="summary-stat-label">物料总数</span>
+                                <span class="summary-stat-label">货道总数</span>
                                 <span class="summary-stat-value"><span id="materialCount">0</span></span>
                             </div>
                             <div class="summary-stat">
@@ -1517,7 +1627,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="materials-grid" id="materialsGrid"></div>
+                    <div class="materials-sections" id="materialsSections"></div>
                 </section>
             </div>
         </main>
@@ -1569,10 +1679,39 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="laneNameModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="laneNameModalTitle">编辑货道名称</h3>
+                <button class="modal-close" onclick="closeLaneNameModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="value-edit-label" for="laneNameInput">货道名称</label>
+                    <input type="text" class="value-edit-input" id="laneNameInput" maxlength="24" placeholder="请输入货道名称">
+                    <div class="form-hint">仅更新当前设备上的货道名称，不会改动关联物料与阈值。</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeLaneNameModal()">取消</button>
+                <button class="btn btn-confirm" onclick="confirmLaneNameEdit()">确认保存</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-staff-access.js"></script>
     <script>
-
+        const LANE_NAME_OVERRIDE_STORAGE_KEY = 'materialsLaneNameOverrides';
+        const LANE_GROUP_ORDER = [
+            '咖啡豆仓',
+            '牛奶&水',
+            '糖浆',
+            '前后道粉',
+            '包材',
+            '制冰机'
+        ];
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
@@ -1789,21 +1928,37 @@
         });
 
         let materialsData = [
-            { name: "杯盖1", category: "杯盖", code: "83020300", index: 54, remaining: 100, unit: "个", warning: 10, critical: 1, max: 100, status: "healthy" },
-            { name: "椰蓉丝-4", category: "椰蓉丝", code: "76150500", index: 27, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
-            { name: "麦片颗粒-2", category: "麦片颗粒", code: "76190100", index: 25, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
-            { name: "榛果颗粒-1", category: "榛果颗粒", code: "76150200", index: 24, remaining: 0, unit: "g", warning: 10, critical: 0, max: 500, status: "critical" },
-            { name: "香草粉-4", category: "香草粉", code: "74180100", index: 23, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
-            { name: "玉桂粉-1", category: "玉桂粉", code: "76170100", index: 20, remaining: 0, unit: "g", warning: 50, critical: 20, max: 500, status: "critical" },
-            { name: "抹茶粉-2", category: "抹茶粉", code: "74160101", index: 21, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
-            { name: "可可粉-3", category: "可可粉", code: "74150400", index: 22, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
-            { name: "前置抹茶粉", category: "前置抹茶粉", code: "74160100", index: 8, remaining: 135, unit: "g", warning: 50, critical: 10, max: 250, status: "healthy" },
-            { name: "前置可可粉", category: "前置可可粉", code: "74160200", index: 7, remaining: 435, unit: "g", warning: 10, critical: 0, max: 500, status: "healthy" },
-            { name: "冰", category: "冰", code: "10000005", index: 6, remaining: 4000, unit: "g", warning: 500, critical: 100, max: 4000, status: "healthy" },
-            { name: "纸杯-16oz", category: "纸杯", code: "81020100", index: 5, remaining: 0, unit: "个", warning: 10, critical: 1, max: 80, status: "critical" }
+            { laneGroup: "包材", laneName: "冰杯-16oz", materialName: "16oz塑杯(鹿森)", category: "冰杯", code: "81010100", materialNumber: "01020212", materialCode: "01020212", index: 1, remaining: 0, unit: "个", warning: 5, critical: 1, max: 100, status: "critical" },
+            { laneGroup: "包材", laneName: "杯盖1", materialName: "机压杯盖", category: "杯盖", code: "83020300", materialNumber: "01020304", materialCode: "01020304", index: 2, remaining: 0, unit: "个", warning: 10, critical: 1, max: 100, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "椰蓉丝-4", materialName: "椰蓉丝", category: "椰蓉丝", code: "76150500", materialCode: "76150500", index: 3, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "麦片颗粒-2", materialName: "麦片颗粒", category: "麦片颗粒", code: "76190100", materialCode: "76190100", index: 4, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "榛果颗粒-1", materialName: "榛果颗粒", category: "榛果颗粒", code: "76150200", materialNumber: "01010601", materialCode: "01010601", index: 5, remaining: 0, unit: "g", warning: 10, critical: 0, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "香草粉-4", materialName: "香草粉", category: "香草粉", code: "74180100", materialCode: "74180100", index: 6, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "玉桂粉-1", materialName: "玉桂粉", category: "玉桂粉", code: "76170100", materialCode: "76170100", index: 7, remaining: 0, unit: "g", warning: 50, critical: 20, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "抹茶粉-2", materialName: "抹茶粉", category: "抹茶粉", code: "74160101", materialNumber: "01010502", materialCode: "01010502", index: 8, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "可可粉-3", materialName: "可可粉", category: "可可粉", code: "74150400", materialNumber: "01010501", materialCode: "01010501", index: 9, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "糖浆", laneName: "蔗糖糖浆-6", materialName: "好成原味冰蔗糖糖浆", category: "糖浆", code: "20010006", materialNumber: "01010407011", materialCode: "01010407011", index: 10, remaining: 712, unit: "ml", warning: 100, critical: 40, max: 1000, status: "healthy" },
+            { laneGroup: "糖浆", laneName: "焦糖海盐糖浆-4", materialName: "好成海盐焦糖糖浆", category: "糖浆", code: "20020004", materialNumber: "01010407010", materialCode: "01010407010", index: 11, remaining: 358, unit: "ml", warning: 100, critical: 40, max: 1000, status: "healthy" },
+            { laneGroup: "糖浆", laneName: "榛果糖浆-3", materialName: "好成榛果糖浆", category: "糖浆", code: "20010003", materialNumber: "01010407013", materialCode: "01010407013", index: 12, remaining: 676, unit: "ml", warning: 100, critical: 40, max: 1000, status: "healthy" },
+            { laneGroup: "糖浆", laneName: "香草糖浆-2", materialName: "好成香草糖浆", category: "糖浆", code: "20010002", materialNumber: "01010407014", materialCode: "01010407014", index: 13, remaining: 640, unit: "ml", warning: 100, critical: 40, max: 1000, status: "healthy" },
+            { laneGroup: "前后道粉", laneName: "前置抹茶粉", materialName: "抹茶粉", category: "前置抹茶粉", code: "74160100", materialNumber: "01010502", materialCode: "01010502", index: 14, remaining: 0, unit: "g", warning: 50, critical: 10, max: 500, status: "critical" },
+            { laneGroup: "前后道粉", laneName: "前置可可粉", materialName: "可可粉", category: "前置可可粉", code: "74160200", materialNumber: "01010501", materialCode: "01010501", index: 15, remaining: 695, unit: "g", warning: 10, critical: 0, max: 1000, status: "healthy" },
+            { laneGroup: "制冰机", laneName: "冰", materialName: "冰块", category: "冰", code: "10000005", materialCode: "10000005", index: 16, remaining: 4000, unit: "g", warning: 500, critical: 100, max: 4000, status: "healthy" },
+            { laneGroup: "包材", laneName: "纸杯-16oz", materialName: "16oz纸杯(鹿森)", category: "纸杯", code: "81020100", materialNumber: "01020111", materialCode: "01020111", index: 17, remaining: 0, unit: "个", warning: 10, critical: 1, max: 100, status: "critical" },
+            { laneGroup: "牛奶&水", laneName: "牛奶", materialName: "君乐宝牛奶（10L箱）", category: "牛奶", code: "10010001", materialNumber: "1010204", materialCode: "1010204", index: 18, remaining: 4551, unit: "ml", warning: 300, critical: 200, max: 5000, status: "healthy" },
+            { laneGroup: "牛奶&水", laneName: "水", materialName: "冰露", category: "水", code: "10010003", materialNumber: "01010301", materialCode: "01010301", index: 19, remaining: 3, unit: "桶", warning: 1, critical: 0, max: 5, status: "healthy" },
+            { laneGroup: "咖啡豆仓", laneName: "埃塞迷谷豆", materialName: "埃塞俄比亚瑰夏村", category: "咖啡豆", code: "10010021", materialNumber: "1010107", materialCode: "1010107", index: 20, remaining: 662, unit: "g", warning: 50, critical: 0, max: 1000, status: "healthy" },
+            { laneGroup: "咖啡豆仓", laneName: "豪浓二号豆", materialName: "金奖意式豆", category: "咖啡豆", code: "10010022", materialNumber: "01010106", materialCode: "01010106", index: 21, remaining: 744, unit: "g", warning: 10, critical: 0, max: 1000, status: "healthy" },
+            { laneGroup: "糖浆", laneName: "雪梨糖浆-5", materialName: "拜佰里秋月梨糖浆", category: "糖浆", code: "20010005", materialNumber: "0101040622", materialCode: "0101040622", index: 22, remaining: 0, unit: "ml", warning: 100, critical: 40, max: 1000, status: "critical" },
+            { laneGroup: "包材", laneName: "纸杯-12oz", materialName: "12oz纸杯(鹿森)", category: "纸杯", code: "81020101", materialNumber: "01020112", materialCode: "01020112", index: 23, remaining: 959, unit: "Pcs", warning: 10, critical: 1, max: 1000, status: "healthy" },
+            { laneGroup: "糖浆", laneName: "零卡话梅-8", materialName: "凯利威话梅糖浆", category: "糖浆", code: "20010008", materialNumber: "0101040802", materialCode: "0101040802", index: 24, remaining: 0, unit: "ml", warning: 100, critical: 40, max: 1000, status: "critical" },
+            { laneGroup: "糖浆", laneName: "热红酒糖浆-1", materialName: "拜佰里热红酒糖浆", category: "糖浆", code: "20010009", materialNumber: "0101040624", materialCode: "0101040624", index: 25, remaining: 0, unit: "ml", warning: 100, critical: 40, max: 1000, status: "critical" },
+            { laneGroup: "糖浆", laneName: "山茶花糖浆-1", materialName: "山茶花糖浆", category: "糖浆", code: "20010010", materialNumber: "0101040606", materialCode: "0101040606", index: 26, remaining: 0, unit: "ml", warning: 100, critical: 40, max: 1000, status: "critical" }
         ];
+        const MATERIALS_BOARD_BASE_DATA = materialsData.map(item => ({ ...item }));
 
         let currentRefillCode = null;
+        let currentLaneEditCode = null;
         let currentDevice = '';
         let allDeviceOptions = [];
         let deviceSearchOptions = [];
@@ -1957,7 +2112,7 @@
             const location = getDeviceLocation(normalizedId);
             document.getElementById('boardDeviceCode').textContent = normalizedId;
             document.getElementById('boardDeviceLocation').textContent = location;
-            document.getElementById('boardSubtitle').textContent = `已选料仓 · ${location}`;
+            document.getElementById('boardSubtitle').textContent = `已选货道看板 · ${location}`;
         }
 
         function isValidDeviceCode(value) {
@@ -2059,65 +2214,201 @@
             hideDeviceDropdown();
         }
 
+        function readLaneNameOverrides() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(LANE_NAME_OVERRIDE_STORAGE_KEY) || '{}');
+                return raw && typeof raw === 'object' ? raw : {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function writeLaneNameOverrides(overrides) {
+            localStorage.setItem(LANE_NAME_OVERRIDE_STORAGE_KEY, JSON.stringify(overrides));
+        }
+
+        function applyLaneNameOverrides(items) {
+            const overrides = readLaneNameOverrides();
+            const deviceOverrides = overrides[currentDevice] || {};
+            const baseItems = Array.isArray(items) && items.length ? items : MATERIALS_BOARD_BASE_DATA;
+            materialsData = baseItems.map(item => {
+                const overriddenLaneName = normalizeText(deviceOverrides[item.code], '');
+                return overriddenLaneName ? { ...item, laneName: overriddenLaneName } : item;
+            });
+        }
+
+        function resolveLaneBoardGroup(item) {
+            const rawGroup = normalizeText(item && item.laneGroup);
+            if (LANE_GROUP_ORDER.includes(rawGroup)) return rawGroup;
+            return LANE_GROUP_ORDER[LANE_GROUP_ORDER.length - 1];
+        }
+
+        function buildLaneGroupSections(items) {
+            const groupedMap = {};
+            LANE_GROUP_ORDER.forEach(category => {
+                groupedMap[category] = [];
+            });
+
+            (Array.isArray(items) ? items : []).forEach(item => {
+                const boardCategory = resolveLaneBoardGroup(item);
+                if (groupedMap[boardCategory]) {
+                    groupedMap[boardCategory].push(item);
+                }
+            });
+
+            const groups = LANE_GROUP_ORDER.map(category => ({
+                category,
+                items: groupedMap[category],
+                criticalCount: groupedMap[category].filter(item => item.status !== 'healthy').length
+            }));
+
+            const nonEmptyGroups = groups.filter(group => group.items.length > 0);
+            const emptyGroups = groups.filter(group => !group.items.length);
+            return nonEmptyGroups.concat(emptyGroups);
+        }
+
+        function canEditLaneName() {
+            const helper = window.CofeAdminStaffAccess;
+            const access = helper && typeof helper.resolveCurrentStaffAccess === 'function'
+                ? helper.resolveCurrentStaffAccess()
+                : null;
+            const permissions = Array.isArray(access?.currentStaff?.permissions) ? access.currentStaff.permissions : [];
+            return permissions.includes('ops.materials.laneNameEdit');
+        }
+
+        function openLaneNameModal(materialCode) {
+            const material = materialsData.find(item => item.code === materialCode);
+            if (!material) {
+                showToast('未找到对应货道', 'error');
+                return;
+            }
+            if (!canEditLaneName()) {
+                showToast('暂无编辑货道名称权限', 'error');
+                return;
+            }
+
+            currentLaneEditCode = material.code;
+            document.getElementById('laneNameInput').value = material.laneName || '';
+            document.getElementById('laneNameModalTitle').textContent = '编辑货道名称';
+            document.getElementById('laneNameModal').classList.add('active');
+        }
+
+        function closeLaneNameModal() {
+            document.getElementById('laneNameModal').classList.remove('active');
+            currentLaneEditCode = null;
+        }
+
+        function confirmLaneNameEdit() {
+            if (!currentLaneEditCode) return;
+            const nextLaneName = normalizeText(document.getElementById('laneNameInput').value, '');
+            if (!nextLaneName) {
+                showToast('请输入货道名称', 'error');
+                return;
+            }
+
+            const overrides = readLaneNameOverrides();
+            if (!overrides[currentDevice] || typeof overrides[currentDevice] !== 'object') {
+                overrides[currentDevice] = {};
+            }
+            overrides[currentDevice][currentLaneEditCode] = nextLaneName;
+            writeLaneNameOverrides(overrides);
+
+            materialsData = materialsData.map(item => item.code === currentLaneEditCode
+                ? { ...item, laneName: nextLaneName }
+                : item);
+
+            renderMaterials();
+            closeLaneNameModal();
+            showToast('货道名称已更新', 'success');
+        }
+
+        function renderMaterialCard(item) {
+            const fillPct = Math.max(0, Math.min(100, (item.remaining / item.max) * 100));
+            const warningPct = Math.max(0, Math.min(100, (item.warning / item.max) * 100));
+            const criticalPct = Math.max(0, Math.min(100, (item.critical / item.max) * 100));
+            const statusText = item.status === "healthy" ? "正常" : "告急";
+            const statusClass = item.status === "healthy" ? "healthy" : "critical";
+
+            return `
+                <article class="material-card ${statusClass}">
+                    <div class="material-card-head">
+                        <div class="material-card-copy">
+                            <div class="material-card-title-row">
+                                <h3 class="material-name">${item.laneName}</h3>
+                                <div class="material-card-tools">
+                                    <span class="status-pill ${statusClass}">${statusText}</span>
+                                    ${canEditLaneName() ? `<button type="button" class="material-lane-edit-btn" onclick="openLaneNameModal('${item.code}')">编辑货道名称</button>` : ''}
+                                </div>
+                            </div>
+                            <div class="material-meta-row">
+                                <span class="material-associated-name">关联物料：${item.materialName || item.name}</span>
+                            </div>
+                            <div class="material-meta-row">
+                                <span class="material-associated-code">商品编码：${item.materialCode || item.materialNumber || item.code}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="material-card-body">
+                        <div class="stock-metrics">
+                            <span class="stock-line-label">剩余量</span>
+                            <div class="stock-line-value">
+                                <strong>${item.remaining}</strong>
+                                <em>${item.unit}</em>
+                            </div>
+                        </div>
+                        <div class="stock-bar">
+                            <div class="stock-fill" style="width:${fillPct}%;"></div>
+                            <span class="threshold warning" style="left:${warningPct}%;"></span>
+                            <span class="threshold critical" style="left:${criticalPct}%;"></span>
+                        </div>
+                        <div class="threshold-meta">
+                            <span>预警 ${item.warning} ${item.unit}</span>
+                            <span>告警 ${item.critical} ${item.unit}</span>
+                        </div>
+                    </div>
+                    <div class="material-card-footer">
+                        <div class="card-actions">
+                            <button class="ship-btn" onclick="goToRefillPage('${item.code}')">
+                                <span>📦</span>
+                                <span>发货</span>
+                            </button>
+                            <button class="refill-btn" onclick="openRefillModal('${item.code}')">
+                                <span>✏️</span>
+                                <span>补充</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
         function renderMaterials() {
-            const grid = document.getElementById("materialsGrid");
+            const sections = document.getElementById("materialsSections");
             const healthyCount = materialsData.filter(item => item.status === "healthy").length;
             const criticalCount = materialsData.filter(item => item.status !== "healthy").length;
-            grid.innerHTML = materialsData.map(item => {
-                const fillPct = Math.max(0, Math.min(100, (item.remaining / item.max) * 100));
-                const warningPct = Math.max(0, Math.min(100, (item.warning / item.max) * 100));
-                const criticalPct = Math.max(0, Math.min(100, (item.critical / item.max) * 100));
-                const statusText = item.status === "healthy" ? "正常" : "告急";
-                const statusClass = item.status === "healthy" ? "healthy" : "critical";
+            const groups = buildLaneGroupSections(materialsData);
+
+            sections.innerHTML = groups.map(group => {
+                const criticalMeta = group.criticalCount > 0
+                    ? `<span class="materials-category-critical">告急 ${group.criticalCount}</span>`
+                    : '';
+                const contentHtml = group.items.length
+                    ? `<div class="materials-grid">${group.items.map(renderMaterialCard).join("")}</div>`
+                    : '<div class="materials-category-empty">当前设备暂无此类物料</div>';
 
                 return `
-                    <article class="material-card ${statusClass}">
-                        <div class="material-card-head">
-                            <div class="material-card-copy">
-                                <div class="material-card-title-row">
-                                    <h3 class="material-name">${item.name}</h3>
-                                    <span class="status-pill ${statusClass}">${statusText}</span>
-                                </div>
-                                <div class="material-meta-row">
-                                    <span class="material-meta-chip">${item.index}</span>
-                                    <span class="material-meta-chip">${item.category}</span>
-                                    <span class="material-code-chip">${item.code}</span>
-                                </div>
+                    <section class="materials-category-section">
+                        <div class="materials-category-head">
+                            <div class="materials-category-copy">
+                                <h3 class="materials-category-title">${group.category}</h3>
+                            </div>
+                            <div class="materials-category-meta">
+                                <span class="materials-category-count">${group.items.length} 个货道</span>
+                                ${criticalMeta}
                             </div>
                         </div>
-                        <div class="material-card-body">
-                            <div class="stock-metrics">
-                                <span class="stock-line-label">剩余量</span>
-                                <div class="stock-line-value">
-                                    <strong>${item.remaining}</strong>
-                                    <em>${item.unit}</em>
-                                </div>
-                            </div>
-                            <div class="stock-bar">
-                                <div class="stock-fill" style="width:${fillPct}%;"></div>
-                                <span class="threshold warning" style="left:${warningPct}%;"></span>
-                                <span class="threshold critical" style="left:${criticalPct}%;"></span>
-                            </div>
-                            <div class="threshold-meta">
-                                <span>预警 ${item.warning} ${item.unit}</span>
-                                <span>告警 ${item.critical} ${item.unit}</span>
-                            </div>
-                        </div>
-                        <div class="material-card-footer">
-                            <span class="use-text">使用中</span>
-                            <div class="card-actions">
-                                <button class="ship-btn" onclick="goToRefillPage('${item.code}')">
-                                    <span>📦</span>
-                                    <span>发货</span>
-                                </button>
-                                <button class="refill-btn" onclick="openRefillModal('${item.code}')">
-                                    <span>✏️</span>
-                                    <span>补充</span>
-                                </button>
-                                <button class="detail-mini-btn" onclick="viewMaterial('${item.code}')">→</button>
-                            </div>
-                        </div>
-                    </article>
+                        ${contentHtml}
+                    </section>
                 `;
             }).join("");
 
@@ -2126,14 +2417,24 @@
             document.getElementById("healthyCount").textContent = healthyCount;
         }
 
-        function viewMaterial(code) {
-            showToast(`查看物料 ${code} 详情`);
+        function persistShipmentReturnContext(materialCode = null) {
+            const matchedLane = materialCode
+                ? (Array.isArray(materialsData) ? materialsData.find(item => item.code === materialCode) : null)
+                : null;
+            const payload = {
+                source: 'materials',
+                deviceId: currentDevice,
+                laneName: matchedLane?.laneName || null,
+                materialCode: materialCode || null
+            };
+            sessionStorage.setItem('materialsShipmentReturnContext', JSON.stringify(payload));
         }
 
         // 跳转到批量添加物料页面
         function goToRefillPage(materialCode = null) {
             // 保存当前设备信息
             sessionStorage.setItem('currentDevice', currentDevice);
+            persistShipmentReturnContext(materialCode);
             
             if (materialCode) {
                 sessionStorage.setItem('preselectMaterial', materialCode);
@@ -2162,6 +2463,7 @@
             currentDevice = matched;
             input.value = getDeviceSearchDisplayLabel(matched);
             sessionStorage.setItem('currentDevice', currentDevice);
+            applyLaneNameOverrides();
             syncDeviceContext(currentDevice);
             showToast(`已切换到设备 ${currentDevice}`);
         }
@@ -2175,7 +2477,7 @@
             }
 
             currentRefillCode = material.code;
-            document.getElementById('modalTitle').textContent = `补充设置 - ${material.name}`;
+            document.getElementById('modalTitle').textContent = `补充设置 - ${material.laneName}`;
             document.getElementById('currentMaterialCode').textContent = material.code;
             document.getElementById('currentStockValue').textContent = `${material.remaining} ${material.unit}`;
             document.getElementById('adjustCurrent').value = material.remaining;
@@ -2205,12 +2507,12 @@
             const formatAmount = (value) => Number.isInteger(value) ? String(value) : value.toFixed(1);
             const delta = nextRemaining - oldRemaining;
             if (delta > 0) {
-                return `${material.name}加${formatAmount(delta)}${material.unit}`;
+                return `${material.laneName}加${formatAmount(delta)}${material.unit}`;
             }
             if (delta < 0) {
-                return `${material.name}调整为${formatAmount(nextRemaining)}${material.unit}（减少${formatAmount(Math.abs(delta))}${material.unit}）`;
+                return `${material.laneName}调整为${formatAmount(nextRemaining)}${material.unit}（减少${formatAmount(Math.abs(delta))}${material.unit}）`;
             }
-            return `${material.name}阈值调整，当前量${formatAmount(nextRemaining)}${material.unit}`;
+            return `${material.laneName}阈值调整，当前量${formatAmount(nextRemaining)}${material.unit}`;
         }
 
         function pickFirstValidValue(...values) {
@@ -2384,7 +2686,7 @@
 
             renderMaterials();
             closeRefillModal();
-            showToast(`已更新 ${material.name}：当前量 ${nextCurrent}${material.unit}，预警 ${nextWarning}${material.unit}，告警 ${nextCritical}${material.unit}`, 'success');
+            showToast(`已更新 ${material.laneName}：当前量 ${nextCurrent}${material.unit}，预警 ${nextWarning}${material.unit}，告警 ${nextCritical}${material.unit}`, 'success');
         }
 
         function showToast(message, type = 'normal') {
@@ -2414,11 +2716,18 @@
             }
         });
 
+        document.getElementById('laneNameModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLaneNameModal();
+            }
+        });
+
         renderSidebarLoginProfile();
         resetMaintenanceRecordsForTesting();
         currentDevice = resolveInitialDevice();
         initDeviceSearch();
         document.getElementById('deviceSearchInput').value = getDeviceSearchDisplayLabel(currentDevice);
+        applyLaneNameOverrides();
         syncDeviceContext(currentDevice);
         sessionStorage.setItem('currentDevice', currentDevice);
         renderMaterials();

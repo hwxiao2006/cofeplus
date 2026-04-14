@@ -79,9 +79,27 @@
             color: #333;
         }
 
-        .add-btn {
+        .header-actions {
             position: absolute;
             right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .materials-return-btn {
+            background: #f3f8ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            padding: 6px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .add-btn {
             background: var(--primary);
             color: #fff;
             border: none;
@@ -214,6 +232,11 @@
             color: var(--success);
         }
 
+        .order-status.voided {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
         .order-items {
             padding: 12px 16px;
             background: #fafafa;
@@ -222,21 +245,41 @@
         .order-item {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
             padding: 6px 0;
             font-size: 13px;
+        }
+
+        .order-item-main {
+            flex: 1;
+            min-width: 0;
         }
 
         .order-item-name {
             color: var(--text-secondary);
         }
 
+        .order-item-code {
+            display: block;
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            word-break: break-all;
+        }
+
         .order-item-qty {
             color: var(--text-primary);
             font-weight: 500;
+            flex-shrink: 0;
         }
 
         .order-item.more {
             color: var(--text-tertiary);
+        }
+
+        .filter-tab.hidden {
+            display: none;
         }
 
         .order-footer {
@@ -272,6 +315,18 @@
         .btn-detail {
             background: #f5f5f5;
             color: var(--text-secondary);
+        }
+
+        .btn-print {
+            background: #eef6ff;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+
+        .btn-void {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
         }
 
         .btn-complete {
@@ -362,12 +417,35 @@
         .detail-item {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
 
         .detail-item:last-child {
             border-bottom: none;
+        }
+
+        .detail-item-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .detail-item-name {
+            color: var(--text-primary);
+        }
+
+        .detail-item-code {
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            word-break: break-all;
+        }
+
+        .detail-item-qty {
+            font-weight: 600;
+            flex-shrink: 0;
         }
 
         .modal-footer {
@@ -628,10 +706,11 @@
 
             .desktop-item-chip {
                 display: inline-flex;
-                align-items: center;
-                gap: 4px;
-                padding: 3px 8px;
-                border-radius: 999px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+                padding: 6px 8px;
+                border-radius: 12px;
                 background: #f1f5f9;
                 border: 1px solid #e2e8f0;
                 font-size: 11px;
@@ -649,6 +728,14 @@
             .desktop-item-chip .qty {
                 font-weight: 700;
                 color: #0f172a;
+            }
+
+            .desktop-item-code {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: #64748b;
             }
 
             .desktop-more {
@@ -701,21 +788,21 @@
     <header class="header">
         <button class="back-btn" onclick="goBack()">←</button>
         <h1 class="header-title">运维清单</h1>
-        <button class="add-btn" onclick="goToAdd()">+ 添加</button>
+        <div class="header-actions">
+            <button class="materials-return-btn" id="materialsReturnBtn" onclick="returnToMaterialsPage()" style="display:none;">返回物料页</button>
+            <button class="add-btn" onclick="goToAdd()">+ 添加</button>
+        </div>
     </header>
 
     <!-- 筛选标签 -->
     <div class="filter-tabs">
-        <div class="filter-tab active" onclick="switchTab('all')">
-            <span>我的清单</span>
+        <div class="filter-tab active" id="allOrdersTab" onclick="switchTab('all')">
+            <span>全部发货单</span>
             <span class="tab-badge hide" id="badgeAll">0</span>
         </div>
-        <div class="filter-tab" onclick="switchTab('pending')">
-            <span>待处理</span>
-            <span class="tab-badge hide" id="badgePending">0</span>
-        </div>
-        <div class="filter-tab" onclick="switchTab('completed')">
-            <span>历史清单</span>
+        <div class="filter-tab" id="myOrdersTab" onclick="switchTab('mine')">
+            <span>我的发货单</span>
+            <span class="tab-badge hide" id="badgeMine">0</span>
         </div>
     </div>
 
@@ -743,47 +830,296 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-staff-access.js"></script>
     <script>
         let currentFilter = 'all';
         let currentOrders = [];
+        let currentRequesterProfile = { name: '当前用户', phone: '' };
+        let currentOrdersAccess = {
+            isScoped: false,
+            visibleDeviceIds: [],
+            canViewAllOrders: false,
+            scopeMessage: ''
+        };
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const ORDERS_PERMISSION_KEY = 'ops.orders';
+        const ORDER_MATERIAL_NUMBER_MAP = {
+            '10010001': '1010204',
+            '10010003': '01010301',
+            '20010001': '01010407011',
+            '20010002': '01010407014',
+            '20010003': '01010407013',
+            '20010004': '0101040624',
+            '74160100': '01010502',
+            '74160200': '01010501',
+            '76150200': '01010601',
+            '74160101': '01010502',
+            '74150400': '01010501',
+            '81020100': '01020111',
+            '81020101': '01020112',
+            '83020300': '01020304',
+            '83020301': '01020303'
+        };
+        const CURRENT_DEVICE_LOCATION_MAP = {
+            'RCK111': '徐汇区 漕河泾创新园',
+            'RCK112': '浦东新区 张江创智天地',
+            'RCK113': '静安区 南京西路商圈'
+        };
+        const LEGACY_SAMPLE_DEVICE_MAP = {
+            'VM-A12': { deviceId: 'RCK111', location: CURRENT_DEVICE_LOCATION_MAP.RCK111 },
+            'VM-B07': { deviceId: 'RCK112', location: CURRENT_DEVICE_LOCATION_MAP.RCK112 },
+            'VM-C18': { deviceId: 'RCK113', location: CURRENT_DEVICE_LOCATION_MAP.RCK113 },
+            'VM-D03': { deviceId: 'RCK111', location: CURRENT_DEVICE_LOCATION_MAP.RCK111 },
+            'VM-E09': { deviceId: 'RCK112', location: CURRENT_DEVICE_LOCATION_MAP.RCK112 }
+        };
+        const SAMPLE_ORDER_ITEM_GROUPS = {
+            hotSell: [
+                { code: '81020100', materialNumber: '01020111', laneName: '纸杯-16oz', name: '纸杯-16oz', quantity: 160, unit: '个' },
+                { code: '83020300', materialNumber: '01020304', laneName: '杯盖1', name: '杯盖1', quantity: 180, unit: '个' },
+                { code: '81020101', materialNumber: '01020112', laneName: '纸杯-12oz', name: '纸杯-12oz', quantity: 120, unit: '个' },
+                { code: '10010001', materialNumber: '1010204', laneName: '牛奶', name: '鲜牛奶', quantity: 6000, unit: 'ml' }
+            ],
+            lowSugar: [
+                { code: '10010003', materialNumber: '01010301', laneName: '水', name: '纯净水', quantity: 12000, unit: 'ml' },
+                { code: '20010001', materialNumber: '01010407011', laneName: '蔗糖糖浆-6', name: '甘蔗冰糖糖浆', quantity: 8, unit: '瓶' },
+                { code: '20010003', materialNumber: '01010407013', laneName: '榛果糖浆-3', name: '榛果风味糖浆', quantity: 6, unit: '瓶' }
+            ],
+            nightShift: [
+                { code: '20010002', materialNumber: '01010407014', laneName: '香草糖浆-2', name: '香草风味糖浆', quantity: 24, unit: '瓶' },
+                { code: '74150400', materialNumber: '01010501', laneName: '可可粉-3', name: '可可粉-3', quantity: 10, unit: '袋' },
+                { code: '74160100', materialNumber: '01010502', laneName: '前置抹茶粉', name: '前置抹茶粉', quantity: 12, unit: '袋' }
+            ],
+            expansion: [
+                { code: '81020101', materialNumber: '01020112', laneName: '纸杯-12oz', name: '纸杯-12oz', quantity: 100, unit: '个' },
+                { code: '83020301', materialNumber: '01020303', laneName: '杯盖2', name: '杯盖2', quantity: 100, unit: '个' },
+                { code: '10010003', materialNumber: '01010301', laneName: '水', name: '纯净水', quantity: 10000, unit: 'ml' },
+                { code: '10010001', materialNumber: '1010204', laneName: '牛奶', name: '鲜牛奶', quantity: 5000, unit: 'ml' }
+            ],
+            inventory: [
+                { code: '20010003', materialNumber: '01010407013', laneName: '榛果糖浆-3', name: '榛果风味糖浆', quantity: 8, unit: '瓶' },
+                { code: '20010004', materialNumber: '0101040624', laneName: '热红酒糖浆-1', name: '热红酒糖浆', quantity: 6, unit: '瓶' },
+                { code: '76150200', materialNumber: '01010601', laneName: '榛果颗粒-1', name: '榛果颗粒-1', quantity: 12, unit: '袋' }
+            ]
+        };
+        const LEGACY_SAMPLE_ORDER_SET_BY_CODE = {
+            'cup-mid': 'hotSell',
+            'lid-mid': 'hotSell',
+            'straw': 'hotSell',
+            'sugar': 'hotSell',
+            'bean': 'lowSugar',
+            'milk': 'lowSugar',
+            'cup-hot': 'lowSugar',
+            'syrup-vn': 'nightShift',
+            'powder-cocoa': 'nightShift',
+            'stirrer': 'nightShift',
+            'napkin': 'expansion',
+            'cup-cold': 'expansion',
+            'lid-cold': 'expansion',
+            'ice-bag': 'expansion',
+            'bean-light': 'inventory',
+            'filter-paper': 'inventory',
+            'clean-kit': 'inventory'
+        };
+
+        function readMaterialsShipmentReturnContext() {
+            try {
+                const raw = sessionStorage.getItem('materialsShipmentReturnContext');
+                const parsed = raw ? JSON.parse(raw) : null;
+                if (!parsed || parsed.source !== 'materials') {
+                    return null;
+                }
+
+                const deviceId = String(parsed.deviceId || '').trim();
+                if (!deviceId) {
+                    return null;
+                }
+
+                return {
+                    source: 'materials',
+                    deviceId,
+                    laneName: parsed.laneName ? String(parsed.laneName) : '',
+                    materialCode: parsed.materialCode ? String(parsed.materialCode) : null
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function clearMaterialsShipmentReturnContext() {
+            sessionStorage.removeItem('materialsShipmentReturnContext');
+        }
+
+        function buildMaterialsReturnUrl() {
+            const context = readMaterialsShipmentReturnContext();
+            if (!context || !context.deviceId) {
+                return 'materials.html';
+            }
+
+            sessionStorage.setItem('currentDevice', context.deviceId);
+            return `materials.html?device=${encodeURIComponent(context.deviceId)}`;
+        }
+
+        function returnToMaterialsPage() {
+            const returnUrl = buildMaterialsReturnUrl();
+            clearMaterialsShipmentReturnContext();
+            window.location.href = returnUrl;
+        }
+
+        function syncMaterialsReturnEntry() {
+            const button = document.getElementById('materialsReturnBtn');
+            if (!button) return;
+            const hasContext = Boolean(readMaterialsShipmentReturnContext());
+            button.style.display = hasContext ? '' : 'none';
+        }
+
+        function getCurrentRequesterProfile() {
+            let session = {};
+            let profile = {};
+
+            try {
+                session = JSON.parse(localStorage.getItem(LOGIN_SESSION_KEY) || '{}') || {};
+            } catch (error) {
+                session = {};
+            }
+
+            try {
+                profile = JSON.parse(localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY) || '{}') || {};
+            } catch (error) {
+                profile = {};
+            }
+
+            return {
+                name: String(profile.name || '当前用户'),
+                phone: String(profile.phone || session.account || '')
+            };
+        }
+
+        function resolveCurrentOrdersAccess() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') {
+                return {
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    canViewAllOrders: true,
+                    scopeMessage: ''
+                };
+            }
+
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) {
+                return {
+                    ...(access || {}),
+                    isScoped: false,
+                    visibleDeviceIds: [],
+                    canViewAllOrders: false,
+                    scopeMessage: '当前账号仅可查看我的发货单'
+                };
+            }
+
+            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'orders')) {
+                return {
+                    ...access,
+                    visibleDeviceIds: [],
+                    canViewAllOrders: false,
+                    scopeMessage: '当前账号仅可查看我的发货单'
+                };
+            }
+
+            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
+                ? helper.getModuleVisibleDeviceIds(access.currentStaff, 'orders')
+                : [];
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+
+            return {
+                ...access,
+                visibleDeviceIds: normalizedVisibleDeviceIds,
+                canViewAllOrders: normalizedVisibleDeviceIds.length > 0,
+                scopeMessage: normalizedVisibleDeviceIds.length
+                    ? `当前可查看全部发货单设备：${normalizedVisibleDeviceIds.length} 台`
+                    : '当前账号仅可查看我的发货单'
+            };
+        }
+
+        function canViewAllOrdersTab(access = currentOrdersAccess) {
+            return Boolean(access && access.canViewAllOrders);
+        }
+
+        function cloneSampleOrderItems(groupKey) {
+            return (SAMPLE_ORDER_ITEM_GROUPS[groupKey] || []).map(item => ({ ...item }));
+        }
+
+        function normalizeOrderDevice(order) {
+            const sourceDeviceId = String(order?.deviceId || '').trim();
+            const legacyDevice = LEGACY_SAMPLE_DEVICE_MAP[sourceDeviceId];
+            const deviceId = legacyDevice?.deviceId || sourceDeviceId;
+            const location = legacyDevice?.location || CURRENT_DEVICE_LOCATION_MAP[deviceId] || order?.location || '';
+            return {
+                deviceId,
+                location,
+                migrated: Boolean(legacyDevice) || (Boolean(deviceId) && location !== (order?.location || ''))
+            };
+        }
 
         function normalizeOrder(order, index = 0) {
             if (!order || typeof order !== 'object') {
                 return null;
             }
 
-            const normalizedItems = Array.isArray(order.items)
-                ? order.items
+            const sourceItems = Array.isArray(order.items) ? order.items : [];
+            const legacySampleGroup = sourceItems
+                .map(item => item && item.code)
+                .find(code => LEGACY_SAMPLE_ORDER_SET_BY_CODE[code]);
+            const itemsForNormalization = legacySampleGroup
+                ? cloneSampleOrderItems(LEGACY_SAMPLE_ORDER_SET_BY_CODE[legacySampleGroup])
+                : sourceItems;
+            const normalizedDevice = normalizeOrderDevice(order);
+            const normalizedStatus = order.status === 'voided'
+                ? 'voided'
+                : order.status === 'completed'
+                    ? 'completed'
+                    : 'pending';
+
+            const normalizedItems = itemsForNormalization
                     .filter(item => item && typeof item === 'object' && item.name)
                     .map(item => {
                         const quantity = Number(item.quantity);
                         return {
                             code: item.code || '',
+                            materialNumber: item.materialNumber || ORDER_MATERIAL_NUMBER_MAP[item.code] || item.code || '',
+                            laneName: item.laneName || '',
                             name: item.name,
                             quantity: Number.isFinite(quantity) && quantity > 0 ? quantity : 1,
                             unit: item.unit || '个'
                         };
                     })
-                : [];
 
             return {
                 id: order.id || `DL${Date.now()}${String(index).padStart(2, '0')}`,
                 createTime: order.createTime || new Date().toISOString(),
                 deliveryTime: order.deliveryTime || order.createTime || new Date().toISOString(),
                 note: order.note || '',
-                status: order.status === 'completed' ? 'completed' : 'pending',
+                status: normalizedStatus,
                 requestedBy: order.requestedBy || '当前用户',
+                requestedByPhone: order.requestedByPhone || '',
                 requestTime: order.requestTime || order.createTime || new Date().toISOString(),
-                deviceId: order.deviceId || '',
-                location: order.location || '',
+                deviceId: normalizedDevice.deviceId,
+                location: normalizedDevice.location,
                 completedBy: order.completedBy || '',
                 completedTime: order.completedTime || '',
-                items: normalizedItems
+                voidedBy: order.voidedBy || '',
+                voidedTime: order.voidedTime || '',
+                voidedReason: order.voidedReason || '',
+                items: normalizedItems,
+                _legacyMigrated: Boolean(legacySampleGroup) || normalizedDevice.migrated
             };
         }
 
         function createSampleOrders() {
             const now = new Date();
+            const currentRequester = getCurrentRequesterProfile();
             const toIso = (dayOffset, hour, minute = 0) => {
                 const date = new Date(now);
                 date.setDate(date.getDate() + dayOffset);
@@ -798,18 +1134,14 @@
                     deliveryTime: toIso(0, 10, 30),
                     note: '周二午高峰前补齐热销品',
                     status: 'pending',
-                    requestedBy: '李晨',
+                    requestedBy: currentRequester.name,
+                    requestedByPhone: currentRequester.phone,
                     requestTime: toIso(-1, 18, 10),
-                    deviceId: 'VM-A12',
-                    location: '徐汇区 漕河泾创新园',
+                    deviceId: 'RCK111',
+                    location: CURRENT_DEVICE_LOCATION_MAP.RCK111,
                     completedBy: null,
                     completedTime: null,
-                    items: [
-                        { code: 'cup-mid', name: '中杯纸杯', quantity: 160, unit: '个' },
-                        { code: 'lid-mid', name: '中杯杯盖', quantity: 180, unit: '个' },
-                        { code: 'straw', name: '纸吸管', quantity: 220, unit: '根' },
-                        { code: 'sugar', name: '方糖包', quantity: 80, unit: '包' }
-                    ]
+                    items: cloneSampleOrderItems('hotSell')
                 },
                 {
                     createTime: toIso(-1, 15, 45),
@@ -817,16 +1149,13 @@
                     note: '补充低糖线物料，配送前请电话确认',
                     status: 'pending',
                     requestedBy: '王珂',
+                    requestedByPhone: '13800138022',
                     requestTime: toIso(-1, 15, 20),
-                    deviceId: 'VM-B07',
-                    location: '浦东新区 张江创智天地',
+                    deviceId: 'RCK112',
+                    location: CURRENT_DEVICE_LOCATION_MAP.RCK112,
                     completedBy: null,
                     completedTime: null,
-                    items: [
-                        { code: 'bean', name: '深烘咖啡豆', quantity: 12, unit: 'kg' },
-                        { code: 'milk', name: '燕麦奶', quantity: 18, unit: '盒' },
-                        { code: 'cup-hot', name: '热饮杯(大)', quantity: 120, unit: '个' }
-                    ]
+                    items: cloneSampleOrderItems('lowSugar')
                 },
                 {
                     createTime: toIso(-3, 10, 5),
@@ -834,51 +1163,44 @@
                     note: '夜班已验收，库存恢复正常',
                     status: 'completed',
                     requestedBy: '赵宁',
+                    requestedByPhone: '13800138023',
                     requestTime: toIso(-3, 9, 40),
-                    deviceId: 'VM-C18',
-                    location: '静安区 南京西路商圈',
+                    deviceId: 'RCK113',
+                    location: CURRENT_DEVICE_LOCATION_MAP.RCK113,
                     completedBy: '运维-陈浩',
                     completedTime: toIso(-2, 16, 10),
-                    items: [
-                        { code: 'syrup-vn', name: '香草糖浆', quantity: 24, unit: '瓶' },
-                        { code: 'powder-cocoa', name: '可可粉', quantity: 10, unit: '袋' },
-                        { code: 'stirrer', name: '木质搅拌棒', quantity: 300, unit: '支' }
-                    ]
+                    items: cloneSampleOrderItems('nightShift')
                 },
                 {
                     createTime: toIso(-4, 11, 15),
                     deliveryTime: toIso(-3, 9, 30),
-                    note: '设备点位扩容，新增周边耗材',
-                    status: 'completed',
+                    note: '设备点位扩容后临时发货单已作废',
+                    status: 'voided',
                     requestedBy: '孙悦',
+                    requestedByPhone: '13800138024',
                     requestTime: toIso(-4, 10, 55),
-                    deviceId: 'VM-D03',
-                    location: '虹口区 北外滩商务区',
-                    completedBy: '运维-冯磊',
-                    completedTime: toIso(-3, 11, 50),
-                    items: [
-                        { code: 'napkin', name: '抽取餐巾纸', quantity: 36, unit: '包' },
-                        { code: 'cup-cold', name: '冷饮杯', quantity: 100, unit: '个' },
-                        { code: 'lid-cold', name: '冷饮杯盖', quantity: 100, unit: '个' },
-                        { code: 'ice-bag', name: '制冰袋', quantity: 20, unit: '袋' }
-                    ]
+                    deviceId: 'RCK111',
+                    location: CURRENT_DEVICE_LOCATION_MAP.RCK111,
+                    completedBy: null,
+                    completedTime: null,
+                    voidedBy: '孙悦',
+                    voidedTime: toIso(-3, 8, 50),
+                    voidedReason: '点位扩容计划调整，改由新批次发货单执行',
+                    items: cloneSampleOrderItems('expansion')
                 },
                 {
                     createTime: toIso(-6, 16, 30),
                     deliveryTime: toIso(-5, 13, 0),
-                    note: '已完成清点并同步台账',
-                    status: 'completed',
-                    requestedBy: '周蓉',
+                    note: '门店补货预留单',
+                    status: 'pending',
+                    requestedBy: currentRequester.name,
+                    requestedByPhone: currentRequester.phone,
                     requestTime: toIso(-6, 16, 10),
-                    deviceId: 'VM-E09',
-                    location: '闵行区 紫竹园区',
-                    completedBy: '运维-杨杰',
-                    completedTime: toIso(-5, 14, 20),
-                    items: [
-                        { code: 'bean-light', name: '浅烘咖啡豆', quantity: 8, unit: 'kg' },
-                        { code: 'filter-paper', name: '滤纸', quantity: 12, unit: '盒' },
-                        { code: 'clean-kit', name: '清洁套装', quantity: 6, unit: '套' }
-                    ]
+                    deviceId: 'RCK112',
+                    location: CURRENT_DEVICE_LOCATION_MAP.RCK112,
+                    completedBy: null,
+                    completedTime: null,
+                    items: cloneSampleOrderItems('inventory')
                 }
             ];
 
@@ -901,12 +1223,24 @@
                 orders = [];
             }
 
+            let hasLegacyMigration = false;
             const normalizedOrders = orders
-                .map((order, index) => normalizeOrder(order, index))
+                .map((order, index) => {
+                    const normalizedOrder = normalizeOrder(order, index);
+                    if (!normalizedOrder) return null;
+                    if (normalizedOrder._legacyMigrated) {
+                        hasLegacyMigration = true;
+                    }
+                    const { _legacyMigrated, ...persistedOrder } = normalizedOrder;
+                    return persistedOrder;
+                })
                 .filter(Boolean)
                 .sort((a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime());
 
             if (normalizedOrders.length > 0) {
+                if (hasLegacyMigration) {
+                    localStorage.setItem('materialOrders', JSON.stringify(normalizedOrders));
+                }
                 return normalizedOrders;
             }
 
@@ -922,71 +1256,143 @@
 
         // 加载发货单
         function loadOrders() {
+            currentRequesterProfile = getCurrentRequesterProfile();
+            currentOrdersAccess = resolveCurrentOrdersAccess();
             currentOrders = readOrdersFromStorage();
+            syncMaterialsReturnEntry();
+            syncFilterTabs();
             renderOrders();
             updateBadges();
         }
 
+        function isOwnOrder(order, requester = currentRequesterProfile) {
+            if (!order) return false;
+            const requesterPhone = String(requester?.phone || '').trim();
+            const orderPhone = String(order.requestedByPhone || '').trim();
+            if (requesterPhone && orderPhone) {
+                return requesterPhone === orderPhone;
+            }
+            return String(order.requestedBy || '').trim() === String(requester?.name || '当前用户').trim();
+        }
+
+        function canAccessOrderInScope(order, access = currentOrdersAccess) {
+            if (!order) return false;
+            if (isOwnOrder(order)) return true;
+            if (!canViewAllOrdersTab(access)) return false;
+            if (!access || !access.isScoped) return true;
+            const visibleDeviceSet = new Set((Array.isArray(access.visibleDeviceIds) ? access.visibleDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean));
+            return visibleDeviceSet.has(String(order.deviceId || '').trim());
+        }
+
+        function canVoidOrder(order, requester = currentRequesterProfile) {
+            return Boolean(order) && order.status === 'pending' && isOwnOrder(order, requester);
+        }
+
+        function getVisibleOrdersByFilter(filter = currentFilter) {
+            if (filter === 'mine') {
+                return currentOrders.filter(order => isOwnOrder(order));
+            }
+            return currentOrders.filter(order => canAccessOrderInScope(order));
+        }
+
+        function getOrderStatusMeta(order) {
+            if (order.status === 'voided') {
+                return { text: '已作废', className: 'voided', color: 'var(--danger)' };
+            }
+            if (order.status === 'completed') {
+                return { text: '已完成', className: 'completed', color: 'var(--success)' };
+            }
+            return { text: '待发货', className: 'pending', color: 'var(--warning)' };
+        }
+
+        function getEmptyTextByFilter(filter = currentFilter) {
+            if (filter === 'mine') return '暂无我的发货单';
+            if (filter === 'all') return '暂无可查看的全部发货单';
+            return '暂无可查看的发货单';
+        }
+
+        function syncFilterTabs() {
+            const allOrdersTab = document.getElementById('allOrdersTab');
+            const myOrdersTab = document.getElementById('myOrdersTab');
+            const showAllOrdersTab = canViewAllOrdersTab();
+
+            if (allOrdersTab) {
+                if (showAllOrdersTab) {
+                    allOrdersTab.style.display = '';
+                } else {
+                    allOrdersTab.style.display = 'none';
+                }
+                allOrdersTab.classList.toggle('hidden', !showAllOrdersTab);
+            }
+
+            if (currentFilter === 'all' && !showAllOrdersTab) {
+                currentFilter = 'mine';
+            }
+
+            [allOrdersTab, myOrdersTab].forEach(tab => {
+                if (tab) tab.classList.remove('active');
+            });
+
+            if (currentFilter === 'all' && allOrdersTab && showAllOrdersTab) {
+                allOrdersTab.classList.add('active');
+            } else if (myOrdersTab) {
+                myOrdersTab.classList.add('active');
+            }
+        }
+
         // 更新徽章数字
         function updateBadges() {
-            // 只计算待处理的订单数（红点代表还需处理的工作量）
-            const pendingCount = currentOrders.filter(o => o.status === 'pending').length;
-            
             const badgeAll = document.getElementById('badgeAll');
-            const badgePending = document.getElementById('badgePending');
-            
-            // 更新全部徽章 - 显示待处理数量（不是总数）
-            badgeAll.textContent = pendingCount;
-            if (pendingCount > 0) {
-                badgeAll.classList.remove('hide');
-                badgeAll.classList.add('show');
-            } else {
-                badgeAll.classList.remove('show');
-                badgeAll.classList.add('hide');
+            const badgeMine = document.getElementById('badgeMine');
+            const allCount = getVisibleOrdersByFilter('all').length;
+            const mineCount = getVisibleOrdersByFilter('mine').length;
+
+            if (badgeAll) {
+                badgeAll.textContent = allCount;
+                badgeAll.classList.toggle('show', allCount > 0);
+                badgeAll.classList.toggle('hide', allCount === 0);
             }
-            
-            // 更新待发货徽章
-            badgePending.textContent = pendingCount;
-            if (pendingCount > 0) {
-                badgePending.classList.remove('hide');
-                badgePending.classList.add('show');
-            } else {
-                badgePending.classList.remove('show');
-                badgePending.classList.add('hide');
+
+            if (badgeMine) {
+                badgeMine.textContent = mineCount;
+                badgeMine.classList.toggle('show', mineCount > 0);
+                badgeMine.classList.toggle('hide', mineCount === 0);
             }
         }
 
         // 切换筛选
         function switchTab(filter) {
+            if (filter === 'all' && !canViewAllOrdersTab()) {
+                return;
+            }
             currentFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // 找到点击的 tab 并激活
-            const tabs = document.querySelectorAll('.filter-tab');
-            if (filter === 'all') tabs[0].classList.add('active');
-            else if (filter === 'pending') tabs[1].classList.add('active');
-            else if (filter === 'completed') tabs[2].classList.add('active');
+            syncFilterTabs();
             renderOrders();
+            updateBadges();
+        }
+
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         // 渲染订单列表
         function renderOrders() {
             const list = document.getElementById('orderList');
-            
-            let filtered = currentOrders;
-            if (currentFilter === 'pending') {
-                filtered = currentOrders.filter(o => o.status === 'pending');
-            } else if (currentFilter === 'completed') {
-                filtered = currentOrders.filter(o => o.status === 'completed');
-            }
+            const filtered = getVisibleOrdersByFilter();
 
             if (filtered.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📦</div>
-                        <div class="empty-text">暂无${currentFilter === 'pending' ? '待发货' : currentFilter === 'completed' ? '已完成' : ''}的发货单</div>
-                        ${currentFilter === 'all' || currentFilter === 'pending' ? '<button class="empty-btn" onclick="goToAdd()">去添加物料</button>' : ''}
+                        <div class="empty-text">${getEmptyTextByFilter()}</div>
+                        <button class="empty-btn" onclick="goToAdd()">去添加物料</button>
                     </div>
                 `;
                 return;
@@ -1004,21 +1410,20 @@
                     <div>操作</div>
                 </div>
             ` + filtered.map(order => {
-                const statusText = order.status === 'pending' ? '待发货' : '已完成';
-                const statusClass = order.status === 'pending' ? 'pending' : 'completed';
+                const statusMeta = getOrderStatusMeta(order);
                 const timeStr = formatDateTime(order.deliveryTime);
                 const createStr = formatDateTime(order.createTime);
                 const deviceInfo = order.deviceId ? `${order.deviceId} · ${order.location || ''}` : '未指定设备';
                 const requester = order.requestedBy || '未知';
                 const noteText = order.note || '无备注';
                 const orderItems = Array.isArray(order.items) ? order.items : [];
-                
-                // 桌面端展示前3项，移动端展示前2项
+                const canVoid = canVoidOrder(order);
+
                 const desktopItems = orderItems.slice(0, 3);
                 const desktopMoreCount = orderItems.length - 3;
                 const mobileItems = orderItems.slice(0, 2);
                 const mobileMoreCount = orderItems.length - 2;
-                
+
                 return `
                     <div class="order-card">
                         <div class="order-desktop-row">
@@ -1040,6 +1445,8 @@
                                     ${desktopItems.length > 0 ? desktopItems.map(item => `
                                         <span class="desktop-item-chip">
                                             <span class="name">${item.name}</span>
+                                            ${item.laneName ? `<span class="desktop-item-code">货道名称：${item.laneName}</span>` : ''}
+                                            <span class="desktop-item-code">商品编码：${item.materialNumber || item.code}</span>
                                             <span class="qty">+${item.quantity}${item.unit ? ` ${item.unit}` : ''}</span>
                                         </span>
                                     `).join('') : '<span class="desktop-item-chip"><span class="name">无物料</span></span>'}
@@ -1047,14 +1454,15 @@
                                 </div>
                             </div>
                             <div class="desktop-col desktop-status">
-                                <span class="order-status ${statusClass}">${statusText}</span>
+                                <span class="order-status ${statusMeta.className}">${statusMeta.text}</span>
                             </div>
                             <div class="desktop-col">
                                 <div class="desktop-note" title="${noteText}">${noteText}</div>
                             </div>
                             <div class="desktop-col desktop-actions">
                                 <button class="btn-sm btn-detail" onclick="showDetail('${order.id}')">详情</button>
-                                ${order.status === 'pending' ? `<button class="btn-sm btn-complete" onclick="completeOrder('${order.id}')">完成</button>` : ''}
+                                <button class="btn-sm btn-print" onclick="printOrder('${order.id}')">打印发货单</button>
+                                ${canVoid ? `<button class="btn-sm btn-void" onclick="voidOrder('${order.id}')">作废</button>` : ''}
                             </div>
                         </div>
                         <div class="order-mobile-block">
@@ -1062,19 +1470,19 @@
                                 <div class="order-info">
                                     <div class="order-id">单号: ${order.id}</div>
                                     <div class="order-time">发货时间: ${timeStr}</div>
-                                    <div class="order-device">
-                                        📍 ${deviceInfo}
-                                    </div>
-                                    <div class="order-requester">
-                                        👤 申请: ${requester}
-                                    </div>
+                                    <div class="order-device">📍 ${deviceInfo}</div>
+                                    <div class="order-requester">👤 申请: ${requester}</div>
                                 </div>
-                                <span class="order-status ${statusClass}">${statusText}</span>
+                                <span class="order-status ${statusMeta.className}">${statusMeta.text}</span>
                             </div>
                             <div class="order-items">
                                 ${mobileItems.map(item => `
                                     <div class="order-item">
-                                        <span class="order-item-name">${item.name}</span>
+                                        <span class="order-item-main">
+                                            <span class="order-item-name">${item.name}</span>
+                                            ${item.laneName ? `<span class="order-item-code">货道名称：${item.laneName}</span>` : ''}
+                                            <span class="order-item-code">商品编码：${item.materialNumber || item.code}</span>
+                                        </span>
                                         <span class="order-item-qty">+${item.quantity}${item.unit ? ` ${item.unit}` : ''}</span>
                                     </div>
                                 `).join('')}
@@ -1084,7 +1492,8 @@
                                 <div class="order-note">${noteText}</div>
                                 <div class="order-actions">
                                     <button class="btn-sm btn-detail" onclick="showDetail('${order.id}')">详情</button>
-                                    ${order.status === 'pending' ? `<button class="btn-sm btn-complete" onclick="completeOrder('${order.id}')">完成</button>` : ''}
+                                    <button class="btn-sm btn-print" onclick="printOrder('${order.id}')">打印发货单</button>
+                                    ${canVoid ? `<button class="btn-sm btn-void" onclick="voidOrder('${order.id}')">作废</button>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1093,16 +1502,93 @@
             }).join('');
         }
 
+        function buildPrintOrderHtml(order) {
+            const statusMeta = getOrderStatusMeta(order);
+            const deviceInfo = order.deviceId ? `${order.deviceId} · ${order.location || ''}` : '未指定设备';
+            const noteText = order.note || '无备注';
+            const voidedReasonText = order.voidedReason || '';
+            const itemRows = (Array.isArray(order.items) ? order.items : []).map(item => `
+                <tr>
+                    <td>${escapeHtml(item.name)}</td>
+                    <td>${item.laneName ? `${escapeHtml(item.laneName)}<br>` : ''}${escapeHtml(item.materialNumber || item.code)}</td>
+                    <td>${escapeHtml(`+${item.quantity} ${item.unit || ''}`)}</td>
+                </tr>
+            `).join('');
+
+            return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>打印发货单 - ${escapeHtml(order.id)}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 32px; color: #111827; }
+        h1 { margin: 0 0 20px; font-size: 24px; }
+        .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; margin-bottom: 20px; }
+        .meta-item strong { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .status { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #f3f4f6; font-size: 12px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #d1d5db; padding: 10px 12px; text-align: left; font-size: 13px; }
+        th { background: #f9fafb; }
+        .note { margin-top: 20px; font-size: 13px; color: #374151; }
+    </style>
+</head>
+<body>
+    <h1>发货单</h1>
+    <div class="meta">
+        <div class="meta-item"><strong>发货单号</strong><span>${escapeHtml(order.id)}</span></div>
+        <div class="meta-item"><strong>状态</strong><span class="status">${escapeHtml(statusMeta.text)}</span></div>
+        <div class="meta-item"><strong>申请人</strong><span>${escapeHtml(order.requestedBy || '未知')}</span></div>
+        <div class="meta-item"><strong>设备点位</strong><span>${escapeHtml(deviceInfo)}</span></div>
+        <div class="meta-item"><strong>创建时间</strong><span>${escapeHtml(formatDateTime(order.createTime))}</span></div>
+        <div class="meta-item"><strong>发货时间</strong><span>${escapeHtml(formatDateTime(order.deliveryTime))}</span></div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>物料名称</th>
+                <th>商品编码</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${itemRows}
+        </tbody>
+    </table>
+    <div class="note"><strong>备注：</strong>${escapeHtml(noteText)}</div>
+    ${voidedReasonText ? `<div class="note"><strong>作废原因：</strong>${escapeHtml(voidedReasonText)}</div>` : ''}
+</body>
+</html>`;
+        }
+
+        function printOrder(orderId) {
+            const order = currentOrders.find(item => item.id === orderId);
+            if (!order) return;
+
+            const printWindow = window.open('', '_blank', 'width=960,height=720');
+            if (!printWindow) {
+                showToast('请允许浏览器打开打印窗口', 'error');
+                return;
+            }
+
+            printWindow.document.write(buildPrintOrderHtml(order));
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 160);
+        }
+
         // 显示详情
         function showDetail(orderId) {
             const order = currentOrders.find(o => o.id === orderId);
             if (!order) return;
 
-            const statusText = order.status === 'pending' ? '待发货' : '已完成';
+            const statusMeta = getOrderStatusMeta(order);
             const timeStr = formatDateTime(order.deliveryTime);
             const createStr = formatDateTime(order.createTime);
             const deviceInfo = order.deviceId ? `${order.deviceId} · ${order.location || ''}` : '未指定';
             const requester = order.requestedBy || '未知';
+            const canVoid = canVoidOrder(order);
 
             let handlerInfo = '';
             if (order.status === 'completed' && order.completedBy) {
@@ -1115,6 +1601,16 @@
                     </div>
                 </div>
                 `;
+            } else if (order.status === 'voided' && order.voidedBy) {
+                const voidedStr = formatDateTime(order.voidedTime);
+                handlerInfo = `
+                <div class="detail-section">
+                    <div class="detail-label">作废信息</div>
+                    <div class="detail-value" style="color: var(--danger);">
+                        ✕ 由 ${order.voidedBy} 于 ${voidedStr} 作废
+                    </div>
+                </div>
+                `;
             }
 
             document.getElementById('modalBody').innerHTML = `
@@ -1124,7 +1620,7 @@
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">状态</div>
-                    <div class="detail-value" style="color: ${order.status === 'pending' ? 'var(--warning)' : 'var(--success)'};">${statusText}</div>
+                    <div class="detail-value" style="color: ${statusMeta.color};">${statusMeta.text}</div>
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">申请信息</div>
@@ -1139,13 +1635,23 @@
                     <div class="detail-value">${timeStr}</div>
                 </div>
                 ${handlerInfo}
+                ${order.voidedReason ? `
+                <div class="detail-section">
+                    <div class="detail-label">作废原因</div>
+                    <div class="detail-value" style="color: var(--text-secondary);">${order.voidedReason}</div>
+                </div>
+                ` : ''}
                 <div class="detail-section">
                     <div class="detail-label">物料明细 (${order.items.length})</div>
                     <div class="detail-items">
                         ${order.items.map(item => `
                             <div class="detail-item">
-                                <span>${item.name}</span>
-                                <span style="font-weight: 600;">+${item.quantity} ${item.unit}</span>
+                                <div class="detail-item-main">
+                                    <span class="detail-item-name">${item.name}</span>
+                                    ${item.laneName ? `<div class="detail-item-code">货道名称：${item.laneName}</div>` : ''}
+                                    <div class="detail-item-code">商品编码：${item.materialNumber || item.code}</div>
+                                </div>
+                                <span class="detail-item-qty">+${item.quantity} ${item.unit}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -1158,18 +1664,12 @@
                 ` : ''}
             `;
 
-            // 根据状态显示不同按钮
             const footer = document.getElementById('modalFooter');
-            if (order.status === 'pending') {
-                footer.innerHTML = `
-                    <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
-                    <button class="btn btn-primary" onclick="completeOrder('${order.id}'); closeDetailModal();">标记完成</button>
-                `;
-            } else {
-                footer.innerHTML = `
-                    <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
-                `;
-            }
+            footer.innerHTML = `
+                <button class="btn btn-default" onclick="closeDetailModal()">关闭</button>
+                <button class="btn btn-default btn-print" onclick="printOrder('${order.id}')">打印发货单</button>
+                ${canVoid ? `<button class="btn btn-default btn-void" onclick="voidOrder('${order.id}'); closeDetailModal();">作废</button>` : ''}
+            `;
 
             document.getElementById('detailModal').classList.add('active');
         }
@@ -1179,31 +1679,44 @@
             document.getElementById('detailModal').classList.remove('active');
         }
 
-        // 完成订单
-        function completeOrder(orderId) {
+        function voidOrder(orderId) {
             const orderIndex = currentOrders.findIndex(o => o.id === orderId);
             if (orderIndex === -1) return;
 
-            // 记录处理信息
-            currentOrders[orderIndex].status = 'completed';
-            currentOrders[orderIndex].completedBy = '当前用户'; // 实际应从登录信息获取
-            currentOrders[orderIndex].completedTime = new Date().toISOString();
-            
-            // 保存到 localStorage
+            const targetOrder = currentOrders[orderIndex];
+            if (!canVoidOrder(targetOrder)) {
+                showToast('仅可作废自己待发货的发货单', 'error');
+                return;
+            }
+
+            if (typeof window.confirm === 'function' && !window.confirm(`确认作废发货单 ${targetOrder.id} 吗？`)) {
+                return;
+            }
+
+            const rawVoidedReason = typeof window.prompt === 'function'
+                ? window.prompt('请输入作废原因', targetOrder.voidedReason || '')
+                : '';
+            if (rawVoidedReason === null) {
+                return;
+            }
+
+            const voidedReason = String(rawVoidedReason || '').trim();
+            if (!voidedReason) {
+                showToast('请输入作废原因', 'error');
+                return;
+            }
+
+            currentOrders[orderIndex].status = 'voided';
+            currentOrders[orderIndex].voidedBy = currentRequesterProfile.name;
+            currentOrders[orderIndex].voidedTime = new Date().toISOString();
+            currentOrders[orderIndex].voidedReason = voidedReason;
+
             localStorage.setItem('materialOrders', JSON.stringify(currentOrders));
-            
-            // 更新全局变量
             currentOrders = readOrdersFromStorage();
-            
-            showToast('发货单已完成', 'success');
-            
-            // 重新渲染列表
+            syncFilterTabs();
             renderOrders();
-            
-            // 更新徽章（在渲染后执行，确保数据已同步）
-            setTimeout(() => {
-                updateBadges();
-            }, 50);
+            updateBadges();
+            showToast('发货单已作废', 'success');
         }
 
         // 格式化日期时间
@@ -1221,6 +1734,10 @@
 
         // 返回
         function goBack() {
+            if (readMaterialsShipmentReturnContext()) {
+                returnToMaterialsPage();
+                return;
+            }
             window.location.href = 'materials.html';
         }
 

@@ -1108,278 +1108,6 @@
             background: #f8fafc;
         }
 
-        .detail-remote-volume-shell {
-            padding: 18px 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .detail-remote-volume-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .detail-remote-volume-back {
-            align-self: flex-start;
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .detail-remote-volume-close {
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .detail-remote-volume-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            text-align: center;
-        }
-
-        .detail-remote-volume-icon {
-            width: 72px;
-            height: 72px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-remote-volume-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .detail-remote-volume-copy {
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1.6;
-        }
-
-        .detail-remote-volume-slider {
-            width: 100%;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .detail-remote-volume-controls {
-            display: grid;
-            grid-template-columns: 56px minmax(72px, 1fr) 56px;
-            gap: 10px;
-            width: min(220px, 100%);
-        }
-
-        .detail-remote-volume-step,
-        .detail-remote-volume-value,
-        .detail-remote-volume-save {
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            background: #f8fafc;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        .detail-remote-volume-step {
-            cursor: pointer;
-            color: var(--primary);
-            font-size: 26px;
-            line-height: 1;
-        }
-
-        .detail-remote-volume-step:disabled {
-            cursor: not-allowed;
-            color: #cbd5e1;
-            background: #f8fafc;
-        }
-
-        .detail-remote-volume-value {
-            color: var(--primary);
-            font-size: 22px;
-        }
-
-        .detail-remote-volume-save {
-            width: 100%;
-            border: none;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-            margin-top: 4px;
-        }
-
-        .detail-remote-restart-guide-shell {
-            padding: 18px 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .detail-remote-restart-guide-card {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            text-align: left;
-        }
-
-        .detail-remote-restart-guide-warning {
-            padding: 12px 14px;
-            border-radius: 12px;
-            background: rgba(20, 184, 166, 0.1);
-            color: #0f766e;
-            font-size: 13px;
-            line-height: 1.6;
-            font-weight: 600;
-        }
-
-        .detail-remote-restart-guide-image {
-            min-height: 168px;
-            border-radius: 18px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            background: linear-gradient(180deg, #f8fbff 0%, #eef7f8 100%);
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 12px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-
-        .detail-remote-restart-guide-image-label {
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .detail-remote-restart-guide-image-diagram {
-            flex: 1;
-            border-radius: 14px;
-            border: 1px dashed rgba(15, 23, 42, 0.16);
-            background:
-                radial-gradient(circle at 22% 30%, rgba(20, 184, 166, 0.18), transparent 26%),
-                radial-gradient(circle at 74% 68%, rgba(15, 23, 42, 0.08), transparent 28%),
-                #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 13px;
-            line-height: 1.6;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .detail-remote-restart-guide-steps {
-            margin: 0;
-            padding-left: 18px;
-            color: var(--text-primary);
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .detail-remote-restart-guide-action {
-            width: 100%;
-            border: none;
-            border-radius: 12px;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 700;
-            min-height: 46px;
-        }
-
-        .detail-remote-restart-confirm-shell {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .detail-remote-restart-confirm-primary,
-        .detail-remote-restart-confirm-helper {
-            width: 100%;
-            border-radius: 18px;
-            min-height: 54px;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .detail-remote-restart-confirm-primary {
-            border: 1px solid rgba(78, 205, 196, 0.45);
-            background: rgba(78, 205, 196, 0.14);
-            color: #0f8f88;
-        }
-
-        .detail-remote-restart-confirm-helper {
-            border: 1px solid rgba(245, 158, 11, 0.35);
-            background: #fffaf0;
-            color: #a16207;
-        }
-
-        .detail-remote-restart-confirm-primary:hover {
-            background: rgba(78, 205, 196, 0.2);
-        }
-
-        .detail-remote-restart-confirm-helper:hover {
-            background: #fff3d6;
-        }
-
-        .detail-remote-restart-confirm-callout {
-            border-radius: 18px;
-            border: 1px solid var(--border-light);
-            background: #f8fafc;
-            color: #666;
-            text-align: center;
-            padding: 16px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .detail-remote-restart-confirm-arrow {
-            font-size: 18px;
-            line-height: 1;
-        }
-
-        .detail-remote-restart-confirm-cancel {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            min-height: 40px;
-        }
-
-        .detail-remote-restart-confirm-cancel:hover {
-            color: var(--text-primary);
-        }
-
         .detail-fault-record-modal {
             width: min(940px, 100%);
             background: #fff;
@@ -3496,10 +3224,15 @@
         }
 
         .header-actions {
+            position: relative;
+            z-index: 1;
             gap: 12px;
         }
 
         .page-primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border: 1px solid #4ECDC4;
             background: #4ECDC4;
             color: #fff;
@@ -3507,6 +3240,7 @@
             font-family: var(--font-ui);
             font-size: 13px;
             font-weight: 500;
+            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -4117,6 +3851,7 @@
                 font-family: var(--font-ui);
                 font-size: 28px;
                 line-height: 1;
+                text-decoration: none;
                 box-shadow: 0 16px 32px rgba(220, 38, 38, 0.22);
                 cursor: pointer;
                 z-index: 120;
@@ -4225,7 +3960,7 @@
                     <span class="header-desc">管理和监控所有咖啡设备</span>
                 </div>
                 <div class="header-actions">
-                    <button class="page-primary-btn" type="button" onclick="openDeviceEntryPage()">+ 设备录入</button>
+                    <a class="page-primary-btn" href="device-entry.html">+ 设备录入</a>
                 </div>
             </header>
 
@@ -4311,7 +4046,7 @@
                 </div>
             </div>
 
-            <button class="mobile-fab" type="button" onclick="openDeviceEntryPage()" aria-label="设备录入">+</button>
+            <a class="mobile-fab" href="device-entry.html" aria-label="设备录入">+</a>
         </main>
     </div>
 
@@ -4823,6 +4558,8 @@
             'disabled': '是'
         };
 
+        const merchantMap = cloneSharedDeviceData((sharedAdminMockData.maps && sharedAdminMockData.maps.merchantMap) || {});
+
         const categoryMap = {
             self: '自营',
             lease: '租赁',
@@ -4837,12 +4574,9 @@
         // 默认设备数据
         const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
         const resolveDeviceBaseline = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
-            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices); }
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices, defaultDevicesData); }
             : function(storedDevices) {
-                if (Array.isArray(storedDevices) && storedDevices.length) {
-                    return cloneSharedDeviceData(storedDevices);
-                }
-                return cloneSharedDeviceData(defaultDevicesData);
+                return storedDevices.length ? storedDevices : cloneSharedDeviceData(defaultDevicesData);
             };
 
         // 设备数据
@@ -4863,13 +4597,11 @@
             location: []
         };
         let activeFaultActionDeviceId = '';
+        let detailRemoteActionMode = 'root';
+        let detailRemotePendingCommand = '';
         let currentTemperatureAlarmDeviceId = '';
         let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
-        const DETAIL_REMOTE_VOLUME_STORAGE_KEY = 'deviceRemoteVolumeSettings';
-        let detailRemoteActionMode = 'root';
-        let detailRemoteRestartContext = null;
-        let detailRemoteVolumeContext = null;
 
         function saveDevicesData() {
             localStorage.setItem('devicesData', JSON.stringify(devicesData));
@@ -4999,10 +4731,6 @@
             return device.entered === false || !device.location
                 ? '未入场'
                 : (runtimeLocationMap[device.location] || device.location);
-        }
-
-        function openDeviceEntryPage() {
-            window.location.href = 'device-entry.html';
         }
 
         function ensureUnenteredDevices(data) {
@@ -5382,10 +5110,10 @@
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
 
+            const merchantName = merchantMap[device.merchant] || device.merchant;
             const action = device.sales === 'enabled' ? '下架' : '上架';
-            const locationText = buildLocationMap()[device.location] || device.location || '未入场';
             
-            if (confirm(`确定要${action}设备 ${deviceId}（${locationText}）吗？`)) {
+            if (confirm(`确定要${action}设备 ${deviceId} (${merchantName}) 吗？`)) {
                 device.sales = device.sales === 'enabled' ? 'disabled' : 'enabled';
                 saveDevicesData();
                 updateStats();
@@ -6436,13 +6164,14 @@
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备开门')">设备开门</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('更新配方')">更新配方</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备停售')">设备停售</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
                 </div>
             `;
         }
 
-        function renderDetailRemoteRestartTargetPanel(deviceId) {
+        function renderDetailRemoteRestartPanel(deviceId) {
             return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">机构重启 · ${escapeHtml(deviceId)}</div>
@@ -6454,86 +6183,7 @@
             `;
         }
 
-        function getDetailRemoteRestartMeta(actionName) {
-            const warning = '该操作需要客户在设备现场完成，系统无法远程执行。';
-            const map = {
-                '重启系统': {
-                    title: '重启系统',
-                    guideTitle: '机器按钮位置 · 重启系统',
-                    imageLabel: '整机重启按钮位置示意图',
-                    imageHint: '请客户查看设备机身侧面或背部控制区域，寻找整机电源 / 重启按钮。',
-                    steps: [
-                        '请先确认设备周边无人操作，避免重启过程中误触。',
-                        '在设备机身侧面或背部找到整机电源 / 重启按钮。',
-                        '按住按钮约 3 秒后松开，等待系统重新启动。',
-                        '等待设备恢复后，再返回页面查看设备状态。'
-                    ],
-                    warning
-                },
-                '重启点单屏（左）': {
-                    title: '重启点单屏（左）',
-                    guideTitle: '机器按钮位置 · 重启点单屏（左）',
-                    imageLabel: '左侧点单屏按钮位置示意图',
-                    imageHint: '请客户查看左侧点单屏边框背面或屏幕下缘，找到该屏对应的电源按钮。',
-                    steps: [
-                        '确认左侧点单屏当前无人操作后，再进行重启。',
-                        '在左侧点单屏边框背面或下沿找到电源按钮。',
-                        '短按关闭后等待 2 秒，再次按下启动左侧点单屏。',
-                        '屏幕重新点亮后，确认页面恢复正常显示。'
-                    ],
-                    warning
-                },
-                '重启点单屏（右）': {
-                    title: '重启点单屏（右）',
-                    guideTitle: '机器按钮位置 · 重启点单屏（右）',
-                    imageLabel: '右侧点单屏按钮位置示意图',
-                    imageHint: '请客户查看右侧点单屏边框背面或屏幕下缘，找到该屏对应的电源按钮。',
-                    steps: [
-                        '确认右侧点单屏当前无人操作后，再进行重启。',
-                        '在右侧点单屏边框背面或下沿找到电源按钮。',
-                        '短按关闭后等待 2 秒，再次按下启动右侧点单屏。',
-                        '屏幕重新点亮后，确认页面恢复正常显示。'
-                    ],
-                    warning
-                },
-                '重启六轴机械臂（注意安全，谨慎使用）': {
-                    title: '重启六轴机械臂（注意安全，谨慎使用）',
-                    guideTitle: '机器按钮位置 · 重启六轴机械臂',
-                    imageLabel: '六轴机械臂控制按钮位置示意图',
-                    imageHint: '请客户在确保机械臂周边安全的前提下，查看控制柜或机械臂基座上的控制按钮区域。',
-                    steps: [
-                        '先确认机械臂作业范围内无人、无障碍物，再进行操作。',
-                        '在控制柜或机械臂基座找到机械臂控制电源按钮。',
-                        '按流程关闭机械臂电源，等待数秒后再次启动。',
-                        '机械臂重新上电后，再观察其是否恢复待机状态。'
-                    ],
-                    warning: '该操作需要客户在设备现场完成，系统无法远程执行。请先确认机械臂周边安全后再操作。'
-                }
-            };
-            return map[actionName] || null;
-        }
-
         function renderDetailRemoteConfirmDialog(actionName) {
-            const restartMeta = getDetailRemoteRestartMeta(actionName);
-            if (restartMeta) {
-                return `
-                    <div class="detail-fault-sheet-dialog">
-                        <div class="detail-fault-sheet-title">确认操作</div>
-                        <div class="detail-remote-restart-confirm-shell">
-                            <button type="button" class="detail-remote-restart-confirm-primary" onclick="handleDetailRemoteAction('确认软件重启')">
-                                <span>确认软件重启</span>
-                                <span class="detail-remote-restart-confirm-arrow">›</span>
-                            </button>
-                            <div class="detail-remote-restart-confirm-callout">确定要${escapeHtml(actionName)}？</div>
-                            <button type="button" class="detail-remote-restart-confirm-helper" onclick="handleDetailRemoteAction('无法远程处理？查看机器按钮位置')">
-                                <span>无法远程处理？查看机器按钮位置</span>
-                                <span class="detail-remote-restart-confirm-arrow">›</span>
-                            </button>
-                            <button type="button" class="detail-remote-restart-confirm-cancel" onclick="closeDetailRemoteActions()">取消</button>
-                        </div>
-                    </div>
-                `;
-            }
             return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">确认操作</div>
@@ -6544,163 +6194,10 @@
             `;
         }
 
-        function renderDetailRemoteHardwareGuidePanel(deviceId, restartAction) {
-            const meta = getDetailRemoteRestartMeta(restartAction);
-            if (!meta) return renderDetailRemoteActionPanel(deviceId);
-            const steps = (meta.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join('');
-            return `
-                <div class="detail-fault-sheet-dialog">
-                    <div class="detail-fault-sheet-title">${escapeHtml(meta.guideTitle)} · ${escapeHtml(deviceId)}</div>
-                    <div class="detail-remote-restart-guide-shell">
-                        <div class="detail-remote-volume-topbar">
-                            <button type="button" class="detail-remote-volume-close" onclick="closeDetailRemoteActions()">关闭</button>
-                        </div>
-                        <div class="detail-remote-restart-guide-card">
-                            <div class="detail-remote-restart-guide-warning">${escapeHtml(meta.warning)}</div>
-                            <div class="detail-remote-restart-guide-image" role="img" aria-label="${escapeHtml(meta.imageLabel)}">
-                                <div class="detail-remote-restart-guide-image-label">${escapeHtml(meta.imageLabel)}</div>
-                                <div class="detail-remote-restart-guide-image-diagram">${escapeHtml(meta.imageHint)}</div>
-                            </div>
-                            <ol class="detail-remote-restart-guide-steps">${steps}</ol>
-                        </div>
-                        <button type="button" class="detail-remote-restart-guide-action" onclick="handleDetailRemoteAction('我知道了')">我知道了</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getDetailRemoteVolumeMeta(volumeType) {
-            if (volumeType === 'device') {
-                return {
-                    mode: 'volume-device',
-                    title: '设备音量',
-                    description: '待机背景音乐、饮品出品信息、排队号语音',
-                    actionName: '设备音量调节',
-                    storageKey: 'deviceVolume',
-                    icon: `
-                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                            <rect x="12" y="10" width="28" height="44" rx="4" stroke="currentColor" stroke-width="3"></rect>
-                            <path d="M20 22H32M20 30H32M20 38H26" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M44 28C47 30 49 33 49 37C49 41 47 44 44 46" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M48 22C53 25 56 30 56 37C56 44 53 49 48 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                        </svg>
-                    `
-                };
-            }
-            if (volumeType === 'order-screen') {
-                return {
-                    mode: 'volume-order-screen',
-                    title: '点单屏音量',
-                    description: '欢迎语音、下单提示语音、制作中音乐',
-                    actionName: '点单屏音量调节',
-                    storageKey: 'orderScreenVolume',
-                    icon: `
-                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                            <rect x="18" y="8" width="22" height="40" rx="4" stroke="currentColor" stroke-width="3"></rect>
-                            <path d="M25 16H33" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M29 43H29.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M43 24C46 26 48 29 48 33C48 37 46 40 43 42" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M47 19C52 22 55 27 55 33C55 39 52 44 47 47" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                        </svg>
-                    `
-                };
-            }
-            return null;
-        }
-
-        function clampDetailRemoteVolumeValue(value) {
-            if (!Number.isFinite(Number(value))) return 0;
-            return Math.max(0, Math.min(15, Math.round(Number(value))));
-        }
-
-        function getStoredDetailRemoteVolumes() {
-            try {
-                const raw = JSON.parse(localStorage.getItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY) || '{}');
-                return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-            } catch (error) {
-                return {};
-            }
-        }
-
-        function getDetailRemoteVolumeValue(deviceId, volumeType) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            if (!meta) return 0;
-            const stored = getStoredDetailRemoteVolumes();
-            const deviceConfig = stored[String(deviceId || '').trim()] || {};
-            return clampDetailRemoteVolumeValue(deviceConfig[meta.storageKey]);
-        }
-
-        function persistDetailRemoteVolumeValue(deviceId, volumeType, nextValue) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            if (!meta) return null;
-            const safeDeviceId = String(deviceId || '').trim();
-            if (!safeDeviceId) return null;
-            const clampedValue = clampDetailRemoteVolumeValue(nextValue);
-            try {
-                const stored = getStoredDetailRemoteVolumes();
-                stored[safeDeviceId] = {
-                    ...(stored[safeDeviceId] && typeof stored[safeDeviceId] === 'object' ? stored[safeDeviceId] : {}),
-                    [meta.storageKey]: clampedValue
-                };
-                localStorage.setItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY, JSON.stringify(stored));
-                return clampedValue;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function renderDetailRemoteVolumeMenu(deviceId) {
-            return `
-                <div class="detail-fault-sheet-dialog">
-                    <div class="detail-fault-sheet-title">音量调节 · ${escapeHtml(deviceId)}</div>
-                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备音量')">设备音量</button>
-                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('点单屏音量')">点单屏音量</button>
-                </div>
-            `;
-        }
-
-        function renderDetailRemoteVolumePanel(deviceId, volumeType) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            const currentValue = detailRemoteVolumeContext && detailRemoteVolumeContext.type === volumeType
-                ? clampDetailRemoteVolumeValue(detailRemoteVolumeContext.value)
-                : getDetailRemoteVolumeValue(deviceId, volumeType);
-            if (!meta) return renderDetailRemoteActionPanel(deviceId);
-            return `
-                <div class="detail-fault-sheet-dialog">
-                    <div class="detail-fault-sheet-title">${escapeHtml(meta.title)} · ${escapeHtml(deviceId)}</div>
-                    <div class="detail-remote-volume-shell">
-                        <div class="detail-remote-volume-topbar">
-                            <button type="button" class="detail-remote-volume-close" onclick="closeDetailRemoteActions()">关闭</button>
-                        </div>
-                        <div class="detail-remote-volume-card">
-                            <div class="detail-remote-volume-icon">${meta.icon}</div>
-                            <div class="detail-remote-volume-copy">${escapeHtml(meta.description)}</div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="15"
-                                step="1"
-                                class="detail-remote-volume-slider"
-                                value="${currentValue}"
-                                oninput="setDetailRemoteVolumeDraftValue(this.value)"
-                            >
-                            <div class="detail-remote-volume-controls">
-                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(-1)" ${currentValue <= 0 ? 'disabled' : ''}>−</button>
-                                <div class="detail-remote-volume-value">${currentValue}</div>
-                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(1)" ${currentValue >= 15 ? 'disabled' : ''}>+</button>
-                            </div>
-                        </div>
-                        <button type="button" class="detail-remote-volume-save" onclick="saveDetailRemoteVolumeSetting()">保存</button>
-                    </div>
-                </div>
-            `;
-        }
-
         function openDetailRemoteActions(deviceId) {
             activeFaultActionDeviceId = deviceId;
             detailRemoteActionMode = 'root';
-            detailRemoteRestartContext = null;
-            detailRemoteVolumeContext = null;
+            detailRemotePendingCommand = '';
             const panel = document.getElementById('detailRemoteActionSheet');
             if (!panel) return;
             panel.innerHTML = renderDetailRemoteActionPanel(deviceId);
@@ -6713,135 +6210,39 @@
             panel.classList.remove('active');
             panel.innerHTML = '';
             detailRemoteActionMode = 'root';
-            detailRemoteRestartContext = null;
-            detailRemoteVolumeContext = null;
-        }
-
-        function openDetailRemoteVolumePanel(volumeType) {
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!deviceId || !meta || !panel) return;
-            detailRemoteActionMode = meta.mode;
-            detailRemoteVolumeContext = {
-                deviceId,
-                type: volumeType,
-                value: getDetailRemoteVolumeValue(deviceId, volumeType)
-            };
-            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, volumeType);
-            panel.classList.add('active');
-        }
-
-        function refreshDetailRemoteVolumePanel() {
-            const panel = document.getElementById('detailRemoteActionSheet');
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            if (!panel || !detailRemoteVolumeContext || !deviceId) return;
-            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, detailRemoteVolumeContext.type);
-            panel.classList.add('active');
-        }
-
-        function changeDetailRemoteVolumeDraftValue(delta) {
-            if (!detailRemoteVolumeContext) return;
-            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue((detailRemoteVolumeContext.value || 0) + Number(delta || 0));
-            refreshDetailRemoteVolumePanel();
-        }
-
-        function setDetailRemoteVolumeDraftValue(nextValue) {
-            if (!detailRemoteVolumeContext) return;
-            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue(nextValue);
-            refreshDetailRemoteVolumePanel();
-        }
-
-        function saveDetailRemoteVolumeSetting() {
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            if (!detailRemoteVolumeContext || !deviceId) return;
-            const meta = getDetailRemoteVolumeMeta(detailRemoteVolumeContext.type);
-            if (!meta) return;
-            const savedValue = persistDetailRemoteVolumeValue(deviceId, detailRemoteVolumeContext.type, detailRemoteVolumeContext.value);
-            if (savedValue === null) {
-                showToast('音量保存失败，请重试', 'error');
-                return;
-            }
-            appendFaultOperationRecord(deviceId, meta.actionName, '成功', `${deviceId} ${meta.title}已调整为 ${savedValue}`);
-            closeDetailRemoteActions();
-            showToast('已下发音量调节');
+            detailRemotePendingCommand = '';
         }
 
         function handleDetailRemoteAction(actionName) {
             const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
             const panel = document.getElementById('detailRemoteActionSheet');
             if (!panel) return;
-            const restartMeta = getDetailRemoteRestartMeta(actionName);
 
+            // Root menu: 机构重启 enters sub-panel
             if (actionName === '机构重启') {
-                detailRemoteActionMode = 'restart-targets';
-                detailRemoteRestartContext = {
-                    deviceId,
-                    target: '',
-                    method: 'software'
-                };
-                detailRemoteVolumeContext = null;
-                panel.innerHTML = renderDetailRemoteRestartTargetPanel(deviceId);
-                panel.classList.add('active');
+                detailRemoteActionMode = 'restart';
+                panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
                 return;
             }
 
-            if (detailRemoteActionMode === 'restart-hardware-guide' && actionName === '我知道了') {
-                closeDetailRemoteActions();
-                return;
-            }
-
-            if (detailRemoteActionMode === 'restart-targets' && restartMeta) {
-                detailRemoteActionMode = 'restart-confirm';
-                detailRemoteRestartContext = {
-                    deviceId,
-                    target: actionName,
-                    method: 'software'
-                };
+            // Restart sub-panel items show confirmation
+            if (detailRemoteActionMode === 'restart' && actionName !== '确认执行') {
+                detailRemotePendingCommand = actionName;
+                detailRemoteActionMode = 'confirm';
                 panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
-                panel.classList.add('active');
                 return;
             }
 
-            if (detailRemoteActionMode === 'restart-confirm' && ['查看机器按钮位置', '无法远程处理？查看机器按钮位置'].includes(actionName) && detailRemoteRestartContext?.target) {
-                detailRemoteRestartContext.method = 'hardware';
-                detailRemoteActionMode = 'restart-hardware-guide';
-                panel.innerHTML = renderDetailRemoteHardwareGuidePanel(deviceId, detailRemoteRestartContext.target);
-                panel.classList.add('active');
-                return;
-            }
-
-            if (detailRemoteActionMode === 'restart-confirm' && ['确认执行', '确认软件重启'].includes(actionName) && detailRemoteRestartContext?.target) {
-                const restartAction = detailRemoteRestartContext.target;
-                appendFaultOperationRecord(deviceId, restartAction, '成功', `${deviceId} 已执行${restartAction}`);
+            // Confirmation: execute the pending command
+            if (actionName === '确认执行' && detailRemotePendingCommand) {
+                const cmd = detailRemotePendingCommand;
+                appendFaultOperationRecord(deviceId, cmd, '成功', `${deviceId} 已执行${cmd}`);
                 closeDetailRemoteActions();
-                showToast(`已向设备 ${deviceId} 下发指令：${restartAction}`);
+                showToast(`已向设备 ${deviceId} 下发指令：${cmd}`);
                 return;
             }
 
-            if (actionName === '确认执行') {
-                return;
-            }
-
-            if (actionName === '音量调节') {
-                detailRemoteActionMode = 'volume-menu';
-                detailRemoteRestartContext = null;
-                detailRemoteVolumeContext = null;
-                panel.innerHTML = renderDetailRemoteVolumeMenu(deviceId);
-                panel.classList.add('active');
-                return;
-            }
-
-            if (detailRemoteActionMode === 'volume-menu' && actionName === '设备音量') {
-                openDetailRemoteVolumePanel('device');
-                return;
-            }
-
-            if (detailRemoteActionMode === 'volume-menu' && actionName === '点单屏音量') {
-                openDetailRemoteVolumePanel('order-screen');
-                return;
-            }
-
+            // Direct actions (non-restart items)
             appendFaultOperationRecord(deviceId, actionName, '成功', `${deviceId} 已执行${actionName}`);
             closeDetailRemoteActions();
             showToast(`已向设备 ${deviceId} 下发指令：${actionName}`);

@@ -33,10 +33,12 @@ test('主筛选栏下拉与搜索框应沿用订单页输入样式', () => {
   assert.ok(/\.main-filter-item\s+\.filter-select:focus\s*\{[\s\S]*border-color:\s*var\(--primary\)/.test(html));
 });
 
-test('设备管理页设备录入跳转应通过单一页面入口函数实现', () => {
-  const entryLinks = html.match(/device-entry\.html/g) || [];
-  assert.strictEqual(entryLinks.length, 1);
-  assert.ok(/function\s+openDeviceEntryPage\s*\(\)\s*\{[\s\S]*window\.location\.href\s*=\s*'device-entry\.html'/.test(html));
+test('设备管理页设备录入入口应使用可直接跳转的链接', () => {
+  const entryLinks = html.match(/href="device-entry\.html"/g) || [];
+  assert.strictEqual(entryLinks.length, 2);
+  assert.ok(/<a class="page-primary-btn" href="device-entry\.html">\+ 设备录入<\/a>/.test(html));
+  assert.ok(/<a class="mobile-fab" href="device-entry\.html" aria-label="设备录入">\+<\/a>/.test(html));
+  assert.ok(!/function\s+openDeviceEntryPage\s*\(/.test(html));
 });
 
 test('设备管理主筛选栏应提供点位筛选', () => {

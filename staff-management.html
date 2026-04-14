@@ -1965,10 +1965,11 @@
                                 <button type="button" class="permission-group-trigger" onclick="togglePermissionGroup('materials')">
                                     <span class="permission-group-summary-text" data-permission-summary="materials">点击选择权限</span>
                                 </button>
-                                <button type="button" class="permission-group-count" data-permission-count="materials" onclick="togglePermissionGroup('materials')">0/1</button>
+                                <button type="button" class="permission-group-count" data-permission-count="materials" onclick="togglePermissionGroup('materials')">0/2</button>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-materials" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"><span>查看物料</span></label>
+                                <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.materials.laneNameEdit" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"><span>编辑货道名称</span></label>
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="orders" data-selected="false" data-expanded="false">
@@ -2397,7 +2398,8 @@
                 key: 'materials',
                 label: '物料',
                 children: [
-                    { value: 'ops.materials', label: '查看物料' }
+                    { value: 'ops.materials', label: '查看物料' },
+                    { value: 'ops.materials.laneNameEdit', label: '编辑货道名称' }
                 ]
             },
             {
@@ -2455,7 +2457,7 @@
                 username: '王运维',
                 phone: '13800138021',
                 accountEnabled: true,
-                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
                 moduleDeviceScopes: {
                     devices: { mode: 'inherit', deviceIds: [] },
