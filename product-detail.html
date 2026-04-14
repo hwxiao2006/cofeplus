@@ -1605,6 +1605,69 @@
             overflow: hidden;
         }
 
+        .embedded-order-preview-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.48);
+            z-index: 1280;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .embedded-order-preview-overlay.active {
+            display: flex;
+        }
+
+        .embedded-order-preview-shell {
+            width: min(1180px, 100%);
+            height: min(860px, calc(100vh - 36px));
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .embedded-order-preview-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #f8fffd 0%, #f5fbfb 100%);
+        }
+
+        .embedded-order-preview-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .embedded-order-preview-subtitle {
+            margin-top: 6px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .embedded-order-preview-body {
+            flex: 1;
+            min-height: 0;
+            background: #eef4f7;
+        }
+
+        .embedded-order-preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #fff;
+        }
+
         .recipe-editor-header {
             display: flex;
             align-items: flex-start;
@@ -2324,6 +2387,29 @@
                 border-radius: 16px 16px 0 0;
             }
 
+            .embedded-order-preview-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .embedded-order-preview-shell {
+                width: 100%;
+                height: min(88vh, calc(100vh - 8px));
+                border-radius: 18px 18px 0 0;
+            }
+
+            .embedded-order-preview-header {
+                padding: 16px 16px 12px;
+            }
+
+            .embedded-order-preview-title {
+                font-size: 18px;
+            }
+
+            .embedded-order-preview-subtitle {
+                font-size: 12px;
+            }
+
             .recipe-editor-header,
             .recipe-editor-body,
             .recipe-editor-footer {
@@ -2559,7 +2645,7 @@
                 <div class="header-actions">
                     <button type="button" class="btn btn-default header-btn-cancel" id="headerCancelBtn" onclick="goBack()">取消</button>
                     <button type="button" class="btn btn-default header-btn-preview" id="headerPreviewBtn" onclick="saveProductAndOpenOrderPreview()"><span class="header-btn-icon" aria-hidden="true">🖥️</span><span>预览点单屏</span></button>
-                    <button type="button" class="btn btn-primary header-btn-save" id="headerSaveBtn" onclick="saveProduct()">保存</button>
+                    <button type="button" class="btn btn-primary header-btn-save" id="headerSaveBtn" onclick="saveProduct()">保存编辑</button>
                 </div>
             </header>
 
@@ -6747,6 +6833,104 @@
             openTagSyncModal();
         }
 
+        function buildOrderPreviewUrl() {
+            const params = new URLSearchParams();
+            params.set('tab', 'menu');
+            params.set('innerTab', 'manage');
+            if (currentDevice) {
+                params.set('device', currentDevice);
+            }
+            params.set('openOrderPreview', '1');
+            return `menu-management.html?${params.toString()}`;
+        }
+
+        function buildEmbeddedOrderPreviewUrl() {
+            try {
+                const previewUrl = new URL(buildOrderPreviewUrl(), window.location.href);
+                previewUrl.searchParams.set('embedOrderPreview', '1');
+                return previewUrl.toString();
+            } catch (e) {
+                return buildOrderPreviewUrl();
+            }
+        }
+
+        function buildOrderPreviewDraftPayload() {
+            if (!productData) return null;
+
+            const langs = typeof getDeviceLangs === 'function' ? getDeviceLangs() : [];
+            const names = { ...(productData.names || {}) };
+            const descs = { ...(productData.descs || {}) };
+
+            langs.forEach(lang => {
+                const nameEl = document.querySelector('.product-name-' + lang);
+                const descEl = document.querySelector('.product-desc-' + lang);
+                if (nameEl) {
+                    names[lang] = String(nameEl.value || '');
+                }
+                if (descEl) {
+                    descs[lang] = String(descEl.value || '');
+                }
+            });
+
+            const imageEl = document.getElementById('productImage');
+            const priceEl = document.getElementById('productPrice');
+            const originalPriceEl = document.getElementById('productOriginalPrice');
+            const onSaleEl = document.getElementById('onSaleSwitch');
+
+            const parsedPrice = Number(priceEl?.value);
+            const parsedOriginalPrice = Number(originalPriceEl?.value);
+
+            return {
+                productId: Number(productData.id) || null,
+                names,
+                descs,
+                image: imageEl ? String(imageEl.value || '').trim() : (productData.image || ''),
+                price: Number.isFinite(parsedPrice) ? parsedPrice : Number(productData.price || 0),
+                originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
+                    ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
+                    : null,
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+            };
+        }
+
+        function openEmbeddedOrderPreviewModal(draftPayload = null) {
+            const overlay = document.getElementById('embeddedOrderPreviewOverlay');
+            const frame = document.getElementById('embeddedOrderPreviewFrame');
+            if (!overlay || !frame) return false;
+
+            frame.onload = function() {
+                try {
+                    if (frame.contentWindow && typeof frame.contentWindow.postMessage === 'function' && draftPayload) {
+                        frame.contentWindow.postMessage({
+                            type: 'orderPreviewDraftPayload',
+                            payload: draftPayload
+                        }, window.location.origin || '*');
+                    }
+                } catch (e) {
+                    // ignore cross-window messaging failures
+                }
+            };
+            frame.src = buildEmbeddedOrderPreviewUrl();
+            overlay.classList.add('active');
+            return true;
+        }
+
+        function closeEmbeddedOrderPreviewModal() {
+            const overlay = document.getElementById('embeddedOrderPreviewOverlay');
+            const frame = document.getElementById('embeddedOrderPreviewFrame');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            if (frame) {
+                frame.onload = null;
+                frame.src = '';
+            }
+        }
+
+        function saveProductAndOpenOrderPreview() {
+            return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
+        }
+
         function saveProduct() {
             if (!productData) return false;
             if (isProductBusinessTagEditorBlocked()) {
@@ -6822,15 +7006,11 @@
             }
 
             persistProductCategoryAssignments(updatedProduct.id, draft.selectedCategories);
-            resetProductBusinessTagDraftState();
-            renderProductBusinessTagSummary();
-            showToast('商品配置已保存');
-
-            setTimeout(() => {
-                goBack();
-            }, 800);
-            return true;
-        }
+             resetProductBusinessTagDraftState();
+             renderProductBusinessTagSummary();
+             showToast('商品配置已保存');
+             return true;
+         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');

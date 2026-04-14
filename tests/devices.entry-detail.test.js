@@ -23,6 +23,13 @@ test('入场提交应持久化 entryInfo 结构', () => {
   assert.ok(/function\s+buildEntryInfoPayload\s*\(/.test(deviceEntryHtml));
   assert.ok(/device\.entryInfo\s*=\s*buildEntryInfoPayload\(\)/.test(deviceEntryHtml));
   assert.ok(/entryAt/.test(deviceEntryHtml));
+  assert.ok(/operatorPhone/.test(deviceEntryHtml));
+  assert.ok(/networkSignal/.test(deviceEntryHtml));
+  assert.ok(/maintenanceWindow/.test(deviceEntryHtml));
+  assert.ok(/notes/.test(deviceEntryHtml));
+  assert.ok(/adScreen/.test(deviceEntryHtml));
+  assert.ok(/locationImageUrls/.test(deviceEntryHtml));
+  assert.ok(!/displayImages:\s*'待上传'/.test(deviceEntryHtml));
 });
 
 test('设备详情应将入场信息合并为单一顶层入口', () => {

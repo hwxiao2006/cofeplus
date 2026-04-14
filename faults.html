@@ -1714,7 +1714,6 @@
                         <div class="fault-desktop-title">远程操作 · ${escapeText(deviceId)}</div>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
-                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('更新配方')">更新配方</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
                     </div>
@@ -1724,7 +1723,6 @@
                     <div class="fault-sheet-panel">
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
-                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('更新配方')">更新配方</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
                     </div>
@@ -1822,9 +1820,9 @@
                 {
                     time: '2026-03-04 08:11:05',
                     operator: '系统',
-                    action: '更新配方',
-                    result: '失败',
-                    note: `${deviceId} 网络波动，待重试`
+                    action: '音量调节',
+                    result: '成功',
+                    note: `${deviceId} 设备音量已调整为 9`
                 }
             ];
         }

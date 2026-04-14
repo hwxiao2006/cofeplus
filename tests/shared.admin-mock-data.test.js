@@ -108,6 +108,44 @@ test('共享 mock 设备 helper 应在本地设备数据残缺时补齐默认 18
   assert.ok(resolved.some((device) => device.id === 'RCK497'));
 });
 
+test('共享 mock 设备基线应保留 3 台未绑定点位的 mer001 设备供录入使用', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  const unenteredDevices = data.defaultDevices.filter((device) => !String(device.location || '').trim());
+
+  assert.strictEqual(data.defaultDevices.length, 18);
+  assert.strictEqual(unenteredDevices.length, 3);
+  assert.strictEqual(
+    JSON.stringify(unenteredDevices.map((device) => device.id)),
+    JSON.stringify(['RCK499', 'RCK498', 'RCK497'])
+  );
+  assert.ok(unenteredDevices.every((device) => device.merchant === 'mer001'));
+});
+
+test('共享 mock 设备 helper 应将旧缓存中的未入场占位设备归属修正为最新基线商户', () => {
+  const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
+  const sharedJs = fs.readFileSync(sharedPath, 'utf8');
+  const context = { window: {}, globalThis: {} };
+  vm.createContext(context);
+  vm.runInContext(sharedJs, context);
+
+  const data = context.window.COFE_SHARED_MOCK_DATA || context.globalThis.COFE_SHARED_MOCK_DATA;
+  const resolved = data.helpers.resolveDevices([
+    { id: 'RCK498', merchant: 'mer002', location: '', entered: false, sales: 'disabled', heartbeat: '-' },
+    { id: 'RCK497', merchant: 'mer003', location: '', entered: false, sales: 'disabled', heartbeat: '-' }
+  ]);
+
+  const rck498 = resolved.find((device) => device.id === 'RCK498');
+  const rck497 = resolved.find((device) => device.id === 'RCK497');
+  assert.strictEqual(rck498.merchant, 'mer001');
+  assert.strictEqual(rck497.merchant, 'mer001');
+});
+
 test('共享 mock 业务标签应保持 disabled 兼容输入并可被 helper 规范化为 hidden', () => {
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const helperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');

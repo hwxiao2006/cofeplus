@@ -128,13 +128,17 @@ function loadMenuContext() {
   };
 
   const documentListeners = {};
+  const windowListeners = {};
+  const bodyClassNames = new Set();
 
   const context = {
     console,
     window: {
       location: { pathname: '/menu-management.html', search: '', href: '' },
       history: { replaceState() {} },
-      addEventListener() {},
+      addEventListener(type, handler) {
+        windowListeners[type] = handler;
+      },
       scrollY: 0,
       innerWidth: 1280,
       scrollTo(arg1, arg2) {
@@ -150,6 +154,26 @@ function loadMenuContext() {
     localStorage,
     sessionStorage,
     document: {
+      body: {
+        classList: {
+          add(name) { bodyClassNames.add(name); },
+          remove(name) { bodyClassNames.delete(name); },
+          toggle(name, force) {
+            if (typeof force === 'boolean') {
+              if (force) bodyClassNames.add(name);
+              else bodyClassNames.delete(name);
+              return force;
+            }
+            if (bodyClassNames.has(name)) {
+              bodyClassNames.delete(name);
+              return false;
+            }
+            bodyClassNames.add(name);
+            return true;
+          },
+          contains(name) { return bodyClassNames.has(name); }
+        }
+      },
       addEventListener(type, handler) {
         documentListeners[type] = handler;
       },
@@ -173,6 +197,11 @@ function loadMenuContext() {
   context.dispatchDocumentClick = (target) => {
     if (typeof documentListeners.click === 'function') {
         documentListeners.click({ target });
+    }
+  };
+  context.dispatchWindowMessage = (data, origin = 'http://127.0.0.1:4174') => {
+    if (typeof windowListeners.message === 'function') {
+      windowListeners.message({ data, origin });
     }
   };
   context.__realRenderMenu = context.renderMenu;
@@ -2314,6 +2343,66 @@ test('菜单管理页初始化时应恢复详情返回前的筛选条件与滚�
   assert.strictEqual(ctx.sessionStorage.getItem('menuManagementReturnState'), null);
 });
 
+test('菜单管理页初始化时应支持通过 URL 参数自动打开点单屏预览', () => {
+  const ctx = loadMenuContext();
+  let previewOpenCount = 0;
+  ctx.openOrderPreviewModal = () => {
+    previewOpenCount += 1;
+  };
+  ctx.window.location.search = '?tab=menu&innerTab=manage&openOrderPreview=1';
+
+  ctx.init();
+
+  assert.strictEqual(previewOpenCount, 1);
+});
+
+test('菜单管理页初始化时应支持嵌入式点单屏预览模式', () => {
+  const ctx = loadMenuContext();
+  let previewOpenCount = 0;
+  ctx.openOrderPreviewModal = () => {
+    previewOpenCount += 1;
+  };
+  ctx.window.location.search = '?tab=menu&innerTab=manage&openOrderPreview=1&embedOrderPreview=1';
+
+  ctx.init();
+
+  assert.strictEqual(previewOpenCount, 1);
+  assert.ok(ctx.document.body.classList.contains('embedded-order-preview-mode'));
+});
+
+test('嵌入式点单屏预览应支持接收详情页基础信息草稿并覆盖预览展示', () => {
+  const ctx = loadMenuContext();
+  ctx.window.location.search = '?tab=menu&innerTab=manage&openOrderPreview=1&embedOrderPreview=1';
+
+  ctx.init();
+
+  const firstCategory = ctx.getOrderPreviewCategoryEntries().find(entry => entry.items.length > 0);
+  assert.ok(firstCategory);
+  const firstProduct = firstCategory.items[0];
+  assert.ok(firstProduct);
+
+  ctx.dispatchWindowMessage({
+    type: 'orderPreviewDraftPayload',
+    payload: {
+      productId: Number(firstProduct.id),
+      names: { zh: '临时点单名' },
+      descs: { zh: '临时点单描述' },
+      image: 'https://example.com/draft.png',
+      price: 66.6,
+      originalPrice: 88.8,
+      onSale: true
+    }
+  });
+
+  const productsHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
+
+  assert.ok(productsHtml.includes('临时点单名'));
+  assert.ok(productsHtml.includes('临时点单描述'));
+  assert.ok(productsHtml.includes('66.60'));
+  assert.ok(productsHtml.includes('88.80'));
+  assert.ok(productsHtml.includes('https://example.com/draft.png'));
+});
+
 test('菜单管理页初始化时应消费详情页返回的复制结果并清空暂存', () => {
   const ctx = loadMenuContext();
   const pendingResults = [
@@ -2486,6 +2575,30 @@ test('菜单管理商品卡片：上架和下架按钮应使用不同状态色',
   assert.ok(/\.product-action-btn-sale-on\s*\{[\s\S]*color:\s*#15803d;[\s\S]*background:\s*#dcfce7;/.test(html));
   assert.ok(/\.product-action-btn-sale-off\s*\{[\s\S]*color:\s*#c2410c;[\s\S]*background:\s*#ffedd5;/.test(html));
   assert.ok(/saleActionClass\s*=\s*isOnSale\s*\?\s*'product-action-btn-sale-off'\s*:\s*'product-action-btn-sale-on'/.test(html));
+});
+
+test('菜单管理商品卡片：业务标签应悬浮在商品图右上角，不占用正文布局', () => {
+  const ctx = loadMenuContext();
+  ctx.currentLang = 'zh';
+  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
+    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
+    tag_recommend: { id: 'tag_recommend', names: { zh: '推荐', en: 'Recommend' }, status: 'active' }
+  };
+  const product = {
+    id: 9,
+    price: 10,
+    onSale: true,
+    names: { zh: '卡布其诺*' },
+    descs: { zh: '金奖黑咖-浓香意式、热、标准' },
+    businessTagIds: ['tag_signature', 'tag_recommend']
+  };
+
+  const cardHtml = ctx.renderMenuManageProductCard(product, { categoryKey: '奶咖系列' });
+  const source = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+
+  assert.ok(/<div class="product-image-wrapper">[\s\S]*product-business-tag-list product-business-tag-list-overlay/.test(cardHtml));
+  assert.ok(!/<div class="product-content">[\s\S]*product-business-tag-list/.test(cardHtml));
+  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(source));
 });
 
 test('菜单管理工作区：当前分类模式应提供调整商品顺序入口，全部分类模式不显示', () => {
