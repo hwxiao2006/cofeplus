@@ -178,7 +178,14 @@
             font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .material-code {
+            font-size: 11px;
+            color: var(--text-secondary);
             margin-bottom: 4px;
+            word-break: break-all;
         }
 
         .material-stock {
@@ -395,6 +402,13 @@
             color: var(--text-primary);
         }
 
+        .selected-item-code {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
         .selected-item-qty {
             font-size: 12px;
             color: var(--primary);
@@ -498,6 +512,8 @@
         .summary-item {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
             font-size: 14px;
@@ -507,12 +523,45 @@
             border-bottom: none;
         }
 
+        .summary-item-main {
+            flex: 1;
+            min-width: 0;
+        }
+
         .summary-item-name {
             color: var(--text-primary);
         }
 
+        .summary-item-code {
+            display: block;
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+
         .summary-item-qty {
             color: var(--primary);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .source-lane-context {
+            margin: 0 14px 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #d9ece9;
+            background: #f4fffd;
+            color: #0f766e;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .source-lane-line {
+            display: block;
+            margin-top: 4px;
+            color: #475569;
+            font-size: 12px;
             font-weight: 600;
         }
 
@@ -631,6 +680,8 @@
         </div>
     </header>
 
+    <div class="source-lane-context" id="sourceLaneContext" style="display:none;"></div>
+
     <!-- 主内容区 -->
     <div class="main-container">
         <!-- 左侧分类栏 -->
@@ -698,78 +749,291 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // 物料数据，按分类组织
-        const materialsData = {
-            '奶&咖啡&水': [
-                { name: "鲜牛奶", code: "10010001", index: 1, remaining: 5000, unit: "ml", max: 10000 },
-                { name: "咖啡豆", code: "10010002", index: 2, remaining: 2000, unit: "g", max: 5000 },
-                { name: "纯净水", code: "10010003", index: 3, remaining: 15000, unit: "ml", max: 20000 },
-            ],
-            '糖浆': [
-                { name: "甘蔗冰糖糖浆", code: "20010001", index: 11, remaining: 800, unit: "ml", max: 2000 },
-                { name: "香草风味糖浆", code: "20010002", index: 12, remaining: 600, unit: "ml", max: 2000 },
-                { name: "榛果风味糖浆", code: "20010003", index: 13, remaining: 450, unit: "ml", max: 2000 },
-                { name: "热红酒糖浆", code: "20010004", index: 14, remaining: 300, unit: "ml", max: 1000 },
-            ],
-            '前/后道粉': [
-                { name: "前置抹茶粉", code: "74160100", index: 8, remaining: 135, unit: "g", max: 250 },
-                { name: "前置可可粉", code: "74160200", index: 7, remaining: 435, unit: "g", max: 500 },
-                { name: "椰蓉丝-4", code: "76150500", index: 27, remaining: 0, unit: "g", max: 500 },
-                { name: "麦片颗粒-2", code: "76190100", index: 25, remaining: 0, unit: "g", max: 500 },
-                { name: "榛果颗粒-1", code: "76150200", index: 24, remaining: 0, unit: "g", max: 500 },
-                { name: "香草粉-4", code: "74180100", index: 23, remaining: 0, unit: "g", max: 500 },
-                { name: "玉桂粉-1", code: "76170100", index: 20, remaining: 0, unit: "g", max: 500 },
-                { name: "抹茶粉-2", code: "74160101", index: 21, remaining: 0, unit: "g", max: 500 },
-                { name: "可可粉-3", code: "74150400", index: 22, remaining: 0, unit: "g", max: 500 },
-            ],
-            '包材': [
-                { name: "纸杯-16oz", code: "81020100", index: 5, remaining: 0, unit: "个", max: 80 },
-                { name: "纸杯-12oz", code: "81020101", index: 51, remaining: 60, unit: "个", max: 80 },
-                { name: "杯盖1", code: "83020300", index: 54, remaining: 100, unit: "个", max: 100 },
-                { name: "杯盖2", code: "83020301", index: 55, remaining: 80, unit: "个", max: 100 },
-                { name: "杯塞盒", code: "83030100", index: 56, remaining: 200, unit: "个", max: 500 },
-                { name: "吸管", code: "83040100", index: 57, remaining: 300, unit: "根", max: 500 },
-                { name: "杯套", code: "83050100", index: 58, remaining: 150, unit: "个", max: 300 },
-                { name: "纸袋", code: "83060100", index: 59, remaining: 80, unit: "个", max: 200 },
-            ],
-            '辅材': [
-                { name: "清洁布", code: "91010100", index: 91, remaining: 20, unit: "条", max: 50 },
-                { name: "消毒湿巾", code: "91010200", index: 92, remaining: 15, unit: "包", max: 30 },
-                { name: "一次性手套", code: "91010300", index: 93, remaining: 8, unit: "盒", max: 20 },
-                { name: "垃圾袋", code: "91010400", index: 94, remaining: 5, unit: "卷", max: 10 },
-            ],
-            '耗材': [
-                { name: "洗机药水", code: "92010100", index: 81, remaining: 500, unit: "ml", max: 1000 },
-                { name: "洗机药丸", code: "92010200", index: 82, remaining: 30, unit: "颗", max: 50 },
-                { name: "驱虫药水", code: "92010300", index: 83, remaining: 200, unit: "ml", max: 500 },
-                { name: "过滤棉", code: "92010400", index: 84, remaining: 5, unit: "片", max: 10 },
-                { name: "密封圈", code: "92010500", index: 85, remaining: 3, unit: "个", max: 10 },
-            ],
-            '奶粉': [
-                { name: "全脂奶粉", code: "30010001", index: 31, remaining: 2000, unit: "g", max: 5000 },
-                { name: "脱脂奶粉", code: "30010002", index: 32, remaining: 1500, unit: "g", max: 5000 },
-                { name: "燕麦奶", code: "30010003", index: 33, remaining: 800, unit: "ml", max: 2000 },
-                { name: "杏仁奶", code: "30010004", index: 34, remaining: 600, unit: "ml", max: 2000 },
-            ],
-            '料盒': [
-                { name: "糖浆料盒A", code: "40010001", index: 41, remaining: 1, unit: "个", max: 2 },
-                { name: "糖浆料盒B", code: "40010002", index: 42, remaining: 1, unit: "个", max: 2 },
-                { name: "奶粉料盒", code: "40010003", index: 43, remaining: 1, unit: "个", max: 2 },
-                { name: "粉料盒-1", code: "40010004", index: 44, remaining: 0, unit: "个", max: 2 },
-                { name: "粉料盒-2", code: "40010005", index: 45, remaining: 1, unit: "个", max: 2 },
-            ],
-            '食材': [
-                { name: "冰", code: "10000005", index: 6, remaining: 4000, unit: "g", max: 4000 },
-                { name: "柠檬片", code: "50010001", index: 61, remaining: 20, unit: "片", max: 50 },
-                { name: "薄荷叶", code: "50010002", index: 62, remaining: 15, unit: "g", max: 30 },
-                { name: "肉桂棒", code: "50010003", index: 63, remaining: 10, unit: "根", max: 20 },
-            ]
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const REFILL_CATEGORY_ORDER = [
+            '奶&咖啡&水',
+            '糖浆',
+            '前/后道粉',
+            '包材',
+            '辅材',
+            '耗材',
+            '奶粉',
+            '料盒',
+            '食材'
+        ];
+        const REFILL_PRESELECT_CODE_MAP = {
+            '10010001': '1010204',
+            '10010003': '01010301',
+            '10010021': '1010107',
+            '10010022': '01010106',
+            '20010002': '01010407014',
+            '20010003': '01010407013',
+            '20010005': '0101040622',
+            '20010006': '01010407011',
+            '20010008': '0101040802',
+            '20010009': '0101040624',
+            '20010010': '0101040606',
+            '20020004': '01010407010',
+            '74160100': '01010502',
+            '74160101': '01010502',
+            '74160200': '01010501',
+            '74150400': '01010501',
+            '76150200': '01010601',
+            '81010100': '01020212',
+            '81020100': '01020111',
+            '81020101': '01020112',
+            '83020300': '01020304',
+            '83020301': '01020303',
+            '83040100': '01020602',
+            '83050100': '01020403',
+            '83060100': '01020702'
         };
+        const REFILL_MATERIAL_MASTER_DATA = [
+            ["01010106", "金奖意式豆", "454g/包", "包"],
+            ["1010107", "埃塞俄比亚瑰夏村", "454g/包", "袋"],
+            ["01010205", "君乐宝牛奶（1L/盒，12盒/箱）", "1L/盒", "盒"],
+            ["1010204", "君乐宝牛奶（10L箱）", "10L箱", "箱"],
+            ["01010206", "蒙牛牛奶（10L）", "10L/箱", "箱"],
+            ["01010301", "冰露", "18.9L/桶", "桶"],
+            ["01010403020", "王力香草糖浆", "700ml/瓶", "瓶"],
+            ["01010403021", "王力原味糖浆", "700ml/瓶", "瓶"],
+            ["0101040620", "拜佰里原味糖浆", "700ml/瓶", "瓶"],
+            ["01010407010", "好成海盐焦糖糖浆", "700ml/瓶", "瓶"],
+            ["01010407011", "好成原味冰蔗糖糖浆", "1000ml/瓶", "瓶"],
+            ["01010407012", "好成橘皮调味风味", "750mL/瓶", "瓶"],
+            ["01010407013", "好成榛果糖浆", "1000ml/瓶", "瓶"],
+            ["01010407014", "好成香草糖浆", "1000ml/瓶", "瓶"],
+            ["01010501", "可可粉", "800g/袋", "袋"],
+            ["01010502", "抹茶粉", "1000g/袋", "袋"],
+            ["01010601", "榛果颗粒", "100g/袋", "袋"],
+            ["01010701", "白糖包", "5g*100条/包", "包"],
+            ["01010702", "黄糖包", "5g*100条/包", "包"],
+            ["01020110", "10oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020111", "16oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020112", "12oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020303", "诚宇杯盖", "50个/条", "条"],
+            ["01020304", "机压杯盖", "50个/条", "条"],
+            ["01020308", "西红柿纸杯盖", "50个/条", "条"],
+            ["01020403", "白色杯套", "50/扎，40扎/箱", "PCS"],
+            ["01020602", "塑料吸管", "100个/包", "包"],
+            ["01020701", "单杯打包袋", "100个/扎", "扎"],
+            ["01020702", "鹿森单杯打包袋", "50个/扎", "扎"],
+            ["010301", "剪刀", "把", "把"],
+            ["010302", "双色洗机桶", "个", "个"],
+            ["010304", "棕色抹布", "个", "个"],
+            ["010306", "奶管夹", "24个/盒", "个"],
+            ["010307", "小板凳", "个", "个"],
+            ["01040101", "洗机药水(1L)", "1L/瓶", "瓶"],
+            ["01040103", "洗机药丸", "80/盒", "盒"],
+            ["01040105", "洗剂药丸（球状）", "62/盒", "盒"],
+            ["01040107", "洗机药片（特定机型可用）", "100片/瓶", "瓶"],
+            ["01040201", "一次性手套", "50双/盒", "盒"],
+            ["01040203", "一次性口罩", "50个/盒", "个"],
+            ["01040204", "酒精湿巾(A)", "100张/袋", "袋"],
+            ["01040206", "垃圾袋", "100个/卷", "卷"],
+            ["01040207", "卫生纸", "100张/包", "包"],
+            ["01040208", "驱蚊药水", "瓶", "瓶"],
+            ["01040209", "蟑螂丸", "盒", "盒"],
+            ["01051003", "小乌龟车", "", "个"],
+            ["59000077", "EVEBOT拉花机墨盒", "咖啡色,食品级,40g", "PCS"],
+            ["0101040605", "拜伯里桂花糖浆", "700ml/瓶", "瓶"],
+            ["0101040606", "山茶花糖浆", "700ML/瓶", "瓶"],
+            ["0101040608", "拜佰里樱花糖浆", "700ML/瓶", "瓶"],
+            ["0101040618", "青苹果糖浆", "700ml/瓶", "瓶"],
+            ["0101040621", "拜佰里水蜜桃糖浆", "700ml/瓶", "瓶"],
+            ["0101040622", "拜佰里秋月梨糖浆", "700ml/瓶", "瓶"],
+            ["0101040623", "拜佰里苹果肉桂糖浆", "700ml/瓶", "瓶"],
+            ["0101040624", "拜佰里热红酒糖浆", "700ml/瓶", "个"],
+            ["0101040625", "拜佰里山茶碧螺春糖浆", "700ml/瓶", "瓶"],
+            ["0101040626", "拜佰里柠檬味糖浆", "700ml/瓶", "瓶"],
+            ["0101040801", "凯利威玫瑰糖浆", "1.3L/瓶", "瓶"],
+            ["0101040802", "凯利威话梅糖浆", "1.3L/瓶", "瓶"],
+            ["0101040803", "凯利威绿薄荷糖浆", "1.3L/瓶", "瓶"],
+            ["0101040804", "凯利威栀子花糖浆", "1.25L/瓶", "瓶"],
+            ["0101040805", "凯利威玉兰花风味糖浆", "1.25L/瓶", "瓶"],
+            ["01010802", "茉莉绿茶茶汤", "1L/盒", "盒"],
+            ["01020109", "12oz纸杯(上海六院定制）", "50个/条", "条"],
+            ["01020113", "8oz纸杯（鹿森）", "20个/条", "条"],
+            ["01020114", "12oz咪咕纸杯", "20个/条", "条"],
+            ["01020115", "12oz香港客户定制纸杯", "20个/条", "条"],
+            ["01020116", "16oz香港客户定制纸杯", "20个/条", "条"],
+            ["01020117", "12oz美国弗吉尼亚客户定制纸杯", "20个/条", "条"],
+            ["01020118", "16oz美国弗吉尼亚客户定制纸杯", "20个/条", "条"],
+            ["01020205", "16oz塑料杯(诚宇)", "25个/条", "条"],
+            ["01020209", "英托品康窄边塑杯", "25个/条", "个"],
+            ["01020212", "16oz塑杯(鹿森)", "25个/条", "条"],
+            ["01020213", "16oz塑杯(上海六院定制）", "20个/条", "条"],
+            ["01020214", "16oz咪咕塑杯", "20个/条", "条"],
+            ["01020402", "杯套-上海文化周", "25/扎", "扎"]
+        ].map(([materialNumber, name, spec, unit], index) => ({
+            index: index + 1,
+            code: materialNumber,
+            materialNumber,
+            name,
+            spec,
+            unit: unit || '个'
+        }));
+
+        function normalizeRefillMaterialCode(code) {
+            const normalizedCode = String(code || '').trim();
+            return REFILL_PRESELECT_CODE_MAP[normalizedCode] || normalizedCode;
+        }
+
+        function resolveRefillMaterialCategory(item) {
+            const materialNumber = String(item.materialNumber || '').trim();
+            const name = String(item.name || '').trim();
+
+            if (
+                /^(010101|010102|010103|010108)/.test(materialNumber) ||
+                materialNumber === '1010204' ||
+                materialNumber === '1010107' ||
+                /咖啡|牛奶|茶汤|冰露/.test(name)
+            ) {
+                return '奶&咖啡&水';
+            }
+
+            if (/^010104/.test(materialNumber) || /糖浆/.test(name)) {
+                return '糖浆';
+            }
+
+            if (/^010105/.test(materialNumber) || /^010106/.test(materialNumber) || /粉|颗粒/.test(name)) {
+                return '前/后道粉';
+            }
+
+            if (
+                /^(010201|010202|010203|010204|010206|010207)/.test(materialNumber) ||
+                /纸杯|杯盖|杯套|吸管|打包袋|塑杯/.test(name)
+            ) {
+                return '包材';
+            }
+
+            if (/^010401/.test(materialNumber) || materialNumber === '59000077' || /药水|药丸|药片|墨盒/.test(name)) {
+                return '耗材';
+            }
+
+            if (
+                /^010402/.test(materialNumber) ||
+                /^0103/.test(materialNumber) ||
+                materialNumber === '01051003' ||
+                /剪刀|抹布|手套|口罩|湿巾|垃圾袋|卫生纸|驱蚊|蟑螂|小乌龟车|奶管夹|板凳/.test(name)
+            ) {
+                return '辅材';
+            }
+
+            if (/奶粉/.test(name)) {
+                return '奶粉';
+            }
+
+            if (/料盒|料桶|料仓/.test(name)) {
+                return '料盒';
+            }
+
+            if (/糖包|冰|柠檬|薄荷|肉桂/.test(name)) {
+                return '食材';
+            }
+
+            return '辅材';
+        }
+
+        function resolveRefillMockMax(item, category) {
+            const unit = String(item.unit || '').trim();
+
+            if (category === '糖浆') return 12;
+            if (category === '前/后道粉') return 20;
+            if (category === '奶&咖啡&水') return ['箱', '桶', '盒'].includes(unit) ? 20 : 12;
+            if (category === '包材') return ['条', '扎', '包', 'PCS'].includes(unit) ? 40 : 20;
+            if (category === '耗材') return ['瓶', '盒'].includes(unit) ? 12 : 20;
+            if (category === '辅材') return ['个', '把'].includes(unit) ? 10 : 20;
+            if (category === '奶粉') return 10;
+            if (category === '料盒') return 4;
+            if (category === '食材') return 20;
+            return 20;
+        }
+
+        function resolveRefillMockRemaining(item, max) {
+            const cycle = item.index % 4;
+            if (cycle === 0) return 0;
+            if (cycle === 1) return Math.max(1, Math.floor(max * 0.75));
+            if (cycle === 2) return Math.max(1, Math.floor(max * 0.45));
+            return Math.max(1, Math.floor(max * 0.2));
+        }
+
+        function buildRefillMaterialsData(masterData) {
+            const grouped = REFILL_CATEGORY_ORDER.reduce((accumulator, category) => {
+                accumulator[category] = [];
+                return accumulator;
+            }, {});
+
+            (Array.isArray(masterData) ? masterData : []).forEach(item => {
+                const category = resolveRefillMaterialCategory(item);
+                const max = resolveRefillMockMax(item, category);
+                grouped[category].push({
+                    ...item,
+                    remaining: resolveRefillMockRemaining(item, max),
+                    max
+                });
+            });
+
+            return grouped;
+        }
+
+        const materialsData = buildRefillMaterialsData(REFILL_MATERIAL_MASTER_DATA);
 
         let currentCategory = '奶&咖啡&水';
         let selectedItems = {}; // { code: quantity }
         let preselectedMaterialCode = '';
+        let activeLaneContext = null;
         const DELIVERY_DAY_OFFSETS = [1, 3, 5, 8, 10, 12];
+
+        function readMaterialsShipmentReturnContext() {
+            try {
+                const raw = sessionStorage.getItem('materialsShipmentReturnContext');
+                const parsed = raw ? JSON.parse(raw) : null;
+                if (!parsed || parsed.source !== 'materials') {
+                    return null;
+                }
+
+                const deviceId = String(parsed.deviceId || '').trim();
+                if (!deviceId) {
+                    return null;
+                }
+
+                return {
+                    source: 'materials',
+                    deviceId,
+                    laneName: parsed.laneName ? String(parsed.laneName) : '',
+                    materialCode: parsed.materialCode ? String(parsed.materialCode) : null
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function syncSourceLaneContext() {
+            const container = document.getElementById('sourceLaneContext');
+            if (!container) return;
+            if (!activeLaneContext || !activeLaneContext.laneName) {
+                container.style.display = 'none';
+                container.innerHTML = '';
+                return;
+            }
+
+            container.style.display = '';
+            container.innerHTML = `
+                来源货道：${activeLaneContext.laneName}
+                <span class="source-lane-line">当前发货单会为该来源物料带出货道名称。</span>
+            `;
+        }
+
+        function buildMaterialsReturnUrl() {
+            const context = readMaterialsShipmentReturnContext();
+            if (!context || !context.deviceId) {
+                return 'materials.html';
+            }
+            sessionStorage.setItem('currentDevice', context.deviceId);
+            return `materials.html?device=${encodeURIComponent(context.deviceId)}`;
+        }
 
         // 初始化
         function init() {
@@ -777,13 +1041,15 @@
             const deviceId = getCurrentDevice();
             const location = getDeviceLocation(deviceId);
             document.getElementById('headerDeviceInfo').innerHTML = `${deviceId}<br><small>${location}</small>`;
+            activeLaneContext = readMaterialsShipmentReturnContext();
+            syncSourceLaneContext();
             
             renderCategories();
             renderMaterials();
             updateSelectedUI();
             
             // 检查是否有预选的物料（从卡片点击进来）
-            const preselect = sessionStorage.getItem('preselectMaterial');
+            const preselect = normalizeRefillMaterialCode(sessionStorage.getItem('preselectMaterial'));
             if (preselect) {
                 // 找到该物料所属分类并切换
                 Object.keys(materialsData).forEach(category => {
@@ -806,7 +1072,7 @@
         // 渲染分类
         function renderCategories() {
             const sidebar = document.getElementById('categorySidebar');
-            const categories = Object.keys(materialsData);
+            const categories = REFILL_CATEGORY_ORDER;
             
             sidebar.innerHTML = categories.map(cat => `
                 <div class="category-item ${cat === currentCategory ? 'active' : ''}" 
@@ -835,6 +1101,7 @@
                     <div class="material-item ${item.code === preselectedMaterialCode ? 'preselected' : ''} ${qty > 0 ? 'selected' : ''}" data-material-code="${item.code}" tabindex="-1">
                         <div class="material-info">
                             <div class="material-name">${item.name}</div>
+                            <div class="material-code">商品编码：${item.materialNumber || item.code}</div>
                             <div class="material-stock">库存: ${item.remaining}${item.unit} · 最大: ${item.max}${item.unit}</div>
                         </div>
                         <div class="quantity-control">
@@ -936,10 +1203,13 @@
                 materialsData[category].forEach(item => {
                     if (selectedItems[item.code]) {
                         const qty = selectedItems[item.code];
+                        const laneName = activeLaneContext && activeLaneContext.materialCode === item.code ? activeLaneContext.laneName : '';
                         html += `
                             <div class="selected-item">
                                 <div class="selected-item-info">
                                     <div class="selected-item-name">${item.name}</div>
+                                    ${laneName ? `<div class="selected-item-code">来源货道：${laneName}</div>` : ''}
+                                    <div class="selected-item-code">商品编码：${item.materialNumber || item.code}</div>
                                     <div class="selected-item-qty">+${qty} ${item.unit}</div>
                                 </div>
                                 <button class="selected-item-remove" onclick="setQuantity('${item.code}', 0)">✕</button>
@@ -991,9 +1261,14 @@
                 Object.values(materialsData).forEach(list => {
                     const item = list.find(m => m.code === code);
                     if (item) {
+                        const laneName = activeLaneContext && activeLaneContext.materialCode === item.code ? activeLaneContext.laneName : '';
                         html += `
                             <div class="summary-item">
-                                <span class="summary-item-name">${item.name}</span>
+                                <span class="summary-item-main">
+                                    <span class="summary-item-name">${item.name}</span>
+                                    ${laneName ? `<span class="summary-item-code">来源货道：${laneName}</span>` : ''}
+                                    <span class="summary-item-code">商品编码：${item.materialNumber || item.code}</span>
+                                </span>
                                 <span class="summary-item-qty">+${selectedItems[code]} ${item.unit}</span>
                             </div>
                         `;
@@ -1047,11 +1322,33 @@
         // 获取点位信息
         function getDeviceLocation(deviceId) {
             const locationMap = {
-                'RCK111': '上海市中心店',
-                'RCK112': '北京朝阳门店',
-                'RCK113': '广州天河店'
+                'RCK111': '徐汇区 漕河泾创新园',
+                'RCK112': '浦东新区 张江创智天地',
+                'RCK113': '静安区 南京西路商圈'
             };
             return locationMap[deviceId] || '未知点位';
+        }
+
+        function getCurrentRequesterProfile() {
+            let session = {};
+            let profile = {};
+
+            try {
+                session = JSON.parse(localStorage.getItem(LOGIN_SESSION_KEY) || '{}') || {};
+            } catch (error) {
+                session = {};
+            }
+
+            try {
+                profile = JSON.parse(localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY) || '{}') || {};
+            } catch (error) {
+                profile = {};
+            }
+
+            return {
+                name: String(profile.name || '当前用户'),
+                phone: String(profile.phone || session.account || '')
+            };
         }
 
         // 确认生成发货单
@@ -1069,6 +1366,7 @@
             const deliveryTime = deliveryDateObj.toISOString();
             
             const deviceId = getCurrentDevice();
+            const requester = getCurrentRequesterProfile();
             
             // 构建发货单数据
             const orderId = 'DL' + Date.now();
@@ -1079,7 +1377,8 @@
                 note: note,
                 status: 'pending', // pending 或 completed
                 // 申请人信息
-                requestedBy: '当前用户', // 实际应从登录系统获取
+                requestedBy: requester.name,
+                requestedByPhone: requester.phone,
                 requestTime: new Date().toISOString(),
                 // 设备和点位信息
                 deviceId: deviceId,
@@ -1097,6 +1396,8 @@
                     if (item) {
                         orderData.items.push({
                             code: item.code,
+                            materialNumber: item.materialNumber || item.code,
+                            laneName: activeLaneContext && activeLaneContext.materialCode === item.code ? activeLaneContext.laneName : '',
                             name: item.name,
                             quantity: selectedItems[code],
                             unit: item.unit
@@ -1130,7 +1431,7 @@
 
         // 返回
         function goBack() {
-            window.location.href = 'materials.html';
+            window.location.href = buildMaterialsReturnUrl();
         }
 
         // 显示提示
