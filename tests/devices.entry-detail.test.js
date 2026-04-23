@@ -94,6 +94,11 @@ test('设备详情桌面端应使用超宽弹层与分组卡片布局', () => {
   assert.ok(/renderTechnicalStatusCard/.test(devicesHtml));
 });
 
+test('设备概览不应再展示部署类型字段', () => {
+  assert.ok(/function\s+renderDeviceOverviewCard\s*\(/.test(devicesHtml));
+  assert.ok(!/renderDetailRow\('部署类型'/.test(devicesHtml));
+});
+
 test('设备详情桌面端应采用左主内容与右侧设备操作布局', () => {
   assert.ok(/class=\"detail-layout\"/.test(devicesHtml));
   assert.ok(/class=\"detail-main\"/.test(devicesHtml));
