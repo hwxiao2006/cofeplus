@@ -4566,11 +4566,6 @@
             third: '第三方'
         };
 
-        const deploymentMap = {
-            private: '自有部署',
-            public: '公共部署'
-        };
-
         // 默认设备数据
         const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
         const resolveDeviceBaseline = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
@@ -4609,11 +4604,9 @@
 
         function normalizeDevices(data) {
             const categoryFallback = ['self', 'lease', 'third'];
-            const deploymentFallback = ['private', 'public'];
             return data.map((d, index) => ({
                 ...d,
                 category: d.category || categoryFallback[index % categoryFallback.length],
-                deployment: d.deployment || deploymentFallback[index % deploymentFallback.length],
                 entered: d.entered !== false && !!d.location
             }));
         }
@@ -4735,9 +4728,9 @@
 
         function ensureUnenteredDevices(data) {
             const seeds = [
-                { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'self', deployment: 'private' },
-                { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'lease', deployment: 'public' },
-                { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'third', deployment: 'public' }
+                { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'self' },
+                { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'lease' },
+                { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'third' }
             ];
             const ids = new Set(data.map(d => d.id));
             seeds.forEach(seed => {
@@ -5170,7 +5163,6 @@
                     deviceId: device.id,
                     locationName: device.entered === false || !device.location ? '未入场' : locationName,
                     categoryName: categoryMap[device.category] || device.category || '-',
-                    deploymentName: deploymentMap[device.deployment] || device.deployment || '-',
                     statusName: statusMap[device.status] || device.status,
                     salesName: salesMap[device.sales] || device.sales,
                     heartbeat: device.heartbeat
@@ -5281,8 +5273,7 @@
             const rows = [
                 renderDetailRow('设备编号', summary.deviceId || '-'),
                 renderDetailRow('点位', summary.locationName === '未入场' ? '未分配点位' : (summary.locationName || '-')),
-                renderDetailRow('设备类别', summary.categoryName || '-'),
-                renderDetailRow('部署类型', summary.deploymentName || '-')
+                renderDetailRow('设备类别', summary.categoryName || '-')
             ].join('');
             return renderDetailCard('设备概览', rows, 'detail-card-basic');
         }
