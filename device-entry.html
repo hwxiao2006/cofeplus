@@ -636,6 +636,23 @@
             background: #ecfbfa;
         }
 
+        .quick-location-locate-btn {
+            border: 1px solid var(--primary);
+            background: #ecfbfa;
+            color: var(--primary-dark);
+            border-radius: 8px;
+            height: 36px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .quick-location-locate-btn:hover {
+            background: #dff7f4;
+        }
+
         .quick-location-field input,
         .quick-location-field select,
         .quick-location-field textarea {
@@ -1114,6 +1131,18 @@
                     <span>详细地址 *</span>
                     <input id="quickLocationAddress" placeholder="请输入详细地址">
                 </label>
+                <label class="quick-location-field">
+                    <span>经度（可选）</span>
+                    <input id="quickLocationLongitude" placeholder="例如 121.473700">
+                </label>
+                <label class="quick-location-field">
+                    <span>纬度（可选）</span>
+                    <input id="quickLocationLatitude" placeholder="例如 31.230400">
+                </label>
+                <div class="quick-location-field">
+                    <span>当前位置</span>
+                    <button type="button" class="quick-location-locate-btn" id="quickLocationLocateBtn" onclick="requestQuickLocationCurrentPosition()">获取当前位置</button>
+                </div>
                 <label class="quick-location-field full">
                     <span>备注（可选）</span>
                     <textarea id="quickLocationRemark" placeholder="可填写补充说明"></textarea>
@@ -1577,9 +1606,17 @@
             return Number.isFinite(parsed) ? parsed : null;
         }
 
-        function generateNextLocationCodeForEntry() {
+        function generateNextLocationCodeForEntry(excludedCode = '') {
             const used = new Set();
             let maxCodeNumber = 999;
+            const excluded = String(excludedCode || '').trim();
+            if (excluded) {
+                used.add(excluded.toLowerCase());
+                const codeNumber = extractLocationCodeNumber(excluded);
+                if (Number.isFinite(codeNumber)) {
+                    maxCodeNumber = Math.max(maxCodeNumber, codeNumber);
+                }
+            }
             locationsData.forEach(item => {
                 const rawCode = String(item?.code || '').trim();
                 if (!rawCode) return;
@@ -1599,7 +1636,8 @@
         }
 
         function regenerateQuickLocationCode() {
-            document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
+            const input = document.getElementById('quickLocationCode');
+            input.value = generateNextLocationCodeForEntry(input.value);
         }
 
         function openQuickCreateLocationModal() {
@@ -1620,6 +1658,13 @@
             document.getElementById('quickLocationManager').value = '';
             document.getElementById('quickLocationPhone').value = '';
             document.getElementById('quickLocationAddress').value = '';
+            document.getElementById('quickLocationLongitude').value = '';
+            document.getElementById('quickLocationLatitude').value = '';
+            const locateBtn = document.getElementById('quickLocationLocateBtn');
+            if (locateBtn) {
+                locateBtn.dataset.locating = '0';
+                locateBtn.textContent = '获取当前位置';
+            }
             document.getElementById('quickLocationRemark').value = '';
         }
 
@@ -1646,6 +1691,9 @@
                 manager: document.getElementById('quickLocationManager').value.trim(),
                 phone: document.getElementById('quickLocationPhone').value.trim(),
                 address: document.getElementById('quickLocationAddress').value.trim(),
+                longitude: document.getElementById('quickLocationLongitude').value.trim(),
+                latitude: document.getElementById('quickLocationLatitude').value.trim(),
+                gpsAction: '新增点位时录入',
                 remark: document.getElementById('quickLocationRemark').value.trim(),
                 createTime: new Date().toISOString().split('T')[0]
             };
@@ -2152,6 +2200,40 @@
             } finally {
                 actionEl.dataset.locating = '0';
                 actionEl.textContent = '获取当前位置 ›';
+            }
+        }
+
+        async function requestQuickLocationCurrentPosition() {
+            const button = document.getElementById('quickLocationLocateBtn');
+            if (!button) return;
+            if (!navigator.geolocation) {
+                alert('当前浏览器不支持定位功能');
+                return;
+            }
+            if (button.dataset.locating === '1') return;
+            button.dataset.locating = '1';
+            button.textContent = '定位中...';
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    });
+                });
+                const longitude = Number(position.coords.longitude).toFixed(6);
+                const latitude = Number(position.coords.latitude).toFixed(6);
+                document.getElementById('quickLocationLongitude').value = longitude;
+                document.getElementById('quickLocationLatitude').value = latitude;
+                const addressInput = document.getElementById('quickLocationAddress');
+                if (addressInput && !addressInput.value.trim()) {
+                    addressInput.value = await resolveAddressByCoordinates(latitude, longitude);
+                }
+            } catch (error) {
+                alert(getLocationErrorMessage(error));
+            } finally {
+                button.dataset.locating = '0';
+                button.textContent = '获取当前位置';
             }
         }
 

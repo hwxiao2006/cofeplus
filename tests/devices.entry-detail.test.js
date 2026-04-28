@@ -187,6 +187,13 @@ test('详情页应提供编辑入场信息入口并支持保存', () => {
   assert.ok(/id="editGpsAction"/.test(devicesHtml));
   assert.ok(/id="editLongitude"/.test(devicesHtml));
   assert.ok(/id="editLatitude"/.test(devicesHtml));
+  assert.ok(/id="editLocationCode"/.test(devicesHtml));
+  assert.ok(/id="entryEditQuickCreateLocationModal"/.test(devicesHtml));
+  assert.ok(/id="entryEditQuickLocationLocateBtn"/.test(devicesHtml));
+  assert.ok(/function\s+onEntryEditLocationChange\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+openEntryEditQuickCreateLocationModal\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+createLocationFromDeviceDetail\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+requestEntryEditQuickLocationCurrentPosition\s*\(/.test(devicesHtml));
   assert.ok(/广告屏设置/.test(devicesHtml));
   assert.ok(/左侧菜单/.test(devicesHtml));
   assert.ok(/右侧排队号背景/.test(devicesHtml));
@@ -210,7 +217,25 @@ test('详情页应提供编辑入场信息入口并支持保存', () => {
   assert.ok(/handleEntryAdScreenUpload\('rightQueueBackground',\s*'image'/.test(devicesHtml));
   assert.ok(/new FileReader\(\)/.test(devicesHtml));
   assert.ok(/currentDetailDeviceId/.test(devicesHtml));
+  assert.ok(!/id="editLocationName"/.test(devicesHtml));
   assert.ok(/entryInfo\s*=\s*\{[\s\S]*operatorName[\s\S]*adScreen[\s\S]*locationImageUrls/.test(devicesHtml));
+});
+
+test('编辑点位信息后应沉淀点位变更记录并在入场信息中展示', () => {
+  assert.ok(/function\s+normalizeLocationChangeRecord\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+buildLocationChangeRecord\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+appendLocationChangeRecord\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+getCurrentLoginOperatorInfo\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+renderLocationChangeRecords\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+renderLocationChangeRecordCard\s*\(/.test(devicesHtml));
+  assert.ok(/locationChangeRecords/.test(devicesHtml));
+  assert.ok(/点位变更记录/.test(devicesHtml));
+  assert.ok(/previousLocationName/.test(devicesHtml));
+  assert.ok(/nextLocationAddress/.test(devicesHtml));
+  assert.ok(/previousLongitude/.test(devicesHtml));
+  assert.ok(/nextLatitude/.test(devicesHtml));
+  assert.ok(/operatorName:\s*loginOperator\.operatorName/.test(devicesHtml));
+  assert.ok(/nextEntryInfo\.locationChangeRecords\s*=\s*appendLocationChangeRecord\(/.test(devicesHtml));
 });
 
 test('广告屏保存应写入 adScreen 并保留旧数据兼容读取', () => {

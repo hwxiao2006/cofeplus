@@ -863,11 +863,278 @@
             font-weight: 600;
         }
 
+        .detail-location-change-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-location-change-card {
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .detail-location-change-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+            background: #fcfcfd;
+        }
+
+        .detail-location-change-time {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .detail-location-change-operator {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        .detail-location-change-body {
+            display: grid;
+            gap: 0;
+        }
+
+        .detail-location-change-row {
+            display: grid;
+            grid-template-columns: 96px minmax(0, 1fr);
+            gap: 10px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .detail-location-change-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-location-change-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .detail-location-change-value {
+            min-width: 0;
+            display: grid;
+            gap: 6px;
+            text-align: right;
+        }
+
+        .detail-location-change-value-line {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .detail-location-change-value-line strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .detail-location-change-empty {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            border: 1px dashed var(--border-light);
+            border-radius: 8px;
+            background: #fff;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
         .detail-status-note {
             margin-top: 10px;
             font-size: 12px;
             color: var(--text-secondary);
             line-height: 1.5;
+        }
+
+        .entry-location-select-wrap {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .entry-location-select-wrap select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .entry-location-quick-btn {
+            flex-shrink: 0;
+            border: 1px solid rgba(29, 78, 216, 0.14);
+            background: rgba(37, 99, 235, 0.08);
+            color: #1d4ed8;
+            border-radius: 10px;
+            padding: 0 12px;
+            height: 38px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .entry-location-quick-btn:hover {
+            background: rgba(37, 99, 235, 0.12);
+        }
+
+        .entry-edit-field input[readonly] {
+            background: #f8fafc;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .quick-location-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.48);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1300;
+            padding: 20px;
+        }
+
+        .quick-location-modal-overlay.show {
+            display: flex;
+        }
+
+        .quick-location-modal {
+            width: min(720px, 100%);
+            max-height: calc(100vh - 48px);
+            overflow: auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+        }
+
+        .quick-location-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .quick-location-modal-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quick-location-modal-close {
+            border: none;
+            background: transparent;
+            color: var(--text-tertiary);
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .quick-location-modal-body {
+            padding: 18px 22px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .quick-location-field {
+            display: grid;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .quick-location-field.full {
+            grid-column: 1 / -1;
+        }
+
+        .quick-location-code-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quick-location-code-row input {
+            flex: 1;
+        }
+
+        .quick-code-regenerate-btn {
+            flex-shrink: 0;
+            border: 1px solid var(--border-light);
+            background: #f8fafc;
+            color: var(--text-primary);
+            border-radius: 10px;
+            padding: 0 12px;
+            height: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .quick-code-regenerate-btn:hover {
+            background: #eef2ff;
+        }
+
+        .quick-location-locate-btn {
+            width: 100%;
+            border: 1px solid rgba(29, 78, 216, 0.2);
+            background: rgba(37, 99, 235, 0.08);
+            color: #1d4ed8;
+            border-radius: 10px;
+            height: 40px;
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .quick-location-locate-btn:hover {
+            background: rgba(37, 99, 235, 0.12);
+        }
+
+        .quick-location-field input,
+        .quick-location-field select,
+        .quick-location-field textarea {
+            width: 100%;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: #fff;
+            outline: none;
+        }
+
+        .quick-location-field textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+
+        .quick-location-field input:focus,
+        .quick-location-field select:focus,
+        .quick-location-field textarea:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .quick-location-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 0 22px 22px;
+        }
+
+        .quick-location-modal-footer .btn {
+            min-width: 112px;
         }
 
         .detail-aside {
@@ -4083,24 +4350,25 @@
                         <input id="editOperatorPhone" placeholder="请输入联系电话">
                     </label>
                     <label class="entry-edit-field">
-                        <span>点位名称</span>
-                        <input id="editLocationName" placeholder="请输入点位名称">
+                        <span>点位</span>
+                        <div class="entry-location-select-wrap">
+                            <select id="editLocationCode" onchange="onEntryEditLocationChange()">
+                                <option value="">请选择点位</option>
+                            </select>
+                            <button type="button" class="entry-location-quick-btn" onclick="openEntryEditQuickCreateLocationModal()">+ 新增点位</button>
+                        </div>
                     </label>
                     <label class="entry-edit-field">
                         <span>点位地址</span>
-                        <input id="editLocationAddress" placeholder="请输入点位地址">
+                        <input id="editLocationAddress" placeholder="请选择点位后自动带出" readonly>
                     </label>
                     <label class="entry-edit-field">
                         <span>入场时间</span>
                         <input id="editEntryAt" type="datetime-local">
                     </label>
                     <label class="entry-edit-field">
-                        <span>GPS定位</span>
-                        <select id="editGpsAction">
-                            <option value="获取当前位置">获取当前位置</option>
-                            <option value="手动定位修正">手动定位修正</option>
-                            <option value="导入点位坐标">导入点位坐标</option>
-                        </select>
+                        <span>坐标来源</span>
+                        <input id="editGpsAction" placeholder="随点位信息自动带出" readonly>
                     </label>
                     <label class="entry-edit-field">
                         <span>经度</span>
@@ -4229,6 +4497,74 @@
         </div>
     </div>
 
+    <div class="quick-location-modal-overlay" id="entryEditQuickCreateLocationModal">
+        <div class="quick-location-modal">
+            <div class="quick-location-modal-header">
+                <h3 class="quick-location-modal-title">快速新增点位</h3>
+                <button type="button" class="quick-location-modal-close" onclick="closeEntryEditQuickCreateLocationModal()">×</button>
+            </div>
+            <div class="quick-location-modal-body">
+                <label class="quick-location-field">
+                    <span>点位名称 *</span>
+                    <input id="entryEditQuickLocationName" placeholder="请输入点位名称">
+                </label>
+                <label class="quick-location-field">
+                    <span>点位编码 *</span>
+                    <div class="quick-location-code-row">
+                        <input id="entryEditQuickLocationCode" placeholder="自动生成，可手动修改">
+                        <button type="button" class="quick-code-regenerate-btn" onclick="regenerateEntryEditQuickLocationCode()">重新生成</button>
+                    </div>
+                </label>
+                <label class="quick-location-field">
+                    <span>点位分类 *</span>
+                    <select id="entryEditQuickLocationCategory">
+                        <option value="exhibition">展会点位</option>
+                        <option value="operation">运营点位</option>
+                    </select>
+                </label>
+                <label class="quick-location-field">
+                    <span>点位状态</span>
+                    <select id="entryEditQuickLocationStatus">
+                        <option value="operational">运营中</option>
+                        <option value="closed">暂停运营</option>
+                    </select>
+                </label>
+                <label class="quick-location-field">
+                    <span>负责人（可选）</span>
+                    <input id="entryEditQuickLocationManager" placeholder="请输入负责人">
+                </label>
+                <label class="quick-location-field">
+                    <span>联系电话（可选）</span>
+                    <input id="entryEditQuickLocationPhone" placeholder="请输入联系电话">
+                </label>
+                <label class="quick-location-field full">
+                    <span>详细地址 *</span>
+                    <input id="entryEditQuickLocationAddress" placeholder="请输入详细地址">
+                </label>
+                <label class="quick-location-field">
+                    <span>经度（可选）</span>
+                    <input id="entryEditQuickLocationLongitude" placeholder="例如 121.473700">
+                </label>
+                <label class="quick-location-field">
+                    <span>纬度（可选）</span>
+                    <input id="entryEditQuickLocationLatitude" placeholder="例如 31.230400">
+                </label>
+                <div class="quick-location-field">
+                    <span>当前位置</span>
+                    <button type="button" class="quick-location-locate-btn" id="entryEditQuickLocationLocateBtn" onclick="requestEntryEditQuickLocationCurrentPosition()">获取当前位置</button>
+                </div>
+                <label class="quick-location-field full">
+                    <span>备注（可选）</span>
+                    <textarea id="entryEditQuickLocationRemark" placeholder="可填写补充说明"></textarea>
+                </label>
+            </div>
+            <div class="quick-location-modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="closeEntryEditQuickCreateLocationModal()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="createLocationFromDeviceDetail()">保存并选中</button>
+            </div>
+        </div>
+    </div>
+
     <div class="detail-fault-sheet-overlay" id="detailRemoteActionSheet"></div>
     <div class="detail-fault-sheet-overlay" id="detailStatusEditSheet"></div>
 
@@ -4316,6 +4652,7 @@
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
             phone: '13800138000'
@@ -4627,6 +4964,296 @@
                 }
             });
             return map;
+        }
+
+        function getLocationsData() {
+            try {
+                const raw = JSON.parse(localStorage.getItem('locationsData') || '[]');
+                return Array.isArray(raw) ? raw : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function buildLocationCustomerIdFromMerchantKey(merchantKey) {
+            const matched = String(merchantKey || '').trim().match(/^mer(\d+)$/i);
+            if (!matched) return '';
+            return `C${matched[1].padStart(3, '0')}`;
+        }
+
+        function getEntryEditLocationOptions(device) {
+            const allLocations = getLocationsData();
+            const merchantKey = String(device?.merchant || '').trim().toLowerCase();
+            const merchantName = normalizeEditableValue(merchantMap[merchantKey], '');
+            const customerId = buildLocationCustomerIdFromMerchantKey(merchantKey);
+            const filtered = allLocations.filter((location) => {
+                if (!location || typeof location !== 'object') return false;
+                if (!merchantKey && !merchantName && !customerId) return true;
+                const locationCustomerId = normalizeEditableValue(location.customerId, '');
+                const locationCustomerName = normalizeEditableValue(location.customerName, '');
+                return (
+                    (customerId && locationCustomerId === customerId)
+                    || (merchantName && locationCustomerName === merchantName)
+                );
+            });
+            return filtered.length ? filtered : allLocations;
+        }
+
+        function renderEntryEditLocationOptions(device, selectedCode = '') {
+            const select = document.getElementById('editLocationCode');
+            if (!select) return;
+            const options = getEntryEditLocationOptions(device);
+            const currentCode = normalizeEditableValue(selectedCode || select.value || device?.location, '');
+            let html = '<option value="">请选择点位</option>';
+            options.forEach((location) => {
+                const code = normalizeEditableValue(location.code || location.id, '');
+                const name = normalizeEditableValue(location.name, code || '未命名点位');
+                const address = normalizeEditableValue(location.address, '');
+                html += `<option value="${escapeHtml(code)}" data-name="${escapeHtml(name)}" data-address="${escapeHtml(address)}">${escapeHtml(`${name}（${code}）`)}</option>`;
+            });
+            select.innerHTML = html;
+            const hasCurrentCode = options.some((location) => normalizeEditableValue(location.code || location.id, '') === currentCode);
+            select.value = hasCurrentCode ? currentCode : '';
+        }
+
+        function getEntryEditSelectedLocationMeta() {
+            const select = document.getElementById('editLocationCode');
+            const code = normalizeEditableValue(select?.value, '');
+            if (!code) {
+                return { code: '', name: '', address: '' };
+            }
+            const location = getLocationsData().find((item) => normalizeEditableValue(item?.code || item?.id, '') === code) || {};
+            const option = select?.options?.[select.selectedIndex];
+            return {
+                code,
+                name: normalizeEditableValue(location.name, option?.dataset?.name || option?.textContent || ''),
+                address: normalizeEditableValue(location.address, option?.dataset?.address || ''),
+                longitude: normalizeEditableValue(location.longitude, ''),
+                latitude: normalizeEditableValue(location.latitude, ''),
+                gpsAction: normalizeEditableValue(location.gpsAction, location.longitude || location.latitude ? '来自点位信息' : '未配置点位坐标')
+            };
+        }
+
+        function onEntryEditLocationChange() {
+            const meta = getEntryEditSelectedLocationMeta();
+            const addressInput = document.getElementById('editLocationAddress');
+            const gpsActionInput = document.getElementById('editGpsAction');
+            const longitudeInput = document.getElementById('editLongitude');
+            const latitudeInput = document.getElementById('editLatitude');
+            if (addressInput) {
+                addressInput.value = meta.address || '';
+            }
+            if (gpsActionInput) {
+                gpsActionInput.value = meta.gpsAction || '未配置点位坐标';
+            }
+            if (longitudeInput) {
+                longitudeInput.value = meta.longitude || '';
+            }
+            if (latitudeInput) {
+                latitudeInput.value = meta.latitude || '';
+            }
+        }
+
+        function generateNextEntryEditLocationCode(excludedCode = '') {
+            const locationsData = getLocationsData();
+            const used = new Set();
+            let maxCodeNumber = 999;
+            const excluded = String(excludedCode || '').trim();
+            if (excluded) {
+                used.add(excluded.toLowerCase());
+                const matched = excluded.match(/^k(\d+)$/i);
+                const codeNumber = matched ? Number(matched[1]) : NaN;
+                if (Number.isFinite(codeNumber)) {
+                    maxCodeNumber = Math.max(maxCodeNumber, codeNumber);
+                }
+            }
+            locationsData.forEach((item) => {
+                const rawCode = String(item?.code || '').trim();
+                if (!rawCode) return;
+                used.add(rawCode.toLowerCase());
+                const matched = rawCode.match(/^k(\d+)$/i);
+                const codeNumber = matched ? Number(matched[1]) : NaN;
+                if (Number.isFinite(codeNumber)) {
+                    maxCodeNumber = Math.max(maxCodeNumber, codeNumber);
+                }
+            });
+            let next = maxCodeNumber + 1;
+            let candidate = `k${next}`;
+            while (used.has(candidate.toLowerCase())) {
+                next += 1;
+                candidate = `k${next}`;
+            }
+            return candidate;
+        }
+
+        function buildNextEntryEditLocationId() {
+            const locationsData = getLocationsData();
+            const maxId = locationsData.reduce((max, location) => {
+                const raw = String(location?.id || '').replace(/^L/i, '');
+                const num = Number(raw);
+                if (!Number.isFinite(num)) return max;
+                return Math.max(max, num);
+            }, 0);
+            return `L${String(maxId + 1).padStart(3, '0')}`;
+        }
+
+        function resetEntryEditQuickCreateLocationForm() {
+            document.getElementById('entryEditQuickLocationName').value = '';
+            document.getElementById('entryEditQuickLocationCode').value = generateNextEntryEditLocationCode();
+            document.getElementById('entryEditQuickLocationCategory').value = 'operation';
+            document.getElementById('entryEditQuickLocationStatus').value = 'operational';
+            document.getElementById('entryEditQuickLocationManager').value = '';
+            document.getElementById('entryEditQuickLocationPhone').value = '';
+            document.getElementById('entryEditQuickLocationAddress').value = '';
+            document.getElementById('entryEditQuickLocationLongitude').value = '';
+            document.getElementById('entryEditQuickLocationLatitude').value = '';
+            const locateBtn = document.getElementById('entryEditQuickLocationLocateBtn');
+            if (locateBtn) {
+                locateBtn.dataset.locating = '0';
+                locateBtn.textContent = '获取当前位置';
+            }
+            document.getElementById('entryEditQuickLocationRemark').value = '';
+        }
+
+        function openEntryEditQuickCreateLocationModal() {
+            resetEntryEditQuickCreateLocationForm();
+            document.getElementById('entryEditQuickCreateLocationModal').classList.add('show');
+        }
+
+        function closeEntryEditQuickCreateLocationModal() {
+            document.getElementById('entryEditQuickCreateLocationModal').classList.remove('show');
+        }
+
+        function regenerateEntryEditQuickLocationCode() {
+            const input = document.getElementById('entryEditQuickLocationCode');
+            input.value = generateNextEntryEditLocationCode(input.value);
+        }
+
+        function buildEntryEditQuickLocationPayload(device) {
+            const merchantKey = normalizeEditableValue(device?.merchant, '');
+            const merchantName = normalizeEditableValue(merchantMap[merchantKey], '');
+            return {
+                id: buildNextEntryEditLocationId(),
+                name: document.getElementById('entryEditQuickLocationName').value.trim(),
+                code: document.getElementById('entryEditQuickLocationCode').value.trim(),
+                pointCategory: normalizePointCategory(document.getElementById('entryEditQuickLocationCategory').value),
+                status: document.getElementById('entryEditQuickLocationStatus').value || 'operational',
+                customerId: buildLocationCustomerIdFromMerchantKey(merchantKey),
+                customerName: merchantName,
+                manager: document.getElementById('entryEditQuickLocationManager').value.trim(),
+                phone: document.getElementById('entryEditQuickLocationPhone').value.trim(),
+                address: document.getElementById('entryEditQuickLocationAddress').value.trim(),
+                longitude: document.getElementById('entryEditQuickLocationLongitude').value.trim(),
+                latitude: document.getElementById('entryEditQuickLocationLatitude').value.trim(),
+                gpsAction: '新增点位时录入',
+                remark: document.getElementById('entryEditQuickLocationRemark').value.trim(),
+                createTime: new Date().toISOString().split('T')[0]
+            };
+        }
+
+        function validateEntryEditQuickLocation(location) {
+            if (!location.name || !location.code || !location.address) {
+                return '请填写点位名称、编码和地址';
+            }
+            const normalizedCode = String(location.code || '').trim();
+            const duplicated = getLocationsData().some((existing) =>
+                String(existing?.code || '').trim().toLowerCase() === normalizedCode.toLowerCase()
+            );
+            if (duplicated) {
+                return '点位编码已存在';
+            }
+            return '';
+        }
+
+        function createLocationFromDeviceDetail() {
+            if (!currentDetailDeviceId) return;
+            const device = devicesData.find((item) => item.id === currentDetailDeviceId);
+            if (!device) return;
+            const location = buildEntryEditQuickLocationPayload(device);
+            const message = validateEntryEditQuickLocation(location);
+            if (message) {
+                alert(message);
+                return;
+            }
+            const nextLocations = getLocationsData();
+            nextLocations.push(location);
+            localStorage.setItem('locationsData', JSON.stringify(nextLocations));
+            renderEntryEditLocationOptions(device, location.code);
+            const addressInput = document.getElementById('editLocationAddress');
+            if (addressInput) {
+                addressInput.value = normalizeEditableValue(location.address, '');
+            }
+            onEntryEditLocationChange();
+            closeEntryEditQuickCreateLocationModal();
+            showToast(`点位 ${location.name} 已创建并选中`);
+        }
+
+        function getLocationErrorMessage(error) {
+            if (!error) return '定位失败，请稍后重试';
+            if (error.code === 1) return '定位权限被拒绝，请允许定位权限后重试';
+            if (error.code === 2) return '无法获取当前位置，请确认定位服务已开启';
+            if (error.code === 3) return '定位超时，请稍后重试';
+            return '定位失败，请稍后重试';
+        }
+
+        async function resolveAddressByCoordinates(latitude, longitude) {
+            const fallback = `当前位置（经度${longitude}，纬度${latitude}）`;
+            try {
+                const params = new URLSearchParams({
+                    latitude: String(latitude),
+                    longitude: String(longitude),
+                    localityLanguage: 'zh'
+                });
+                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?${params.toString()}`);
+                if (!response.ok) return fallback;
+                const data = await response.json();
+                const parts = [
+                    data.countryName,
+                    data.principalSubdivision,
+                    data.city || data.locality,
+                    data.locality,
+                    data.streetName,
+                    data.street
+                ].map(item => String(item || '').trim()).filter(Boolean);
+                const deduped = parts.filter((item, index) => parts.indexOf(item) === index);
+                return deduped.join('') || fallback;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        async function requestEntryEditQuickLocationCurrentPosition() {
+            const button = document.getElementById('entryEditQuickLocationLocateBtn');
+            if (!button) return;
+            if (!navigator.geolocation) {
+                alert('当前浏览器不支持定位功能');
+                return;
+            }
+            if (button.dataset.locating === '1') return;
+            button.dataset.locating = '1';
+            button.textContent = '定位中...';
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    });
+                });
+                const longitude = Number(position.coords.longitude).toFixed(6);
+                const latitude = Number(position.coords.latitude).toFixed(6);
+                document.getElementById('entryEditQuickLocationLongitude').value = longitude;
+                document.getElementById('entryEditQuickLocationLatitude').value = latitude;
+                const addressInput = document.getElementById('entryEditQuickLocationAddress');
+                if (addressInput && !addressInput.value.trim()) {
+                    addressInput.value = await resolveAddressByCoordinates(latitude, longitude);
+                }
+            } catch (error) {
+                alert(getLocationErrorMessage(error));
+            } finally {
+                button.dataset.locating = '0';
+                button.textContent = '获取当前位置';
+            }
         }
 
         function buildLocationCategoryMap() {
@@ -6347,9 +6974,9 @@
             const rows = [
                 ['运维人员', info.operatorName || '未选择'],
                 ['运维电话', info.operatorPhone || '-'],
-                ['GPS定位', info.gpsAction || '未获取'],
-                ['经度', info.longitude || '手动输入'],
-                ['纬度', info.latitude || '手动输入'],
+                ['坐标来源', info.gpsAction || '未配置点位坐标'],
+                ['经度', info.longitude || '-'],
+                ['纬度', info.latitude || '-'],
                 ['网络信号', info.networkSignal || '-'],
                 ['设备开始日期', info.deviceStartDate || '-'],
                 ['设备结束日期', info.deviceEndDate || '-'],
@@ -6362,6 +6989,150 @@
                 rows.splice(6, 0, ['开启节能模式', info.energyStartTime || '-'], ['关闭节能模式', info.energyEndTime || '-']);
             }
             return rows.map(([label, value]) => renderDetailRow(label, value)).join('');
+        }
+
+        function normalizeLocationChangeRecord(record) {
+            const source = record && typeof record === 'object' ? record : {};
+            return {
+                time: normalizeEditableValue(source.time, '-'),
+                operatorName: normalizeEditableValue(source.operatorName, '当前用户'),
+                previousLocationName: normalizeEditableValue(source.previousLocationName, '-'),
+                nextLocationName: normalizeEditableValue(source.nextLocationName, '-'),
+                previousLocationAddress: normalizeEditableValue(source.previousLocationAddress, '-'),
+                nextLocationAddress: normalizeEditableValue(source.nextLocationAddress, '-'),
+                previousLongitude: normalizeEditableValue(source.previousLongitude, '-'),
+                nextLongitude: normalizeEditableValue(source.nextLongitude, '-'),
+                previousLatitude: normalizeEditableValue(source.previousLatitude, '-'),
+                nextLatitude: normalizeEditableValue(source.nextLatitude, '-')
+            };
+        }
+
+        function getCurrentLoginOperatorInfo() {
+            const readJson = (storageKey) => {
+                try {
+                    return JSON.parse(localStorage.getItem(storageKey) || '{}') || {};
+                } catch (error) {
+                    return {};
+                }
+            };
+            const profile = readJson(SIDEBAR_LOGIN_PROFILE_KEY);
+            const session = readJson(LOGIN_SESSION_KEY);
+            const operatorName = normalizeEditableValue(
+                profile.name || profile.username || session.name || session.username || session.accountName,
+                '当前用户'
+            );
+            const operatorPhone = normalizeEditableValue(
+                profile.phone || profile.mobile || session.phone || session.mobile || session.account,
+                '-'
+            );
+            return {
+                operatorName,
+                operatorPhone
+            };
+        }
+
+        function buildLocationChangeRecord(previousInfo, nextInfo) {
+            const beforeInfo = previousInfo && typeof previousInfo === 'object' ? previousInfo : {};
+            const afterInfo = nextInfo && typeof nextInfo === 'object' ? nextInfo : {};
+            const loginOperator = getCurrentLoginOperatorInfo();
+            const previousLocationName = normalizeEditableValue(beforeInfo.locationName, '-');
+            const nextLocationName = normalizeEditableValue(afterInfo.locationName, '-');
+            const previousLocationAddress = normalizeEditableValue(beforeInfo.locationAddress, '-');
+            const nextLocationAddress = normalizeEditableValue(afterInfo.locationAddress, '-');
+            const previousLongitude = normalizeEditableValue(beforeInfo.longitude, '-');
+            const nextLongitude = normalizeEditableValue(afterInfo.longitude, '-');
+            const previousLatitude = normalizeEditableValue(beforeInfo.latitude, '-');
+            const nextLatitude = normalizeEditableValue(afterInfo.latitude, '-');
+            const changedName = previousLocationName !== nextLocationName;
+            const changedAddress = previousLocationAddress !== nextLocationAddress;
+            const changedLongitude = previousLongitude !== nextLongitude;
+            const changedLatitude = previousLatitude !== nextLatitude;
+            if (!changedName && !changedAddress && !changedLongitude && !changedLatitude) {
+                return null;
+            }
+            return {
+                time: formatCurrentDateTime(),
+                operatorName: loginOperator.operatorName,
+                operatorPhone: loginOperator.operatorPhone,
+                previousLocationName,
+                nextLocationName,
+                previousLocationAddress,
+                nextLocationAddress,
+                previousLongitude,
+                nextLongitude,
+                previousLatitude,
+                nextLatitude
+            };
+        }
+
+        function appendLocationChangeRecord(existingRecords, previousInfo, nextInfo) {
+            const records = Array.isArray(existingRecords)
+                ? existingRecords
+                    .filter(item => item && typeof item === 'object')
+                    .map(item => ({ ...item }))
+                : [];
+            const record = buildLocationChangeRecord(previousInfo, nextInfo);
+            if (!record) {
+                return records;
+            }
+            records.push(record);
+            return records.slice(-20);
+        }
+
+        function getLocationChangeRecords(entryInfo) {
+            const records = Array.isArray(entryInfo?.locationChangeRecords) ? entryInfo.locationChangeRecords : [];
+            return records
+                .map(item => normalizeLocationChangeRecord(item))
+                .sort((a, b) => {
+                    const timeA = new Date(a.time).getTime();
+                    const timeB = new Date(b.time).getTime();
+                    const safeTimeA = Number.isFinite(timeA) ? timeA : 0;
+                    const safeTimeB = Number.isFinite(timeB) ? timeB : 0;
+                    return safeTimeB - safeTimeA;
+                });
+        }
+
+        function renderLocationChangeRecordCard(record) {
+            const normalized = normalizeLocationChangeRecord(record);
+            return `
+                <article class="detail-location-change-card">
+                    <div class="detail-location-change-head">
+                        <div class="detail-location-change-time">${escapeHtml(normalizeRecordTime(normalized.time))}</div>
+                        <div class="detail-location-change-operator">操作人：${escapeHtml(normalized.operatorName || '当前用户')}</div>
+                    </div>
+                    <div class="detail-location-change-body">
+                        <div class="detail-location-change-row">
+                            <div class="detail-location-change-label">点位名称</div>
+                            <div class="detail-location-change-value">
+                                <div class="detail-location-change-value-line">变更前：${escapeHtml(normalized.previousLocationName || '-')}</div>
+                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(normalized.nextLocationName || '-')}</strong></div>
+                            </div>
+                        </div>
+                        <div class="detail-location-change-row">
+                            <div class="detail-location-change-label">点位地址</div>
+                            <div class="detail-location-change-value">
+                                <div class="detail-location-change-value-line">变更前：${escapeHtml(normalized.previousLocationAddress || '-')}</div>
+                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(normalized.nextLocationAddress || '-')}</strong></div>
+                            </div>
+                        </div>
+                        <div class="detail-location-change-row">
+                            <div class="detail-location-change-label">经纬度</div>
+                            <div class="detail-location-change-value">
+                                <div class="detail-location-change-value-line">变更前：${escapeHtml(`${normalized.previousLongitude || '-'}, ${normalized.previousLatitude || '-'}`)}</div>
+                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(`${normalized.nextLongitude || '-'}, ${normalized.nextLatitude || '-'}`)}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderLocationChangeRecords(entryData) {
+            const records = getLocationChangeRecords(entryData?.info);
+            if (!records.length) {
+                return '<div class="detail-location-change-empty">暂无点位变更记录</div>';
+            }
+            return `<div class="detail-location-change-list">${records.slice(0, 10).map(item => renderLocationChangeRecordCard(item)).join('')}</div>`;
         }
 
         function normalizePreviewImageList(rawValue, fallbackLabel) {
@@ -6553,11 +7324,12 @@
             const coreRows = renderEntryCoreRows(entryData);
             const extendedRows = renderEntryAllRows(entryData);
             const locationImages = renderEntryImageGallery(device, 'location', '暂无点位图片');
+            const locationChangeRecords = renderLocationChangeRecords(entryData);
             const body = `
                 <details class="detail-disclosure">
                     <summary>展开入场信息</summary>
                     <div class="detail-disclosure-content">
-                        <div class="detail-section-meta">包含入场基础信息、补充配置以及点位图片，默认折叠以减少首屏干扰。</div>
+                        <div class="detail-section-meta">包含入场基础信息、补充配置、点位图片以及点位变更记录，默认折叠以减少首屏干扰。</div>
                         <div class="detail-subsection">
                             <div class="detail-subsection-title">基础信息</div>
                             ${coreRows}
@@ -6571,6 +7343,10 @@
                         <div class="detail-subsection">
                             <div class="detail-subsection-title">点位图片</div>
                             ${locationImages}
+                        </div>
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">点位变更记录</div>
+                            ${locationChangeRecords}
                         </div>
                     </div>
                 </details>
@@ -7148,12 +7924,17 @@
             entryEditImageDraft = buildEntryEditImageDraft(info);
             document.getElementById('editOperatorName').value = normalizeEditableValue(info.operatorName);
             document.getElementById('editOperatorPhone').value = normalizeEditableValue(info.operatorPhone);
-            document.getElementById('editLocationName').value = normalizeEditableValue(info.locationName, runtimeLocationMap[device.location] || device.location || '');
-            document.getElementById('editLocationAddress').value = normalizeEditableValue(info.locationAddress);
+            renderEntryEditLocationOptions(device, normalizeEditableValue(device.location, ''));
+            if (!document.getElementById('editLocationCode').value) {
+                const matchedByName = getEntryEditLocationOptions(device).find((location) => (
+                    normalizeEditableValue(location.name, '') === normalizeEditableValue(info.locationName, '')
+                ));
+                if (matchedByName) {
+                    document.getElementById('editLocationCode').value = normalizeEditableValue(matchedByName.code || matchedByName.id, '');
+                }
+            }
+            onEntryEditLocationChange();
             document.getElementById('editEntryAt').value = toDateTimeLocalValue(info.entryAt);
-            document.getElementById('editGpsAction').value = normalizeEditableValue(info.gpsAction, '获取当前位置');
-            document.getElementById('editLongitude').value = normalizeEditableValue(info.longitude);
-            document.getElementById('editLatitude').value = normalizeEditableValue(info.latitude);
             document.getElementById('editEnergyMode').value = normalizeEditableValue(info.energyMode, '开启');
             document.getElementById('editNetworkSignal').value = normalizeEditableValue(info.networkSignal, '优');
             document.getElementById('editEnergyStartTime').value = normalizeTimeInputValue(info.energyStartTime);
@@ -7186,6 +7967,14 @@
 
             const runtimeLocationMap = buildLocationMap();
             ensureEntryInfoForEditing(device, runtimeLocationMap);
+            const previousEntryInfo = device.entryInfo && typeof device.entryInfo === 'object'
+                ? { ...device.entryInfo }
+                : {};
+            const selectedLocation = getEntryEditSelectedLocationMeta();
+            if (!selectedLocation.code) {
+                showToast('请选择点位', 'error');
+                return;
+            }
             const payQr = document.getElementById('editPayQr').checked;
             const payDigitalRmb = document.getElementById('editPayDigitalRmb').checked;
             const paymentMethods = [
@@ -7199,17 +7988,16 @@
             } = device.entryInfo || {};
             const locationImageUrls = [...(entryEditImageDraft.location || [])];
             const entryAt = toDateTimeStorageValue(document.getElementById('editEntryAt').value);
-
-            device.entryInfo = {
+            const nextEntryInfo = {
                 ...baseEntryInfo,
                 entryAt,
                 operatorName: normalizeEditableValue(document.getElementById('editOperatorName').value, '未选择'),
                 operatorPhone: normalizeEditableValue(document.getElementById('editOperatorPhone').value, '-'),
-                locationName: normalizeEditableValue(document.getElementById('editLocationName').value, runtimeLocationMap[device.location] || device.location || '-'),
-                locationAddress: normalizeEditableValue(document.getElementById('editLocationAddress').value, '-'),
-                gpsAction: normalizeEditableValue(document.getElementById('editGpsAction').value, '获取当前位置'),
-                longitude: normalizeEditableValue(document.getElementById('editLongitude').value, '手动输入'),
-                latitude: normalizeEditableValue(document.getElementById('editLatitude').value, '手动输入'),
+                locationName: normalizeEditableValue(selectedLocation.name, runtimeLocationMap[selectedLocation.code] || selectedLocation.code || '-'),
+                locationAddress: normalizeEditableValue(selectedLocation.address, '-'),
+                gpsAction: normalizeEditableValue(selectedLocation.gpsAction, '未配置点位坐标'),
+                longitude: normalizeEditableValue(selectedLocation.longitude, '-'),
+                latitude: normalizeEditableValue(selectedLocation.latitude, '-'),
                 energyMode: normalizeEditableValue(document.getElementById('editEnergyMode').value, '开启'),
                 networkSignal: normalizeEditableValue(document.getElementById('editNetworkSignal').value, '-'),
                 energyStartTime: normalizeEditableValue(document.getElementById('editEnergyStartTime').value, '-'),
@@ -7227,6 +8015,13 @@
                 locationImageUrls,
                 locationImages: locationImageUrls.length ? `${locationImageUrls.length}张图片` : '-'
             };
+            nextEntryInfo.locationChangeRecords = appendLocationChangeRecord(
+                previousEntryInfo.locationChangeRecords,
+                previousEntryInfo,
+                nextEntryInfo
+            );
+            device.location = selectedLocation.code;
+            device.entryInfo = nextEntryInfo;
 
             if (!device.entryInfo.entryAt || device.entryInfo.entryAt === '-') {
                 device.entryInfo.entryAt = formatCurrentDateTime();
@@ -7353,6 +8148,12 @@
         document.getElementById('entryEditModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeEntryEditModal();
+            }
+        });
+
+        document.getElementById('entryEditQuickCreateLocationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEntryEditQuickCreateLocationModal();
             }
         });
 

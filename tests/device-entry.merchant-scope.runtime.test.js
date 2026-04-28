@@ -428,12 +428,17 @@ test('运行时：快速新增点位应默认写入当前商户', () => {
   elements.quickLocationManager = { value: '张店长' };
   elements.quickLocationPhone = { value: '13800138001' };
   elements.quickLocationAddress = { value: '上海市静安区广场 2 层' };
+  elements.quickLocationLongitude = { value: '121.473700' };
+  elements.quickLocationLatitude = { value: '31.230400' };
   elements.quickLocationRemark = { value: '靠近扶梯' };
 
   const payload = sandbox.buildLocationPayloadForEntry();
 
   assert.strictEqual(payload.customerId, 'C001');
   assert.strictEqual(payload.customerName, '星巴克咖啡');
+  assert.strictEqual(payload.longitude, '121.473700');
+  assert.strictEqual(payload.latitude, '31.230400');
+  assert.strictEqual(payload.gpsAction, '新增点位时录入');
 });
 
 test('运行时：缺少当前商户时不应允许快速新增点位', () => {
@@ -447,6 +452,8 @@ test('运行时：缺少当前商户时不应允许快速新增点位', () => {
   elements.quickLocationManager = { value: '张店长' };
   elements.quickLocationPhone = { value: '13800138001' };
   elements.quickLocationAddress = { value: '上海市静安区广场 2 层' };
+  elements.quickLocationLongitude = { value: '121.473700' };
+  elements.quickLocationLatitude = { value: '31.230400' };
   elements.quickLocationRemark = { value: '靠近扶梯' };
   sandbox.renderLocationOptions = () => {};
   sandbox.onLocationChange = () => {};
