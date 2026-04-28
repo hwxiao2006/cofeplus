@@ -23,6 +23,13 @@ test('入场提交应持久化 entryInfo 结构', () => {
   assert.ok(/function\s+buildEntryInfoPayload\s*\(/.test(deviceEntryHtml));
   assert.ok(/device\.entryInfo\s*=\s*buildEntryInfoPayload\(\)/.test(deviceEntryHtml));
   assert.ok(/entryAt/.test(deviceEntryHtml));
+  assert.ok(/operatorPhone/.test(deviceEntryHtml));
+  assert.ok(/networkSignal/.test(deviceEntryHtml));
+  assert.ok(/maintenanceWindow/.test(deviceEntryHtml));
+  assert.ok(/notes/.test(deviceEntryHtml));
+  assert.ok(/adScreen/.test(deviceEntryHtml));
+  assert.ok(/locationImageUrls/.test(deviceEntryHtml));
+  assert.ok(!/displayImages:\s*'待上传'/.test(deviceEntryHtml));
 });
 
 test('设备详情应将入场信息合并为单一顶层入口', () => {
@@ -85,6 +92,11 @@ test('设备详情桌面端应使用超宽弹层与分组卡片布局', () => {
   assert.ok(/renderDeviceOverviewCard/.test(devicesHtml));
   assert.ok(/renderDeviceStatusCard/.test(devicesHtml));
   assert.ok(/renderTechnicalStatusCard/.test(devicesHtml));
+});
+
+test('设备概览不应再展示部署类型字段', () => {
+  assert.ok(/function\s+renderDeviceOverviewCard\s*\(/.test(devicesHtml));
+  assert.ok(!/renderDetailRow\('部署类型'/.test(devicesHtml));
 });
 
 test('设备详情桌面端应采用左主内容与右侧设备操作布局', () => {

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'devices.html'), 'utf8');
+const headerBlocks = html.match(/\.header\s*\{[^}]*\}/g) || [];
 
 function test(name, fn) {
   try {
@@ -47,12 +48,16 @@ test('设备页顶部 header 应恢复为与其他页面一致的白底间距样
   assert.ok(/\.header\s*\{[\s\S]*padding:\s*20px 28px/.test(html));
   assert.ok(/\.header\s*\{[\s\S]*border-bottom:\s*1px solid var\(--border\)/.test(html));
   assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.header\s*\{[\s\S]*padding:\s*16px/.test(html));
-  assert.ok(!/\.header\s*\{[\s\S]*padding:\s*0;\s*[\s\S]*background:\s*transparent;\s*[\s\S]*border-bottom:\s*none;/.test(html));
+  assert.ok(!headerBlocks.some(block =>
+    /padding:\s*0;/.test(block)
+    && /background:\s*transparent;/.test(block)
+    && /border-bottom:\s*none;/.test(block)
+  ));
 });
 
 test('设备页表格应使用新的列头结构', () => {
   assert.ok(/<th>设备编号<\/th>/.test(html));
-  assert.ok(/<th>商户<\/th>/.test(html));
+  assert.ok(!/<th>商户<\/th>/.test(html));
   assert.ok(/<th>点位<\/th>/.test(html));
   assert.ok(/<th>状态<\/th>/.test(html));
   assert.ok(/<th>停卖<\/th>/.test(html));
@@ -72,12 +77,19 @@ test('设备页表格应使用新的列头结构', () => {
   assert.ok(/\.device-table tbody tr:hover\s*\{[\s\S]*background:\s*rgba\(46,\s*196,\s*182,\s*0\.08\)/.test(html));
   assert.ok(/\.device-id\s*\{[\s\S]*font-family:\s*'SF Mono',\s*monospace/.test(html));
   assert.ok(/\.device-id\s*\{[\s\S]*font-weight:\s*800/.test(html));
-  assert.ok(/\.merchant-name,\s*[\s\S]*\.location-text\s*\{[\s\S]*font-size:\s*15px/.test(html));
-  assert.ok(/\.merchant-name,\s*[\s\S]*\.location-text\s*\{[\s\S]*font-weight:\s*800/.test(html));
+  assert.ok(/\.location-text\s*\{[\s\S]*font-size:\s*15px/.test(html));
+  assert.ok(/\.location-text\s*\{[\s\S]*font-weight:\s*800/.test(html));
+  assert.ok(!/\.merchant-name/.test(html));
   assert.ok(/\.sales-state\s*\{[\s\S]*font-size:\s*13px/.test(html));
   assert.ok(/\.sales-state\s*\{[\s\S]*font-weight:\s*700/.test(html));
   assert.ok(/\.heartbeat-time\s*\{[\s\S]*font-size:\s*13px/.test(html));
   assert.ok(/\.heartbeat-time\s*\{[\s\S]*font-weight:\s*700/.test(html));
+});
+
+test('设备页列表与详情都不应再展示商户字段', () => {
+  assert.ok(!/device-mobile-label">商户</.test(html));
+  assert.ok(!/renderDetailRow\('所属商户'/.test(html));
+  assert.ok(!/merchantName:/.test(html));
 });
 
 test('设备页移动端应提供状态色条卡片与悬浮录入按钮', () => {

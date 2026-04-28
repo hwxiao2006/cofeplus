@@ -2339,11 +2339,6 @@
             font-size: 13px;
         }
 
-        .merchant-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
         .location-tag {
             display: inline-flex;
             align-items: center;
@@ -3229,10 +3224,15 @@
         }
 
         .header-actions {
+            position: relative;
+            z-index: 1;
             gap: 12px;
         }
 
         .page-primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border: 1px solid #4ECDC4;
             background: #4ECDC4;
             color: #fff;
@@ -3240,6 +3240,7 @@
             font-family: var(--font-ui);
             font-size: 13px;
             font-weight: 500;
+            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -3439,7 +3440,6 @@
             color: #334155;
         }
 
-        .merchant-name,
         .location-text {
             font-size: 15px;
             font-weight: 800;
@@ -3851,6 +3851,7 @@
                 font-family: var(--font-ui);
                 font-size: 28px;
                 line-height: 1;
+                text-decoration: none;
                 box-shadow: 0 16px 32px rgba(220, 38, 38, 0.22);
                 cursor: pointer;
                 z-index: 120;
@@ -3959,7 +3960,7 @@
                     <span class="header-desc">管理和监控所有咖啡设备</span>
                 </div>
                 <div class="header-actions">
-                    <button class="page-primary-btn" type="button" onclick="openDeviceEntryPage()">+ 设备录入</button>
+                    <a class="page-primary-btn" href="device-entry.html">+ 设备录入</a>
                 </div>
             </header>
 
@@ -4020,7 +4021,6 @@
                             <thead>
                                 <tr>
                                     <th>设备编号</th>
-                                    <th>商户</th>
                                     <th>点位</th>
                                     <th>状态</th>
                                     <th>停卖</th>
@@ -4046,7 +4046,7 @@
                 </div>
             </div>
 
-            <button class="mobile-fab" type="button" onclick="openDeviceEntryPage()" aria-label="设备录入">+</button>
+            <a class="mobile-fab" href="device-entry.html" aria-label="设备录入">+</a>
         </main>
     </div>
 
@@ -4566,13 +4566,13 @@
             third: '第三方'
         };
 
-        const deploymentMap = {
-            private: '自有部署',
-            public: '公共部署'
-        };
-
         // 默认设备数据
         const defaultDevicesData = cloneSharedDeviceData(sharedAdminMockData.defaultDevices || []);
+        const resolveDeviceBaseline = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.resolveDevices === 'function'
+            ? function(storedDevices) { return sharedAdminMockData.helpers.resolveDevices(storedDevices, defaultDevicesData); }
+            : function(storedDevices) {
+                return storedDevices.length ? storedDevices : cloneSharedDeviceData(defaultDevicesData);
+            };
 
         // 设备数据
         let devicesData = [];
@@ -4592,6 +4592,8 @@
             location: []
         };
         let activeFaultActionDeviceId = '';
+        let detailRemoteActionMode = 'root';
+        let detailRemotePendingCommand = '';
         let currentTemperatureAlarmDeviceId = '';
         let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
@@ -4602,11 +4604,9 @@
 
         function normalizeDevices(data) {
             const categoryFallback = ['self', 'lease', 'third'];
-            const deploymentFallback = ['private', 'public'];
             return data.map((d, index) => ({
                 ...d,
                 category: d.category || categoryFallback[index % categoryFallback.length],
-                deployment: d.deployment || deploymentFallback[index % deploymentFallback.length],
                 entered: d.entered !== false && !!d.location
             }));
         }
@@ -4726,15 +4726,11 @@
                 : (runtimeLocationMap[device.location] || device.location);
         }
 
-        function openDeviceEntryPage() {
-            window.location.href = 'device-entry.html';
-        }
-
         function ensureUnenteredDevices(data) {
             const seeds = [
-                { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'self', deployment: 'private' },
-                { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'lease', deployment: 'public' },
-                { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'third', deployment: 'public' }
+                { id: 'RCK499', merchant: 'mer001', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'self' },
+                { id: 'RCK498', merchant: 'mer002', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'lease' },
+                { id: 'RCK497', merchant: 'mer003', location: '', status: 'operational', sales: 'disabled', heartbeat: '-', entered: false, category: 'third' }
             ];
             const ids = new Set(data.map(d => d.id));
             seeds.forEach(seed => {
@@ -4914,7 +4910,7 @@
             if (stored.length === 0) {
                 devicesData = normalizeDevices(defaultDevicesData);
             } else {
-                devicesData = normalizeDevices(stored);
+                devicesData = normalizeDevices(resolveDeviceBaseline(stored));
                 devicesData = ensureUnenteredDevices(devicesData);
                 devicesData = normalizeDevices(devicesData);
             }
@@ -4955,7 +4951,7 @@
                 const emptyText = scopedTotal === 0 ? getScopedDeviceEmptyText(currentStaffDeviceAccess) : '暂无匹配的设备';
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7">
+                        <td colspan="6">
                             <div class="empty-state">
                                 <div class="empty-icon">📭</div>
                                 <div class="empty-text">${emptyText}</div>
@@ -4987,7 +4983,6 @@
                             </div>
                         </div>
                     </td>
-                    <td><span class="merchant-name">${merchantMap[device.merchant] || device.merchant}</span></td>
                     <td><span class="location-text ${locationText === '未入场' ? 'muted' : ''}">${locationText}</span></td>
                     <td><span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span></td>
                     <td><span class="sales-state ${isSalesEnabled ? 'active' : 'disabled'}">${salesMap[device.sales] || device.sales}</span></td>
@@ -5005,7 +5000,6 @@
             mobileList.innerHTML = pageData.map(device => {
                 const isSalesEnabled = device.sales === 'enabled';
                 const statusDisplay = getStatusDisplay(device);
-                const merchantName = merchantMap[device.merchant] || device.merchant;
                 const locationText = getDeviceLocationText(device, runtimeLocationMap);
                 const heartbeatText = formatHeartbeatLabel(device.heartbeat);
                 return `
@@ -5016,10 +5010,6 @@
                             <span class="status-badge ${statusDisplay.className}">${statusDisplay.label}</span>
                         </div>
                         <div class="device-mobile-meta">
-                            <div class="device-mobile-meta-item">
-                                <div class="device-mobile-label">商户</div>
-                                <div class="device-mobile-value">${merchantName}</div>
-                            </div>
                             <div class="device-mobile-meta-item">
                                 <div class="device-mobile-label">点位</div>
                                 <div class="device-mobile-value">${locationText}</div>
@@ -5171,10 +5161,8 @@
             return {
                 base: {
                     deviceId: device.id,
-                    merchantName: merchantMap[device.merchant] || device.merchant || '-',
                     locationName: device.entered === false || !device.location ? '未入场' : locationName,
                     categoryName: categoryMap[device.category] || device.category || '-',
-                    deploymentName: deploymentMap[device.deployment] || device.deployment || '-',
                     statusName: statusMap[device.status] || device.status,
                     salesName: salesMap[device.sales] || device.sales,
                     heartbeat: device.heartbeat
@@ -5284,10 +5272,8 @@
             const summary = base || {};
             const rows = [
                 renderDetailRow('设备编号', summary.deviceId || '-'),
-                renderDetailRow('所属商户', summary.merchantName || '-'),
                 renderDetailRow('点位', summary.locationName === '未入场' ? '未分配点位' : (summary.locationName || '-')),
-                renderDetailRow('设备类别', summary.categoryName || '-'),
-                renderDetailRow('部署类型', summary.deploymentName || '-')
+                renderDetailRow('设备类别', summary.categoryName || '-')
             ].join('');
             return renderDetailCard('设备概览', rows, 'detail-card-basic');
         }
@@ -6163,11 +6149,8 @@
             showToast(`${zone.title} 参数已更新`);
         }
 
-        function openDetailRemoteActions(deviceId) {
-            activeFaultActionDeviceId = deviceId;
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!panel) return;
-            panel.innerHTML = `
+        function renderDetailRemoteActionPanel(deviceId) {
+            return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
@@ -6177,6 +6160,38 @@
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
                 </div>
             `;
+        }
+
+        function renderDetailRemoteRestartPanel(deviceId) {
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">机构重启 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启系统')">重启系统</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（左）')">重启点单屏（左）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（右）')">重启点单屏（右）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启六轴机械臂（注意安全，谨慎使用）')">重启六轴机械臂（注意安全，谨慎使用）</button>
+                </div>
+            `;
+        }
+
+        function renderDetailRemoteConfirmDialog(actionName) {
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">确认操作</div>
+                    <div style="padding: 16px; text-align: center; color: #666;">确定要${escapeHtml(actionName)}？</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('确认执行')">确认执行</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="closeDetailRemoteActions()">取消</button>
+                </div>
+            `;
+        }
+
+        function openDetailRemoteActions(deviceId) {
+            activeFaultActionDeviceId = deviceId;
+            detailRemoteActionMode = 'root';
+            detailRemotePendingCommand = '';
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+            panel.innerHTML = renderDetailRemoteActionPanel(deviceId);
             panel.classList.add('active');
         }
 
@@ -6185,10 +6200,40 @@
             if (!panel) return;
             panel.classList.remove('active');
             panel.innerHTML = '';
+            detailRemoteActionMode = 'root';
+            detailRemotePendingCommand = '';
         }
 
         function handleDetailRemoteAction(actionName) {
             const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!panel) return;
+
+            // Root menu: 机构重启 enters sub-panel
+            if (actionName === '机构重启') {
+                detailRemoteActionMode = 'restart';
+                panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
+                return;
+            }
+
+            // Restart sub-panel items show confirmation
+            if (detailRemoteActionMode === 'restart' && actionName !== '确认执行') {
+                detailRemotePendingCommand = actionName;
+                detailRemoteActionMode = 'confirm';
+                panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
+                return;
+            }
+
+            // Confirmation: execute the pending command
+            if (actionName === '确认执行' && detailRemotePendingCommand) {
+                const cmd = detailRemotePendingCommand;
+                appendFaultOperationRecord(deviceId, cmd, '成功', `${deviceId} 已执行${cmd}`);
+                closeDetailRemoteActions();
+                showToast(`已向设备 ${deviceId} 下发指令：${cmd}`);
+                return;
+            }
+
+            // Direct actions (non-restart items)
             appendFaultOperationRecord(deviceId, actionName, '成功', `${deviceId} 已执行${actionName}`);
             closeDetailRemoteActions();
             showToast(`已向设备 ${deviceId} 下发指令：${actionName}`);

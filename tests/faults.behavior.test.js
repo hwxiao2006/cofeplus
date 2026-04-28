@@ -212,7 +212,7 @@ test('远程操作：点击后应显示图一菜单弹层', () => {
   assert.strictEqual(panel.classList.contains('active'), true);
   assert.ok(panel.innerHTML.includes('机构重启'));
   assert.ok(panel.innerHTML.includes('设备开门'));
-  assert.ok(panel.innerHTML.includes('更新配方'));
+  assert.ok(!panel.innerHTML.includes('更新配方'));
   assert.ok(panel.innerHTML.includes('设备停售'));
   assert.ok(panel.innerHTML.includes('音量调节'));
 });
