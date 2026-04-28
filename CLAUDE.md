@@ -15,14 +15,19 @@ COFE+ is a Chinese-language operations console for managing coffee vending machi
 - `menu.html` - Product browsing interface for customers
 - `menu-management.html` - Admin interface for managing products and categories
 - `product-detail.html` - Product editing interface
+- `product-management.html` - Product management listing
 - `devices.html` - Device management and monitoring
+- `device-entry.html` - Device registration
 - `orders.html` - Order history and tracking
 - `materials.html` - Inventory management
+- `materials-orders.html` - Materials order tracking
+- `materials-refill.html` - Materials refill workflow
 - `faults.html` - Fault records and maintenance
 - `customers.html` - Customer management
 - `locations.html` - Location management
 - `staff-management.html` - Staff administration
-- `device-entry.html` - Device registration
+- `login-paper.html` - Login page
+- `index.html` - Entry point / redirect
 
 **Shared patterns:**
 - Sidebar navigation with `.sidebar` class, consistent across all admin pages
@@ -81,10 +86,15 @@ npx wrangler deploy
 ## Project Structure
 
 - `shared/admin-mock-data.js` - Shared mock data generation utilities used across pages
+- `shared/business-tag-library.js` - Business tag management library
+- `shared/device-latte-art-library.js` - Device latte art pattern library
+- `shared/admin-staff-access.js` - Staff access control utilities
+- `designs/` - Design files (`.pen` and `.svg` previews)
 - `docs/plans/` - Date-prefixed implementation and design plans (e.g. `2026-03-01-feature-name.md`)
 - `docs/superpowers/plans/` and `docs/superpowers/specs/` - Detailed feature specs and plans
 - `tasks/` - PRD documents (both `.md` and `.html` formats)
 - `figma-paste/` - Figma export HTML files for design reference
+- `scripts/` - Utility scripts (e.g. screenshot generators)
 - `test-results/` - Test execution results
 - `screenshots/` - UI screenshots
 
@@ -113,7 +123,7 @@ npx wrangler deploy
 
 **HTML:**
 - Chinese language content (`lang="zh-CN"`)
-- Inline styles and scripts (no external files except `shared/admin-mock-data.js`)
+- Inline styles and scripts, with shared JS loaded from `shared/` directory
 - Consistent sidebar structure across all admin pages
 
 ## Key Implementation Details

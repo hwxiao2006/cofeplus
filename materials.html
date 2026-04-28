@@ -798,6 +798,12 @@
             box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
         }
 
+        .material-card.soldout {
+            border-color: rgba(185, 28, 28, 0.34);
+            background: linear-gradient(180deg, #fff7f7 0%, #fffafa 100%);
+            box-shadow: inset 0 0 0 1px rgba(185, 28, 28, 0.18), 0 14px 30px rgba(127, 29, 29, 0.08);
+        }
+
         .material-card-head {
             display: flex;
             justify-content: space-between;
@@ -808,6 +814,7 @@
 
         .material-card-copy {
             min-width: 0;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -818,6 +825,8 @@
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .material-card-title-row {
@@ -826,6 +835,7 @@
             justify-content: space-between;
             gap: 6px;
             min-width: 0;
+            flex-wrap: wrap;
         }
 
         .material-meta-row {
@@ -886,6 +896,7 @@
             margin-bottom: 0;
             letter-spacing: -0.01em;
             min-width: 0;
+            flex: 1 1 96px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -1083,6 +1094,11 @@
             background: var(--danger-light);
         }
 
+        .status-pill.soldout {
+            color: #fff;
+            background: #b91c1c;
+        }
+
         /* 模态框样式 */
         .modal-overlay {
             display: none;
@@ -1111,6 +1127,10 @@
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
             animation: modalSlideUp 0.3s ease;
+        }
+
+        .modal.modal-wide {
+            max-width: 760px;
         }
 
         @keyframes modalSlideUp {
@@ -1204,6 +1224,135 @@
             font-size: 12px;
             color: var(--text-tertiary);
             margin-top: 6px;
+        }
+
+        .lane-material-picker {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr);
+            gap: 16px;
+            min-height: 420px;
+        }
+
+        .lane-material-category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--bg-body);
+            overflow-y: auto;
+        }
+
+        .lane-material-category-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 12px;
+            text-align: left;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lane-material-category-btn:hover,
+        .lane-material-category-btn.active {
+            color: var(--primary);
+            background: #fff;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .lane-material-main {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .lane-material-search {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .lane-material-search:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .lane-material-hint {
+            margin: 8px 0 12px;
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .lane-material-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            overflow-y: auto;
+            max-height: 335px;
+            padding-right: 4px;
+        }
+
+        .lane-material-option-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lane-material-option-card:hover {
+            border-color: rgba(20, 184, 166, 0.45);
+            background: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .lane-material-option-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.14), rgba(255, 255, 255, 0.95));
+            box-shadow: 0 12px 24px rgba(20, 184, 166, 0.16);
+        }
+
+        .lane-material-option-code {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .lane-material-option-name {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .lane-material-option-meta {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .lane-material-empty {
+            grid-column: 1 / -1;
+            padding: 48px 12px;
+            text-align: center;
+            color: var(--text-tertiary);
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            background: var(--bg-body);
         }
 
         .value-edit-row {
@@ -1482,6 +1631,28 @@
                 align-items: flex-end;
                 padding: 0;
             }
+
+            .lane-material-picker {
+                grid-template-columns: 1fr;
+                min-height: 0;
+            }
+
+            .lane-material-category-list {
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 4px;
+            }
+
+            .lane-material-category-btn {
+                flex: 0 0 auto;
+                white-space: nowrap;
+            }
+
+            .lane-material-list {
+                grid-template-columns: 1fr;
+                max-height: 45vh;
+            }
         }
         /* 跨页统一优化（桌面 + 移动） */
         .content {
@@ -1573,7 +1744,7 @@
                     <div class="header-title-row">
                         <h1 class="header-title">物料</h1>
                     </div>
-                    <div class="header-desc">设备物料余量。 · 语言=中文</div>
+                    <div class="header-desc" id="pageSubtitle">-</div>
                 </div>
             </header>
 
@@ -1655,8 +1826,8 @@
                 </div>
                 <div class="form-group">
                     <div class="value-edit-row">
-                        <label class="value-edit-label" for="adjustCurrent">当前量</label>
-                        <input type="number" class="value-edit-input" id="adjustCurrent" min="0" step="1" inputmode="numeric">
+                        <label class="value-edit-label" for="adjustCurrent">补充数量</label>
+                        <input type="number" class="value-edit-input" id="adjustCurrent" min="0" step="1" inputmode="numeric" onfocus="selectNumericInputValue(this)" oninput="currentRefillResetMode = false">
                         <span class="value-edit-unit" id="unitCurrent">--</span>
                     </div>
                     <div class="value-edit-row">
@@ -1669,11 +1840,12 @@
                         <input type="number" class="value-edit-input" id="adjustCritical" min="0" step="0.1">
                         <span class="value-edit-unit" id="unitCritical">--</span>
                     </div>
-                    <div class="form-hint">建议保持：当前量 >= 预警值 >= 告警值</div>
+                    <div class="form-hint">保存后当前量 = 当前库存 + 补充数量；重置为 0 会直接清空当前量。</div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" onclick="closeRefillModal()">取消</button>
+                <button class="btn btn-default" onclick="resetRefillCurrentToZero()">重置为 0</button>
                 <button class="btn btn-confirm" onclick="confirmRefill()">确认保存</button>
             </div>
         </div>
@@ -1699,11 +1871,36 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="laneMaterialModal">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h3 class="modal-title" id="laneMaterialModalTitle">编辑关联物料</h3>
+                <button class="modal-close" onclick="closeLaneMaterialModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="lane-material-picker">
+                    <aside class="lane-material-category-list" id="laneMaterialCategoryList"></aside>
+                    <section class="lane-material-main">
+                        <input type="search" class="lane-material-search" id="laneMaterialSearch" placeholder="搜索商品编码 / 物料名称 / 规格" oninput="handleLaneMaterialSearch(this.value)">
+                        <div class="lane-material-hint" id="laneMaterialHint">只能选择当前商户物料表中的物料。</div>
+                        <div class="lane-material-list" id="laneMaterialList"></div>
+                    </section>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeLaneMaterialModal()">取消</button>
+                <button class="btn btn-confirm" onclick="confirmLaneMaterialEdit()">确认保存</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-staff-access.js"></script>
     <script>
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
         const LANE_NAME_OVERRIDE_STORAGE_KEY = 'materialsLaneNameOverrides';
+        const LANE_MATERIAL_OVERRIDE_STORAGE_KEY = 'materialsLaneMaterialOverrides';
         const LANE_GROUP_ORDER = [
             '咖啡豆仓',
             '牛奶&水',
@@ -1712,10 +1909,31 @@
             '包材',
             '制冰机'
         ];
+        const LANE_MATERIAL_CATEGORY_ORDER = [
+            '奶&咖啡&水',
+            '糖浆',
+            '前/后道粉',
+            '包材',
+            '辅材',
+            '耗材',
+            '奶粉',
+            '料盒',
+            '食材'
+        ];
+        const LANE_GROUP_TO_MATERIAL_CATEGORIES = {
+            咖啡豆仓: ['奶&咖啡&水'],
+            '牛奶&水': ['奶&咖啡&水'],
+            糖浆: ['糖浆'],
+            前后道粉: ['前/后道粉'],
+            包材: ['包材'],
+            制冰机: ['食材']
+        };
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
-            phone: '13800138000'
+            phone: '13800138000',
+            merchantId: 'C001',
+            merchantName: '星巴克咖啡'
         };
 
         const ADMIN_SIDEBAR_LANG_KEY = 'adminSidebarLang';
@@ -1891,10 +2109,29 @@
                 const parsed = JSON.parse(raw);
                 return {
                     name: String(parsed?.name || DEFAULT_SIDEBAR_LOGIN_PROFILE.name),
-                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone)
+                    phone: String(parsed?.phone || DEFAULT_SIDEBAR_LOGIN_PROFILE.phone),
+                    merchantId: String(parsed?.merchantId || DEFAULT_SIDEBAR_LOGIN_PROFILE.merchantId || 'C001'),
+                    merchantName: String(parsed?.merchantName || DEFAULT_SIDEBAR_LOGIN_PROFILE.merchantName || '星巴克咖啡')
                 };
             } catch (e) {
                 return { ...DEFAULT_SIDEBAR_LOGIN_PROFILE };
+            }
+        }
+
+        function getCurrentMerchantContext() {
+            const fallbackProfile = getSidebarLoginProfile();
+            try {
+                const session = JSON.parse(localStorage.getItem(LOGIN_SESSION_KEY) || '{}');
+                const profile = JSON.parse(localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY) || '{}');
+                return {
+                    merchantId: String(session.merchantId || profile.merchantId || fallbackProfile.merchantId || 'C001'),
+                    merchantName: String(session.merchantName || profile.merchantName || fallbackProfile.merchantName || '星巴克咖啡')
+                };
+            } catch (error) {
+                return {
+                    merchantId: String(fallbackProfile.merchantId || 'C001'),
+                    merchantName: String(fallbackProfile.merchantName || '星巴克咖啡')
+                };
             }
         }
 
@@ -1956,9 +2193,154 @@
             { laneGroup: "糖浆", laneName: "山茶花糖浆-1", materialName: "山茶花糖浆", category: "糖浆", code: "20010010", materialNumber: "0101040606", materialCode: "0101040606", index: 26, remaining: 0, unit: "ml", warning: 100, critical: 40, max: 1000, status: "critical" }
         ];
         const MATERIALS_BOARD_BASE_DATA = materialsData.map(item => ({ ...item }));
+        const MATERIAL_MASTER_ROWS = [
+            ["01010106", "金奖意式豆", "454g/包", "包"],
+            ["1010107", "埃塞俄比亚瑰夏村", "454g/包", "袋"],
+            ["01010205", "君乐宝牛奶（1L/盒，12盒/箱）", "1L/盒", "盒"],
+            ["1010204", "君乐宝牛奶（10L箱）", "10L箱", "箱"],
+            ["01010206", "蒙牛牛奶（10L）", "10L/箱", "箱"],
+            ["01010301", "冰露", "18.9L/桶", "桶"],
+            ["01010403020", "王力香草糖浆", "700ml/瓶", "瓶"],
+            ["01010403021", "王力原味糖浆", "700ml/瓶", "瓶"],
+            ["0101040620", "拜佰里原味糖浆", "700ml/瓶", "瓶"],
+            ["01010407010", "好成海盐焦糖糖浆", "700ml/瓶", "瓶"],
+            ["01010407011", "好成原味冰蔗糖糖浆", "1000ml/瓶", "瓶"],
+            ["01010407012", "好成橘皮调味风味", "750mL/瓶", "瓶"],
+            ["01010407013", "好成榛果糖浆", "1000ml/瓶", "瓶"],
+            ["01010407014", "好成香草糖浆", "1000ml/瓶", "瓶"],
+            ["01010501", "可可粉", "800g/袋", "袋"],
+            ["01010502", "抹茶粉", "1000g/袋", "袋"],
+            ["01010601", "榛果颗粒", "100g/袋", "袋"],
+            ["01010701", "白糖包", "5g*100条/包", "包"],
+            ["01010702", "黄糖包", "5g*100条/包", "包"],
+            ["01020110", "10oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020111", "16oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020112", "12oz纸杯(鹿森)", "50个/条", "条"],
+            ["01020303", "诚宇杯盖", "50个/条", "条"],
+            ["01020304", "机压杯盖", "50个/条", "条"],
+            ["01020308", "西红柿纸杯盖", "50个/条", "条"],
+            ["01020403", "白色杯套", "50/扎，40扎/箱", "PCS"],
+            ["01020602", "塑料吸管", "100个/包", "包"],
+            ["01020701", "单杯打包袋", "100个/扎", "扎"],
+            ["01020702", "鹿森单杯打包袋", "50个/扎", "扎"],
+            ["010301", "剪刀", "把", "把"],
+            ["010302", "双色洗机桶", "个", "个"],
+            ["010304", "棕色抹布", "个", "个"],
+            ["010306", "奶管夹", "24个/盒", "个"],
+            ["010307", "小板凳", "个", "个"],
+            ["01040101", "洗机药水(1L)", "1L/瓶", "瓶"],
+            ["01040103", "洗机药丸", "80/盒", "盒"],
+            ["01040105", "洗剂药丸（球状）", "62/盒", "盒"],
+            ["01040107", "洗机药片（特定机型可用）", "100片/瓶", "瓶"],
+            ["01040201", "一次性手套", "50双/盒", "盒"],
+            ["01040203", "一次性口罩", "50个/盒", "个"],
+            ["01040204", "酒精湿巾(A)", "100张/袋", "袋"],
+            ["01040206", "垃圾袋", "100个/卷", "卷"],
+            ["01040207", "卫生纸", "100张/包", "包"],
+            ["01040208", "驱蚊药水", "瓶", "瓶"],
+            ["01040209", "蟑螂丸", "盒", "盒"],
+            ["01051003", "小乌龟车", "", "个"],
+            ["59000077", "EVEBOT拉花机墨盒", "咖啡色,食品级,40g", "PCS"],
+            ["0101040605", "拜伯里桂花糖浆", "700ml/瓶", "瓶"],
+            ["0101040606", "山茶花糖浆", "700ML/瓶", "瓶"],
+            ["0101040608", "拜佰里樱花糖浆", "700ML/瓶", "瓶"],
+            ["0101040618", "青苹果糖浆", "700ml/瓶", "瓶"],
+            ["0101040621", "拜佰里水蜜桃糖浆", "700ml/瓶", "瓶"],
+            ["0101040622", "拜佰里秋月梨糖浆", "700ml/瓶", "瓶"],
+            ["0101040623", "拜佰里苹果肉桂糖浆", "700ml/瓶", "瓶"],
+            ["0101040624", "拜佰里热红酒糖浆", "700ml/瓶", "个"],
+            ["0101040625", "拜佰里山茶碧螺春糖浆", "700ml/瓶", "瓶"],
+            ["0101040626", "拜佰里柠檬味糖浆", "700ml/瓶", "瓶"],
+            ["0101040801", "凯利威玫瑰糖浆", "1.3L/瓶", "瓶"],
+            ["0101040802", "凯利威话梅糖浆", "1.3L/瓶", "瓶"],
+            ["0101040803", "凯利威绿薄荷糖浆", "1.3L/瓶", "瓶"],
+            ["0101040804", "凯利威栀子花糖浆", "1.25L/瓶", "瓶"],
+            ["0101040805", "凯利威玉兰花风味糖浆", "1.25L/瓶", "瓶"],
+            ["01010802", "茉莉绿茶茶汤", "1L/盒", "盒"],
+            ["01020109", "12oz纸杯(上海六院定制）", "50个/条", "条"],
+            ["01020113", "8oz纸杯（鹿森）", "20个/条", "条"],
+            ["01020114", "12oz咪咕纸杯", "20个/条", "条"],
+            ["01020115", "12oz香港客户定制纸杯", "20个/条", "条"],
+            ["01020116", "16oz香港客户定制纸杯", "20个/条", "条"],
+            ["01020117", "12oz美国弗吉尼亚客户定制纸杯", "20个/条", "条"],
+            ["01020118", "16oz美国弗吉尼亚客户定制纸杯", "20个/条", "条"],
+            ["01020205", "16oz塑料杯(诚宇)", "25个/条", "条"],
+            ["01020209", "英托品康窄边塑杯", "25个/条", "个"],
+            ["01020212", "16oz塑杯(鹿森)", "25个/条", "条"],
+            ["01020213", "16oz塑杯(上海六院定制）", "20个/条", "条"],
+            ["01020214", "16oz咪咕塑杯", "20个/条", "条"],
+            ["01020402", "杯套-上海文化周", "25/扎", "扎"]
+        ];
+
+        function resolveMaterialMasterCategory(item) {
+            const materialNumber = String(item.materialNumber || '').trim();
+            const name = String(item.name || '').trim();
+
+            if (
+                /^(010101|010102|010103|010108)/.test(materialNumber) ||
+                materialNumber === '1010204' ||
+                materialNumber === '1010107' ||
+                /咖啡|牛奶|茶汤|冰露/.test(name)
+            ) {
+                return '奶&咖啡&水';
+            }
+
+            if (/^010104/.test(materialNumber) || /糖浆/.test(name)) {
+                return '糖浆';
+            }
+
+            if (/^010105/.test(materialNumber) || /^010106/.test(materialNumber) || /粉|颗粒/.test(name)) {
+                return '前/后道粉';
+            }
+
+            if (
+                /^(010201|010202|010203|010204|010206|010207)/.test(materialNumber) ||
+                /纸杯|杯盖|杯套|吸管|打包袋|塑杯/.test(name)
+            ) {
+                return '包材';
+            }
+
+            if (/^010401/.test(materialNumber) || materialNumber === '59000077' || /药水|药丸|药片|墨盒/.test(name)) {
+                return '耗材';
+            }
+
+            if (/^010402/.test(materialNumber) || /^0103/.test(materialNumber) || materialNumber === '01051003' || /剪刀|抹布|手套|口罩|湿巾|垃圾袋|卫生纸|驱蚊|蟑螂|小乌龟车|奶管夹|板凳/.test(name)) {
+                return '辅材';
+            }
+
+            if (/奶粉/.test(name)) return '奶粉';
+            if (/料盒|料桶|料仓/.test(name)) return '料盒';
+            if (/糖包|冰|柠檬|薄荷|肉桂/.test(name)) return '食材';
+            return '辅材';
+        }
+
+        const MATERIAL_MASTER_DATA = MATERIAL_MASTER_ROWS.map(([materialNumber, name, spec, unit], index) => {
+            const item = {
+                index: index + 1,
+                code: materialNumber,
+                materialNumber,
+                name,
+                spec,
+                unit: unit || '个'
+            };
+            return {
+                ...item,
+                category: resolveMaterialMasterCategory(item)
+            };
+        });
+        const MERCHANT_MATERIAL_MASTER_DATA = {
+            C001: MATERIAL_MASTER_DATA,
+            C002: MATERIAL_MASTER_DATA.filter(item => ['奶&咖啡&水', '糖浆', '包材'].includes(item.category)),
+            C003: MATERIAL_MASTER_DATA.filter(item => ['奶&咖啡&水', '前/后道粉', '耗材', '辅材'].includes(item.category))
+        };
 
         let currentRefillCode = null;
+        let currentRefillResetMode = false;
         let currentLaneEditCode = null;
+        let currentLaneMaterialEditCode = null;
+        let currentLaneMaterialSelectedNumber = '';
+        let currentLaneMaterialCategory = '';
+        let currentLaneMaterialSearch = '';
         let currentDevice = '';
         let allDeviceOptions = [];
         let deviceSearchOptions = [];
@@ -2107,11 +2489,30 @@
             return deviceLocationMap[normalized] || '未配置点位';
         }
 
+        function resolveDeviceTitleName(deviceId) {
+            const normalized = normalizeDeviceId(deviceId);
+            if (!normalized) return '-';
+            const storedDevices = parseStoredArray('devicesData');
+            const matchedDevice = storedDevices.find(device => normalizeDeviceId(device?.id) === normalized) || null;
+            const candidateName = matchedDevice
+                ? (
+                    normalizeText(matchedDevice.deviceName)
+                    || normalizeText(matchedDevice.name)
+                    || normalizeText(matchedDevice.displayName)
+                    || normalizeText(matchedDevice.title)
+                    || normalizeText(matchedDevice.alias)
+                )
+                : '';
+            return candidateName || normalized;
+        }
+
         function syncDeviceContext(deviceId) {
             const normalizedId = normalizeDeviceId(deviceId) || '-';
             const location = getDeviceLocation(normalizedId);
+            const deviceTitleName = resolveDeviceTitleName(normalizedId);
             document.getElementById('boardDeviceCode').textContent = normalizedId;
             document.getElementById('boardDeviceLocation').textContent = location;
+            document.getElementById('pageSubtitle').textContent = deviceTitleName;
             document.getElementById('boardSubtitle').textContent = `已选货道看板 · ${location}`;
         }
 
@@ -2227,13 +2628,54 @@
             localStorage.setItem(LANE_NAME_OVERRIDE_STORAGE_KEY, JSON.stringify(overrides));
         }
 
+        function readLaneMaterialOverrides() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(LANE_MATERIAL_OVERRIDE_STORAGE_KEY) || '{}');
+                return raw && typeof raw === 'object' ? raw : {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function writeLaneMaterialOverrides(overrides) {
+            localStorage.setItem(LANE_MATERIAL_OVERRIDE_STORAGE_KEY, JSON.stringify(overrides));
+        }
+
+        function getCurrentMerchantMaterialOptions() {
+            const merchantId = getCurrentMerchantContext().merchantId;
+            return MERCHANT_MATERIAL_MASTER_DATA[merchantId] || MERCHANT_MATERIAL_MASTER_DATA.C001 || [];
+        }
+
+        function findCurrentMerchantMaterial(materialCode) {
+            const normalizedCode = String(materialCode || '').trim();
+            return getCurrentMerchantMaterialOptions().find(material => material.materialNumber === normalizedCode || material.code === normalizedCode) || null;
+        }
+
+        function applyMaterialOverrideToLane(item, material) {
+            if (!material) return item;
+            return {
+                ...item,
+                materialName: material.name,
+                materialCode: material.materialNumber,
+                materialNumber: material.materialNumber,
+                category: material.category || item.category,
+                unit: material.unit || item.unit
+            };
+        }
+
         function applyLaneNameOverrides(items) {
-            const overrides = readLaneNameOverrides();
-            const deviceOverrides = overrides[currentDevice] || {};
+            const nameOverrides = readLaneNameOverrides();
+            const nameDeviceOverrides = nameOverrides[currentDevice] || {};
+            const materialOverrides = readLaneMaterialOverrides();
+            const merchantId = getCurrentMerchantContext().merchantId;
+            const materialDeviceOverrides = (((materialOverrides[merchantId] || {})[currentDevice]) || {});
             const baseItems = Array.isArray(items) && items.length ? items : MATERIALS_BOARD_BASE_DATA;
             materialsData = baseItems.map(item => {
-                const overriddenLaneName = normalizeText(deviceOverrides[item.code], '');
-                return overriddenLaneName ? { ...item, laneName: overriddenLaneName } : item;
+                const overriddenLaneName = normalizeText(nameDeviceOverrides[item.code], '');
+                const materialOverride = materialDeviceOverrides[item.code];
+                const merchantMaterial = materialOverride ? findCurrentMerchantMaterial(materialOverride.materialNumber || materialOverride.materialCode) : null;
+                const laneItem = overriddenLaneName ? { ...item, laneName: overriddenLaneName } : { ...item };
+                return applyMaterialOverrideToLane(laneItem, merchantMaterial);
             });
         }
 
@@ -2274,6 +2716,20 @@
                 : null;
             const permissions = Array.isArray(access?.currentStaff?.permissions) ? access.currentStaff.permissions : [];
             return permissions.includes('ops.materials.laneNameEdit');
+        }
+
+        function canEditLaneMaterial() {
+            const helper = window.CofeAdminStaffAccess;
+            const access = helper && typeof helper.resolveCurrentStaffAccess === 'function'
+                ? helper.resolveCurrentStaffAccess()
+                : null;
+            const permissions = Array.isArray(access?.currentStaff?.permissions) ? access.currentStaff.permissions : [];
+            return permissions.includes('ops.materials.laneMaterialEdit');
+        }
+
+        function getAllowedMaterialCategoriesForLane(laneItem) {
+            const laneGroup = resolveLaneBoardGroup(laneItem);
+            return LANE_GROUP_TO_MATERIAL_CATEGORIES[laneGroup] || [];
         }
 
         function openLaneNameModal(materialCode) {
@@ -2322,12 +2778,149 @@
             showToast('货道名称已更新', 'success');
         }
 
+        function renderLaneMaterialOptions(selectedMaterialNumber = '') {
+            const laneItem = materialsData.find(item => item.code === currentLaneMaterialEditCode) || null;
+            const allowedCategories = getAllowedMaterialCategoriesForLane(laneItem);
+            const options = getCurrentMerchantMaterialOptions()
+                .filter(material => allowedCategories.includes(material.category));
+            const merchant = getCurrentMerchantContext();
+            const categories = LANE_MATERIAL_CATEGORY_ORDER.filter(category => options.some(material => material.category === category));
+            if (!currentLaneMaterialCategory || !categories.includes(currentLaneMaterialCategory)) {
+                const selectedMaterial = options.find(material => material.materialNumber === selectedMaterialNumber);
+                currentLaneMaterialCategory = selectedMaterial?.category || categories[0] || '';
+            }
+
+            const categoryList = document.getElementById('laneMaterialCategoryList');
+            categoryList.innerHTML = categories.map(category => {
+                const active = category === currentLaneMaterialCategory ? ' active' : '';
+                const count = options.filter(material => material.category === category).length;
+                return `<button type="button" class="lane-material-category-btn${active}" onclick="switchLaneMaterialCategory('${category}')">${category} · ${count}</button>`;
+            }).join('');
+
+            const keyword = normalizeText(currentLaneMaterialSearch, '').toLowerCase();
+            const filteredOptions = options.filter(material => {
+                const inCategory = !currentLaneMaterialCategory || material.category === currentLaneMaterialCategory;
+                const searchable = `${material.materialNumber} ${material.name} ${material.spec || ''} ${material.unit || ''}`.toLowerCase();
+                return inCategory && (!keyword || searchable.includes(keyword));
+            });
+
+            const list = document.getElementById('laneMaterialList');
+            list.innerHTML = filteredOptions.length
+                ? filteredOptions.map(material => {
+                    const selectedClass = material.materialNumber === currentLaneMaterialSelectedNumber ? 'lane-material-option-card selected' : 'lane-material-option-card';
+                    return `
+                        <button type="button" class="${selectedClass}" onclick="selectLaneMaterial('${material.materialNumber}')">
+                            <div class="lane-material-option-code">商品编码：${material.materialNumber}</div>
+                            <div class="lane-material-option-name">${material.name}</div>
+                            <div class="lane-material-option-meta">${material.spec || '-'} · ${material.unit || '-'}</div>
+                        </button>
+                    `;
+                }).join('')
+                : '<div class="lane-material-empty">当前货道大类下没有匹配的物料</div>';
+
+            const categoryText = allowedCategories.length ? allowedCategories.join('、') : '未配置';
+            document.getElementById('laneMaterialHint').textContent = `${merchant.merchantName || merchant.merchantId} · 仅可选择：${categoryText} · ${filteredOptions.length}/${options.length} 个可选物料`;
+        }
+
+        function switchLaneMaterialCategory(category) {
+            currentLaneMaterialCategory = category;
+            renderLaneMaterialOptions(currentLaneMaterialSelectedNumber);
+        }
+
+        function selectLaneMaterial(materialNumber) {
+            currentLaneMaterialSelectedNumber = String(materialNumber || '').trim();
+            renderLaneMaterialOptions(currentLaneMaterialSelectedNumber);
+        }
+
+        function handleLaneMaterialSearch(value) {
+            currentLaneMaterialSearch = value || '';
+            renderLaneMaterialOptions(currentLaneMaterialSelectedNumber);
+        }
+
+        function openLaneMaterialModal(laneCode) {
+            const material = materialsData.find(item => item.code === laneCode);
+            if (!material) {
+                showToast('未找到对应货道', 'error');
+                return;
+            }
+            if (!canEditLaneMaterial()) {
+                showToast('暂无编辑货道关联物料权限', 'error');
+                return;
+            }
+
+            currentLaneMaterialEditCode = material.code;
+            currentLaneMaterialSelectedNumber = material.materialNumber || material.materialCode || '';
+            currentLaneMaterialCategory = '';
+            currentLaneMaterialSearch = '';
+            document.getElementById('laneMaterialSearch').value = '';
+            renderLaneMaterialOptions(currentLaneMaterialSelectedNumber);
+            document.getElementById('laneMaterialModalTitle').textContent = `编辑关联物料 · ${material.laneName}`;
+            document.getElementById('laneMaterialModal').classList.add('active');
+        }
+
+        function closeLaneMaterialModal() {
+            document.getElementById('laneMaterialModal').classList.remove('active');
+            currentLaneMaterialEditCode = null;
+            currentLaneMaterialSelectedNumber = '';
+            currentLaneMaterialCategory = '';
+            currentLaneMaterialSearch = '';
+        }
+
+        function confirmLaneMaterialEdit() {
+            if (!currentLaneMaterialEditCode) return;
+            const material = findCurrentMerchantMaterial(currentLaneMaterialSelectedNumber);
+            if (!material) {
+                showToast('请选择当前商户物料表中的物料', 'error');
+                return;
+            }
+            const laneItem = materialsData.find(item => item.code === currentLaneMaterialEditCode) || null;
+            const allowedCategories = getAllowedMaterialCategoriesForLane(laneItem);
+            if (!allowedCategories.includes(material.category)) {
+                showToast('请选择与当前货道分类匹配的物料', 'error');
+                return;
+            }
+
+            const merchantId = getCurrentMerchantContext().merchantId;
+            const overrides = readLaneMaterialOverrides();
+            if (!overrides[merchantId] || typeof overrides[merchantId] !== 'object') {
+                overrides[merchantId] = {};
+            }
+            if (!overrides[merchantId][currentDevice] || typeof overrides[merchantId][currentDevice] !== 'object') {
+                overrides[merchantId][currentDevice] = {};
+            }
+            overrides[merchantId][currentDevice][currentLaneMaterialEditCode] = {
+                merchantId: getCurrentMerchantContext().merchantId,
+                materialNumber: material.materialNumber,
+                materialCode: material.materialNumber
+            };
+            writeLaneMaterialOverrides(overrides);
+
+            materialsData = materialsData.map(item => item.code === currentLaneMaterialEditCode
+                ? applyMaterialOverrideToLane(item, material)
+                : item);
+
+            renderMaterials();
+            closeLaneMaterialModal();
+            showToast('关联物料已更新', 'success');
+        }
+
+        function resolveMaterialDisplayStatus(item) {
+            if (Number(item?.remaining || 0) <= 0) {
+                return { className: 'soldout', label: '售罄' };
+            }
+            if (Number(item?.remaining || 0) <= Number(item?.critical || 0)) {
+                return { className: 'critical', label: '告急' };
+            }
+            return { className: 'healthy', label: '正常' };
+        }
+
         function renderMaterialCard(item) {
             const fillPct = Math.max(0, Math.min(100, (item.remaining / item.max) * 100));
             const warningPct = Math.max(0, Math.min(100, (item.warning / item.max) * 100));
             const criticalPct = Math.max(0, Math.min(100, (item.critical / item.max) * 100));
-            const statusText = item.status === "healthy" ? "正常" : "告急";
-            const statusClass = item.status === "healthy" ? "healthy" : "critical";
+            const displayStatus = resolveMaterialDisplayStatus(item);
+            const statusText = displayStatus.label;
+            const statusClass = displayStatus.className;
 
             return `
                 <article class="material-card ${statusClass}">
@@ -2338,6 +2931,7 @@
                                 <div class="material-card-tools">
                                     <span class="status-pill ${statusClass}">${statusText}</span>
                                     ${canEditLaneName() ? `<button type="button" class="material-lane-edit-btn" onclick="openLaneNameModal('${item.code}')">编辑货道名称</button>` : ''}
+                                    ${canEditLaneMaterial() ? `<button type="button" class="material-lane-edit-btn" onclick="openLaneMaterialModal('${item.code}')">编辑关联物料</button>` : ''}
                                 </div>
                             </div>
                             <div class="material-meta-row">
@@ -2421,11 +3015,12 @@
             const matchedLane = materialCode
                 ? (Array.isArray(materialsData) ? materialsData.find(item => item.code === materialCode) : null)
                 : null;
+            const associatedMaterialCode = matchedLane?.materialCode || matchedLane?.materialNumber || materialCode || null;
             const payload = {
                 source: 'materials',
                 deviceId: currentDevice,
                 laneName: matchedLane?.laneName || null,
-                materialCode: materialCode || null
+                materialCode: associatedMaterialCode
             };
             sessionStorage.setItem('materialsShipmentReturnContext', JSON.stringify(payload));
         }
@@ -2437,7 +3032,8 @@
             persistShipmentReturnContext(materialCode);
             
             if (materialCode) {
-                sessionStorage.setItem('preselectMaterial', materialCode);
+                const matchedLane = materialsData.find(item => item.code === materialCode);
+                sessionStorage.setItem('preselectMaterial', matchedLane?.materialCode || matchedLane?.materialNumber || materialCode);
             }
             window.location.href = 'materials-refill.html';
         }
@@ -2480,7 +3076,8 @@
             document.getElementById('modalTitle').textContent = `补充设置 - ${material.laneName}`;
             document.getElementById('currentMaterialCode').textContent = material.code;
             document.getElementById('currentStockValue').textContent = `${material.remaining} ${material.unit}`;
-            document.getElementById('adjustCurrent').value = material.remaining;
+            currentRefillResetMode = false;
+            document.getElementById('adjustCurrent').value = 0;
             document.getElementById('adjustWarning').value = material.warning;
             document.getElementById('adjustCritical').value = material.critical;
             document.getElementById('unitCurrent').textContent = material.unit;
@@ -2492,6 +3089,20 @@
         function closeRefillModal() {
             document.getElementById('refillModal').classList.remove('active');
             currentRefillCode = null;
+            currentRefillResetMode = false;
+        }
+
+        function selectNumericInputValue(input) {
+            if (!input || typeof input.select !== 'function') return;
+            setTimeout(() => input.select(), 0);
+        }
+
+        function resetRefillCurrentToZero() {
+            const currentInput = document.getElementById('adjustCurrent');
+            if (currentInput) {
+                currentInput.value = 0;
+            }
+            currentRefillResetMode = true;
         }
 
         function formatDateTimeWithSeconds(dateValue = new Date()) {
@@ -2570,6 +3181,40 @@
             };
         }
 
+        function resolveCurrentOperationUser() {
+            let session = {};
+            let profile = {};
+            try {
+                session = JSON.parse(localStorage.getItem(LOGIN_SESSION_KEY) || '{}');
+            } catch (error) {
+                session = {};
+            }
+            try {
+                profile = JSON.parse(localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY) || '{}');
+            } catch (error) {
+                profile = {};
+            }
+
+            return {
+                operatorName: pickFirstValidValue(
+                    session.name,
+                    session.username,
+                    session.operatorName,
+                    session.staffName,
+                    profile.name,
+                    profile.username
+                ),
+                operatorPhone: pickFirstValidValue(
+                    session.phone,
+                    session.mobile,
+                    session.account,
+                    session.operatorPhone,
+                    profile.phone,
+                    profile.mobile
+                )
+            };
+        }
+
         function appendMaintenanceRecord(record) {
             let records = [];
             try {
@@ -2581,12 +3226,14 @@
                 records = [];
             }
             const targetDeviceId = normalizeDeviceId(record?.deviceId || record?.deviceCode || currentDevice);
+            const operator = resolveCurrentOperationUser();
             const fallbackOperator = resolveOperatorByDevice(targetDeviceId);
             const normalizedOperatorName = pickFirstValidValue(
                 record?.operatorName,
                 record?.operator,
                 record?.maintainerName,
                 record?.maintenanceOperator,
+                operator.operatorName,
                 fallbackOperator.operatorName,
                 '当前用户'
             ) || '当前用户';
@@ -2596,6 +3243,7 @@
                 record?.mobile,
                 record?.operatorMobile,
                 record?.maintainerPhone,
+                operator.operatorPhone,
                 fallbackOperator.operatorPhone,
                 '-'
             ) || '-';
@@ -2623,7 +3271,10 @@
         }
 
         function createRefillMaintenanceRecord(material, oldRemaining, nextRemaining) {
-            const operator = resolveOperatorByDevice(currentDevice);
+            const operator = resolveCurrentOperationUser();
+            const fallbackOperator = resolveOperatorByDevice(currentDevice);
+            const operatorName = pickFirstValidValue(operator.operatorName, fallbackOperator.operatorName, '当前用户');
+            const operatorPhone = pickFirstValidValue(operator.operatorPhone, fallbackOperator.operatorPhone, '-');
             const deviceLocation = getDeviceLocation(currentDevice);
             appendMaintenanceRecord({
                 id: `MR${Date.now()}`,
@@ -2633,13 +3284,13 @@
                 deviceId: currentDevice,
                 deviceLocation,
                 deviceAddress: deviceLocation,
-                operatorName: operator.operatorName,
-                operatorPhone: operator.operatorPhone,
-                operator: operator.operatorName,
-                phone: operator.operatorPhone,
-                maintainerName: operator.operatorName,
-                maintainerPhone: operator.operatorPhone,
-                materialCode: material.code
+                operatorName,
+                operatorPhone,
+                operator: operatorName,
+                phone: operatorPhone,
+                maintainerName: operatorName,
+                maintainerPhone: operatorPhone,
+                materialCode: material.materialCode || material.materialNumber || material.code
             });
         }
 
@@ -2655,19 +3306,19 @@
                 return;
             }
 
-            const nextCurrent = Number(document.getElementById('adjustCurrent').value);
+            const refillDelta = Number(document.getElementById('adjustCurrent').value);
             const nextWarning = Number(document.getElementById('adjustWarning').value);
             const nextCritical = Number(document.getElementById('adjustCritical').value);
 
-            if (![nextCurrent, nextWarning, nextCritical].every(Number.isFinite)) {
+            if (![refillDelta, nextWarning, nextCritical].every(Number.isFinite)) {
                 showToast('请输入有效数字', 'error');
                 return;
             }
-            if (!Number.isInteger(nextCurrent)) {
-                showToast('当前量仅支持整数', 'error');
+            if (!Number.isInteger(refillDelta)) {
+                showToast('补充数量仅支持整数', 'error');
                 return;
             }
-            if (nextCurrent < 0 || nextWarning < 0 || nextCritical < 0) {
+            if (refillDelta < 0 || nextWarning < 0 || nextCritical < 0) {
                 showToast('数值不能小于 0', 'error');
                 return;
             }
@@ -2677,16 +3328,18 @@
             }
 
             const oldRemaining = material.remaining;
+            const nextCurrent = currentRefillResetMode ? 0 : oldRemaining + refillDelta;
             material.remaining = nextCurrent;
             material.warning = nextWarning;
             material.critical = nextCritical;
             material.max = Math.max(material.max, nextCurrent, nextWarning, nextCritical, 1);
-            material.status = material.remaining > material.critical ? 'healthy' : 'critical';
+            material.status = resolveMaterialDisplayStatus(material).className;
             createRefillMaintenanceRecord(material, oldRemaining, nextCurrent);
+            const actionText = currentRefillResetMode ? '已重置为 0' : `补充 ${refillDelta}${material.unit}`;
 
             renderMaterials();
             closeRefillModal();
-            showToast(`已更新 ${material.laneName}：当前量 ${nextCurrent}${material.unit}，预警 ${nextWarning}${material.unit}，告警 ${nextCritical}${material.unit}`, 'success');
+            showToast(`已更新 ${material.laneName}：${actionText}，当前量 ${nextCurrent}${material.unit}`, 'success');
         }
 
         function showToast(message, type = 'normal') {
@@ -2719,6 +3372,12 @@
         document.getElementById('laneNameModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeLaneNameModal();
+            }
+        });
+
+        document.getElementById('laneMaterialModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLaneMaterialModal();
             }
         });
 

@@ -934,7 +934,7 @@
             color: #d97706;
         }
 
-        .status-cancelled, .status-failed {
+        .status-cancelled {
             background: rgba(148, 163, 184, 0.18);
             color: #64748b;
         }
@@ -4654,7 +4654,6 @@
         const paymentStatusMap = {
             'succeed': '支付成功',
             'cancelled': '已取消',
-            'failed': '支付失败',
             'pending': '待支付'
         };
 
@@ -4932,7 +4931,7 @@
                 return sum + Number(sourceProduct?.price || 0) * Number(item.quantity || 1);
             }, 0);
             const status = index % 7 === 0 ? 'pending' : index % 5 === 0 ? 'cancelled' : 'done';
-            const paymentStatus = status === 'pending' ? 'pending' : status === 'cancelled' ? 'cancelled' : (index % 4 === 0 ? 'failed' : 'succeed');
+            const paymentStatus = status === 'pending' ? 'pending' : status === 'cancelled' ? 'cancelled' : 'succeed';
             const orderId = `8${createdAt.getFullYear()}${padFallbackDatePart(createdAt.getMonth() + 1)}${padFallbackDatePart(createdAt.getDate())}${padFallbackDatePart(createdAt.getHours())}${padFallbackDatePart(createdAt.getMinutes())}${padFallbackDatePart(createdAt.getSeconds())}${String(index).padStart(6, '0')}`;
 
             return {
@@ -4957,6 +4956,9 @@
         function normalizeRuntimeOrder(order, fallbackIndex = 0) {
             const orderItems = normalizeOrderItems(order);
             const items = resolveOrderItemCount(order);
+            const normalizedPaymentStatus = order?.status === 'done'
+                ? 'succeed'
+                : (order?.status === 'cancelled' ? 'cancelled' : 'pending');
             return {
                 ...order,
                 id: String(order?.id || `runtime-${fallbackIndex}`),
@@ -4967,6 +4969,7 @@
                 product: order?.product || buildLegacyOrderSummary(orderItems),
                 specs: typeof order?.specs === 'string' ? order.specs : buildLegacyOrderSpecs(orderItems),
                 orderItems,
+                paymentStatus: normalizedPaymentStatus,
                 amount: order?.amount ?? '0.00',
                 currency: getOrderCurrency(order),
                 pickupCode: String(order?.pickupCode ?? ''),
