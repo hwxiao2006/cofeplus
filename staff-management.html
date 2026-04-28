@@ -2572,6 +2572,12 @@
                 }
             });
 
+            if (normalizedSet.has('ops.staff.manage')) {
+                normalizedSet.add('ops.materials.laneNameEdit');
+                normalizedSet.add('ops.materials.laneMaterialEdit');
+                normalizedSet.add('ops.materials');
+            }
+
             return allPermissionKeys.filter((value) => normalizedSet.has(value));
         }
 
