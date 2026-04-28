@@ -4,6 +4,8 @@
   const STAFF_MANAGERS_DATA_KEY = 'staffManagersData';
   const DEVICE_SCOPED_MODULES = {
     devices: 'ops.devices',
+    products: 'ops.products',
+    materials: 'ops.materials',
     orders: 'ops.orders',
     faults: 'ops.faults'
   };

@@ -97,8 +97,31 @@ test('共享权限助手：应对缺失 moduleDeviceScopes 的历史员工默认
   });
 
   assert.strictEqual(normalized.moduleDeviceScopes.devices.mode, 'inherit');
+  assert.strictEqual(normalized.moduleDeviceScopes.products.mode, 'inherit');
+  assert.strictEqual(normalized.moduleDeviceScopes.materials.mode, 'inherit');
   assert.strictEqual(normalized.moduleDeviceScopes.orders.mode, 'inherit');
   assert.deepStrictEqual(Array.from(normalized.moduleDeviceScopes.orders.deviceIds), []);
+});
+
+test('共享权限助手：商品管理和物料也应支持页面设备范围', () => {
+  const sandbox = loadStaffAccessSandbox();
+  const staffRecord = {
+    ...activeStaffRecord,
+    permissions: ['ops.products', 'ops.materials'],
+    moduleDeviceScopes: {
+      products: { mode: 'custom', deviceIds: ['RCK386', 'RCK999'] },
+      materials: { mode: 'custom', deviceIds: ['RCK385'] }
+    }
+  };
+
+  assert.deepStrictEqual(
+    Array.from(sandbox.window.CofeAdminStaffAccess.getModuleVisibleDeviceIds(staffRecord, 'products')),
+    ['RCK386']
+  );
+  assert.deepStrictEqual(
+    Array.from(sandbox.window.CofeAdminStaffAccess.getModuleVisibleDeviceIds(staffRecord, 'materials')),
+    ['RCK385']
+  );
 });
 
 test('共享权限助手：历史人员维护账号应自动获得新增货道编辑权限', () => {

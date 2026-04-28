@@ -6418,6 +6418,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/admin-staff-access.js"></script>
     <script src="shared/device-latte-art-library.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script>
@@ -9502,7 +9503,23 @@
                 }
             });
 
-            return Array.from(optionMap.values());
+            return filterProductDeviceOptionsByStaffScope(Array.from(optionMap.values()));
+        }
+
+        function getProductScopedDeviceIdSet() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function' || typeof helper.getModuleVisibleDeviceIds !== 'function') {
+                return null;
+            }
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) return null;
+            return new Set(helper.getModuleVisibleDeviceIds(access.currentStaff, 'products').map(normalizeDeviceSearchId));
+        }
+
+        function filterProductDeviceOptionsByStaffScope(options) {
+            const visibleDeviceIds = getProductScopedDeviceIdSet();
+            if (!visibleDeviceIds) return options;
+            return options.filter(item => visibleDeviceIds.has(normalizeDeviceSearchId(item?.id)));
         }
 
         function hasKnownDeviceSearchOption(deviceId) {
@@ -9548,7 +9565,9 @@
 
         function initDeviceSearch() {
             rebuildDeviceSearchData();
-            const storedPriorityDeviceIds = loadStoredRuntimeDeviceIds();
+            const staffScopedDeviceIds = getProductScopedDeviceIdSet();
+            const storedPriorityDeviceIds = loadStoredRuntimeDeviceIds()
+                .filter(deviceId => !staffScopedDeviceIds || staffScopedDeviceIds.has(normalizeDeviceSearchId(deviceId)));
             if (storedPriorityDeviceIds.length && !storedPriorityDeviceIds.includes(currentDevice)) {
                 currentDevice = storedPriorityDeviceIds[0];
             } else if (!allDeviceOptions.includes(currentDevice)) {
