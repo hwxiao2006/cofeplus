@@ -72,6 +72,13 @@ test('物料页：设备来源不在默认列表时应加入下拉选项', () =>
   assert.ok(/allDeviceOptions\.unshift\(currentDevice\)/.test(html));
 });
 
+test('物料页：员工物料设备范围应限制可切换设备', () => {
+  assert.ok(html.includes('<script src="shared/admin-staff-access.js"></script>'));
+  assert.ok(/function\s+filterMaterialDeviceOptionsByStaffScope\s*\(/.test(html));
+  assert.ok(/getModuleVisibleDeviceIds\([^)]*'materials'/.test(html));
+  assert.ok(/filterMaterialDeviceOptionsByStaffScope\(options\)/.test(html));
+});
+
 test('物料页：设备标题应同步展示点位信息', () => {
   assert.ok(/function\s+buildRuntimeLocationMap\s*\(/.test(html));
   assert.ok(/function\s+resolveDeviceLocationName\s*\(/.test(html));

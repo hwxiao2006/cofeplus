@@ -2414,11 +2414,11 @@
             const runtimeLocationMap = buildRuntimeLocationMap();
             const storedDevices = parseStoredArray('devicesData');
             if (!storedDevices.length) {
-                return DEFAULT_DEVICE_CONTEXT.map(item => ({
+                return filterMaterialDeviceOptionsByStaffScope(DEFAULT_DEVICE_CONTEXT.map(item => ({
                     id: item.id,
                     location: item.location,
                     locationName: normalizeText(item.location)
-                }));
+                })));
             }
 
             const locationByDevice = {};
@@ -2435,18 +2435,34 @@
             });
 
             if (!ids.length) {
-                return DEFAULT_DEVICE_CONTEXT.map(item => ({
+                return filterMaterialDeviceOptionsByStaffScope(DEFAULT_DEVICE_CONTEXT.map(item => ({
                     id: item.id,
                     location: item.location,
                     locationName: normalizeText(item.location)
-                }));
+                })));
             }
 
-            return ids.map(id => ({
+            return filterMaterialDeviceOptionsByStaffScope(ids.map(id => ({
                 id,
                 location: locationByDevice[id] || '未配置点位',
                 locationName: searchLocationByDevice[id] || ''
-            }));
+            })));
+        }
+
+        function getMaterialScopedDeviceIdSet() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function' || typeof helper.getModuleVisibleDeviceIds !== 'function') {
+                return null;
+            }
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) return null;
+            return new Set(helper.getModuleVisibleDeviceIds(access.currentStaff, 'materials').map(normalizeDeviceId));
+        }
+
+        function filterMaterialDeviceOptionsByStaffScope(options) {
+            const visibleDeviceIds = getMaterialScopedDeviceIdSet();
+            if (!visibleDeviceIds) return options;
+            return options.filter(item => visibleDeviceIds.has(normalizeDeviceId(item?.id)));
         }
 
         function rebuildDeviceSearchData() {
@@ -2533,13 +2549,14 @@
 
         function initDeviceSearch() {
             rebuildDeviceSearchData();
-            if (currentDevice && !allDeviceOptions.includes(currentDevice)) {
+            const staffScopedDeviceIds = getMaterialScopedDeviceIdSet();
+            if (currentDevice && !allDeviceOptions.includes(currentDevice) && !staffScopedDeviceIds) {
                 allDeviceOptions.unshift(currentDevice);
                 if (!deviceLocationMap[currentDevice]) {
                     deviceLocationMap[currentDevice] = '未配置点位';
                 }
             }
-            if (!allDeviceOptions.length) {
+            if (!allDeviceOptions.length && !staffScopedDeviceIds) {
                 allDeviceOptions = DEFAULT_DEVICE_CONTEXT.map(item => item.id);
                 deviceLocationMap = {};
                 DEFAULT_DEVICE_CONTEXT.forEach(item => {
@@ -2547,7 +2564,7 @@
                 });
             }
             if (!allDeviceOptions.includes(currentDevice)) {
-                currentDevice = allDeviceOptions[0];
+                currentDevice = allDeviceOptions[0] || '';
             }
             document.getElementById('deviceSearchInput').value = getDeviceSearchDisplayLabel(currentDevice);
         }

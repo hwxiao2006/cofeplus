@@ -1019,6 +1019,21 @@
             line-height: 1.4;
         }
 
+        .staff-config-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .section-helper {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
         .permission-selection-stats {
             display: inline-flex;
             align-items: center;
@@ -1062,6 +1077,10 @@
             align-items: center;
             gap: 12px;
             padding: 10px 12px;
+        }
+
+        .permission-group-main.has-scope {
+            grid-template-columns: auto minmax(0, 1fr) auto minmax(280px, 360px);
         }
 
         .permission-group-head {
@@ -1124,6 +1143,59 @@
 
         .permission-group-row[data-selected="true"] .permission-group-count {
             color: #17827a;
+        }
+
+        .permission-scope-slot {
+            min-width: 0;
+            justify-self: stretch;
+        }
+
+        .permission-scope-inline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 1px solid #e5eef5;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .permission-scope-inline.is-muted {
+            color: #94a3b8;
+        }
+
+        .permission-scope-inline.is-warning {
+            border-color: #fecaca;
+            background: #fff7f7;
+            align-items: flex-start;
+        }
+
+        .permission-scope-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+
+        .permission-scope-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            line-height: 1.2;
+        }
+
+        .permission-scope-summary {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            line-height: 1.35;
+        }
+
+        .permission-scope-inline.is-muted .permission-scope-summary {
+            color: #94a3b8;
+            font-weight: 500;
         }
 
         .permission-group-options {
@@ -1302,6 +1374,7 @@
             font-weight: 600;
             padding: 0 10px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .module-scope-mode.is-active {
@@ -1320,6 +1393,7 @@
             font-weight: 600;
             padding: 0 10px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .module-scope-config-btn[disabled],
@@ -1665,6 +1739,10 @@
                 row-gap: 4px;
             }
 
+            .permission-group-main.has-scope {
+                grid-template-columns: minmax(0, 1fr) auto;
+            }
+
             .permission-group-head {
                 min-width: 0;
             }
@@ -1678,6 +1756,15 @@
                 grid-column: 2 / 3;
                 grid-row: 1 / span 2;
                 align-self: center;
+            }
+
+            .permission-scope-slot {
+                grid-column: 1 / -1;
+            }
+
+            .permission-scope-inline {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
             .permission-group-options {
@@ -1856,57 +1943,30 @@
                     </div>
                 </section>
 
-                <div class="staff-modal-step-layout">
-                    <div class="staff-modal-stepbar" id="staffModalStepbar">
-                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="manageableDevices" onclick="handleStaffModalStepTrigger('manageableDevices')">
-                            <span class="staff-modal-step-trigger-index">1</span>
-                            <span class="staff-modal-step-trigger-text">
-                                <span class="staff-modal-step-trigger-label">步骤 1 · 可管理设备</span>
-                                <span class="staff-modal-step-trigger-hint">先选该人员可管理的设备</span>
-                            </span>
-                        </button>
-                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="pagePermissions" onclick="handleStaffModalStepTrigger('pagePermissions')">
-                            <span class="staff-modal-step-trigger-index">2</span>
-                            <span class="staff-modal-step-trigger-text">
-                                <span class="staff-modal-step-trigger-label">步骤 2 · 页面权限</span>
-                                <span class="staff-modal-step-trigger-hint">再决定能进入哪些页面</span>
-                            </span>
-                        </button>
-                        <button type="button" class="staff-modal-step-trigger" data-staff-step-trigger="pageDeviceScopes" onclick="handleStaffModalStepTrigger('pageDeviceScopes')">
-                            <span class="staff-modal-step-trigger-index">3</span>
-                            <span class="staff-modal-step-trigger-text">
-                                <span class="staff-modal-step-trigger-label">步骤 3 · 页面设备范围</span>
-                                <span class="staff-modal-step-trigger-hint">仅对支持范围的页面细分设备</span>
-                            </span>
-                        </button>
+                <section class="section-block staff-device-section" id="staffDeviceSection">
+                    <div class="staff-config-section-head">
+                        <div>
+                            <div class="section-title">可管理设备<span class="required">*</span></div>
+                            <p class="section-helper">这个员工最多只能看到这里选中的设备。</p>
+                        </div>
+                        <span class="device-selection-stats" id="deviceSelectionStats">已选 0 / 共 0</span>
                     </div>
+                    <div class="device-picker-entry">
+                        <p class="module-scope-note">页面里的设备范围只能从这里已选的设备中选择。</p>
+                        <button type="button" class="device-picker-btn" id="openDeviceSelectorBtn" onclick="openDeviceSelector()">选择可管理设备</button>
+                    </div>
+                    <div class="selected-device-summary" id="selectedDeviceSummary"></div>
+                </section>
 
-                    <div class="staff-modal-step-summary-list" id="staffModalStepSummaryList" hidden></div>
-
-                    <section class="staff-modal-step-section" data-staff-step="manageableDevices">
-                        <div class="staff-modal-step-heading">
-                            <div>
-                                <div class="staff-modal-step-title">步骤 1 · 可管理设备<span class="required">*</span></div>
-                                <p class="staff-modal-step-note">先选择该人员可管理的设备，后续页面可见设备都从这里选择</p>
-                            </div>
-                            <span class="device-selection-stats" id="deviceSelectionStats">已选 0 / 共 0</span>
+                <section class="section-block permission-matrix-section" id="staffPermissionMatrix">
+                    <div class="permission-section-head">
+                        <div>
+                            <div class="section-title">页面权限<span class="required">*</span></div>
+                            <p class="permission-section-note">在每个页面行里设置可进入页面和可查看设备。</p>
                         </div>
-                        <div class="device-picker-entry">
-                            <p class="module-scope-note">选择完成后，会自动带入后续可设置范围的页面。</p>
-                            <button type="button" class="device-picker-btn" id="openDeviceSelectorBtn" onclick="openDeviceSelector()">选择可管理设备</button>
-                        </div>
-                        <div class="selected-device-summary" id="selectedDeviceSummary"></div>
-                    </section>
-
-                    <section class="staff-modal-step-section" data-staff-step="pagePermissions">
-                        <div class="permission-section-head">
-                            <div>
-                                <div class="staff-modal-step-title">步骤 2 · 页面权限<span class="required">*</span></div>
-                                <p class="permission-section-note">按模块快速勾选，一屏完成。</p>
-                            </div>
-                            <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
-                        </div>
-                        <div class="permission-tree" id="permissionTree">
+                        <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                    </div>
+                    <div class="permission-tree" id="permissionTree">
                         <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
                             <div class="permission-group-main">
                                 <label class="permission-group-head">
@@ -1923,7 +1983,7 @@
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="devices" data-selected="false" data-expanded="false">
-                            <div class="permission-group-main">
+                            <div class="permission-group-main has-scope">
                                 <label class="permission-group-head">
                                     <input type="checkbox" class="permission-group-checkbox" data-permission-parent="devices" onchange="handlePermissionParentChange('devices', this.checked)">
                                     <span class="permission-group-title">设备</span>
@@ -1932,13 +1992,14 @@
                                     <span class="permission-group-summary-text" data-permission-summary="devices">点击选择权限</span>
                                 </button>
                                 <button type="button" class="permission-group-count" data-permission-count="devices" onclick="togglePermissionGroup('devices')">0/1</button>
+                                <div class="permission-scope-slot" data-module-scope-row="devices"></div>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-devices" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.devices" data-permission-group-child="devices" onchange="handlePermissionChildChange('devices')"><span>查看设备</span></label>
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="products" data-selected="false" data-expanded="false">
-                            <div class="permission-group-main">
+                            <div class="permission-group-main has-scope">
                                 <label class="permission-group-head">
                                     <input type="checkbox" class="permission-group-checkbox" data-permission-parent="products" onchange="handlePermissionParentChange('products', this.checked)">
                                     <span class="permission-group-title">商品管理</span>
@@ -1947,6 +2008,7 @@
                                     <span class="permission-group-summary-text" data-permission-summary="products">点击选择权限</span>
                                 </button>
                                 <button type="button" class="permission-group-count" data-permission-count="products" onclick="togglePermissionGroup('products')">0/5</button>
+                                <div class="permission-scope-slot" data-module-scope-row="products"></div>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-products" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.products" data-permission-group-child="products" onchange="handlePermissionChildChange('products')"><span>查看商品管理</span></label>
@@ -1957,7 +2019,7 @@
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="materials" data-selected="false" data-expanded="false">
-                            <div class="permission-group-main">
+                            <div class="permission-group-main has-scope">
                                 <label class="permission-group-head">
                                     <input type="checkbox" class="permission-group-checkbox" data-permission-parent="materials" onchange="handlePermissionParentChange('materials', this.checked)">
                                     <span class="permission-group-title">物料</span>
@@ -1966,6 +2028,7 @@
                                     <span class="permission-group-summary-text" data-permission-summary="materials">点击选择权限</span>
                                 </button>
                                 <button type="button" class="permission-group-count" data-permission-count="materials" onclick="togglePermissionGroup('materials')">0/3</button>
+                                <div class="permission-scope-slot" data-module-scope-row="materials"></div>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-materials" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.materials" data-permission-group-child="materials" onchange="handlePermissionChildChange('materials')"><span>查看物料</span></label>
@@ -1974,7 +2037,7 @@
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="orders" data-selected="false" data-expanded="false">
-                            <div class="permission-group-main">
+                            <div class="permission-group-main has-scope">
                                 <label class="permission-group-head">
                                     <input type="checkbox" class="permission-group-checkbox" data-permission-parent="orders" onchange="handlePermissionParentChange('orders', this.checked)">
                                     <span class="permission-group-title">订单</span>
@@ -1983,6 +2046,7 @@
                                     <span class="permission-group-summary-text" data-permission-summary="orders">点击选择权限</span>
                                 </button>
                                 <button type="button" class="permission-group-count" data-permission-count="orders" onclick="togglePermissionGroup('orders')">0/2</button>
+                                <div class="permission-scope-slot" data-module-scope-row="orders"></div>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-orders" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.orders" data-permission-group-child="orders" onchange="handlePermissionChildChange('orders')"><span>查看订单</span></label>
@@ -1990,7 +2054,7 @@
                             </div>
                         </div>
                         <div class="permission-group-row" data-permission-group="faults" data-selected="false" data-expanded="false">
-                            <div class="permission-group-main">
+                            <div class="permission-group-main has-scope">
                                 <label class="permission-group-head">
                                     <input type="checkbox" class="permission-group-checkbox" data-permission-parent="faults" onchange="handlePermissionParentChange('faults', this.checked)">
                                     <span class="permission-group-title">故障列表</span>
@@ -1999,6 +2063,7 @@
                                     <span class="permission-group-summary-text" data-permission-summary="faults">点击选择权限</span>
                                 </button>
                                 <button type="button" class="permission-group-count" data-permission-count="faults" onclick="togglePermissionGroup('faults')">0/1</button>
+                                <div class="permission-scope-slot" data-module-scope-row="faults"></div>
                             </div>
                             <div class="permission-group-options" id="permissionOptions-faults" hidden>
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.faults" data-permission-group-child="faults" onchange="handlePermissionChildChange('faults')"><span>查看故障列表</span></label>
@@ -2020,20 +2085,8 @@
                                 <label class="permission-inline-option"><input type="checkbox" name="permission" value="ops.staff.manage" data-permission-group-child="staff" onchange="handlePermissionChildChange('staff')"><span>人员维护</span></label>
                             </div>
                         </div>
-                        </div>
-                    </section>
-
-                    <section class="staff-modal-step-section module-scope-section" data-staff-step="pageDeviceScopes">
-                        <div class="staff-modal-step-heading">
-                            <div>
-                                <div class="staff-modal-step-title">步骤 3 · 页面设备范围</div>
-                                <p class="staff-modal-step-note">只显示已勾选且当前真正支持设备范围的页面；其他页面不在这里出现</p>
-                                <p class="module-scope-note">默认继承全部可管理设备；只有切到“指定设备”时，才需要进一步选择</p>
-                            </div>
-                        </div>
-                        <div class="module-scope-list" id="moduleDeviceScopeRows"></div>
-                    </section>
-                </div>
+                    </div>
+                </section>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="closeStaffModal()">取消</button>
@@ -2329,8 +2382,6 @@
         let deviceSearchKeyword = '';
         let showOnlySelectedDevices = false;
         let currentModuleDeviceScopes = {};
-        let currentStaffModalStep = 'manageableDevices';
-        let completedStaffModalSteps = new Set();
         let activeModuleScopeKey = '';
         let moduleScopeDeviceSelectionSet = new Set();
         let moduleScopeSearchKeyword = '';
@@ -2431,14 +2482,10 @@
 
         const deviceScopedModuleConfigs = [
             { moduleKey: 'devices', label: '设备', permission: 'ops.devices' },
+            { moduleKey: 'products', label: '商品管理', permission: 'ops.products' },
+            { moduleKey: 'materials', label: '物料', permission: 'ops.materials' },
             { moduleKey: 'orders', label: '订单', permission: 'ops.orders' },
             { moduleKey: 'faults', label: '故障列表', permission: 'ops.faults' }
-        ];
-
-        const staffModalStepConfigs = [
-            { key: 'manageableDevices', label: '可管理设备', title: '步骤 1 · 可管理设备' },
-            { key: 'pagePermissions', label: '页面权限', title: '步骤 2 · 页面权限' },
-            { key: 'pageDeviceScopes', label: '页面设备范围', title: '步骤 3 · 页面设备范围' }
         ];
 
         const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
@@ -2595,92 +2642,9 @@
             }, {});
         }
 
-        function getStaffModalStepIndex(stepKey) {
-            return staffModalStepConfigs.findIndex((item) => item.key === stepKey);
-        }
-
-        function getCompletedStaffModalSteps(selectedDevices = getAssignedDeviceIds(), selectedPermissions = getSelectedPermissionValues()) {
-            const completedSteps = new Set();
-            if (Array.isArray(selectedDevices) && selectedDevices.length) {
-                completedSteps.add('manageableDevices');
-            }
-            if (completedSteps.has('manageableDevices') && Array.isArray(selectedPermissions) && selectedPermissions.length) {
-                completedSteps.add('pagePermissions');
-            }
-            return completedSteps;
-        }
-
-        function getNextRequiredStaffModalStep(selectedDevices = getAssignedDeviceIds(), selectedPermissions = getSelectedPermissionValues()) {
-            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
-                return 'manageableDevices';
-            }
-            if (!Array.isArray(selectedPermissions) || !selectedPermissions.length) {
-                return 'pagePermissions';
-            }
-            return 'pageDeviceScopes';
-        }
-
-        function getStaffModalMaxOpenIndex(currentStep = currentStaffModalStep, completedSteps = completedStaffModalSteps) {
-            const completedIndexes = Array.from(completedSteps).map((stepKey) => getStaffModalStepIndex(stepKey));
-            const lastCompletedIndex = completedIndexes.length ? Math.max(...completedIndexes) : -1;
-            const currentIndex = getStaffModalStepIndex(currentStep);
-            return Math.max(lastCompletedIndex + 1, currentIndex);
-        }
-
-        function canOpenStaffModalStep(stepKey, currentStep = currentStaffModalStep, completedSteps = completedStaffModalSteps) {
-            const stepIndex = getStaffModalStepIndex(stepKey);
-            if (stepIndex === -1) return false;
-            return stepIndex <= getStaffModalMaxOpenIndex(currentStep, completedSteps);
-        }
-
-        function getStaffModalStepState(stepKey) {
-            if (stepKey === currentStaffModalStep) return 'current';
-            if (completedStaffModalSteps.has(stepKey)) return 'done';
-            return 'locked';
-        }
-
-        function getSelectedPermissionGroupLabels(selectedPermissions = getSelectedPermissionValues()) {
-            const permissionSet = new Set(Array.isArray(selectedPermissions) ? selectedPermissions : []);
-            return permissionTreeGroups
-                .filter((group) => group.children.some((child) => permissionSet.has(child.value)))
-                .map((group) => group.label);
-        }
-
-        function buildManageableDevicesStepSummary(selectedDevices = getAssignedDeviceIds()) {
-            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
-                return '暂未选择可管理设备';
-            }
-            const preview = selectedDevices.slice(0, 5).join('、');
-            const suffix = selectedDevices.length > 5 ? ` 等 ${selectedDevices.length} 台` : '';
-            return `已选 ${selectedDevices.length} 台：${preview}${suffix}`;
-        }
-
-        function buildPermissionsStepSummary(selectedPermissions = getSelectedPermissionValues()) {
-            const labels = getSelectedPermissionGroupLabels(selectedPermissions);
-            if (!labels.length) {
-                return '暂未选择页面权限';
-            }
-            return `已选 ${labels.length} 项：${labels.join('、')}`;
-        }
-
         function getAvailableScopedModulesForStep(selectedPermissions = getSelectedPermissionValues()) {
             const permissionSet = new Set(Array.isArray(selectedPermissions) ? selectedPermissions : []);
             return deviceScopedModuleConfigs.filter((config) => permissionSet.has(config.permission));
-        }
-
-        function buildPageScopeStepSummary(selectedPermissions = getSelectedPermissionValues()) {
-            const availableModules = getAvailableScopedModulesForStep(selectedPermissions);
-            const assignedDeviceIds = getAssignedDeviceIds();
-            if (!availableModules.length) {
-                return '当前无需单独设置页面设备范围';
-            }
-            return availableModules.map((config) => {
-                const scope = currentModuleDeviceScopes[config.moduleKey] || { mode: 'inherit', deviceIds: [] };
-                if (scope.mode === 'custom') {
-                    return `${config.label} ${scope.deviceIds.length}/${assignedDeviceIds.length || 0} 台`;
-                }
-                return `${config.label} 全部可管理设备`;
-            }).join(' · ');
         }
 
         function getEmptyCustomScopeModuleKeys(moduleDeviceScopes, selectedPermissions = getSelectedPermissionValues()) {
@@ -2693,84 +2657,9 @@
                 .map((config) => config.moduleKey);
         }
 
-        function buildStepSummaryContent(stepKey) {
-            if (stepKey === 'manageableDevices') {
-                return buildManageableDevicesStepSummary();
-            }
-            if (stepKey === 'pagePermissions') {
-                return buildPermissionsStepSummary();
-            }
-            return buildPageScopeStepSummary();
-        }
-
-        function updateStaffModalStepUi() {
-            const stepbar = document.getElementById('staffModalStepbar');
-            const summaryList = document.getElementById('staffModalStepSummaryList');
-            const currentIndex = getStaffModalStepIndex(currentStaffModalStep);
-
-            if (stepbar) {
-                Array.from(stepbar.querySelectorAll('[data-staff-step-trigger]')).forEach((button) => {
-                    const stepKey = button.getAttribute('data-staff-step-trigger');
-                    const state = getStaffModalStepState(stepKey);
-                    button.setAttribute('data-state', state);
-                    button.disabled = !canOpenStaffModalStep(stepKey);
-                });
-            }
-
-            if (summaryList) {
-                const summaryMarkup = staffModalStepConfigs
-                    .filter((config) => completedStaffModalSteps.has(config.key) && getStaffModalStepIndex(config.key) < currentIndex)
-                    .map((config) => `
-                        <div class="staff-modal-step-summary-row">
-                            <span class="staff-modal-step-summary-title">${config.title}</span>
-                            <span class="staff-modal-step-summary-text">${buildStepSummaryContent(config.key)}</span>
-                            <button type="button" class="staff-modal-step-summary-action" onclick="openCompletedStaffModalStep('${config.key}')">修改</button>
-                        </div>
-                    `)
-                    .join('');
-                summaryList.innerHTML = summaryMarkup;
-                summaryList.hidden = !summaryMarkup;
-            }
-
-            Array.from(document.querySelectorAll('[data-staff-step]')).forEach((section) => {
-                const stepKey = section.getAttribute('data-staff-step');
-                const isCurrent = stepKey === currentStaffModalStep;
-                section.hidden = !isCurrent;
-                section.setAttribute('data-step-state', isCurrent ? 'current' : getStaffModalStepState(stepKey));
-            });
-        }
-
-        function syncStaffModalProgress({ preferredStepKey = '', autoAdvance = false } = {}) {
-            const selectedDevices = getAssignedDeviceIds();
-            const selectedPermissions = getSelectedPermissionValues();
-            const nextCompletedSteps = getCompletedStaffModalSteps(selectedDevices, selectedPermissions);
-            const nextRequiredStep = getNextRequiredStaffModalStep(selectedDevices, selectedPermissions);
-
-            completedStaffModalSteps = nextCompletedSteps;
-
-            if (preferredStepKey) {
-                currentStaffModalStep = canOpenStaffModalStep(preferredStepKey, nextRequiredStep, nextCompletedSteps)
-                    ? preferredStepKey
-                    : nextRequiredStep;
-            } else if (autoAdvance) {
-                currentStaffModalStep = nextRequiredStep;
-            } else if (!canOpenStaffModalStep(currentStaffModalStep, nextRequiredStep, nextCompletedSteps)) {
-                currentStaffModalStep = nextRequiredStep;
-            }
-
-            updateStaffModalStepUi();
-        }
-
-        function openCompletedStaffModalStep(stepKey) {
-            if (!canOpenStaffModalStep(stepKey)) {
-                return;
-            }
-            currentStaffModalStep = stepKey;
-            updateStaffModalStepUi();
-        }
-
-        function handleStaffModalStepTrigger(stepKey) {
-            openCompletedStaffModalStep(stepKey);
+        function buildEmptyCustomScopeMessage(config) {
+            const label = config?.label || '当前';
+            return `${label}页面已设置为“指定设备”，但还没有可查看设备。请点击“选择设备”，或改为“全部可管理设备”。`;
         }
 
         function resolveStaffModalValidationResult({
@@ -2796,8 +2685,8 @@
             if (invalidScopeKeys.length) {
                 const config = getDeviceScopedModuleConfig(invalidScopeKeys[0]);
                 return {
-                    stepKey: 'pageDeviceScopes',
-                    message: `${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`
+                    stepKey: 'permissionMatrix',
+                    message: buildEmptyCustomScopeMessage(config)
                 };
             }
             return { stepKey: '', message: '' };
@@ -2852,7 +2741,7 @@
             const invalidScopeKeys = getEmptyCustomScopeModuleKeys(normalizedScopes, selectedPermissions);
             if (invalidScopeKeys.length) {
                 const config = getDeviceScopedModuleConfig(invalidScopeKeys[0]);
-                return `${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`;
+                return buildEmptyCustomScopeMessage(config);
             }
             return '';
         }
@@ -2900,7 +2789,6 @@
                 input.checked = checked;
             });
             refreshPermissionSelectionUi();
-            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function handlePermissionChildChange(groupKey) {
@@ -2930,7 +2818,6 @@
             }
 
             refreshPermissionSelectionUi();
-            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function updatePermissionSelectionStats() {
@@ -3013,7 +2900,7 @@
                 getEmptyCustomScopeModuleKeys(normalizedModuleDeviceScopes, selectedPermissions).forEach((moduleKey) => {
                     if (!previousInvalidKeys.has(moduleKey)) {
                         const config = getDeviceScopedModuleConfig(moduleKey);
-                        showToast(`${config?.label || '当前'}页面已无可见设备，请重新选择范围或改回“全部可管理设备”`);
+                        showToast(buildEmptyCustomScopeMessage(config));
                     }
                 });
             }
@@ -3028,64 +2915,95 @@
             return `${device.id}${device.locationLabel ? ` · ${device.locationLabel}` : ''}`;
         }
 
+        function buildModuleScopeDeviceChipLabel(deviceId) {
+            return String(deviceId || '').trim();
+        }
+
         function renderModuleDeviceScopeRows() {
-            const container = document.getElementById('moduleDeviceScopeRows');
-            if (!container) return;
-
             const assignedDeviceIds = getAssignedDeviceIds();
-            const availableModules = getAvailableScopedModulesForStep();
-            const invalidScopeKeys = new Set(getEmptyCustomScopeModuleKeys(currentModuleDeviceScopes));
+            const selectedPermissions = getSelectedPermissionValues();
+            const availableModuleKeys = new Set(getAvailableScopedModulesForStep(selectedPermissions).map((config) => config.moduleKey));
+            const invalidScopeKeys = new Set(getEmptyCustomScopeModuleKeys(currentModuleDeviceScopes, selectedPermissions));
 
-            if (!availableModules.length) {
-                container.innerHTML = '<div class="module-scope-empty">当前未勾选支持设备范围的页面，保存后默认使用全部可管理设备。</div>';
-                return;
-            }
+            deviceScopedModuleConfigs.forEach((config) => {
+                const slot = document.querySelector(`[data-module-scope-row="${config.moduleKey}"]`);
+                if (!slot) return;
 
-            container.innerHTML = availableModules.map((config) => {
+                const parentRow = slot.closest('.permission-group-row');
+                const isAuthorized = availableModuleKeys.has(config.moduleKey);
                 const scope = currentModuleDeviceScopes[config.moduleKey] || { mode: 'inherit', deviceIds: [] };
-                const selectedLabels = scope.deviceIds.map((deviceId) => buildModuleScopeDeviceLabel(deviceId));
+                const selectedLabels = scope.deviceIds.map((deviceId) => buildModuleScopeDeviceChipLabel(deviceId));
                 const isWarning = invalidScopeKeys.has(config.moduleKey);
+                if (parentRow) {
+                    parentRow.setAttribute('data-scope-warning', isWarning ? 'true' : 'false');
+                }
+
+                if (!isAuthorized) {
+                    slot.innerHTML = `
+                        <div class="permission-scope-inline is-muted">
+                            <span class="permission-scope-label">设备范围</span>
+                            <span class="permission-scope-summary">勾选查看权限后可设置</span>
+                        </div>
+                    `;
+                    return;
+                }
+
                 const scopeSummary = scope.mode === 'inherit'
-                    ? `当前可查看设备：全部可管理设备（${assignedDeviceIds.length} / ${assignedDeviceIds.length} 台）`
-                    : `当前可查看设备：已指定 ${scope.deviceIds.length} / ${assignedDeviceIds.length} 台设备`;
-                const selectedMarkup = scope.mode === 'inherit'
-                    ? '<span class="module-scope-chip">全部可管理设备</span>'
-                    : selectedLabels.length
-                        ? selectedLabels.slice(0, 3).map((label) => `<span class="module-scope-chip">${label}</span>`).join('') + (selectedLabels.length > 3 ? `<span class="module-scope-chip">+${selectedLabels.length - 3}台</span>` : '')
-                        : '<span class="module-scope-empty">暂未指定设备</span>';
+                    ? `全部可管理设备（${assignedDeviceIds.length} / ${assignedDeviceIds.length} 台）`
+                    : scope.deviceIds.length
+                        ? `指定设备 ${scope.deviceIds.length} / ${assignedDeviceIds.length} 台`
+                        : `指定设备 0 / ${assignedDeviceIds.length} 台（保存前需处理）`;
+                const selectedMarkup = scope.mode === 'custom' && selectedLabels.length
+                    ? `<div class="module-scope-selected">${selectedLabels.slice(0, 2).map((label) => `<span class="module-scope-chip">${label}</span>`).join('')}${selectedLabels.length > 2 ? `<span class="module-scope-chip">+${selectedLabels.length - 2}台</span>` : ''}</div>`
+                    : '';
                 const warningMarkup = isWarning
-                    ? `<div class="module-scope-warning">${config.label}页面已无可见设备，请重新选择范围或改回“全部可管理设备”。</div>`
+                    ? `<div class="module-scope-warning">${buildEmptyCustomScopeMessage(config)}</div>`
+                    : '';
+                const configButtonMarkup = scope.mode === 'custom'
+                    ? `<button type="button" class="module-scope-config-btn" onclick="openModuleDeviceScopeSelector('${config.moduleKey}')">${scope.deviceIds.length ? '重新选择' : '选择设备'}</button>`
+                    : `<button type="button" class="module-scope-config-btn" onclick="openModuleDeviceScopeSelector('${config.moduleKey}', true)">限制设备</button>`;
+                const resetButtonMarkup = scope.mode === 'custom'
+                    ? `<button type="button" class="module-scope-mode" onclick="setModuleDeviceScopeMode('${config.moduleKey}', 'inherit')">全部可管理设备</button>`
                     : '';
 
-                return `
-                    <div class="module-scope-row module-scope-row-compact ${isWarning ? 'is-warning' : ''}">
-                        <div class="module-scope-main">
-                            <div class="module-scope-header">
-                                <span class="module-scope-title">${config.label}</span>
-                                <span class="module-scope-status">已授权</span>
-                            </div>
-                            <div class="module-scope-summary">${scopeSummary}</div>
+                slot.innerHTML = `
+                    <div class="permission-scope-inline ${isWarning ? 'is-warning' : ''}">
+                        <div class="permission-scope-copy">
+                            <span class="permission-scope-label">设备范围</span>
+                            <span class="permission-scope-summary">${scopeSummary}</span>
                             ${warningMarkup}
-                            <div class="module-scope-selected">
-                                ${selectedMarkup}
-                            </div>
+                            ${selectedMarkup}
                         </div>
                         <div class="module-scope-controls">
-                            <button type="button" class="module-scope-mode ${scope.mode === 'inherit' ? 'is-active' : ''}" onclick="setModuleDeviceScopeMode('${config.moduleKey}', 'inherit')">全部可管理设备</button>
-                            <button type="button" class="module-scope-mode ${scope.mode === 'custom' ? 'is-active' : ''}" onclick="setModuleDeviceScopeMode('${config.moduleKey}', 'custom')">指定设备</button>
-                            <button type="button" class="module-scope-config-btn" ${scope.mode === 'custom' ? '' : 'disabled'} onclick="openModuleDeviceScopeSelector('${config.moduleKey}')">${scope.mode === 'custom' ? '重新选择' : '选择设备'}</button>
+                            ${resetButtonMarkup}
+                            ${configButtonMarkup}
                         </div>
                     </div>
                 `;
-            }).join('');
+            });
+        }
+
+        function buildNextModuleDeviceScope(currentScope, mode, assignedDeviceIds = getAssignedDeviceIds()) {
+            const normalizedAssignedDeviceIds = Array.from(new Set((Array.isArray(assignedDeviceIds) ? assignedDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+            const currentDeviceIds = Array.from(new Set((Array.isArray(currentScope?.deviceIds) ? currentScope.deviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter((deviceId) => normalizedAssignedDeviceIds.includes(deviceId))));
+
+            if (mode !== 'custom') {
+                return { mode: 'inherit', deviceIds: [] };
+            }
+
+            return {
+                mode: 'custom',
+                deviceIds: currentDeviceIds.length ? currentDeviceIds : normalizedAssignedDeviceIds
+            };
         }
 
         function setModuleDeviceScopeMode(moduleKey, mode) {
             const currentScope = currentModuleDeviceScopes[moduleKey] || { mode: 'inherit', deviceIds: [] };
-            const nextScope = {
-                mode: mode === 'custom' ? 'custom' : 'inherit',
-                deviceIds: mode === 'custom' ? currentScope.deviceIds || [] : []
-            };
+            const nextScope = buildNextModuleDeviceScope(currentScope, mode);
 
             currentModuleDeviceScopes = normalizeModuleDeviceScopes({
                 ...currentModuleDeviceScopes,
@@ -3095,7 +3013,7 @@
             renderModuleDeviceScopeRows();
         }
 
-        function openModuleDeviceScopeSelector(moduleKey) {
+        function openModuleDeviceScopeSelector(moduleKey, startFromAllDevices = false) {
             const config = getDeviceScopedModuleConfig(moduleKey);
             const assignedOptions = getAssignedDeviceOptions();
             if (!config) return;
@@ -3106,7 +3024,9 @@
             }
 
             activeModuleScopeKey = moduleKey;
-            moduleScopeDeviceSelectionSet = new Set((currentModuleDeviceScopes[moduleKey] || { deviceIds: [] }).deviceIds || []);
+            moduleScopeDeviceSelectionSet = new Set(startFromAllDevices
+                ? assignedOptions.map((device) => device.id)
+                : (currentModuleDeviceScopes[moduleKey] || { deviceIds: [] }).deviceIds || []);
             moduleScopeSearchKeyword = '';
             showOnlySelectedModuleScopeDevices = false;
 
@@ -3187,6 +3107,27 @@
             }
         }
 
+        function buildSavedModuleDeviceScopeSelection(selectedDeviceIds, assignedDeviceIds = getAssignedDeviceIds()) {
+            const normalizedAssignedDeviceIds = Array.from(new Set((Array.isArray(assignedDeviceIds) ? assignedDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter(Boolean)));
+            const normalizedSelectedDeviceIds = Array.from(new Set((Array.isArray(selectedDeviceIds) ? selectedDeviceIds : [])
+                .map((deviceId) => String(deviceId || '').trim())
+                .filter((deviceId) => normalizedAssignedDeviceIds.includes(deviceId))));
+            const selectedSet = new Set(normalizedSelectedDeviceIds);
+            const includesAllAssignedDevices = normalizedAssignedDeviceIds.length > 0
+                && normalizedAssignedDeviceIds.every((deviceId) => selectedSet.has(deviceId));
+
+            if (includesAllAssignedDevices) {
+                return { mode: 'inherit', deviceIds: [] };
+            }
+
+            return {
+                mode: 'custom',
+                deviceIds: normalizedSelectedDeviceIds
+            };
+        }
+
         function saveModuleDeviceScopeSelection() {
             if (!activeModuleScopeKey) {
                 closeModuleDeviceScopeSelector();
@@ -3195,15 +3136,11 @@
 
             currentModuleDeviceScopes = normalizeModuleDeviceScopes({
                 ...currentModuleDeviceScopes,
-                [activeModuleScopeKey]: {
-                    mode: 'custom',
-                    deviceIds: Array.from(moduleScopeDeviceSelectionSet)
-                }
+                [activeModuleScopeKey]: buildSavedModuleDeviceScopeSelection(Array.from(moduleScopeDeviceSelectionSet))
             }, getAssignedDeviceIds());
 
             closeModuleDeviceScopeSelector();
             renderModuleDeviceScopeRows();
-            syncStaffModalProgress({ preferredStepKey: 'pageDeviceScopes' });
         }
 
         function getManagersByMerchant(merchantId) {
@@ -3342,7 +3279,6 @@
             updateStaffModalState();
             resetStaffForm();
             renderDevicePicker(selectedMerchantId, []);
-            syncStaffModalProgress({ preferredStepKey: 'manageableDevices' });
             document.getElementById('staffModal').classList.add('active');
         }
 
@@ -3364,7 +3300,6 @@
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
             closeModuleDeviceScopeSelector();
-            syncStaffModalProgress({ preferredStepKey: 'manageableDevices' });
             document.getElementById('staffModal').classList.add('active');
         }
 
@@ -3411,8 +3346,6 @@
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
             currentModuleDeviceScopes = createDefaultModuleDeviceScopes();
-            currentStaffModalStep = 'manageableDevices';
-            completedStaffModalSteps = new Set();
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = false;
@@ -3420,15 +3353,12 @@
 
             expandedPermissionGroups.clear();
             renderPermissionTree();
-            updateStaffModalStepUi();
         }
 
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
-            currentStaffModalStep = 'manageableDevices';
-            completedStaffModalSteps = new Set();
 
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
@@ -3436,7 +3366,6 @@
             });
             expandedPermissionGroups.clear();
             renderPermissionTree();
-            updateStaffModalStepUi();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -3621,14 +3550,12 @@
             }
             renderDeviceSelectionSummary();
             syncModuleDeviceScopeStateWithAssignedDevices(true);
-            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function removeSelectedDevice(deviceId) {
             deviceSelectionSet.delete(deviceId);
             renderDevicePickerList();
             syncModuleDeviceScopeStateWithAssignedDevices(true);
-            syncStaffModalProgress({ autoAdvance: true });
         }
 
         function renderDeviceSelectionSummary() {
@@ -3651,6 +3578,18 @@
             }).join('');
             const moreText = selectedDevices.length > maxVisible ? `<span class="selected-more">+${selectedDevices.length - maxVisible}台</span>` : '';
             summary.innerHTML = chips + moreText;
+        }
+
+        function focusStaffModalValidationTarget(targetKey) {
+            const targetIdMap = {
+                manageableDevices: 'staffDeviceSection',
+                pagePermissions: 'staffPermissionMatrix',
+                permissionMatrix: 'staffPermissionMatrix'
+            };
+            const target = document.getElementById(targetIdMap[targetKey] || '');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function saveStaff() {
@@ -3676,8 +3615,7 @@
             });
             if (validationResult.message) {
                 if (validationResult.stepKey) {
-                    currentStaffModalStep = validationResult.stepKey;
-                    updateStaffModalStepUi();
+                    focusStaffModalValidationTarget(validationResult.stepKey);
                 }
                 showToast(validationResult.message);
                 return;

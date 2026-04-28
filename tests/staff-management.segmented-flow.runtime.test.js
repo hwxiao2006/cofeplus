@@ -68,22 +68,19 @@ function extractConstBlock(source, constName) {
 function loadSandbox() {
   const sandbox = {
     console,
-    currentStaffModalStep: 'manageableDevices',
-    completedStaffModalSteps: new Set(),
     globalThis: null
   };
   sandbox.globalThis = sandbox;
   vm.createContext(sandbox);
 
   vm.runInContext(extractConstBlock(html, 'deviceScopedModuleConfigs'), sandbox);
-  vm.runInContext(extractConstBlock(html, 'staffModalStepConfigs'), sandbox);
   vm.runInContext(extractFunctionSource(html, 'getDeviceScopedModuleConfig'), sandbox);
-  vm.runInContext(extractFunctionSource(html, 'getStaffModalStepIndex'), sandbox);
-  vm.runInContext(extractFunctionSource(html, 'getStaffModalMaxOpenIndex'), sandbox);
 
   [
+    'buildEmptyCustomScopeMessage',
+    'buildNextModuleDeviceScope',
+    'buildSavedModuleDeviceScopeSelection',
     'getAvailableScopedModulesForStep',
-    'canOpenStaffModalStep',
     'getEmptyCustomScopeModuleKeys',
     'resolveStaffModalValidationResult'
   ].forEach((functionName) => {
@@ -93,29 +90,39 @@ function loadSandbox() {
   return sandbox;
 }
 
-test('future steps stay locked until previous steps are complete', () => {
-  const sandbox = loadSandbox();
-  sandbox.currentStaffModalStep = 'manageableDevices';
-  sandbox.completedStaffModalSteps = new Set();
-
-  assert.strictEqual(sandbox.canOpenStaffModalStep('pagePermissions'), false);
-  assert.strictEqual(sandbox.canOpenStaffModalStep('pageDeviceScopes'), false);
-});
-
-test('completed earlier steps stay reopenable from the step header', () => {
-  const sandbox = loadSandbox();
-  sandbox.currentStaffModalStep = 'pageDeviceScopes';
-  sandbox.completedStaffModalSteps = new Set(['manageableDevices', 'pagePermissions']);
-
-  assert.strictEqual(sandbox.canOpenStaffModalStep('manageableDevices'), true);
-  assert.strictEqual(sandbox.canOpenStaffModalStep('pagePermissions'), true);
-});
-
-test('step 3 only includes authorized scoped modules', () => {
+test('permission matrix only treats authorized device-scoped modules as active', () => {
   const sandbox = loadSandbox();
   const modules = sandbox.getAvailableScopedModulesForStep(['ops.overview', 'ops.orders', 'ops.staff']);
 
   assert.deepStrictEqual(Array.from(modules.map((item) => item.moduleKey)), ['orders']);
+});
+
+test('custom device scope starts from all manageable devices so admins only remove blocked devices', () => {
+  const sandbox = loadSandbox();
+
+  const result = sandbox.buildNextModuleDeviceScope(
+      { mode: 'inherit', deviceIds: [] },
+      'custom',
+      ['RCK386', 'RCK385']
+  );
+
+  assert.deepStrictEqual(
+    JSON.parse(JSON.stringify(result)),
+    { mode: 'custom', deviceIds: ['RCK386', 'RCK385'] }
+  );
+});
+
+test('saving all selected devices keeps page scope inherited', () => {
+  const sandbox = loadSandbox();
+  const result = sandbox.buildSavedModuleDeviceScopeSelection(
+    ['RCK386', 'RCK385'],
+    ['RCK386', 'RCK385']
+  );
+
+  assert.deepStrictEqual(
+    JSON.parse(JSON.stringify(result)),
+    { mode: 'inherit', deviceIds: [] }
+  );
 });
 
 test('custom scope pruned to zero stays invalid until manually fixed', () => {
@@ -126,19 +133,22 @@ test('custom scope pruned to zero stays invalid until manually fixed', () => {
   );
 
   assert.deepStrictEqual(Array.from(invalidKeys), ['faults']);
-  assert.strictEqual(
-    sandbox.resolveStaffModalValidationResult({
+  const result = sandbox.resolveStaffModalValidationResult({
       username: '王运维',
       phone: '13800138021',
       selectedPermissions: ['ops.faults'],
       selectedDevices: ['RCK386'],
       moduleDeviceScopes: { faults: { mode: 'custom', deviceIds: [] } }
-    }).stepKey,
-    'pageDeviceScopes'
+  });
+
+  assert.strictEqual(result.stepKey, 'permissionMatrix');
+  assert.strictEqual(
+    result.message,
+    '故障列表页面已设置为“指定设备”，但还没有可查看设备。请点击“选择设备”，或改为“全部可管理设备”。'
   );
 });
 
-test('basic info errors stay in the always-visible section instead of forcing step 1 open', () => {
+test('basic info errors stay in the always-visible section instead of focusing matrix', () => {
   const sandbox = loadSandbox();
   const result = sandbox.resolveStaffModalValidationResult({
     username: '',
