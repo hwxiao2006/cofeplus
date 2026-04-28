@@ -31,6 +31,22 @@
       .filter(Boolean)));
   }
 
+  function normalizeStaffPermissions(permissions) {
+    const normalized = Array.from(new Set((Array.isArray(permissions) ? permissions : [])
+      .map((item) => String(item || '').trim())
+      .filter(Boolean)));
+
+    if (normalized.includes('ops.staff.manage')) {
+      ['ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit'].forEach((permission) => {
+        if (!normalized.includes(permission)) {
+          normalized.push(permission);
+        }
+      });
+    }
+
+    return normalized;
+  }
+
   function hasModulePermission(staffRecord, moduleKey) {
     const permissionKey = DEVICE_SCOPED_MODULES[moduleKey];
     if (!permissionKey) return false;
@@ -63,7 +79,7 @@
       username: String(source.username || ''),
       phone: String(source.phone || ''),
       accountEnabled: source.accountEnabled !== false,
-      permissions: Array.isArray(source.permissions) ? source.permissions.slice() : [],
+      permissions: normalizeStaffPermissions(source.permissions),
       devices,
       moduleDeviceScopes: normalizeModuleDeviceScopes(source.moduleDeviceScopes, devices)
     };
@@ -128,6 +144,7 @@
     normalizeDeviceIds,
     normalizeModuleDeviceScopes,
     normalizeStaffRecord,
+    normalizeStaffPermissions,
     hasModulePermission,
     getModuleVisibleDeviceIds,
     readCurrentLoginSession,

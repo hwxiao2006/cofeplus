@@ -101,6 +101,24 @@ test('共享权限助手：应对缺失 moduleDeviceScopes 的历史员工默认
   assert.deepStrictEqual(Array.from(normalized.moduleDeviceScopes.orders.deviceIds), []);
 });
 
+test('共享权限助手：历史人员维护账号应自动获得新增货道编辑权限', () => {
+  const sandbox = loadStaffAccessSandbox({
+    cofeLoginSession: JSON.stringify({
+      account: '13800138021',
+      merchantId: 'C001',
+      merchantName: '星巴克咖啡'
+    }),
+    staffManagersData: JSON.stringify([{
+      ...activeStaffRecord,
+      permissions: ['ops.devices', 'ops.materials', 'ops.staff', 'ops.staff.manage']
+    }])
+  });
+
+  const access = sandbox.window.CofeAdminStaffAccess.resolveCurrentStaffAccess();
+  assert.ok(access.currentStaff.permissions.includes('ops.materials.laneNameEdit'));
+  assert.ok(access.currentStaff.permissions.includes('ops.materials.laneMaterialEdit'));
+});
+
 test('共享权限助手：自定义页面设备范围应裁剪为负责设备子集', () => {
   const sandbox = loadStaffAccessSandbox();
   const visibleOrders = sandbox.window.CofeAdminStaffAccess.getModuleVisibleDeviceIds(activeStaffRecord, 'orders');
