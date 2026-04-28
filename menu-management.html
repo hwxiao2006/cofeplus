@@ -1485,6 +1485,338 @@
             color: var(--text-secondary);
         }
 
+        .menu-latte-art-panel {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #fff;
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .menu-latte-art-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .menu-latte-art-copy {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .menu-latte-art-title {
+            margin: 0 0 4px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .menu-latte-art-desc {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .menu-latte-art-summary {
+            display: grid;
+            grid-template-columns: minmax(0, 220px);
+            gap: 12px;
+        }
+
+        .menu-latte-art-stat {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            background: linear-gradient(180deg, #fcfefe 0%, #f6fbfb 100%);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .menu-latte-art-stat strong {
+            font-size: 24px;
+            line-height: 1;
+            color: var(--text-primary);
+        }
+
+        .menu-latte-art-stat span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .menu-latte-art-stat.is-linked strong {
+            color: #0f766e;
+        }
+
+        .menu-latte-art-stat.is-unreferenced strong {
+            color: #64748b;
+        }
+
+        .menu-latte-art-stat.is-missing strong {
+            color: #b45309;
+        }
+
+        .menu-latte-art-missing,
+        .menu-latte-art-empty,
+        .menu-latte-art-copy-impact-card,
+        .menu-latte-art-copy-empty {
+            border: 1px dashed rgba(14, 35, 52, 0.14);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .menu-latte-art-toolbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .menu-latte-art-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 46px;
+        }
+
+        .menu-latte-art-search span {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .menu-latte-art-search .form-input {
+            padding-left: 0;
+        }
+
+        .menu-latte-art-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .menu-latte-art-item {
+            display: grid;
+            grid-template-columns: 92px minmax(0, 1fr);
+            gap: 14px;
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 14px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .menu-latte-art-thumb {
+            width: 92px;
+            height: 92px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f3f4f6;
+            border: 1px solid var(--border);
+        }
+
+        .menu-latte-art-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .menu-latte-art-item-main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu-latte-art-item-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .menu-latte-art-item-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .menu-latte-art-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 2px;
+        }
+
+        .menu-latte-art-item-meta {
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .menu-latte-art-action-btn,
+        .menu-latte-art-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 36px;
+            padding: 0 14px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .menu-latte-art-action-btn:hover,
+        .menu-latte-art-upload-btn:hover {
+            background: #f8fafc;
+            border-color: rgba(14, 35, 52, 0.18);
+            color: var(--text-primary);
+        }
+
+        .menu-latte-art-upload-btn input {
+            display: none;
+        }
+
+        .menu-latte-art-modal {
+            max-width: 780px;
+        }
+
+        .menu-latte-art-copy-modal {
+            max-width: 760px;
+        }
+
+        .menu-latte-art-copy-toolbar {
+            grid-template-columns: minmax(0, 280px) auto;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-latte-art-copy-toolbar .form-input {
+            max-width: 320px;
+        }
+
+        .menu-latte-art-copy-toolbar .copy-product-device-actions {
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .menu-latte-art-copy-toolbar .copy-product-device-actions .btn {
+            white-space: nowrap;
+        }
+
+        .menu-latte-art-upload-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 240px;
+            gap: 16px;
+        }
+
+        .menu-latte-art-upload-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .menu-latte-art-upload-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .menu-latte-art-preview {
+            min-height: 240px;
+            border: 1px dashed rgba(14, 35, 52, 0.14);
+            border-radius: 14px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .menu-latte-art-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .menu-latte-art-copy-source {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .menu-latte-art-copy-source strong {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .menu-latte-art-copy-source span {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .menu-latte-art-copy-impact,
+        .menu-latte-art-copy-results {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .menu-latte-art-copy-results .copy-product-device-empty,
+        .menu-latte-art-copy-results .menu-latte-art-copy-empty {
+            margin-top: 0;
+        }
+
+        .menu-latte-art-copy-result-group {
+            border: 1px solid rgba(14, 35, 52, 0.08);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: #fff;
+        }
+
+        .menu-latte-art-copy-result-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .menu-latte-art-copy-result-list {
+            padding-left: 18px;
+            margin: 0;
+            display: grid;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         .view-section {
             display: none;
         }
@@ -4699,6 +5031,11 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
+            .menu-latte-art-summary,
+            .menu-latte-art-upload-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .menu-topbar {
                 flex-direction: column;
                 align-items: stretch;
@@ -4840,7 +5177,7 @@
             .menu-inner-tabs {
                 width: 100%;
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
             }
 
             .menu-inner-tab-btn {
@@ -4872,6 +5209,24 @@
             .settings-footer {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .menu-latte-art-head,
+            .menu-latte-art-toolbar,
+            .menu-latte-art-summary,
+            .menu-latte-art-upload-grid {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .menu-latte-art-item {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-latte-art-thumb {
+                width: 100%;
+                height: 180px;
             }
 
             .business-tag-manager-panel {
@@ -5415,6 +5770,7 @@
                     </div>
                     <div class="menu-inner-tabs">
                         <button type="button" id="menuInnerTabManageBtn" class="menu-inner-tab-btn active" onclick="switchMenuInnerTab('manage')">菜单管理</button>
+                        <button type="button" id="menuInnerTabLatteArtBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('latteArt')">印花图片设置</button>
                         <button type="button" id="menuInnerTabSettingsBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('settings')">基本设置</button>
                         <button type="button" id="menuInnerTabBatchBtn" class="menu-inner-tab-btn" onclick="switchMenuInnerTab('batch')">批量改价</button>
                     </div>
@@ -5599,6 +5955,28 @@
                             <div class="menu-shared-mobile-sheet-body" id="menuManageProductSortSheetBody"></div>
                             <div class="menu-shared-mobile-sheet-footer" id="menuManageProductSortSheetFooter"></div>
                         </div>
+                    </div>
+
+                    <div id="menuLatteArtPanel" class="menu-inner-panel">
+                        <section class="menu-latte-art-panel">
+                            <div class="menu-latte-art-head">
+                                <div class="menu-latte-art-copy">
+                                    <h3 class="menu-latte-art-title">印花图片设置</h3>
+                                    <p class="menu-latte-art-desc">当前设备生效，上传后可直接复制到其他设备。</p>
+                                </div>
+                                <div class="settings-scope-pill" id="menuLatteArtScopeSummary">当前设备生效</div>
+                            </div>
+                            <div id="menuLatteArtSummary" class="menu-latte-art-summary"></div>
+                            <div id="menuLatteArtMissing" class="menu-latte-art-missing" style="display:none;"></div>
+                            <div class="menu-latte-art-toolbar">
+                                <label class="menu-latte-art-search">
+                                    <span>⌕</span>
+                                    <input type="text" id="menuLatteArtSearchInput" class="form-input" placeholder="搜索印花名称" oninput="setMenuLatteArtFilterKeyword(this.value)">
+                                </label>
+                                <button type="button" class="btn btn-primary" onclick="openMenuLatteArtUploadModal()">上传印花图片</button>
+                            </div>
+                            <div id="menuLatteArtLibraryList" class="menu-latte-art-list"></div>
+                        </section>
                     </div>
 
                     <div id="menuBatchPanel" class="menu-inner-panel">
@@ -5895,6 +6273,68 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="menuLatteArtUploadModal" onclick="if(event.target === this) closeMenuLatteArtUploadModal()">
+        <div class="modal menu-latte-art-modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="menuLatteArtUploadTitle">上传印花图片</h3>
+                <button class="modal-close" onclick="closeMenuLatteArtUploadModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="menu-latte-art-upload-grid">
+                    <div class="menu-latte-art-upload-fields">
+                        <div class="form-group">
+                            <label class="form-label" for="menuLatteArtNameInput">印花名称 <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="menuLatteArtNameInput" placeholder="例如：天鹅">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">印花图片 <span class="required">*</span></label>
+                            <label class="menu-latte-art-upload-btn">
+                                选择图片
+                                <input type="file" id="menuLatteArtFileInput" accept="image/*" onchange="handleMenuLatteArtFileChange(event)">
+                            </label>
+                            <div class="menu-latte-art-upload-note" id="menuLatteArtUploadHint">当前设备生效，印花名称将作为商品联动键。</div>
+                        </div>
+                    </div>
+                    <div id="menuLatteArtPreview" class="menu-latte-art-preview">选择图片后在这里预览</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeMenuLatteArtUploadModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveMenuLatteArtUpload()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="menuLatteArtCopyModal" onclick="if(event.target === this) closeMenuLatteArtCopyModal()">
+        <div class="modal menu-latte-art-copy-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">复制印花图片到其他设备</h3>
+                <button class="modal-close" onclick="closeMenuLatteArtCopyModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="menu-latte-art-copy-source">
+                    <strong id="menuLatteArtCopySourceName">-</strong>
+                    <span id="menuLatteArtCopySourceMeta">-</span>
+                </div>
+                <div class="copy-product-device-toolbar menu-latte-art-copy-toolbar">
+                    <input type="text" class="form-input" id="menuLatteArtCopySearchInput" placeholder="搜索设备或点位" oninput="setMenuLatteArtCopyTargetKeyword(this.value)">
+                    <div class="copy-product-device-actions">
+                        <button type="button" class="btn btn-default" onclick="selectAllMenuLatteArtCopyTargets()">全选当前筛选</button>
+                        <button type="button" class="btn btn-default" onclick="clearMenuLatteArtCopyTargets()">清空已选</button>
+                    </div>
+                </div>
+                <div class="copy-product-device-summary" id="menuLatteArtCopySummary">已选 0 台设备</div>
+                <div id="menuLatteArtCopyImpact" class="menu-latte-art-copy-impact"></div>
+                <div class="copy-product-device-list" id="menuLatteArtCopyTargetOptions"></div>
+                <div id="menuLatteArtCopyResults" class="menu-latte-art-copy-results"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeMenuLatteArtCopyModal()">取消</button>
+                <button class="btn btn-primary" id="menuLatteArtCopySubmitBtn" onclick="submitMenuLatteArtCopy()">开始复制</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 复制/编辑商品模态框 -->
     <div class="modal-overlay" id="productModal">
         <div class="modal">
@@ -5978,6 +6418,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/device-latte-art-library.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script>
 
@@ -6545,6 +6986,7 @@
         // ==================== 商品数据（多语言结构） ====================
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         const BusinessTags = window.CofeBusinessTags || globalThis.CofeBusinessTags;
+        const DeviceLatteArtLibrary = window.CofeDeviceLatteArtLibrary || globalThis.CofeDeviceLatteArtLibrary;
         const cloneSharedMenuProducts = sharedAdminMockData.helpers && typeof sharedAdminMockData.helpers.clone === 'function'
             ? sharedAdminMockData.helpers.clone
             : function(value) { return JSON.parse(JSON.stringify(value)); };
@@ -6554,7 +6996,8 @@
                 if (Array.isArray(storedDevices) && storedDevices.length) {
                     return cloneSharedMenuProducts(storedDevices);
                 }
-                return cloneSharedMenuProducts(sharedAdminMockData.defaultDevices || []);
+                const fallbackDevices = cloneSharedMenuProducts(sharedAdminMockData.defaultDevices || []);
+                return fallbackDevices;
             };
         const initialRuntimeDevices = loadRuntimeDeviceRecords();
 
@@ -6597,6 +7040,11 @@
         let overviewSelectedDevices = new Set();
         let currentTab = 'menu';
         let currentMenuInnerTab = 'manage';
+        let menuLatteArtUploadDraft = null;
+        let menuLatteArtPendingCopyItem = null;
+        let menuLatteArtCopyTargetDeviceIds = new Set();
+        let menuLatteArtCopyTargetKeyword = '';
+        let menuLatteArtFilterKeyword = '';
         let businessTagManagerDraft = null;
         let previewActiveCategory = '';
         let orderPreviewLang = '';
@@ -7269,7 +7717,7 @@
                 if (tab === 'overview' || tab === 'menu') {
                     currentTab = tab;
                 }
-                if (innerTab === 'manage' || innerTab === 'settings' || innerTab === 'batch') {
+                if (innerTab === 'manage' || innerTab === 'latteArt' || innerTab === 'settings' || innerTab === 'batch') {
                     currentMenuInnerTab = innerTab;
                 }
                 if (device && hasKnownDeviceSearchOption(device)) {
@@ -7334,7 +7782,7 @@
             if (state.tab === 'overview' || state.tab === 'menu') {
                 currentTab = state.tab;
             }
-            if (state.innerTab === 'manage' || state.innerTab === 'settings' || state.innerTab === 'batch') {
+            if (state.innerTab === 'manage' || state.innerTab === 'latteArt' || state.innerTab === 'settings' || state.innerTab === 'batch') {
                 currentMenuInnerTab = state.innerTab;
             }
 
@@ -7508,6 +7956,528 @@
             refreshOrderPreviewIfOpen();
             showToast('基础设置已保存');
             return true;
+        }
+
+        function getMenuLatteArtLibraryStorageKey(deviceId = currentDevice) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            return normalizedDeviceId ? `deviceLatteArtLibrary_${normalizedDeviceId}` : '';
+        }
+
+        function readStoredMenuLatteArtLibrary(deviceId = currentDevice) {
+            const storageKey = getMenuLatteArtLibraryStorageKey(deviceId);
+            if (!storageKey || !DeviceLatteArtLibrary) {
+                return {
+                    version: 1,
+                    deviceId: String(deviceId || '').trim(),
+                    updatedAt: '',
+                    items: []
+                };
+            }
+            try {
+                const raw = localStorage.getItem(storageKey);
+                const parsed = raw ? JSON.parse(raw) : null;
+                return DeviceLatteArtLibrary.normalizeDeviceLatteArtLibrary(parsed, deviceId);
+            } catch (e) {
+                return DeviceLatteArtLibrary.createEmptyDeviceLatteArtLibrary(deviceId);
+            }
+        }
+
+        function persistMenuLatteArtLibrary(deviceId = currentDevice, library = null) {
+            const storageKey = getMenuLatteArtLibraryStorageKey(deviceId);
+            if (!storageKey || !DeviceLatteArtLibrary) return readStoredMenuLatteArtLibrary(deviceId);
+            const normalized = DeviceLatteArtLibrary.normalizeDeviceLatteArtLibrary(library, deviceId);
+            localStorage.setItem(storageKey, JSON.stringify(normalized));
+            return normalized;
+        }
+
+        function getMenuLatteArtLinkageSummary(deviceId = currentDevice) {
+            if (!DeviceLatteArtLibrary) {
+                return {
+                    uploadedCount: 0,
+                    linkedCount: 0,
+                    unreferencedCount: 0,
+                    missingMaterialCount: 0,
+                    linkedNameKeys: [],
+                    missingNameKeys: []
+                };
+            }
+            return DeviceLatteArtLibrary.buildLatteArtLinkageSummary({
+                productNames: DeviceLatteArtLibrary.collectNormalizedProductLatteArtNames(productsData),
+                library: readStoredMenuLatteArtLibrary(deviceId)
+            });
+        }
+
+        function findMenuLatteArtItemById(itemId, deviceId = currentDevice) {
+            const normalizedItemId = String(itemId || '').trim();
+            if (!normalizedItemId) return null;
+            return readStoredMenuLatteArtLibrary(deviceId).items.find(item => item.id === normalizedItemId) || null;
+        }
+
+        function findMenuLatteArtItemByNameKey(nameKey, deviceId = currentDevice) {
+            const normalizedNameKey = DeviceLatteArtLibrary
+                ? DeviceLatteArtLibrary.normalizeLatteArtName(nameKey)
+                : String(nameKey || '').trim().toLowerCase();
+            if (!normalizedNameKey) return null;
+            return readStoredMenuLatteArtLibrary(deviceId).items.find(item => item.nameKey === normalizedNameKey) || null;
+        }
+
+        function setMenuLatteArtFilterKeyword(keyword = '') {
+            menuLatteArtFilterKeyword = String(keyword || '');
+            renderMenuLatteArtPanel();
+        }
+
+        function getFilteredMenuLatteArtItems(deviceId = currentDevice) {
+            const keyword = String(menuLatteArtFilterKeyword || '').trim().toLowerCase();
+            const items = readStoredMenuLatteArtLibrary(deviceId).items.slice().sort((left, right) => {
+                const leftTime = Date.parse(left.updatedAt || left.createdAt || '') || 0;
+                const rightTime = Date.parse(right.updatedAt || right.createdAt || '') || 0;
+                if (leftTime !== rightTime) return rightTime - leftTime;
+                return String(left.name || '').localeCompare(String(right.name || ''), 'zh-Hans-CN');
+            });
+            if (!keyword) return items;
+            return items.filter(item => `${item.name || ''} ${item.nameKey || ''}`.toLowerCase().includes(keyword));
+        }
+
+        function buildMenuLatteArtSummaryCards(summary = {}) {
+            return [
+                { label: '总计印花数', value: summary.uploadedCount || 0, className: '' }
+            ];
+        }
+
+        function syncMenuLatteArtPanelSnapshot(panel, scope, summaryWrap, missingWrap, listWrap) {
+            if (!panel || typeof panel.querySelector === 'function') return;
+            panel.innerHTML = [
+                scope?.textContent || '',
+                summaryWrap?.innerHTML || '',
+                missingWrap?.innerHTML || '',
+                listWrap?.innerHTML || ''
+            ].join('');
+        }
+
+        function renderMenuLatteArtPanel() {
+            const panel = document.getElementById('menuLatteArtPanel');
+            const scope = document.getElementById('menuLatteArtScopeSummary');
+            const summaryWrap = document.getElementById('menuLatteArtSummary');
+            const missingWrap = document.getElementById('menuLatteArtMissing');
+            const listWrap = document.getElementById('menuLatteArtLibraryList');
+            const searchInput = document.getElementById('menuLatteArtSearchInput');
+            if (!panel || !scope || !summaryWrap || !missingWrap || !listWrap || !searchInput) return;
+
+            scope.textContent = `当前设备生效 · ${currentDevice}`;
+            if (searchInput.value !== menuLatteArtFilterKeyword) {
+                searchInput.value = menuLatteArtFilterKeyword;
+            }
+
+            if (!DeviceLatteArtLibrary) {
+                summaryWrap.innerHTML = '';
+                missingWrap.style.display = '';
+                missingWrap.textContent = '拉花图库脚本未加载，暂时无法编辑。';
+                listWrap.innerHTML = '<div class="menu-latte-art-empty">拉花图库脚本未加载，暂时无法编辑。</div>';
+                syncMenuLatteArtPanelSnapshot(panel, scope, summaryWrap, missingWrap, listWrap);
+                return;
+            }
+
+            const summary = getMenuLatteArtLinkageSummary(currentDevice);
+            const items = getFilteredMenuLatteArtItems(currentDevice);
+            const hasCopyTargets = getMenuLatteArtCopyTargetOptions(currentDevice).length > 0;
+            summaryWrap.innerHTML = buildMenuLatteArtSummaryCards(summary).map(card => `
+                <div class="menu-latte-art-stat ${card.className}">
+                    <strong>${escapePreviewText(card.value)}</strong>
+                    <span>${escapePreviewText(card.label)}</span>
+                </div>
+            `).join('');
+
+            if (summary.missingMaterialCount > 0) {
+                missingWrap.style.display = '';
+                missingWrap.innerHTML = `<strong>缺失素材：</strong>${escapePreviewText(summary.missingNameKeys.join('、'))}`;
+            } else {
+                missingWrap.style.display = 'none';
+                missingWrap.innerHTML = '';
+            }
+
+            if (!items.length) {
+                listWrap.innerHTML = `<div class="menu-latte-art-empty">${escapePreviewText(menuLatteArtFilterKeyword ? '没有匹配到印花名称，请换个关键词再试。' : '当前设备还没有上传印花图片，先上传一张素材开始联动。')}</div>`;
+                syncMenuLatteArtPanelSnapshot(panel, scope, summaryWrap, missingWrap, listWrap);
+                return;
+            }
+
+            listWrap.innerHTML = items.map(item => {
+                const updatedAt = item.updatedAt
+                    ? String(item.updatedAt).replace('T', ' ').slice(0, 16)
+                    : '刚刚更新';
+                return `
+                    <div class="menu-latte-art-item">
+                        <div class="menu-latte-art-thumb">
+                            ${item.image ? `<img src="${escapePreviewText(item.image)}" alt="${escapePreviewText(item.name)}">` : ''}
+                        </div>
+                        <div class="menu-latte-art-item-main">
+                            <div class="menu-latte-art-item-head">
+                                <div class="menu-latte-art-item-name">${escapePreviewText(item.name || '-')}</div>
+                            </div>
+                            <div class="menu-latte-art-item-meta">当前设备生效，更新于 ${escapePreviewText(updatedAt)}</div>
+                            <div class="menu-latte-art-actions">
+                                ${hasCopyTargets ? `<button type="button" class="menu-latte-art-action-btn" onclick="openMenuLatteArtCopyModal('${escapePreviewText(item.id)}')">复制到其他设备</button>` : ''}
+                                <button type="button" class="menu-latte-art-action-btn" onclick="deleteMenuLatteArtItem('${escapePreviewText(item.id)}')">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            syncMenuLatteArtPanelSnapshot(panel, scope, summaryWrap, missingWrap, listWrap);
+        }
+
+        function openMenuLatteArtUploadModal(itemId = '') {
+            menuLatteArtUploadDraft = {
+                deviceId: currentDevice,
+                itemId: '',
+                name: '',
+                image: ''
+            };
+            const modal = document.getElementById('menuLatteArtUploadModal');
+            const title = document.getElementById('menuLatteArtUploadTitle');
+            const nameInput = document.getElementById('menuLatteArtNameInput');
+            const fileInput = document.getElementById('menuLatteArtFileInput');
+            const hint = document.getElementById('menuLatteArtUploadHint');
+            if (title) title.textContent = '上传印花图片';
+            if (nameInput) nameInput.value = menuLatteArtUploadDraft.name;
+            if (fileInput) fileInput.value = '';
+            if (hint) hint.textContent = '当前设备生效，印花名称将作为商品联动键。';
+            updateMenuLatteArtPreview(menuLatteArtUploadDraft.image);
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeMenuLatteArtUploadModal() {
+            const modal = document.getElementById('menuLatteArtUploadModal');
+            if (modal) modal.classList.remove('active');
+            menuLatteArtUploadDraft = null;
+        }
+
+        function updateMenuLatteArtPreview(image = '') {
+            const preview = document.getElementById('menuLatteArtPreview');
+            if (!preview) return;
+            preview.innerHTML = image
+                ? `<img src="${escapePreviewText(image)}" alt="印花图片预览">`
+                : '选择图片后在这里预览';
+        }
+
+        async function handleMenuLatteArtFileChange(event) {
+            const file = event?.target?.files?.[0];
+            if (!file) return;
+            try {
+                const image = await readFileAsDataUrl(file);
+                menuLatteArtUploadDraft = {
+                    ...(menuLatteArtUploadDraft || {}),
+                    image
+                };
+                updateMenuLatteArtPreview(image);
+            } catch (e) {
+                showToast('印花图片读取失败，请重试', 'error');
+            }
+        }
+
+        function resolveMenuLatteArtUploadPayload(payloadOverride = null) {
+            if (payloadOverride && typeof payloadOverride === 'object') {
+                return {
+                    deviceId: String(payloadOverride.deviceId || currentDevice || '').trim(),
+                    itemId: String(payloadOverride.itemId || '').trim(),
+                    name: String(payloadOverride.name || '').trim(),
+                    image: String(payloadOverride.image || '').trim()
+                };
+            }
+            return {
+                deviceId: currentDevice,
+                itemId: String(menuLatteArtUploadDraft?.itemId || '').trim(),
+                name: String(document.getElementById('menuLatteArtNameInput')?.value || menuLatteArtUploadDraft?.name || '').trim(),
+                image: String(menuLatteArtUploadDraft?.image || '').trim()
+            };
+        }
+
+        function saveMenuLatteArtUpload(payloadOverride = null) {
+            if (!DeviceLatteArtLibrary) return false;
+            const payload = resolveMenuLatteArtUploadPayload(payloadOverride);
+            if (!payload.deviceId) return false;
+            if (payload.itemId) {
+                showToast('当前不支持修改已有印花，请删除后重新上传', 'error');
+                return false;
+            }
+            if (!payload.name) {
+                showToast('请输入印花名称', 'error');
+                return false;
+            }
+            if (!payload.image) {
+                showToast('请先选择印花图片', 'error');
+                return false;
+            }
+            const library = readStoredMenuLatteArtLibrary(payload.deviceId);
+            const nameKey = DeviceLatteArtLibrary.normalizeLatteArtName(payload.name);
+            const existing = library.items.find(item => item.nameKey === nameKey) || null;
+            if (existing) {
+                showToast('当前设备已存在同名印花，请先删除后再上传', 'error');
+                return false;
+            }
+
+            const nextLibrary = DeviceLatteArtLibrary.upsertDeviceLatteArtItem({
+                ...library,
+                deviceId: payload.deviceId
+            }, {
+                id: '',
+                name: payload.name,
+                image: payload.image,
+                sourceDeviceId: payload.deviceId,
+                createdAt: ''
+            });
+            const persisted = persistMenuLatteArtLibrary(payload.deviceId, nextLibrary);
+            const savedItem = persisted.items.find(item => item.nameKey === nameKey) || null;
+            menuLatteArtPendingCopyItem = savedItem ? { ...savedItem, sourceDeviceId: payload.deviceId } : null;
+            if (!payloadOverride) {
+                closeMenuLatteArtUploadModal();
+            }
+            renderMenuLatteArtPanel();
+            showToast('印花图片已上传');
+            if (savedItem) {
+                promptMenuLatteArtCopyAfterSave(savedItem, payload.deviceId);
+            }
+            return {
+                ok: true,
+                item: savedItem,
+                library: persisted
+            };
+        }
+
+        function deleteMenuLatteArtItem(itemId) {
+            const item = findMenuLatteArtItemById(itemId, currentDevice);
+            if (!item || !DeviceLatteArtLibrary) return false;
+            const confirmed = confirm('删除后，商品侧同名拉花将视为未配置素材，当前设备也不会再显示这张图片。是否继续？');
+            if (!confirmed) return false;
+            const nextLibrary = DeviceLatteArtLibrary.deleteDeviceLatteArtItem(readStoredMenuLatteArtLibrary(currentDevice), item.id);
+            persistMenuLatteArtLibrary(currentDevice, nextLibrary);
+            renderMenuLatteArtPanel();
+            showToast('印花图片已删除');
+            return true;
+        }
+
+        function getMenuLatteArtCopyTargetOptions(sourceDeviceId = currentDevice) {
+            const normalizedSourceDeviceId = String(sourceDeviceId || currentDevice || '').trim();
+            const options = deviceSearchOptions.length ? deviceSearchOptions : loadDeviceSearchOptions();
+            return options.filter(option => option.id !== normalizedSourceDeviceId);
+        }
+
+        function getFilteredMenuLatteArtCopyTargetOptions() {
+            const keyword = String(menuLatteArtCopyTargetKeyword || '').trim().toLowerCase();
+            const options = getMenuLatteArtCopyTargetOptions();
+            if (!keyword) return options;
+            return options.filter(option => {
+                const label = typeof getDeviceSearchDisplayLabel === 'function'
+                    ? getDeviceSearchDisplayLabel(option.id)
+                    : `${option.locationName || ''} · ${option.id}`;
+                return `${option.id} ${label}`.toLowerCase().includes(keyword);
+            });
+        }
+
+        function setMenuLatteArtCopyTargetKeyword(keyword = '') {
+            menuLatteArtCopyTargetKeyword = String(keyword || '').trim();
+            renderMenuLatteArtCopyTargetOptions();
+        }
+
+        function toggleMenuLatteArtCopyTargetSelection(deviceId = '', checked = false) {
+            const normalized = String(deviceId || '').trim();
+            if (!normalized) return;
+            if (checked) menuLatteArtCopyTargetDeviceIds.add(normalized);
+            else menuLatteArtCopyTargetDeviceIds.delete(normalized);
+            renderMenuLatteArtCopyTargetOptions();
+        }
+
+        function selectAllMenuLatteArtCopyTargets() {
+            getFilteredMenuLatteArtCopyTargetOptions().forEach(option => {
+                menuLatteArtCopyTargetDeviceIds.add(option.id);
+            });
+            renderMenuLatteArtCopyTargetOptions();
+        }
+
+        function clearMenuLatteArtCopyTargets() {
+            menuLatteArtCopyTargetDeviceIds = new Set();
+            renderMenuLatteArtCopyTargetOptions();
+        }
+
+        function previewMenuLatteArtCopyImpact(itemId, targetDeviceIds) {
+            const sourceItem = findMenuLatteArtItemById(itemId, currentDevice)
+                || (menuLatteArtPendingCopyItem?.id === itemId ? menuLatteArtPendingCopyItem : null);
+            const rows = (Array.isArray(targetDeviceIds) ? targetDeviceIds : []).map(deviceId => {
+                const targetLibrary = readStoredMenuLatteArtLibrary(deviceId);
+                const matched = sourceItem ? targetLibrary.items.find(item => item.nameKey === sourceItem.nameKey) : null;
+                return {
+                    deviceId,
+                    action: matched ? 'overwritten' : 'added',
+                    message: matched ? '同名素材将被覆盖，其他素材保持不变。' : '将新增同名素材，其他素材保持不变。'
+                };
+            });
+            return {
+                overwriteCount: rows.filter(row => row.action === 'overwritten').length,
+                addCount: rows.filter(row => row.action === 'added').length,
+                rows
+            };
+        }
+
+        function renderMenuLatteArtCopyTargetOptions() {
+            const searchInput = document.getElementById('menuLatteArtCopySearchInput');
+            const summary = document.getElementById('menuLatteArtCopySummary');
+            const impact = document.getElementById('menuLatteArtCopyImpact');
+            const list = document.getElementById('menuLatteArtCopyTargetOptions');
+            const submitBtn = document.getElementById('menuLatteArtCopySubmitBtn');
+            if (searchInput && searchInput.value !== menuLatteArtCopyTargetKeyword) {
+                searchInput.value = menuLatteArtCopyTargetKeyword;
+            }
+            const allOptions = getMenuLatteArtCopyTargetOptions();
+            const validIds = new Set(allOptions.map(option => option.id));
+            menuLatteArtCopyTargetDeviceIds = new Set(Array.from(menuLatteArtCopyTargetDeviceIds).filter(deviceId => validIds.has(deviceId)));
+            const filtered = getFilteredMenuLatteArtCopyTargetOptions();
+            if (summary) {
+                summary.textContent = `已选 ${menuLatteArtCopyTargetDeviceIds.size} 台设备`;
+            }
+            if (list) {
+                if (!allOptions.length) {
+                    list.innerHTML = '<div class="copy-product-device-empty">暂无可选设备</div>';
+                } else if (!filtered.length) {
+                    list.innerHTML = '<div class="copy-product-device-empty">无匹配设备</div>';
+                } else {
+                    list.innerHTML = filtered.map(option => {
+                        const label = typeof getDeviceSearchDisplayLabel === 'function'
+                            ? getDeviceSearchDisplayLabel(option.id)
+                            : `${option.locationName || ''} · ${option.id}`;
+                        const checked = menuLatteArtCopyTargetDeviceIds.has(option.id);
+                        return `
+                            <label class="copy-product-device-option">
+                                <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleMenuLatteArtCopyTargetSelection('${escapePreviewText(option.id)}', this.checked)">
+                                <span>${escapePreviewText(label)}</span>
+                            </label>
+                        `;
+                    }).join('');
+                }
+            }
+            if (impact) {
+                if (!menuLatteArtCopyTargetDeviceIds.size) {
+                    impact.innerHTML = '<div class="menu-latte-art-copy-empty">选择目标设备后，这里会显示覆盖 / 新增预检查摘要。</div>';
+                } else {
+                    const preview = previewMenuLatteArtCopyImpact(menuLatteArtPendingCopyItem?.id, Array.from(menuLatteArtCopyTargetDeviceIds));
+                    impact.innerHTML = `
+                        <div class="menu-latte-art-copy-impact-card">
+                            <strong>预计覆盖 ${escapePreviewText(preview.overwriteCount)} 台，新增 ${escapePreviewText(preview.addCount)} 台</strong>
+                            <span>按同名覆盖、不同名新增执行，其他无关素材保持不变。</span>
+                        </div>
+                    `;
+                }
+            }
+            if (submitBtn) {
+                submitBtn.disabled = menuLatteArtCopyTargetDeviceIds.size === 0;
+            }
+        }
+
+        function openMenuLatteArtCopyModal(itemId) {
+            if (!getMenuLatteArtCopyTargetOptions(currentDevice).length) return false;
+            const sourceItem = findMenuLatteArtItemById(itemId, currentDevice);
+            if (!sourceItem) return false;
+            menuLatteArtPendingCopyItem = { ...sourceItem, sourceDeviceId: currentDevice };
+            menuLatteArtCopyTargetDeviceIds = new Set();
+            menuLatteArtCopyTargetKeyword = '';
+            const modal = document.getElementById('menuLatteArtCopyModal');
+            const sourceName = document.getElementById('menuLatteArtCopySourceName');
+            const sourceMeta = document.getElementById('menuLatteArtCopySourceMeta');
+            const results = document.getElementById('menuLatteArtCopyResults');
+            if (sourceName) sourceName.textContent = sourceItem.name || '-';
+            if (sourceMeta) sourceMeta.textContent = `来源设备：${currentDevice} · 同名覆盖，不相关素材不受影响`;
+            if (results) results.innerHTML = '<div class="menu-latte-art-copy-empty">还没有复制结果，确认设备后开始复制。</div>';
+            if (modal) modal.classList.add('active');
+            renderMenuLatteArtCopyTargetOptions();
+            return true;
+        }
+
+        function closeMenuLatteArtCopyModal() {
+            const modal = document.getElementById('menuLatteArtCopyModal');
+            if (modal) modal.classList.remove('active');
+            menuLatteArtCopyTargetDeviceIds = new Set();
+            menuLatteArtCopyTargetKeyword = '';
+        }
+
+        function promptMenuLatteArtCopyAfterSave(savedItem, deviceId = currentDevice) {
+            if (!savedItem) return false;
+            if (!getMenuLatteArtCopyTargetOptions(deviceId).length) return false;
+            menuLatteArtPendingCopyItem = { ...savedItem, sourceDeviceId: deviceId };
+            const shouldCopy = confirm('当前设备已保存，是否复制到其他设备？');
+            if (!shouldCopy) return false;
+            openMenuLatteArtCopyModal(savedItem.id);
+            return true;
+        }
+
+        function copyMenuLatteArtItemToDevices(itemId, targetDeviceIds) {
+            if (!DeviceLatteArtLibrary) return [];
+            const sourceItem = findMenuLatteArtItemById(itemId, currentDevice)
+                || (menuLatteArtPendingCopyItem?.id === itemId ? menuLatteArtPendingCopyItem : null);
+            if (!sourceItem) return [];
+            return (Array.isArray(targetDeviceIds) ? targetDeviceIds : []).map(deviceId => {
+                try {
+                    const currentLibrary = readStoredMenuLatteArtLibrary(deviceId);
+                    const result = DeviceLatteArtLibrary.copyLatteArtItemToLibrary(currentLibrary, {
+                        ...sourceItem,
+                        sourceDeviceId: currentDevice
+                    }, deviceId);
+                    persistMenuLatteArtLibrary(deviceId, result.library);
+                    return {
+                        deviceId,
+                        action: result.action,
+                        message: result.action === 'overwritten' ? '已覆盖目标设备同名素材' : '已新增到目标设备'
+                    };
+                } catch (e) {
+                    return {
+                        deviceId,
+                        action: 'failed',
+                        message: '复制失败，请稍后重试'
+                    };
+                }
+            });
+        }
+
+        function renderMenuLatteArtCopyResults(results = []) {
+            const groups = [
+                { key: 'overwritten', title: '已覆盖' },
+                { key: 'added', title: '已新增' },
+                { key: 'failed', title: '失败' }
+            ];
+            const html = groups.map(group => {
+                const items = results.filter(item => item.action === group.key);
+                if (!items.length) return '';
+                return `
+                    <div class="menu-latte-art-copy-result-group">
+                        <div class="menu-latte-art-copy-result-title">${escapePreviewText(group.title)} ${items.length} 台</div>
+                        <ul class="menu-latte-art-copy-result-list">
+                            ${items.map(item => `<li>${escapePreviewText(item.deviceId)} · ${escapePreviewText(item.message || '')}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+            return html || '<div class="menu-latte-art-copy-empty">还没有复制结果，确认设备后开始复制。</div>';
+        }
+
+        function submitMenuLatteArtCopy() {
+            const itemId = menuLatteArtPendingCopyItem?.id;
+            const targetDeviceIds = Array.from(menuLatteArtCopyTargetDeviceIds);
+            if (!itemId) return [];
+            if (!targetDeviceIds.length) {
+                showToast('请至少选择一台设备', 'error');
+                return [];
+            }
+            const results = copyMenuLatteArtItemToDevices(itemId, targetDeviceIds);
+            const resultsWrap = document.getElementById('menuLatteArtCopyResults');
+            if (resultsWrap) {
+                resultsWrap.innerHTML = renderMenuLatteArtCopyResults(results);
+            }
+            renderMenuLatteArtPanel();
+            const successCount = results.filter(item => item.action !== 'failed').length;
+            const failedCount = results.filter(item => item.action === 'failed').length;
+            if (successCount > 0 && failedCount === 0) {
+                closeMenuLatteArtCopyModal();
+            }
+            showToast(successCount ? `已同步 ${successCount} 台设备` : '本次未复制成功', successCount ? 'success' : 'error');
+            return results;
         }
 
         function applySavedProductEdits() {
@@ -12027,6 +12997,32 @@
         }
 
         // ==================== 商品管理 ====================
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    reject(new Error('missing_file'));
+                    return;
+                }
+                if (typeof FileReader !== 'function') {
+                    reject(new Error('file_reader_unavailable'));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(loadEvent) {
+                    const result = loadEvent && loadEvent.target ? loadEvent.target.result : '';
+                    if (!result || typeof result !== 'string') {
+                        reject(new Error('invalid_file_data'));
+                        return;
+                    }
+                    resolve(result);
+                };
+                reader.onerror = function() {
+                    reject(new Error('file_read_failed'));
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         function handleProductImageFileChange(event) {
             const input = event && event.target;
             const file = input && input.files && input.files[0];
@@ -13268,6 +14264,14 @@
             renderMenu();
             updateStats();
             refreshOrderPreviewIfOpen();
+            if (currentMenuInnerTab === 'latteArt') {
+                renderMenuLatteArtPanel();
+            } else if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            }
+            renderMenuSharedContext();
+            updateHeaderActionVisibility();
             
             if (queuedCopyCount > 0) {
                 showToast(`已切换到设备 ${currentDevice}，并同步 ${queuedCopyCount} 个待复制商品`);
@@ -13277,25 +14281,32 @@
         }
 
         function switchMenuInnerTab(tab) {
-            const nextTab = tab === 'manage' || tab === 'batch' ? tab : 'settings';
+            const nextTab = tab === 'manage' || tab === 'latteArt' || tab === 'settings' || tab === 'batch'
+                ? tab
+                : 'settings';
             const previousTab = currentMenuInnerTab;
             currentMenuInnerTab = nextTab;
             isBatchFixedPriceMode = currentMenuInnerTab === 'batch';
             const settingsBtn = document.getElementById('menuInnerTabSettingsBtn');
             const manageBtn = document.getElementById('menuInnerTabManageBtn');
+            const latteArtBtn = document.getElementById('menuInnerTabLatteArtBtn');
             const batchBtn = document.getElementById('menuInnerTabBatchBtn');
             const settingsPanel = document.getElementById('menuSettingsPanel');
             const managePanel = document.getElementById('menuManagePanel');
+            const latteArtPanel = document.getElementById('menuLatteArtPanel');
             const batchPanel = document.getElementById('menuBatchPanel');
             const isSettings = currentMenuInnerTab === 'settings';
             const isManage = currentMenuInnerTab === 'manage';
+            const isLatteArt = currentMenuInnerTab === 'latteArt';
             const isBatch = currentMenuInnerTab === 'batch';
 
             if (settingsBtn) settingsBtn.classList.toggle('active', isSettings);
             if (manageBtn) manageBtn.classList.toggle('active', isManage);
+            if (latteArtBtn) latteArtBtn.classList.toggle('active', isLatteArt);
             if (batchBtn) batchBtn.classList.toggle('active', isBatch);
             if (settingsPanel) settingsPanel.classList.toggle('active', isSettings);
             if (managePanel) managePanel.classList.toggle('active', isManage);
+            if (latteArtPanel) latteArtPanel.classList.toggle('active', isLatteArt);
             if (batchPanel) batchPanel.classList.toggle('active', isBatch);
 
             if (previousTab === 'batch' && !isBatch) {
@@ -13309,6 +14320,8 @@
             } else if (isManage) {
                 updateStats();
                 renderMenu();
+            } else if (isLatteArt) {
+                renderMenuLatteArtPanel();
             } else {
                 updateStats();
                 renderBatchFixedPricePanel();

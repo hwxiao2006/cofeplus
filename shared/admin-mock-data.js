@@ -187,7 +187,7 @@
             const status = index % 7 === 0 ? 'pending' : index % 5 === 0 ? 'cancelled' : 'done';
             const paymentStatus = status === 'pending'
                 ? 'pending'
-                : (status === 'cancelled' ? 'cancelled' : (index % 4 === 0 ? 'failed' : 'succeed'));
+                : (status === 'cancelled' ? 'cancelled' : 'succeed');
 
             return {
                 id: buildSharedOrderId(parts, index),
