@@ -106,15 +106,22 @@ test('设备详情桌面端应采用左主内容与右侧设备操作布局', ()
   assert.ok(/function\s+renderDetailAside\s*\(/.test(devicesHtml));
   assert.ok(/detail-section-overview/.test(devicesHtml));
   assert.ok(/detail-section-status/.test(devicesHtml));
-  assert.ok(/detail-section-entry/.test(devicesHtml));
-  assert.ok(/detail-section-ad-screen/.test(devicesHtml));
-  assert.ok(/detail-section-technical/.test(devicesHtml));
-  assert.ok(/detail-section-records/.test(devicesHtml));
+  assert.ok(/detail-section-operation-summary/.test(devicesHtml));
+  assert.ok(!/detail-section-entry/.test(devicesHtml));
+  assert.ok(!/detail-section-ad-screen/.test(devicesHtml));
+  assert.ok(!/detail-section-technical/.test(devicesHtml));
+  assert.ok(!/detail-section-records/.test(devicesHtml));
+  assert.ok(/function\s+renderDeviceOperationSummaryCard\s*\(/.test(devicesHtml));
+  assert.ok(/function\s+openDetailInfoPanel\s*\(/.test(devicesHtml));
+  assert.ok(/id=\"detailInfoPanelOverlay\"/.test(devicesHtml));
   assert.ok(!/目录导航/.test(devicesHtml));
   assert.ok(!/状态摘要/.test(devicesHtml));
   assert.ok(!/detail-anchor-list/.test(devicesHtml));
   assert.ok(!/detail-side-state-list/.test(devicesHtml));
   assert.ok(/detail-side-title">设备操作/.test(devicesHtml));
+  assert.ok(/openDetailInfoPanel\('entry'/.test(devicesHtml));
+  assert.ok(/openDetailInfoPanel\('adScreen'/.test(devicesHtml));
+  assert.ok(/openDetailInfoPanel\('technical'/.test(devicesHtml));
 });
 
 test('设备详情右侧设备操作区应新增温度报警设置入口', () => {
@@ -304,13 +311,18 @@ test('设备详情应通过单一分流方法隔离入场数据与故障数据',
 test('设备详情卡片布局应让概览与状态占满主列首屏', () => {
   assert.ok(/\.detail-card-basic\s*\{[\s\S]*grid-column:\s*1\s*\/\s*-1/.test(devicesHtml));
   assert.ok(/\.detail-card-status\s*\{[\s\S]*grid-column:\s*1\s*\/\s*-1/.test(devicesHtml));
+  assert.ok(/\.detail-card-operation-summary\s*\{[\s\S]*grid-column:\s*1\s*\/\s*-1/.test(devicesHtml));
 });
 
 test('状态记录弹层应改为标签切换避免双栏拥挤', () => {
+  const match = devicesHtml.match(/function\s+openDetailStatusRecords\s*\([^)]*\)\s*\{[\s\S]*?\n\s*}\n\n\s*function\s+closeDetailStatusRecords/);
+  assert.ok(match);
+  const openStatusRecordsFn = match[0];
   assert.ok(/function\s+switchDetailStatusRecordTab\s*\(/.test(devicesHtml));
   assert.ok(/detail-fault-record-tabs/.test(devicesHtml));
   assert.ok(/detail-fault-record-tab/.test(devicesHtml));
-  assert.ok(/openDetailStatusRecords[\s\S]*detailStatusRecordTab\s*=\s*'abnormal'/.test(devicesHtml));
+  assert.ok(/detailStatusRecordTab\s*=\s*'abnormal'/.test(openStatusRecordsFn));
+  assert.ok(/closeDetailInfoPanel\(\)/.test(openStatusRecordsFn));
   assert.ok(/switchDetailStatusRecordTab\('abnormal'\)/.test(devicesHtml));
   assert.ok(/switchDetailStatusRecordTab\('operation'\)/.test(devicesHtml));
 });

@@ -732,6 +732,7 @@
 
         .detail-card-basic,
         .detail-card-status,
+        .detail-card-operation-summary,
         .detail-card-entry,
         .detail-card-ad-screen,
         .detail-card-technical,
@@ -745,6 +746,10 @@
         }
 
         .detail-card-status {
+            grid-column: 1 / -1;
+        }
+
+        .detail-card-operation-summary {
             grid-column: 1 / -1;
         }
 
@@ -1467,6 +1472,27 @@
             max-height: 88vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .detail-info-panel-modal {
+            width: min(860px, 100%);
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-info-panel-body {
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .detail-info-panel-body .detail-card {
+            box-shadow: none;
         }
 
         .detail-temperature-modal {
@@ -4649,6 +4675,7 @@
 
     <div class="detail-fault-sheet-overlay" id="detailRemoteActionSheet"></div>
     <div class="detail-fault-sheet-overlay" id="detailStatusEditSheet"></div>
+    <div class="detail-fault-sheet-overlay" id="detailInfoPanelOverlay"></div>
 
     <div class="modal-overlay" id="detailStatusRecordModal">
         <div class="detail-fault-record-modal">
@@ -6012,6 +6039,22 @@
             return renderDetailCard('设备状态', `${rows}${note}`, 'detail-card-status');
         }
 
+        function renderDeviceOperationSummaryCard(entryData, counts) {
+            const info = entryData?.info || {};
+            const changeCount = Array.isArray(info.locationChangeRecords) ? info.locationChangeRecords.length : 0;
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
+            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
+            const rows = [
+                renderDetailRow('当前点位', entryData?.locationName || '-'),
+                renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
+                renderDetailRow('节能模式', info.energyMode || '-'),
+                renderDetailRow('网络信号', info.networkSignal || '-'),
+                renderDetailRow('最近变更', changeCount ? `点位变更 ${changeCount} 条` : '暂无点位变更'),
+                renderDetailRow('记录摘要', `异常 ${abnormalCount} 条，运维 ${operationCount} 条`)
+            ].join('');
+            return renderDetailCard('运营摘要', rows, 'detail-card-operation-summary');
+        }
+
         function renderTechnicalStatusCard(faultData) {
             const snapshot = faultData || {
                 fridgeTemp: '-',
@@ -7010,6 +7053,7 @@
             activeFaultActionDeviceId = deviceId;
             const modal = document.getElementById('detailStatusRecordModal');
             if (!modal) return;
+            closeDetailInfoPanel();
             detailStatusRecordTab = 'abnormal';
             renderDetailStatusRecordBody();
             modal.classList.add('active');
@@ -7547,6 +7591,71 @@
                 </details>
             `;
             return renderDetailCard('状态记录', body, 'detail-card-records');
+        }
+
+        function getDetailInfoPanelContent(kind, detailData, device, counts) {
+            if (kind === 'entry') {
+                return {
+                    title: '入场详情',
+                    body: renderEntryInfoCard(detailData.entry, device)
+                };
+            }
+            if (kind === 'adScreen') {
+                return {
+                    title: '广告屏信息',
+                    body: renderAdScreenInfoCard(device)
+                };
+            }
+            if (kind === 'technical') {
+                return {
+                    title: '技术状态',
+                    body: renderTechnicalStatusCard(detailData.fault)
+                };
+            }
+            if (kind === 'records') {
+                return {
+                    title: '状态记录',
+                    body: renderStatusRecordsCard(counts, detailData.base.deviceId)
+                };
+            }
+            return {
+                title: '设备详情',
+                body: ''
+            };
+        }
+
+        function openDetailInfoPanel(kind) {
+            const panel = document.getElementById('detailInfoPanelOverlay');
+            const device = devicesData.find(d => d.id === currentDetailDeviceId);
+            if (!panel || !device) return;
+            const runtimeLocationMap = buildLocationMap();
+            const detailData = splitDeviceDetailData(device, runtimeLocationMap);
+            const counts = {
+                abnormal: getFaultAbnormalRecords(device.id).length,
+                operation: getMaintenanceRecordsByDevice(device.id).length
+            };
+            const content = getDetailInfoPanelContent(kind, detailData, device, counts);
+            panel.innerHTML = `
+                <div class="detail-info-panel-modal">
+                    <div class="detail-fault-record-header">
+                        <h3 class="detail-fault-record-title">${escapeHtml(content.title)}</h3>
+                        <button class="detail-modal-close" onclick="closeDetailInfoPanel()">×</button>
+                    </div>
+                    <div class="detail-info-panel-body">${content.body}</div>
+                </div>
+            `;
+            panel.classList.add('active');
+            panel.querySelectorAll('.detail-disclosure').forEach(item => {
+                item.open = true;
+            });
+            bindEntryImageThumbEvents();
+        }
+
+        function closeDetailInfoPanel() {
+            const panel = document.getElementById('detailInfoPanelOverlay');
+            if (!panel) return;
+            panel.classList.remove('active');
+            panel.innerHTML = '';
         }
 
         function bindEntryImageThumbEvents() {
@@ -8151,6 +8260,15 @@
                                 <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
                             </div>
                         </section>
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">详细信息</div>
+                            <div class="detail-side-action-list">
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('entry')">入场详情</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('adScreen')">广告屏信息</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('technical')">技术状态</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('records')">记录摘要</button>
+                            </div>
+                        </section>
                     </div>
                 </aside>
             `;
@@ -8187,17 +8305,8 @@
                             <section class="detail-section" id="detail-section-status">
                                 ${renderDeviceStatusCard(detailData.base, detailData.fault, detailRecordCounts)}
                             </section>
-                            <section class="detail-section" id="detail-section-entry">
-                                ${renderEntryInfoCard(detailData.entry, device)}
-                            </section>
-                            <section class="detail-section" id="detail-section-ad-screen">
-                                ${renderAdScreenInfoCard(device)}
-                            </section>
-                            <section class="detail-section" id="detail-section-technical">
-                                ${renderTechnicalStatusCard(detailData.fault)}
-                            </section>
-                            <section class="detail-section" id="detail-section-records">
-                                ${renderStatusRecordsCard(detailRecordCounts, detailData.base.deviceId)}
+                            <section class="detail-section" id="detail-section-operation-summary">
+                                ${renderDeviceOperationSummaryCard(detailData.entry, detailRecordCounts)}
                             </section>
                         </div>
                     </div>
@@ -8217,6 +8326,7 @@
             closeDetailTemperatureAlarmModal();
             closeDetailEditFaultStatus();
             closeDetailStatusRecords();
+            closeDetailInfoPanel();
             if (detailBody) {
                 detailBody.scrollTop = 0;
                 detailBody.innerHTML = '';
@@ -8276,6 +8386,12 @@
             }
         });
 
+        document.getElementById('detailInfoPanelOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailInfoPanel();
+            }
+        });
+
         document.getElementById('detailStatusRecordModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDetailStatusRecords();
@@ -8303,6 +8419,11 @@
             const statusSheet = document.getElementById('detailStatusEditSheet');
             if (statusSheet.classList.contains('active') && e.key === 'Escape') {
                 closeDetailEditFaultStatus();
+                return;
+            }
+            const infoPanel = document.getElementById('detailInfoPanelOverlay');
+            if (infoPanel.classList.contains('active') && e.key === 'Escape') {
+                closeDetailInfoPanel();
                 return;
             }
             const modal = document.getElementById('imagePreviewModal');
