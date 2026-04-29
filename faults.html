@@ -333,6 +333,31 @@
             max-width: 420px;
         }
 
+        .fault-device-filter {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .fault-device-trigger {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #d4dce5;
+            border-radius: 10px;
+            padding: 0 14px;
+            background: #fbfdff;
+            color: var(--text-primary);
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .fault-device-trigger:focus {
+            outline: none;
+            border-color: #2ec4b6;
+            box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.16);
+        }
+
         .search-input {
             width: 100%;
             height: 40px;
@@ -362,6 +387,61 @@
             transform: translateY(-50%);
             font-size: 14px;
             color: var(--text-tertiary);
+        }
+
+        .device-search-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 20;
+            max-height: 240px;
+            overflow-y: auto;
+            border: 1px solid #d4dce5;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+        }
+
+        .device-search-dropdown.show {
+            display: block;
+        }
+
+        .device-search-option {
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 10px 14px;
+            text-align: left;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .device-search-option:hover {
+            background: #ecfbfa;
+            color: var(--primary-dark);
+        }
+
+        .device-search-option.empty {
+            color: var(--text-tertiary);
+            cursor: default;
+        }
+
+        .device-search-option input {
+            margin-right: 8px;
+            flex: 0 0 auto;
+        }
+
+        .device-search-dropdown .search-input {
+            width: calc(100% - 20px);
+            margin: 10px;
+            padding: 0 12px;
+            box-sizing: border-box;
         }
 
         .summary {
@@ -1101,9 +1181,9 @@
             <section class="content">
                 <div class="tabs-card">
                     <div class="search-row">
-                        <div class="search-box">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="deviceSearch" class="search-input" placeholder="搜索设备编号或点位名称" oninput="handleSearch()">
+                        <div class="fault-device-filter" id="faultDeviceFilterWrap">
+                            <button type="button" class="fault-device-trigger" id="faultDeviceFilterTrigger" onclick="toggleFaultDeviceFilterDropdown()">设备：全部</button>
+                            <div class="device-search-dropdown" id="deviceSearchDropdown"></div>
                         </div>
                         <div class="summary" id="summary"></div>
                     </div>
@@ -1346,6 +1426,7 @@
 
         let searchKeyword = '';
         let activeFaultDeviceId = '';
+        let selectedFaultDeviceIds = new Set();
         let currentStaffFaultAccess = {
             isScoped: false,
             visibleDeviceIds: [],
@@ -1354,7 +1435,7 @@
 
         const faults = [
             {
-                id: 'RCK019',
+                id: 'RCK386',
                 siteName: 'COFE+徐汇区行政服务中心*',
                 deviceStatus: '离线',
                 sellStatus: '已停售',
@@ -1501,7 +1582,7 @@
                 ]
             },
             {
-                id: 'RCK073',
+                id: 'RCK385',
                 siteName: 'COFE+宝山政务服务大厅',
                 deviceStatus: '离线',
                 sellStatus: '已停售',
@@ -1641,19 +1722,163 @@
         }
 
         function getFilteredFaults() {
-            const keyword = searchKeyword.trim().toLowerCase();
             return faults.filter(item => {
                 if (item.status !== 'fault') return false;
                 if (!canAccessFaultDevice(item.id)) return false;
-                if (!keyword) return true;
-                return item.id.toLowerCase().includes(keyword) || item.siteName.toLowerCase().includes(keyword);
+                if (!selectedFaultDeviceIds.has(item.id)) return false;
+                return true;
             });
+        }
+
+        function getVisibleFaultSearchOptions() {
+            return faults
+                .filter(item => item.status === 'fault')
+                .filter(item => canAccessFaultDevice(item.id))
+                .map(item => ({
+                    id: item.id,
+                    locationName: item.siteName || ''
+                }));
+        }
+
+        function formatFaultDeviceSearchLabel(option) {
+            const deviceId = String(option?.id || '').trim();
+            const locationName = String(option?.locationName || '').trim();
+            if (!deviceId) return '';
+            return locationName ? `${locationName} · ${deviceId}` : deviceId;
+        }
+
+        function getFaultDeviceSearchCandidates(keyword = '') {
+            const normalizedKeyword = String(keyword || '').trim().toLowerCase();
+            const options = getVisibleFaultSearchOptions();
+            if (!normalizedKeyword) return options;
+            return options.filter(option => {
+                const candidates = [option.id, option.locationName, formatFaultDeviceSearchLabel(option)];
+                return candidates.some(value => String(value || '').toLowerCase().includes(normalizedKeyword));
+            });
+        }
+
+        function initializeFaultDeviceFilter() {
+            selectedFaultDeviceIds = new Set(getVisibleFaultSearchOptions().map(option => option.id));
+            renderFaultDeviceSearchDropdown('');
+            updateFaultDeviceFilterTrigger();
+        }
+
+        function toggleFaultDeviceFilterDropdown() {
+            const dropdown = document.getElementById('deviceSearchDropdown');
+            if (!dropdown) return;
+            renderFaultDeviceSearchDropdown('');
+            dropdown.classList.toggle('show');
+        }
+
+        function renderFaultDeviceSearchDropdown(keyword = '') {
+            const dropdown = document.getElementById('deviceSearchDropdown');
+            if (!dropdown) return;
+            const candidates = getFaultDeviceSearchCandidates(keyword);
+            const visibleOptions = getVisibleFaultSearchOptions();
+            const selectedCount = visibleOptions.filter(option => selectedFaultDeviceIds.has(option.id)).length;
+            const allChecked = visibleOptions.length > 0 && selectedCount === visibleOptions.length;
+            if (!candidates.length) {
+                dropdown.innerHTML = `
+                    <input type="text" id="deviceSearch" class="search-input" placeholder="搜索设备编号或点位名称" oninput="handleSearch()" onkeydown="handleFaultDeviceSearchKeydown(event)">
+                    <label class="device-search-option">
+                        <input type="checkbox" id="selectAllFaultDevices" ${allChecked ? 'checked' : ''} onchange="toggleSelectAllFaultDevices(this.checked)">
+                        <span>全选设备</span>
+                    </label>
+                    <button type="button" class="device-search-option empty" disabled>无匹配设备</button>
+                `;
+                return;
+            }
+            dropdown.innerHTML = `
+                <input type="text" id="deviceSearch" class="search-input" placeholder="搜索设备编号或点位名称" value="${escapeText(keyword)}" oninput="handleSearch()" onkeydown="handleFaultDeviceSearchKeydown(event)">
+                <label class="device-search-option">
+                    <input type="checkbox" id="selectAllFaultDevices" ${allChecked ? 'checked' : ''} onchange="toggleSelectAllFaultDevices(this.checked)">
+                    <span>全选设备</span>
+                </label>
+                ${candidates.map(option => `
+                    <label class="device-search-option">
+                        <input type="checkbox" ${selectedFaultDeviceIds.has(option.id) ? 'checked' : ''} onchange="toggleFaultDeviceSelection('${escapeText(option.id)}', this.checked)">
+                        <span>${escapeText(formatFaultDeviceSearchLabel(option))}</span>
+                    </label>
+                `).join('')}
+            `;
+        }
+
+        function showFaultDeviceSearchDropdown() {
+            const input = document.getElementById('deviceSearch');
+            renderFaultDeviceSearchDropdown(input?.value || '');
+            document.getElementById('deviceSearchDropdown')?.classList.add('show');
+        }
+
+        function hideFaultDeviceSearchDropdown() {
+            document.getElementById('deviceSearchDropdown')?.classList.remove('show');
+        }
+
+        function toggleSelectAllFaultDevices(checked) {
+            if (checked) {
+                selectedFaultDeviceIds = new Set(getVisibleFaultSearchOptions().map(option => option.id));
+            } else {
+                selectedFaultDeviceIds = new Set();
+            }
+            searchKeyword = '';
+            renderFaultDeviceSearchDropdown('');
+            updateFaultDeviceFilterTrigger();
+            renderSummary();
+            renderList();
+        }
+
+        function toggleFaultDeviceSelection(deviceId, checked) {
+            const normalizedDeviceId = String(deviceId || '').trim();
+            if (checked) {
+                selectedFaultDeviceIds.add(normalizedDeviceId);
+            } else {
+                selectedFaultDeviceIds.delete(normalizedDeviceId);
+            }
+            searchKeyword = '';
+            renderFaultDeviceSearchDropdown('');
+            updateFaultDeviceFilterTrigger();
+            renderSummary();
+            renderList();
+        }
+
+        function updateFaultDeviceFilterTrigger() {
+            const trigger = document.getElementById('faultDeviceFilterTrigger');
+            if (!trigger) return;
+            const visibleIds = getVisibleFaultSearchOptions().map(option => option.id);
+            const selected = visibleIds.filter(deviceId => selectedFaultDeviceIds.has(deviceId));
+            if (visibleIds.length && selected.length === visibleIds.length) {
+                trigger.textContent = '设备：全部';
+                return;
+            }
+            if (!selected.length) {
+                trigger.textContent = '设备：未选择';
+                return;
+            }
+            trigger.textContent = selected.length <= 2 ? `设备：${selected.join('、')}` : `设备：已选 ${selected.length} 台`;
+        }
+
+        function selectFaultDeviceSearchOption(deviceId) {
+            selectedFaultDeviceIds = new Set([String(deviceId || '').trim()].filter(Boolean));
+            searchKeyword = '';
+            hideFaultDeviceSearchDropdown();
+            updateFaultDeviceFilterTrigger();
+            renderSummary();
+            renderList();
+        }
+
+        function handleFaultDeviceSearchKeydown(event) {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            const input = document.getElementById('deviceSearch');
+            const firstCandidate = getFaultDeviceSearchCandidates(input?.value || '')[0];
+            if (firstCandidate) {
+                selectFaultDeviceSearchOption(firstCandidate.id);
+            }
         }
 
         function handleSearch() {
             searchKeyword = document.getElementById('deviceSearch').value || '';
-            renderSummary();
-            renderList();
+            renderFaultDeviceSearchDropdown(searchKeyword);
+            document.getElementById('deviceSearchDropdown')?.classList.add('show');
         }
 
         function renderSummary() {
@@ -2017,6 +2242,7 @@
 
         currentStaffFaultAccess = resolveCurrentStaffFaultAccess();
         renderSidebarLoginProfile();
+        initializeFaultDeviceFilter();
         renderSummary();
         renderList();
     </script>

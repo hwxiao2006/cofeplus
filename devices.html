@@ -875,14 +875,61 @@
             overflow: hidden;
         }
 
+        .detail-location-change-summary {
+            display: block;
+            position: relative;
+            padding: 12px 14px;
+            padding-right: 36px;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .detail-location-change-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .detail-location-change-summary::marker {
+            content: '';
+            font-size: 0;
+        }
+
+        .detail-location-change-summary::after {
+            content: '';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid #9ca3af;
+            border-bottom: 2px solid #9ca3af;
+            transform: translateY(-50%) rotate(45deg);
+            transition: transform 0.18s ease;
+        }
+
+        .detail-disclosure .detail-location-change-summary::after {
+            content: '';
+            float: none;
+            font-size: 0;
+        }
+
+        .detail-disclosure[open] .detail-location-change-summary::after {
+            content: '';
+        }
+
+        .detail-location-change-card[open] .detail-location-change-summary::after {
+            transform: translateY(-50%) rotate(225deg);
+        }
+
+        .detail-location-change-summary:focus-visible {
+            outline: 2px solid rgba(41, 116, 255, 0.28);
+            outline-offset: -2px;
+        }
+
         .detail-location-change-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border-light);
-            background: #fcfcfd;
         }
 
         .detail-location-change-time {
@@ -897,9 +944,44 @@
             text-align: right;
         }
 
+        .detail-location-change-brief {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 7px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .detail-location-change-count {
+            padding: 2px 7px;
+            border: 1px solid #bbf7d0;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .detail-location-change-primary {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .detail-location-change-primary strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
         .detail-location-change-body {
             display: grid;
             gap: 0;
+            border-top: 1px solid var(--border-light);
         }
 
         .detail-location-change-row {
@@ -7094,36 +7176,55 @@
 
         function renderLocationChangeRecordCard(record) {
             const normalized = normalizeLocationChangeRecord(record);
+            const fields = [
+                {
+                    label: '点位名称',
+                    previous: normalized.previousLocationName || '-',
+                    next: normalized.nextLocationName || '-'
+                },
+                {
+                    label: '点位地址',
+                    previous: normalized.previousLocationAddress || '-',
+                    next: normalized.nextLocationAddress || '-'
+                },
+                {
+                    label: '经纬度',
+                    previous: `${normalized.previousLongitude || '-'}, ${normalized.previousLatitude || '-'}`,
+                    next: `${normalized.nextLongitude || '-'}, ${normalized.nextLatitude || '-'}`
+                }
+            ].filter(item => item.previous !== item.next);
+            const visibleFields = fields.length ? fields : [{
+                label: '点位信息',
+                previous: normalized.previousLocationName || '-',
+                next: normalized.nextLocationName || '-'
+            }];
+            const primaryField = visibleFields[0];
+            const fullRows = visibleFields.map(item => `
+                        <div class="detail-location-change-row">
+                            <div class="detail-location-change-label">${escapeHtml(item.label)}</div>
+                            <div class="detail-location-change-value">
+                                <div class="detail-location-change-value-line">变更前：${escapeHtml(item.previous)}</div>
+                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(item.next)}</strong></div>
+                            </div>
+                        </div>
+            `).join('');
             return `
-                <article class="detail-location-change-card">
-                    <div class="detail-location-change-head">
-                        <div class="detail-location-change-time">${escapeHtml(normalizeRecordTime(normalized.time))}</div>
-                        <div class="detail-location-change-operator">操作人：${escapeHtml(normalized.operatorName || '当前用户')}</div>
-                    </div>
+                <details class="detail-location-change-card">
+                    <summary class="detail-location-change-summary">
+                        <div class="detail-location-change-head">
+                            <div class="detail-location-change-time">${escapeHtml(normalizeRecordTime(normalized.time))}</div>
+                            <div class="detail-location-change-operator">操作人：${escapeHtml(normalized.operatorName || '当前用户')}</div>
+                        </div>
+                        <div class="detail-location-change-brief">
+                            <span class="detail-location-change-count">${visibleFields.length} 项变更</span>
+                            <span>${escapeHtml(visibleFields.map(item => item.label).join('、'))}</span>
+                        </div>
+                        <div class="detail-location-change-primary">${escapeHtml(primaryField.label)}：${escapeHtml(primaryField.previous)} -> <strong>${escapeHtml(primaryField.next)}</strong></div>
+                    </summary>
                     <div class="detail-location-change-body">
-                        <div class="detail-location-change-row">
-                            <div class="detail-location-change-label">点位名称</div>
-                            <div class="detail-location-change-value">
-                                <div class="detail-location-change-value-line">变更前：${escapeHtml(normalized.previousLocationName || '-')}</div>
-                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(normalized.nextLocationName || '-')}</strong></div>
-                            </div>
-                        </div>
-                        <div class="detail-location-change-row">
-                            <div class="detail-location-change-label">点位地址</div>
-                            <div class="detail-location-change-value">
-                                <div class="detail-location-change-value-line">变更前：${escapeHtml(normalized.previousLocationAddress || '-')}</div>
-                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(normalized.nextLocationAddress || '-')}</strong></div>
-                            </div>
-                        </div>
-                        <div class="detail-location-change-row">
-                            <div class="detail-location-change-label">经纬度</div>
-                            <div class="detail-location-change-value">
-                                <div class="detail-location-change-value-line">变更前：${escapeHtml(`${normalized.previousLongitude || '-'}, ${normalized.previousLatitude || '-'}`)}</div>
-                                <div class="detail-location-change-value-line">变更后：<strong>${escapeHtml(`${normalized.nextLongitude || '-'}, ${normalized.nextLatitude || '-'}`)}</strong></div>
-                            </div>
-                        </div>
+                        ${fullRows}
                     </div>
-                </article>
+                </details>
             `;
         }
 
