@@ -111,6 +111,19 @@ test('运行时：点击机构重启后应进入二级重启面板', () => {
   assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
 });
 
+test('运行时：远程操作一级菜单不应再展示更新配方', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('机构重启'));
+  assert.ok(panel.innerHTML.includes('设备开门'));
+  assert.ok(panel.innerHTML.includes('设备停售'));
+  assert.ok(panel.innerHTML.includes('音量调节'));
+  assert.ok(!panel.innerHTML.includes('更新配方'));
+});
+
 test('运行时：机构重启分项确认后才应执行远程指令', () => {
   const sandbox = buildSandbox();
 
