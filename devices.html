@@ -8140,17 +8140,12 @@
             const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
             const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
             const body = `
-                <details class="detail-disclosure">
-                    <summary>展开状态记录</summary>
-                    <div class="detail-disclosure-content">
-                        <div class="detail-section-meta">历史异常和远程/运维操作仍保留在统一记录弹层里，需要时再展开查看。</div>
-                        ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
-                        ${renderDetailRow('运维记录', `${operationCount} 条`)}
-                        <div class="detail-subsection">
-                            <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
-                        </div>
-                    </div>
-                </details>
+                <div class="detail-section-meta">异常和远程/运维操作统一在这里汇总，需要追溯时进入状态记录查看。</div>
+                ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
+                ${renderDetailRow('运维记录', `${operationCount} 条`)}
+                <div class="detail-subsection">
+                    <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
+                </div>
             `;
             return renderDetailCard('状态记录', body, 'detail-card-records');
         }
