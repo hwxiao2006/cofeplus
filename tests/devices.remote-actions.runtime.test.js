@@ -84,7 +84,9 @@ function buildSandbox() {
     'escapeHtml',
     'renderDetailRemoteActionPanel',
     'renderDetailRemoteRestartPanel',
+    'getDetailRemoteRestartMeta',
     'renderDetailRemoteConfirmDialog',
+    'renderDetailRemoteHardwareGuidePanel',
     'openDetailRemoteActions',
     'closeDetailRemoteActions',
     'handleDetailRemoteAction'
@@ -133,12 +135,37 @@ test('运行时：机构重启分项确认后才应执行远程指令', () => {
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.ok(panel.innerHTML.includes('确定要重启系统？'));
+  assert.ok(panel.innerHTML.includes('确认软件重启'));
+  assert.ok(panel.innerHTML.includes('无法远程处理？查看机器按钮位置'));
+  assert.ok(panel.innerHTML.includes('detail-remote-restart-confirm-primary'));
+  assert.ok(!panel.innerHTML.includes('确认执行'));
   assert.strictEqual(sandbox.__operationRecords.length, 0);
 
-  sandbox.handleDetailRemoteAction('确认执行');
+  sandbox.handleDetailRemoteAction('确认软件重启');
 
   assert.strictEqual(panel.classList.contains('active'), false);
   assert.strictEqual(sandbox.__operationRecords.length, 1);
   assert.strictEqual(sandbox.__operationRecords[0].action, '重启系统');
   assert.ok(sandbox.__toasts[0].includes('重启系统'));
+});
+
+test('运行时：无法远程处理应进入机器按钮位置指导页', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('机构重启');
+  sandbox.handleDetailRemoteAction('重启点单屏（右）');
+  sandbox.handleDetailRemoteAction('无法远程处理？查看机器按钮位置');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('机器按钮位置 · 重启点单屏（右）'));
+  assert.ok(panel.innerHTML.includes('右侧点单屏按钮位置示意图'));
+  assert.ok(panel.innerHTML.includes('系统无法远程执行'));
+  assert.ok(panel.innerHTML.includes('我知道了'));
+  assert.strictEqual(sandbox.__operationRecords.length, 0);
+
+  sandbox.handleDetailRemoteAction('我知道了');
+
+  assert.strictEqual(panel.classList.contains('active'), false);
+  assert.strictEqual(sandbox.__operationRecords.length, 0);
 });
