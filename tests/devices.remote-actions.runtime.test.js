@@ -5,6 +5,7 @@ const vm = require('vm');
 
 const devicesPath = path.join(__dirname, '..', 'devices.html');
 const devicesHtml = fs.readFileSync(devicesPath, 'utf8');
+const REMOTE_VOLUME_STORAGE_KEY = 'deviceRemoteVolumeSettings';
 
 function test(name, fn) {
   try {
@@ -39,7 +40,28 @@ function extractFunctionSource(html, functionName) {
   throw new Error(`函数 ${functionName} 解析失败`);
 }
 
-function buildSandbox() {
+function createLocalStorage(seed = {}) {
+  const data = new Map(Object.entries(seed).map(([key, value]) => [key, String(value)]));
+  return {
+    getItem(key) {
+      return data.has(key) ? data.get(key) : null;
+    },
+    setItem(key, value) {
+      data.set(key, String(value));
+    },
+    removeItem(key) {
+      data.delete(key);
+    },
+    clear() {
+      data.clear();
+    },
+    dump(key) {
+      return data.get(key);
+    }
+  };
+}
+
+function buildSandbox(storageSeed) {
   const elements = {};
   function getElement(id) {
     if (!elements[id]) {
@@ -61,14 +83,20 @@ function buildSandbox() {
 
   const operationRecords = [];
   const toasts = [];
+  const localStorage = createLocalStorage(storageSeed);
   const sandbox = {
     console,
     Math,
     Date,
+    JSON,
+    Number,
+    DETAIL_REMOTE_VOLUME_STORAGE_KEY: REMOTE_VOLUME_STORAGE_KEY,
     activeFaultActionDeviceId: '',
     currentDetailDeviceId: '',
     detailRemoteActionMode: 'root',
     detailRemotePendingCommand: '',
+    detailRemoteVolumeContext: null,
+    localStorage,
     document: {
       getElementById: getElement
     },
@@ -87,6 +115,18 @@ function buildSandbox() {
     'getDetailRemoteRestartMeta',
     'renderDetailRemoteConfirmDialog',
     'renderDetailRemoteHardwareGuidePanel',
+    'getDetailRemoteVolumeMeta',
+    'clampDetailRemoteVolumeValue',
+    'getStoredDetailRemoteVolumes',
+    'getDetailRemoteVolumeValue',
+    'persistDetailRemoteVolumeValue',
+    'renderDetailRemoteVolumeMenu',
+    'renderDetailRemoteVolumePanel',
+    'openDetailRemoteVolumePanel',
+    'refreshDetailRemoteVolumePanel',
+    'changeDetailRemoteVolumeDraftValue',
+    'setDetailRemoteVolumeDraftValue',
+    'saveDetailRemoteVolumeSetting',
     'openDetailRemoteActions',
     'closeDetailRemoteActions',
     'handleDetailRemoteAction'
@@ -95,6 +135,7 @@ function buildSandbox() {
   });
   sandbox.__operationRecords = operationRecords;
   sandbox.__toasts = toasts;
+  sandbox.__localStorage = localStorage;
   return sandbox;
 }
 
@@ -124,6 +165,99 @@ test('运行时：远程操作一级菜单不应再展示更新配方', () => {
   assert.ok(panel.innerHTML.includes('设备停售'));
   assert.ok(panel.innerHTML.includes('音量调节'));
   assert.ok(!panel.innerHTML.includes('更新配方'));
+});
+
+test('运行时：点击音量调节后应进入二级音量菜单', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.strictEqual(panel.classList.contains('active'), true);
+  assert.ok(panel.innerHTML.includes('音量调节 · RCK088'));
+  assert.ok(panel.innerHTML.includes('设备音量'));
+  assert.ok(panel.innerHTML.includes('点单屏音量'));
+  assert.strictEqual(sandbox.__operationRecords.length, 0);
+});
+
+test('运行时：设备音量页应读取该设备上次保存值', () => {
+  const sandbox = buildSandbox({
+    [REMOTE_VOLUME_STORAGE_KEY]: JSON.stringify({
+      RCK088: {
+        deviceVolume: 12,
+        orderScreenVolume: 5
+      }
+    })
+  });
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+  sandbox.handleDetailRemoteAction('设备音量');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('设备音量'));
+  assert.ok(panel.innerHTML.includes('待机背景音乐、饮品出品信息、排队号语音'));
+  assert.ok(panel.innerHTML.includes('value="12"'));
+  assert.ok(panel.innerHTML.includes('>12<'));
+});
+
+test('运行时：点单屏音量页应读取独立的历史值与说明文案', () => {
+  const sandbox = buildSandbox({
+    [REMOTE_VOLUME_STORAGE_KEY]: JSON.stringify({
+      RCK088: {
+        deviceVolume: 12,
+        orderScreenVolume: 6
+      }
+    })
+  });
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+  sandbox.handleDetailRemoteAction('点单屏音量');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('点单屏音量'));
+  assert.ok(panel.innerHTML.includes('欢迎语音、下单提示语音、制作中音乐'));
+  assert.ok(panel.innerHTML.includes('value="6"'));
+  assert.ok(panel.innerHTML.includes('>6<'));
+});
+
+test('运行时：保存音量后应持久化、关闭弹层并提示统一文案', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+  sandbox.handleDetailRemoteAction('设备音量');
+  sandbox.changeDetailRemoteVolumeDraftValue(3);
+  sandbox.setDetailRemoteVolumeDraftValue(9);
+  sandbox.saveDetailRemoteVolumeSetting();
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  const saved = JSON.parse(sandbox.__localStorage.dump(REMOTE_VOLUME_STORAGE_KEY));
+
+  assert.strictEqual(panel.classList.contains('active'), false);
+  assert.strictEqual(panel.innerHTML, '');
+  assert.strictEqual(saved.RCK088.deviceVolume, 9);
+  assert.strictEqual(sandbox.__operationRecords.length, 1);
+  assert.strictEqual(sandbox.__operationRecords[0].action, '设备音量调节');
+  assert.ok(sandbox.__operationRecords[0].note.includes('9'));
+  assert.strictEqual(sandbox.__toasts[0], '已下发音量调节');
+});
+
+test('运行时：音量详情页应提供明确的关闭入口', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRemoteActions('RCK088');
+  sandbox.handleDetailRemoteAction('音量调节');
+  sandbox.handleDetailRemoteAction('设备音量');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.ok(panel.innerHTML.includes('关闭'));
+  assert.ok(panel.innerHTML.includes('closeDetailRemoteActions()'));
+
+  sandbox.closeDetailRemoteActions();
+  assert.strictEqual(panel.classList.contains('active'), false);
 });
 
 test('运行时：机构重启分项确认后才应执行远程指令', () => {
