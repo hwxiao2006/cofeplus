@@ -6281,7 +6281,6 @@
         function renderDeviceStatusCard(base, fault, counts) {
             const summary = base || {};
             const snapshot = fault || {};
-            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
             const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
             const rows = [
                 renderDetailRow('设备状态', summary.statusName || '-'),
@@ -6294,9 +6293,6 @@
             if (snapshot.hasFault && snapshot.updatedAt && snapshot.updatedAt !== '-') {
                 noteParts.push(`最近异常时间：${snapshot.updatedAt}`);
             }
-            if (abnormalCount > 0) {
-                noteParts.push(`历史异常记录：${abnormalCount} 条`);
-            }
             const note = noteParts.length
                 ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
                 : '';
@@ -6306,15 +6302,12 @@
         function renderDeviceOperationSummaryCard(entryData, counts) {
             const info = entryData?.info || {};
             const changeCount = Array.isArray(info.locationChangeRecords) ? info.locationChangeRecords.length : 0;
-            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
-            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
             const rows = [
                 renderDetailRow('当前点位', entryData?.locationName || '-'),
                 renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
                 renderDetailRow('节能模式', info.energyMode || '-'),
                 renderDetailRow('网络信号', info.networkSignal || '-'),
-                renderDetailRow('最近变更', changeCount ? `点位变更 ${changeCount} 条` : '暂无点位变更'),
-                renderDetailRow('记录摘要', `异常 ${abnormalCount} 条，运维 ${operationCount} 条`)
+                renderDetailRow('最近变更', changeCount ? `点位变更 ${changeCount} 条` : '暂无点位变更')
             ].join('');
             return renderDetailCard('运营摘要', rows, 'detail-card-operation-summary');
         }
