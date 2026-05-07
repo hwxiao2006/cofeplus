@@ -164,6 +164,26 @@
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
         }
+
+        .sidebar-logout-btn {
+            flex: 0 0 auto;
+            height: 20px;
+            padding: 0 8px;
+            border: 1px solid rgba(219, 234, 254, 0.18);
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.22);
+            color: rgba(241, 245, 249, 0.76);
+            font-size: 10px;
+            line-height: 18px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .sidebar-logout-btn:hover {
+            border-color: rgba(248, 113, 113, 0.38);
+            background: rgba(127, 29, 29, 0.24);
+            color: #fecaca;
+        }
         .sidebar-admin-lang {
             display: inline-flex;
             align-items: center;
@@ -5635,8 +5655,9 @@
                     </div>
                 </div>
                 <div class="sidebar-login">
-                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
-                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                    <div class="sidebar-login-name" id="sidebarLoginName">运营管理员</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">13800138000</div>
+                    <button type="button" class="sidebar-logout-btn" id="sidebarLogoutButton" onclick="handleSidebarLogout()" aria-label="退出登录" title="退出登录">退出</button>
                 </div>
             </div>
             
@@ -6424,6 +6445,8 @@
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const LOGIN_PAGE_URL = 'login-paper.html';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
             phone: '13800138000'
@@ -6621,6 +6644,16 @@
             }
             fitSidebarLoginInline();
             renderAdminSidebarTranslations();
+        }
+
+        function handleSidebarLogout() {
+            try {
+                localStorage.removeItem(LOGIN_SESSION_KEY);
+                localStorage.removeItem(SIDEBAR_LOGIN_PROFILE_KEY);
+            } catch (e) {
+                // ignore localStorage cleanup failures
+            }
+            window.location.href = LOGIN_PAGE_URL;
         }
 
         function fitSidebarLoginInline() {
