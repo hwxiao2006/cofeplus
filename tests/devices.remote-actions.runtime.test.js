@@ -127,6 +127,8 @@ function buildSandbox(storageSeed) {
     'changeDetailRemoteVolumeDraftValue',
     'setDetailRemoteVolumeDraftValue',
     'saveDetailRemoteVolumeSetting',
+    'openDetailQuickRestart',
+    'openDetailRestartOptions',
     'openDetailRemoteActions',
     'closeDetailRemoteActions',
     'handleDetailRemoteAction'
@@ -165,6 +167,40 @@ test('运行时：远程操作一级菜单不应再展示更新配方', () => {
   assert.ok(panel.innerHTML.includes('设备停售'));
   assert.ok(panel.innerHTML.includes('音量调节'));
   assert.ok(!panel.innerHTML.includes('更新配方'));
+});
+
+test('运行时：快速重启应直达确认页并保持确认后执行', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailQuickRestart('RCK088', '重启系统');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.strictEqual(panel.classList.contains('active'), true);
+  assert.ok(panel.innerHTML.includes('确认操作'));
+  assert.ok(panel.innerHTML.includes('确定要重启系统？'));
+  assert.ok(panel.innerHTML.includes('确认软件重启'));
+  assert.strictEqual(sandbox.__operationRecords.length, 0);
+
+  sandbox.handleDetailRemoteAction('确认软件重启');
+
+  assert.strictEqual(panel.classList.contains('active'), false);
+  assert.strictEqual(sandbox.__operationRecords.length, 1);
+  assert.strictEqual(sandbox.__operationRecords[0].action, '重启系统');
+});
+
+test('运行时：更多重启项应打开完整机构重启菜单', () => {
+  const sandbox = buildSandbox();
+
+  sandbox.openDetailRestartOptions('RCK088');
+
+  const panel = sandbox.document.getElementById('detailRemoteActionSheet');
+  assert.strictEqual(panel.classList.contains('active'), true);
+  assert.ok(panel.innerHTML.includes('机构重启 · RCK088'));
+  assert.ok(panel.innerHTML.includes('重启系统'));
+  assert.ok(panel.innerHTML.includes('重启点单屏（左）'));
+  assert.ok(panel.innerHTML.includes('重启点单屏（右）'));
+  assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
+  assert.strictEqual(sandbox.__operationRecords.length, 0);
 });
 
 test('运行时：点击音量调节后应进入二级音量菜单', () => {

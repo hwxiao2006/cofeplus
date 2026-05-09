@@ -1263,6 +1263,87 @@
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
+        .detail-quick-restart-card {
+            border-color: rgba(37, 99, 235, 0.28);
+            background: linear-gradient(180deg, #eff6ff 0%, #ffffff 92%);
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+        }
+
+        .detail-quick-restart-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .detail-quick-restart-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .detail-quick-restart-subtitle {
+            margin-top: 3px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .detail-quick-restart-badge {
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+        }
+
+        .detail-quick-restart-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-quick-restart-screens {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .detail-quick-restart-btn {
+            width: 100%;
+            border: 1px solid #bfdbfe;
+            border-radius: 9px;
+            background: #fff;
+            color: #1d4ed8;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 9px 10px;
+            text-align: center;
+            transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .detail-quick-restart-btn:hover {
+            transform: translateY(-1px);
+            border-color: #60a5fa;
+            background: #eff6ff;
+        }
+
+        .detail-quick-restart-btn.primary {
+            border-color: #1d4ed8;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .detail-quick-restart-btn.secondary {
+            border-color: var(--border-light);
+            background: #fff;
+            color: var(--text-primary);
+        }
+
         .detail-side-title {
             font-size: 13px;
             font-weight: 600;
@@ -7521,6 +7602,31 @@
             detailRemoteVolumeContext = null;
         }
 
+        function openDetailQuickRestart(deviceId, actionName) {
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            const restartAction = getDetailRemoteRestartMeta(actionName) ? actionName : '重启系统';
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!targetDeviceId || !panel) return;
+            activeFaultActionDeviceId = targetDeviceId;
+            detailRemoteActionMode = 'confirm';
+            detailRemotePendingCommand = restartAction;
+            detailRemoteVolumeContext = null;
+            panel.innerHTML = renderDetailRemoteConfirmDialog(restartAction);
+            panel.classList.add('active');
+        }
+
+        function openDetailRestartOptions(deviceId) {
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            const panel = document.getElementById('detailRemoteActionSheet');
+            if (!targetDeviceId || !panel) return;
+            activeFaultActionDeviceId = targetDeviceId;
+            detailRemoteActionMode = 'restart';
+            detailRemotePendingCommand = '';
+            detailRemoteVolumeContext = null;
+            panel.innerHTML = renderDetailRemoteRestartPanel(targetDeviceId);
+            panel.classList.add('active');
+        }
+
         function handleDetailRemoteAction(actionName) {
             const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
             const panel = document.getElementById('detailRemoteActionSheet');
@@ -8839,6 +8945,23 @@
             return `
                 <aside class="detail-aside">
                     <div class="detail-aside-stack">
+                        <section class="detail-side-card detail-quick-restart-card">
+                            <div class="detail-quick-restart-head">
+                                <div>
+                                    <div class="detail-quick-restart-title">快速重启</div>
+                                    <div class="detail-quick-restart-subtitle">高频操作，点击后仍需确认</div>
+                                </div>
+                                <span class="detail-quick-restart-badge">常用</span>
+                            </div>
+                            <div class="detail-quick-restart-actions">
+                                <button type="button" class="detail-quick-restart-btn primary" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启系统')">重启系统</button>
+                                <div class="detail-quick-restart-screens">
+                                    <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（左）')">点单屏左</button>
+                                    <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（右）')">点单屏右</button>
+                                </div>
+                                <button type="button" class="detail-quick-restart-btn secondary" onclick="openDetailRestartOptions('${escapeHtml(summary.deviceId || '')}')">更多重启项</button>
+                            </div>
+                        </section>
                         <section class="detail-side-card">
                             <div class="detail-side-title">设备操作</div>
                             <div class="detail-side-action-list">
