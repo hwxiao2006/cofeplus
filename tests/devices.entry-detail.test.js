@@ -124,7 +124,7 @@ test('设备详情桌面端应采用左主内容与右侧设备操作布局', ()
   assert.ok(!/function\s+renderDetailQuickRestartBar\s*\(/.test(devicesHtml));
   assert.ok(!/renderDetailQuickRestartBar\(detailData\)/.test(devicesHtml));
   assert.ok(/detail-status-recovery-action/.test(devicesHtml));
-  assert.ok(/建议动作：重启系统/.test(devicesHtml));
+  assert.ok(/快捷操作/.test(devicesHtml));
   assert.ok(/openDetailQuickRestart\('\$\{deviceId\}', '重启系统'\)/.test(devicesHtml));
   assert.ok(/openDetailRestartOptions\('\$\{deviceId\}'\)/.test(devicesHtml));
   assert.ok(/openDetailInfoPanel\('entry'/.test(devicesHtml));

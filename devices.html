@@ -1264,11 +1264,13 @@
         }
 
         .detail-status-recovery-action {
-            margin-top: 12px;
-            border: 1px solid rgba(37, 99, 235, 0.18);
-            border-radius: 12px;
-            background: #f8fbff;
-            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 4px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
         }
 
         .detail-status-recovery-head {
@@ -1276,59 +1278,52 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 10px;
+            min-width: 150px;
         }
 
         .detail-status-recovery-title {
-            color: #1e3a8a;
-            font-size: 13px;
-            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
         }
 
         .detail-status-recovery-copy {
-            margin-top: 3px;
-            color: var(--text-secondary);
-            font-size: 12px;
-            line-height: 1.5;
+            display: none;
         }
 
         .detail-status-recovery-actions {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr auto;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
         .detail-status-recovery-btn {
-            border: 1px solid #bfdbfe;
-            border-radius: 9px;
-            background: #fff;
-            color: #1d4ed8;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-primary);
             cursor: pointer;
             font-size: 12px;
-            font-weight: 700;
-            padding: 8px 10px;
+            font-weight: 500;
+            padding: 4px 6px;
             text-align: center;
             white-space: nowrap;
-            transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+            transition: background-color 0.15s ease, color 0.15s ease;
         }
 
         .detail-status-recovery-btn:hover {
-            transform: translateY(-1px);
-            border-color: #60a5fa;
-            background: #eff6ff;
+            background: #f1f5f9;
+            color: var(--primary);
         }
 
         .detail-status-recovery-btn.primary {
-            border-color: #1d4ed8;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff;
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+            color: var(--text-primary);
         }
 
         .detail-status-recovery-btn.secondary {
-            border-color: var(--border-light);
-            background: #fff;
-            color: var(--text-primary);
+            color: var(--text-secondary);
         }
 
         .detail-side-title {
@@ -6418,12 +6413,12 @@
                 <div class="detail-status-recovery-action">
                     <div class="detail-status-recovery-head">
                         <div>
-                            <div class="detail-status-recovery-title">建议动作：重启系统</div>
+                            <div class="detail-status-recovery-title">快捷操作</div>
                             <div class="detail-status-recovery-copy">重启是高频恢复动作，点击后进入确认页，不会直接执行。</div>
                         </div>
                     </div>
                     <div class="detail-status-recovery-actions">
-                        <button type="button" class="detail-status-recovery-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">立即重启</button>
+                        <button type="button" class="detail-status-recovery-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">重启系统</button>
                         <button type="button" class="detail-status-recovery-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（左）')">点单屏左</button>
                         <button type="button" class="detail-status-recovery-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（右）')">点单屏右</button>
                         <button type="button" class="detail-status-recovery-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">更多</button>
