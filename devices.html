@@ -1263,18 +1263,25 @@
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
-        .detail-quick-restart-card {
-            border-color: rgba(37, 99, 235, 0.28);
-            background: linear-gradient(180deg, #eff6ff 0%, #ffffff 92%);
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+        .detail-quick-restart-bar {
+            position: sticky;
+            bottom: 0;
+            z-index: 5;
+            margin-top: 14px;
+            border: 1px solid rgba(37, 99, 235, 0.28);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.12);
+            backdrop-filter: blur(12px);
+            padding: 12px;
         }
 
         .detail-quick-restart-head {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
         .detail-quick-restart-title {
@@ -1290,24 +1297,9 @@
             line-height: 1.5;
         }
 
-        .detail-quick-restart-badge {
-            flex: 0 0 auto;
-            border-radius: 999px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 8px;
-        }
-
         .detail-quick-restart-actions {
             display: grid;
-            gap: 8px;
-        }
-
-        .detail-quick-restart-screens {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: 1.2fr 1fr 1fr 1fr;
             gap: 8px;
         }
 
@@ -3323,6 +3315,14 @@
             .detail-aside-stack {
                 position: static;
             }
+
+            .detail-quick-restart-bar {
+                margin: 12px -2px 0;
+            }
+
+            .detail-quick-restart-actions {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -3396,6 +3396,19 @@
             .detail-card {
                 padding: 10px 12px;
                 box-shadow: none;
+            }
+
+            .detail-quick-restart-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .detail-quick-restart-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .detail-quick-restart-btn.primary {
+                grid-column: 1 / -1;
             }
 
             .detail-card-title {
@@ -8945,23 +8958,6 @@
             return `
                 <aside class="detail-aside">
                     <div class="detail-aside-stack">
-                        <section class="detail-side-card detail-quick-restart-card">
-                            <div class="detail-quick-restart-head">
-                                <div>
-                                    <div class="detail-quick-restart-title">快速重启</div>
-                                    <div class="detail-quick-restart-subtitle">高频操作，点击后仍需确认</div>
-                                </div>
-                                <span class="detail-quick-restart-badge">常用</span>
-                            </div>
-                            <div class="detail-quick-restart-actions">
-                                <button type="button" class="detail-quick-restart-btn primary" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启系统')">重启系统</button>
-                                <div class="detail-quick-restart-screens">
-                                    <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（左）')">点单屏左</button>
-                                    <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（右）')">点单屏右</button>
-                                </div>
-                                <button type="button" class="detail-quick-restart-btn secondary" onclick="openDetailRestartOptions('${escapeHtml(summary.deviceId || '')}')">更多重启项</button>
-                            </div>
-                        </section>
                         <section class="detail-side-card">
                             <div class="detail-side-title">设备操作</div>
                             <div class="detail-side-action-list">
@@ -8983,6 +8979,27 @@
                         </section>
                     </div>
                 </aside>
+            `;
+        }
+
+        function renderDetailQuickRestartBar(detailData) {
+            const summary = detailData?.base || {};
+            const deviceId = escapeHtml(summary.deviceId || '');
+            return `
+                <section class="detail-quick-restart-bar" aria-label="快速重启">
+                    <div class="detail-quick-restart-head">
+                        <div>
+                            <div class="detail-quick-restart-title">快速重启</div>
+                            <div class="detail-quick-restart-subtitle">高频重启操作固定在底部，点击后仍需确认执行。</div>
+                        </div>
+                    </div>
+                    <div class="detail-quick-restart-actions">
+                        <button type="button" class="detail-quick-restart-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">重启系统</button>
+                        <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（左）')">点单屏左</button>
+                        <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（右）')">点单屏右</button>
+                        <button type="button" class="detail-quick-restart-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">更多重启项</button>
+                    </div>
+                </section>
             `;
         }
 
@@ -9024,6 +9041,7 @@
                     </div>
                     ${renderDetailAside(detailData)}
                 </div>
+                ${renderDetailQuickRestartBar(detailData)}
             `;
             detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
