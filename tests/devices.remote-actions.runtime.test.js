@@ -141,11 +141,10 @@ function buildSandbox(storageSeed) {
   return sandbox;
 }
 
-test('运行时：点击机构重启后应进入二级重启面板', () => {
+test('运行时：快捷重启更多项应进入二级重启面板', () => {
   const sandbox = buildSandbox();
 
-  sandbox.openDetailRemoteActions('RCK088');
-  sandbox.handleDetailRemoteAction('机构重启');
+  sandbox.openDetailRestartOptions('RCK088');
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.strictEqual(panel.classList.contains('active'), true);
@@ -162,7 +161,7 @@ test('运行时：远程操作一级菜单不应再展示更新配方', () => {
   sandbox.openDetailRemoteActions('RCK088');
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
-  assert.ok(panel.innerHTML.includes('机构重启'));
+  assert.ok(!panel.innerHTML.includes('机构重启'));
   assert.ok(panel.innerHTML.includes('设备开门'));
   assert.ok(panel.innerHTML.includes('设备停售'));
   assert.ok(panel.innerHTML.includes('音量调节'));
@@ -299,8 +298,7 @@ test('运行时：音量详情页应提供明确的关闭入口', () => {
 test('运行时：机构重启分项确认后才应执行远程指令', () => {
   const sandbox = buildSandbox();
 
-  sandbox.openDetailRemoteActions('RCK088');
-  sandbox.handleDetailRemoteAction('机构重启');
+  sandbox.openDetailRestartOptions('RCK088');
   sandbox.handleDetailRemoteAction('重启系统');
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
@@ -322,8 +320,7 @@ test('运行时：机构重启分项确认后才应执行远程指令', () => {
 test('运行时：无法远程处理应进入机器按钮位置指导页', () => {
   const sandbox = buildSandbox();
 
-  sandbox.openDetailRemoteActions('RCK088');
-  sandbox.handleDetailRemoteAction('机构重启');
+  sandbox.openDetailRestartOptions('RCK088');
   sandbox.handleDetailRemoteAction('重启点单屏（右）');
   sandbox.handleDetailRemoteAction('无法远程处理？查看机器按钮位置');
 

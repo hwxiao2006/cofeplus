@@ -1263,74 +1263,69 @@
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
-        .detail-quick-restart-bar {
-            position: sticky;
-            bottom: 0;
-            z-index: 5;
-            margin-top: 14px;
-            border: 1px solid rgba(37, 99, 235, 0.28);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.96);
-            box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.12);
-            backdrop-filter: blur(12px);
+        .detail-status-recovery-action {
+            margin-top: 12px;
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            border-radius: 12px;
+            background: #f8fbff;
             padding: 12px;
         }
 
-        .detail-quick-restart-head {
+        .detail-status-recovery-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .detail-quick-restart-title {
-            font-size: 14px;
+        .detail-status-recovery-title {
+            color: #1e3a8a;
+            font-size: 13px;
             font-weight: 700;
-            color: var(--text-primary);
         }
 
-        .detail-quick-restart-subtitle {
+        .detail-status-recovery-copy {
             margin-top: 3px;
             color: var(--text-secondary);
             font-size: 12px;
             line-height: 1.5;
         }
 
-        .detail-quick-restart-actions {
+        .detail-status-recovery-actions {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1fr;
+            grid-template-columns: 1.2fr 1fr 1fr auto;
             gap: 8px;
         }
 
-        .detail-quick-restart-btn {
-            width: 100%;
+        .detail-status-recovery-btn {
             border: 1px solid #bfdbfe;
             border-radius: 9px;
             background: #fff;
             color: #1d4ed8;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            padding: 9px 10px;
+            padding: 8px 10px;
             text-align: center;
+            white-space: nowrap;
             transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
         }
 
-        .detail-quick-restart-btn:hover {
+        .detail-status-recovery-btn:hover {
             transform: translateY(-1px);
             border-color: #60a5fa;
             background: #eff6ff;
         }
 
-        .detail-quick-restart-btn.primary {
+        .detail-status-recovery-btn.primary {
             border-color: #1d4ed8;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #fff;
             box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
         }
 
-        .detail-quick-restart-btn.secondary {
+        .detail-status-recovery-btn.secondary {
             border-color: var(--border-light);
             background: #fff;
             color: var(--text-primary);
@@ -3316,11 +3311,7 @@
                 position: static;
             }
 
-            .detail-quick-restart-bar {
-                margin: 12px -2px 0;
-            }
-
-            .detail-quick-restart-actions {
+            .detail-status-recovery-actions {
                 grid-template-columns: 1fr 1fr;
             }
         }
@@ -3398,16 +3389,16 @@
                 box-shadow: none;
             }
 
-            .detail-quick-restart-head {
+            .detail-status-recovery-head {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-            .detail-quick-restart-actions {
+            .detail-status-recovery-actions {
                 grid-template-columns: 1fr 1fr;
             }
 
-            .detail-quick-restart-btn.primary {
+            .detail-status-recovery-btn.primary {
                 grid-column: 1 / -1;
             }
 
@@ -6408,6 +6399,7 @@
             const summary = base || {};
             const snapshot = fault || {};
             const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
+            const deviceId = escapeHtml(summary.deviceId || '');
             const rows = [
                 renderDetailRow('设备状态', summary.statusName || '-'),
                 renderDetailRow('停卖状态', summary.salesName || '-'),
@@ -6422,7 +6414,23 @@
             const note = noteParts.length
                 ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
                 : '';
-            return renderDetailCard('设备状态', `${rows}${note}`, 'detail-card-status');
+            const recoveryAction = `
+                <div class="detail-status-recovery-action">
+                    <div class="detail-status-recovery-head">
+                        <div>
+                            <div class="detail-status-recovery-title">建议动作：重启系统</div>
+                            <div class="detail-status-recovery-copy">重启是高频恢复动作，点击后进入确认页，不会直接执行。</div>
+                        </div>
+                    </div>
+                    <div class="detail-status-recovery-actions">
+                        <button type="button" class="detail-status-recovery-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">立即重启</button>
+                        <button type="button" class="detail-status-recovery-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（左）')">点单屏左</button>
+                        <button type="button" class="detail-status-recovery-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（右）')">点单屏右</button>
+                        <button type="button" class="detail-status-recovery-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">更多</button>
+                    </div>
+                </div>
+            `;
+            return renderDetailCard('设备状态', `${rows}${note}${recoveryAction}`, 'detail-card-status');
         }
 
         function renderDeviceOperationSummaryCard(entryData, counts) {
@@ -7288,7 +7296,6 @@
             return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
-                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备开门')">设备开门</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备停售')">设备停售</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
@@ -8982,27 +8989,6 @@
             `;
         }
 
-        function renderDetailQuickRestartBar(detailData) {
-            const summary = detailData?.base || {};
-            const deviceId = escapeHtml(summary.deviceId || '');
-            return `
-                <section class="detail-quick-restart-bar" aria-label="快速重启">
-                    <div class="detail-quick-restart-head">
-                        <div>
-                            <div class="detail-quick-restart-title">快速重启</div>
-                            <div class="detail-quick-restart-subtitle">高频重启操作固定在底部，点击后仍需确认执行。</div>
-                        </div>
-                    </div>
-                    <div class="detail-quick-restart-actions">
-                        <button type="button" class="detail-quick-restart-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">重启系统</button>
-                        <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（左）')">点单屏左</button>
-                        <button type="button" class="detail-quick-restart-btn" onclick="openDetailQuickRestart('${deviceId}', '重启点单屏（右）')">点单屏右</button>
-                        <button type="button" class="detail-quick-restart-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">更多重启项</button>
-                    </div>
-                </section>
-            `;
-        }
-
         function viewDetail(deviceId) {
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
@@ -9041,7 +9027,6 @@
                     </div>
                     ${renderDetailAside(detailData)}
                 </div>
-                ${renderDetailQuickRestartBar(detailData)}
             `;
             detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
