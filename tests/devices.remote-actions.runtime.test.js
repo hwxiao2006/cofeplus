@@ -149,7 +149,7 @@ test('运行时：快捷重启更多项应进入二级重启面板', () => {
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.strictEqual(panel.classList.contains('active'), true);
   assert.ok(panel.innerHTML.includes('机构重启'));
-  assert.ok(panel.innerHTML.includes('重启系统'));
+  assert.ok(!panel.innerHTML.includes('重启系统'));
   assert.ok(panel.innerHTML.includes('重启点单屏（左）'));
   assert.ok(panel.innerHTML.includes('重启点单屏（右）'));
   assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
@@ -195,7 +195,7 @@ test('运行时：更多重启项应打开完整机构重启菜单', () => {
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.strictEqual(panel.classList.contains('active'), true);
   assert.ok(panel.innerHTML.includes('机构重启 · RCK088'));
-  assert.ok(panel.innerHTML.includes('重启系统'));
+  assert.ok(!panel.innerHTML.includes('重启系统'));
   assert.ok(panel.innerHTML.includes('重启点单屏（左）'));
   assert.ok(panel.innerHTML.includes('重启点单屏（右）'));
   assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
@@ -295,11 +295,10 @@ test('运行时：音量详情页应提供明确的关闭入口', () => {
   assert.strictEqual(panel.classList.contains('active'), false);
 });
 
-test('运行时：机构重启分项确认后才应执行远程指令', () => {
+test('运行时：快捷系统重启确认后才应执行远程指令', () => {
   const sandbox = buildSandbox();
 
-  sandbox.openDetailRestartOptions('RCK088');
-  sandbox.handleDetailRemoteAction('重启系统');
+  sandbox.openDetailQuickRestart('RCK088', '重启系统');
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.ok(panel.innerHTML.includes('确定要重启系统？'));
