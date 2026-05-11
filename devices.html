@@ -1263,69 +1263,6 @@
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
 
-        .detail-status-recovery-action {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 4px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .detail-status-recovery-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            min-width: 150px;
-        }
-
-        .detail-status-recovery-title {
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .detail-status-recovery-copy {
-            display: none;
-        }
-
-        .detail-status-recovery-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .detail-status-recovery-btn {
-            border: none;
-            border-radius: 6px;
-            background: transparent;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 4px 6px;
-            text-align: center;
-            white-space: nowrap;
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .detail-status-recovery-btn:hover {
-            background: #f1f5f9;
-            color: var(--primary);
-        }
-
-        .detail-status-recovery-btn.primary {
-            color: var(--text-primary);
-        }
-
-        .detail-status-recovery-btn.secondary {
-            color: var(--text-secondary);
-        }
-
         .detail-side-title {
             font-size: 13px;
             font-weight: 600;
@@ -1376,7 +1313,7 @@
             grid-template-columns: 1fr auto;
             border: 1px solid #0f766e;
             border-radius: 6px;
-            overflow: hidden;
+            overflow: visible;
             background: linear-gradient(135deg, #14b8a6, #0f766e);
             color: #fff;
             font-weight: 700;
@@ -1400,11 +1337,13 @@
         .detail-side-restart-primary {
             padding: 10px 12px;
             justify-content: flex-start;
+            border-radius: 5px 0 0 5px;
         }
 
         .detail-side-restart-caret {
             padding: 10px;
             border-left: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 0 5px 5px 0;
         }
 
         .detail-side-restart-primary:hover {
@@ -3446,9 +3385,6 @@
                 position: static;
             }
 
-            .detail-status-recovery-actions {
-                grid-template-columns: 1fr 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -3522,19 +3458,6 @@
             .detail-card {
                 padding: 10px 12px;
                 box-shadow: none;
-            }
-
-            .detail-status-recovery-head {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .detail-status-recovery-actions {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .detail-status-recovery-btn.primary {
-                grid-column: 1 / -1;
             }
 
             .detail-card-title {
@@ -6534,7 +6457,6 @@
             const summary = base || {};
             const snapshot = fault || {};
             const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
-            const deviceId = escapeHtml(summary.deviceId || '');
             const rows = [
                 renderDetailRow('设备状态', summary.statusName || '-'),
                 renderDetailRow('停卖状态', summary.salesName || '-'),
@@ -6549,21 +6471,7 @@
             const note = noteParts.length
                 ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
                 : '';
-            const recoveryAction = `
-                <div class="detail-status-recovery-action">
-                    <div class="detail-status-recovery-head">
-                        <div>
-                            <div class="detail-status-recovery-title">快捷操作</div>
-                            <div class="detail-status-recovery-copy">重启是高频恢复动作，点击后进入确认页，不会直接执行。</div>
-                        </div>
-                    </div>
-                    <div class="detail-status-recovery-actions">
-                        <button type="button" class="detail-status-recovery-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">重启系统</button>
-                        <button type="button" class="detail-status-recovery-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">重启其他</button>
-                    </div>
-                </div>
-            `;
-            return renderDetailCard('设备状态', `${rows}${note}${recoveryAction}`, 'detail-card-status');
+            return renderDetailCard('设备状态', `${rows}${note}`, 'detail-card-status');
         }
 
         function renderDeviceOperationSummaryCard(entryData, counts) {
@@ -7767,6 +7675,59 @@
             panel.classList.add('active');
         }
 
+        // Restart split button: 主区、部件菜单、popover 开关
+        function openDetailRestartSystem(deviceId) {
+            openDetailQuickRestart(deviceId, '重启系统');
+        }
+
+        function openDetailRestartPart(deviceId, actionName) {
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            if (targetDeviceId) {
+                activeFaultActionDeviceId = targetDeviceId;
+                detailRemoteActionMode = 'restart';
+            }
+            closeDetailRestartPopover();
+            handleDetailRemoteAction(actionName);
+        }
+
+        function toggleDetailRestartPopover(event, deviceId) {
+            if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            if (targetDeviceId) activeFaultActionDeviceId = targetDeviceId;
+            const popover = document.querySelector('.detail-side-restart-popover');
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (!popover || !caret) return;
+            const isOpen = popover.getAttribute('data-open') === 'true';
+            popover.setAttribute('data-open', isOpen ? 'false' : 'true');
+            caret.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        }
+
+        function closeDetailRestartPopover() {
+            const popover = document.querySelector('.detail-side-restart-popover');
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (popover) popover.setAttribute('data-open', 'false');
+            if (caret) caret.setAttribute('aria-expanded', 'false');
+        }
+
+        document.addEventListener('click', function(e) {
+            const popover = document.querySelector('.detail-side-restart-popover');
+            if (!popover || popover.getAttribute('data-open') !== 'true') return;
+            if (popover.contains(e.target)) return;
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (caret && caret.contains(e.target)) return;
+            closeDetailRestartPopover();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            const popover = document.querySelector('.detail-side-restart-popover');
+            if (popover && popover.getAttribute('data-open') === 'true') {
+                closeDetailRestartPopover();
+            }
+        });
+
+        // legacy: 保留以防其他入口引用。split button popover 已取代此入口。
         function openDetailRestartOptions(deviceId) {
             const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
             const panel = document.getElementById('detailRemoteActionSheet');
@@ -7806,6 +7767,7 @@
             if (actionName === '机构重启') {
                 detailRemoteActionMode = 'restart';
                 panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
+                panel.classList.add('active');
                 return;
             }
 
@@ -7814,6 +7776,7 @@
                 detailRemotePendingCommand = actionName;
                 detailRemoteActionMode = 'confirm';
                 panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
+                panel.classList.add('active');
                 return;
             }
 
@@ -9100,6 +9063,30 @@
                         <section class="detail-side-card">
                             <div class="detail-side-title">设备操作</div>
                             <div class="detail-side-action-list">
+                                <div class="detail-side-restart-split">
+                                    <button type="button" class="detail-side-restart-primary" onclick="openDetailRestartSystem('${escapeHtml(summary.deviceId || '')}')" aria-label="重启设备">
+                                        <span class="detail-side-restart-icon" aria-hidden="true"></span>
+                                        <span>重启设备</span>
+                                    </button>
+                                    <button type="button" class="detail-side-restart-caret" onclick="toggleDetailRestartPopover(event, '${escapeHtml(summary.deviceId || '')}')" aria-haspopup="menu" aria-expanded="false" aria-label="选择重启部件">
+                                        <span class="detail-side-restart-chevron" aria-hidden="true"></span>
+                                    </button>
+                                    <div class="detail-side-restart-popover" role="menu" data-open="false">
+                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（左）')">
+                                            <span class="detail-side-restart-popover-dot" aria-hidden="true"></span>
+                                            <span>点单屏(左)</span>
+                                        </button>
+                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（右）')">
+                                            <span class="detail-side-restart-popover-dot" aria-hidden="true"></span>
+                                            <span>点单屏(右)</span>
+                                        </button>
+                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启六轴机械臂（注意安全，谨慎使用）')">
+                                            <span class="detail-side-restart-popover-dot detail-side-restart-popover-dot--danger" aria-hidden="true"></span>
+                                            <span>六轴机械臂</span>
+                                            <span class="detail-side-restart-popover-hint">谨慎</span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <button type="button" class="detail-side-action-btn primary" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailTemperatureAlarmModal('${escapeHtml(summary.deviceId || '')}')">温度报警设置</button>
                                 <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>

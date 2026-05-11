@@ -123,11 +123,11 @@ test('设备详情桌面端应采用左主内容与右侧设备操作布局', ()
   assert.ok(!/detail-quick-restart-bar/.test(devicesHtml));
   assert.ok(!/function\s+renderDetailQuickRestartBar\s*\(/.test(devicesHtml));
   assert.ok(!/renderDetailQuickRestartBar\(detailData\)/.test(devicesHtml));
-  assert.ok(/detail-status-recovery-action/.test(devicesHtml));
-  assert.ok(/快捷操作/.test(devicesHtml));
-  assert.ok(/重启其他/.test(devicesHtml));
-  assert.ok(/openDetailQuickRestart\('\$\{deviceId\}', '重启系统'\)/.test(devicesHtml));
-  assert.ok(/openDetailRestartOptions\('\$\{deviceId\}'\)/.test(devicesHtml));
+  assert.ok(!/detail-status-recovery-action/.test(devicesHtml));
+  assert.ok(/detail-side-restart-split/.test(devicesHtml));
+  assert.ok(/openDetailRestartSystem\('\$\{escapeHtml\(summary\.deviceId \|\| ''\)\}'\)/.test(devicesHtml));
+  assert.ok(/toggleDetailRestartPopover\(event,\s*'\$\{escapeHtml\(summary\.deviceId \|\| ''\)\}'\)/.test(devicesHtml));
+  assert.ok(/openDetailRestartPart\([\s\S]*?'重启点单屏（左）'/.test(devicesHtml));
   assert.ok(/openDetailInfoPanel\('entry'/.test(devicesHtml));
   assert.ok(/openDetailInfoPanel\('adScreen'/.test(devicesHtml));
   assert.ok(/openDetailInfoPanel\('technical'/.test(devicesHtml));
