@@ -1369,6 +1369,146 @@
             background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
         }
 
+        /* teal 专用于重启类恢复操作 —— 不要扩散到成功态或其他按钮 */
+        .detail-side-restart-split {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            border: 1px solid #0f766e;
+            border-radius: 6px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            box-shadow: 0 6px 14px rgba(15, 118, 110, 0.22);
+        }
+
+        .detail-side-restart-primary,
+        .detail-side-restart-caret {
+            background: transparent;
+            border: 0;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.15s ease;
+        }
+
+        .detail-side-restart-primary {
+            padding: 10px 12px;
+            justify-content: flex-start;
+        }
+
+        .detail-side-restart-caret {
+            padding: 10px;
+            border-left: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .detail-side-restart-primary:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .detail-side-restart-caret:hover {
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .detail-side-restart-icon {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .detail-side-restart-icon::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -2px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-bottom: 5px solid currentColor;
+        }
+
+        .detail-side-restart-chevron {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid currentColor;
+            transition: transform 0.2s ease;
+        }
+
+        .detail-side-restart-caret[aria-expanded="true"] .detail-side-restart-chevron {
+            transform: rotate(180deg);
+        }
+
+        .detail-side-restart-popover {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+            padding: 6px;
+            min-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+
+        .detail-side-restart-popover[data-open="true"] {
+            display: block;
+        }
+
+        .detail-side-restart-popover-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 500;
+            background: transparent;
+            border: 0;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .detail-side-restart-popover-item:hover {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        .detail-side-restart-popover-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0f766e;
+            flex-shrink: 0;
+        }
+
+        .detail-side-restart-popover-dot--danger {
+            background: #dc2626;
+        }
+
+        .detail-side-restart-popover-hint {
+            margin-left: auto;
+            font-size: 10px;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
 
         .detail-fault-summary {
             margin-top: 8px;
