@@ -720,23 +720,6 @@
             background: #f8fafc;
         }
 
-        .detail-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 300px;
-            gap: 18px;
-            align-items: start;
-        }
-
-        .detail-main {
-            min-width: 0;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: 16px;
-        }
-
         .detail-section {
             scroll-margin-top: 10px;
         }
@@ -1244,129 +1227,380 @@
             min-width: 112px;
         }
 
-        .detail-aside {
-            min-width: 0;
-        }
-
-        .detail-aside-stack {
-            position: sticky;
-            top: 2px;
+        /* teal 专用于重启类恢复操作 —— 不要扩散到成功态或其他按钮 */
+        .detail-side-restart-split {
+            position: relative;
             display: grid;
-            gap: 12px;
-        }
-
-        .detail-side-card {
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            background: #fff;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-        }
-
-        .detail-status-recovery-action {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 4px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .detail-status-recovery-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            min-width: 150px;
-        }
-
-        .detail-status-recovery-title {
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .detail-status-recovery-copy {
-            display: none;
-        }
-
-        .detail-status-recovery-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .detail-status-recovery-btn {
-            border: none;
+            grid-template-columns: 1fr auto;
+            border: 1px solid #0f766e;
             border-radius: 6px;
+            overflow: visible;
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            box-shadow: 0 6px 14px rgba(15, 118, 110, 0.22);
+        }
+
+        .detail-side-restart-primary,
+        .detail-side-restart-caret {
             background: transparent;
-            color: var(--text-primary);
+            border: 0;
+            color: inherit;
+            font: inherit;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.15s ease;
+        }
+
+        .detail-side-restart-primary {
+            padding: 10px 12px;
+            justify-content: flex-start;
+            border-radius: 5px 0 0 5px;
+        }
+
+        .detail-side-restart-caret {
+            padding: 10px;
+            border-left: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .detail-side-restart-primary:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .detail-side-restart-caret:hover {
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .detail-side-restart-icon {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .detail-side-restart-icon::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -2px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-bottom: 5px solid currentColor;
+        }
+
+        .detail-side-restart-chevron {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid currentColor;
+            transition: transform 0.2s ease;
+        }
+
+        .detail-side-restart-caret[aria-expanded="true"] .detail-side-restart-chevron {
+            transform: rotate(180deg);
+        }
+
+        .detail-side-restart-popover {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+            padding: 6px;
+            min-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+
+        .detail-side-restart-popover[data-open="true"] {
+            display: block;
+        }
+
+        .detail-side-restart-popover-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 500;
+            background: transparent;
+            border: 0;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .detail-side-restart-popover-item:hover {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        .detail-side-restart-popover-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0f766e;
+            flex-shrink: 0;
+        }
+
+        .detail-side-restart-popover-dot--danger {
+            background: #dc2626;
+        }
+
+        .detail-side-restart-popover-hint {
+            margin-left: auto;
+            font-size: 10px;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        /* ============ 新详情页:置顶头 ============ */
+        .detail-top-head {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 0;
+        }
+        .detail-top-back {
+            color: #6b7280;
+            font-size: 18px;
+            cursor: pointer;
+            background: transparent;
+            border: 0;
+            padding: 0 6px;
+            line-height: 1;
+        }
+        .detail-top-back:hover { color: #0f766e; }
+        .detail-top-id {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .detail-top-pill {
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+        .detail-top-pill.entered {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .detail-top-pill.stopped {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .detail-top-pill.faulted {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .detail-top-loc {
+            color: #6b7280;
+            font-size: 12px;
+            flex: 1;
+        }
+        .detail-top-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .detail-top-action-btn {
+            padding: 7px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #fff;
             font-size: 12px;
             font-weight: 500;
-            padding: 4px 6px;
-            text-align: center;
-            white-space: nowrap;
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .detail-status-recovery-btn:hover {
-            background: #f1f5f9;
-            color: var(--primary);
-        }
-
-        .detail-status-recovery-btn.primary {
-            color: var(--text-primary);
-        }
-
-        .detail-status-recovery-btn.secondary {
-            color: var(--text-secondary);
-        }
-
-        .detail-side-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .detail-side-action-list {
-            display: grid;
-            gap: 8px;
-        }
-
-        .detail-side-action-btn {
-            width: 100%;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            background: #fff;
-            color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 9px 10px;
             cursor: pointer;
-            text-align: left;
-            transition: border-color 0.15s ease, background-color 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #1f2937;
         }
-
-        .detail-side-action-btn:hover {
-            border-color: #bfdbfe;
-            background: #f8fafc;
+        .detail-top-action-btn:hover {
+            border-color: #0f766e;
+            color: #0f766e;
         }
-
-        .detail-side-action-btn.primary {
-            border-color: #1d4ed8;
+        .detail-top-action-btn.blue {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #fff;
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+            border-color: #1d4ed8;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.18);
+        }
+        .detail-top-action-btn.blue:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+            color: #fff;
         }
 
-        .detail-side-action-btn.primary:hover {
-            border-color: #1e40af;
-            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+        /* Tabs 栏 */
+        .detail-tabs {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-top: 0;
+            display: flex;
+            padding: 0 18px;
+            gap: 4px;
+            overflow-x: auto;
+        }
+        .detail-tabs::-webkit-scrollbar { display: none; }
+        .detail-tab {
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+            background: transparent;
+            border-left: 0;
+            border-right: 0;
+            border-top: 0;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .detail-tab:hover { color: #0f766e; }
+        .detail-tab.active {
+            color: #0f766e;
+            border-bottom-color: #0f766e;
+            font-weight: 700;
+        }
+
+        /* Tab body */
+        .detail-tab-body {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-top: 0;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            min-height: 300px;
+        }
+        .detail-tab-pane { display: none; }
+        .detail-tab-pane.active { display: block; }
+
+        /* Tab body 通用栅格 */
+        .detail-tab-grid { display: grid; gap: 14px; }
+        .detail-tab-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        .detail-tab-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .detail-tab-grid > .span-all { grid-column: 1 / -1; }
+        @media (max-width: 768px) {
+            .detail-tab-grid.cols-2,
+            .detail-tab-grid.cols-3 { grid-template-columns: 1fr; }
+        }
+
+        /* Run tab: 温度瓦片 */
+        .detail-temp-tile-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 768px) {
+            .detail-temp-tile-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        .detail-temp-tile {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        .detail-temp-tile-lbl {
+            font-size: 10.5px;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .detail-temp-tile-val {
+            font-size: 20px;
+            font-weight: 700;
+            color: #134e4a;
+            margin: 4px 0 2px;
+        }
+        .detail-temp-tile-sub {
+            font-size: 10.5px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* Run tab: 温度区块卡 */
+        .detail-temp-zone {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .detail-temp-zone-title {
+            font-weight: 600;
+            font-size: 12.5px;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+        .detail-card-action {
+            font-size: 11px;
+            color: #0f766e;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .detail-empty-hint {
+            padding: 14px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        /* 更多菜单下拉 */
+        .detail-more-menu {
+            position: absolute;
+            min-width: 180px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+            padding: 6px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .detail-more-menu-item {
+            padding: 8px 12px;
+            border: 0;
+            background: transparent;
+            color: #1f2937;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .detail-more-menu-item:hover {
+            background: #f0fdfa;
+            color: #0f766e;
         }
 
 
@@ -3293,22 +3527,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .detail-layout {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .detail-aside {
-                display: block;
-            }
-
-            .detail-aside-stack {
-                position: static;
-            }
-
-            .detail-status-recovery-actions {
-                grid-template-columns: 1fr 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -3374,27 +3592,9 @@
                 padding: 12px;
             }
 
-            .detail-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
             .detail-card {
                 padding: 10px 12px;
                 box-shadow: none;
-            }
-
-            .detail-status-recovery-head {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            .detail-status-recovery-actions {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .detail-status-recovery-btn.primary {
-                grid-column: 1 / -1;
             }
 
             .detail-card-title {
@@ -6251,6 +6451,239 @@
             `;
         }
 
+        // ============ 新详情页:tabs 外壳 ============
+        function renderDetailTabsShell(summary, fault, entryData, counts, device) {
+            const deviceId = escapeHtml(summary?.deviceId || '-');
+            const statusName = escapeHtml(summary?.statusName || '-');
+            const statusClass = summary?.status === 'stopped' ? 'stopped'
+                : summary?.status === 'faulted' ? 'faulted' : '';
+            const locationName = escapeHtml(summary?.locationName || '未分配点位');
+            const entered = summary?.entered !== false;
+
+            const head = `
+                <div class="detail-top-head">
+                    <button type="button" class="detail-top-back" onclick="closeDetailModal()">‹</button>
+                    <div class="detail-top-id">${deviceId}</div>
+                    <span class="detail-top-pill ${statusClass}">● ${statusName}</span>
+                    <span class="detail-top-pill entered">${entered ? '已入场' : '未入场'}</span>
+                    <div class="detail-top-loc">${locationName}</div>
+                    <div class="detail-top-actions">
+                        <div class="detail-side-restart-split" style="position:relative">
+                            <button type="button" class="detail-side-restart-primary" onclick="openDetailRestartSystem('${deviceId}')" aria-label="重启设备">
+                                <span class="detail-side-restart-icon" aria-hidden="true"></span>
+                                <span>重启</span>
+                            </button>
+                            <button type="button" class="detail-side-restart-caret" onclick="toggleDetailRestartPopover(event, '${deviceId}')" aria-haspopup="menu" aria-expanded="false" aria-label="选择重启部件">
+                                <span class="detail-side-restart-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="detail-side-restart-popover" role="menu" data-open="false">
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（左）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(左)</span></button>
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（右）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(右)</span></button>
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启六轴机械臂（注意安全，谨慎使用）')"><span class="detail-side-restart-popover-dot detail-side-restart-popover-dot--danger"></span><span>六轴机械臂</span><span class="detail-side-restart-popover-hint">谨慎</span></button>
+                            </div>
+                        </div>
+                        <button type="button" class="detail-top-action-btn blue" onclick="openDetailRemoteActions('${deviceId}')">远程操作</button>
+                        <button type="button" class="detail-top-action-btn" onclick="openDetailMoreMenu(event, '${deviceId}')">⋯ 更多</button>
+                    </div>
+                </div>
+            `;
+
+            const tabs = `
+                <div class="detail-tabs" role="tablist">
+                    <button type="button" class="detail-tab" role="tab" data-tab="overview" onclick="switchDetailTab('overview')">概览</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="run" onclick="switchDetailTab('run')">运行</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="records" onclick="switchDetailTab('records')">记录</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="entry" onclick="switchDetailTab('entry')">入场</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="adscreen" onclick="switchDetailTab('adscreen')">广告屏</button>
+                </div>
+            `;
+
+            const body = `
+                <div class="detail-tab-body">
+                    <div class="detail-tab-pane" data-tab-pane="overview">${renderDetailTabOverview(summary, fault)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="run">${renderDetailTabRun(summary, fault, entryData)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="records">${renderDetailTabRecords(summary)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData, device)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(device)}</div>
+                </div>
+            `;
+
+            return head + tabs + body;
+        }
+
+        // Tab render 占位(Task 4-8 分别实现)
+        function renderDetailTabOverview(summary, fault) {
+            return `
+                <div class="detail-tab-grid cols-2">
+                    ${renderDeviceOverviewCard(summary)}
+                    ${renderDeviceStatusCard(summary, fault)}
+                </div>
+            `;
+        }
+        function renderDetailTabRun(summary, fault, entryData) {
+            const snap = fault || {};
+            const info = entryData?.info || {};
+            const deviceId = escapeHtml(summary?.deviceId || '');
+
+            const tempTiles = `
+                <div class="detail-temp-tile-row">
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">冰箱温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.fridgeTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">fridgeTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">豆仓温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">beanTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">制作仓温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.craftTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">craftTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">豆仓湿度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanHumidity || '-')}</div>
+                        <div class="detail-temp-tile-sub">beanHumidity</div>
+                    </div>
+                </div>
+            `;
+
+            const softwareRows = [
+                ['上位机软件', snap.upperSoftware],
+                ['点单屏软件', snap.orderSoftware],
+                ['点单屏系统', snap.orderSystem],
+                ['点单屏内核', snap.orderKernel],
+                ['广告屏版本', snap.adVersion],
+                ['固件版本', snap.firmwareVersion],
+                ['更新时间', snap.updatedAt]
+            ].map(([l, v]) => renderDetailRow(l, v || '-')).join('');
+            const softwareCard = renderDetailCard('软件 / 固件版本', softwareRows);
+
+            const opRows = [
+                renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
+                renderDetailRow('节能模式', info.energyMode || '-'),
+                renderDetailRow('网络信号', info.networkSignal || '-')
+            ].join('');
+            const opCard = renderDetailCard('运营参数', opRows);
+
+            const orgStatusList = Array.isArray(snap.orgStatus) ? snap.orgStatus : [];
+            const chipHtml = orgStatusList.map(part => `
+                <span class="detail-fault-chip ${escapeHtml(part.status || 'normal')}">${escapeHtml(`${part.label || ''} ${part.name || ''}`.trim())}</span>
+            `).join('') || '<span class="detail-empty-hint">暂无机构状态</span>';
+            const orgCard = renderDetailCard('机构状态',
+                `<div class="detail-fault-chip-list">${chipHtml}</div>`);
+
+            const zones = (typeof buildDetailTemperatureAlarmZones === 'function')
+                ? buildDetailTemperatureAlarmZones(summary?.deviceId) : [];
+            const zonesHtml = zones.map(z => `
+                <div class="detail-temp-zone">
+                    <div class="detail-temp-zone-title">${escapeHtml(z.title || '-')}</div>
+                    ${renderDetailRow('温度报警', z.tempAlarm || '-')}
+                    ${z.humidityAlarm ? renderDetailRow('湿度报警', z.humidityAlarm) : ''}
+                    ${z.tempStop ? renderDetailRow('停机温度', z.tempStop) : ''}
+                    ${renderDetailRow('存储温度', z.storageTemp || '-')}
+                    ${z.normalHumidity ? renderDetailRow('正常湿度', z.normalHumidity) : ''}
+                </div>
+            `).join('');
+            const tempAlarmCard = renderDetailCard(
+                '温度报警设置',
+                `<div class="detail-tab-grid cols-3">${zonesHtml}</div>`
+            );
+
+            return `
+                ${tempTiles}
+                <div class="detail-tab-grid cols-2">
+                    ${softwareCard}
+                    ${opCard}
+                    <div class="span-all">${orgCard}</div>
+                    <div class="span-all">${tempAlarmCard}</div>
+                </div>
+            `;
+        }
+        function renderDetailTabRecords(summary) {
+            const deviceId = summary?.deviceId || '';
+            const abnormalRecords = (typeof getFaultAbnormalRecords === 'function')
+                ? getFaultAbnormalRecords(deviceId) : [];
+            const operationRecords = (typeof getMaintenanceRecordsByDevice === 'function')
+                ? getMaintenanceRecordsByDevice(deviceId) : [];
+            const abnormalBody = renderDetailStatusRecordItems(abnormalRecords, 'abnormal');
+            const operationBody = renderDetailStatusRecordItems(operationRecords, 'operation');
+            const abnormalCard = renderDetailCard(
+                `异常记录(${abnormalRecords.length})`,
+                abnormalBody
+            );
+            const operationCard = renderDetailCard(
+                `运维记录(${operationRecords.length})`,
+                operationBody
+            );
+            return `
+                <div class="detail-tab-grid cols-2">
+                    ${abnormalCard}
+                    ${operationCard}
+                </div>
+            `;
+        }
+        function renderDetailTabEntry(entryData, device) {
+            return `
+                <div class="detail-tab-grid cols-2">
+                    <div class="span-all">${renderEntryInfoCard(entryData, device, { expanded: true })}</div>
+                </div>
+            `;
+        }
+        function renderDetailTabAdScreen(device) {
+            if (!device) {
+                return `<div class="detail-empty-hint">暂无广告屏信息</div>`;
+            }
+            return `
+                <div class="detail-tab-grid cols-2">
+                    <div class="span-all">${renderAdScreenInfoCard(device, { expanded: true })}</div>
+                </div>
+            `;
+        }
+
+        // 更多菜单:下拉列出非高频操作
+        function openDetailMoreMenu(event, deviceId) {
+            if (event) event.stopPropagation();
+            const existing = document.getElementById('detailMoreMenu');
+            if (existing) {
+                existing.remove();
+                return;
+            }
+            const btn = event?.currentTarget;
+            if (!btn) return;
+            const rect = btn.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.id = 'detailMoreMenu';
+            menu.className = 'detail-more-menu';
+            menu.setAttribute('role', 'menu');
+            menu.style.top = `${rect.bottom + window.scrollY + 6}px`;
+            menu.style.left = `${rect.right + window.scrollX - 180}px`;
+            const id = escapeHtml(deviceId || '');
+            menu.innerHTML = `
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailTemperatureAlarmModal('${id}')">温度报警设置</button>
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailEditFaultStatus('${id}')">编辑状态</button>
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();goToDeviceMaterials('${id}')">物料页面</button>
+            `;
+            document.body.appendChild(menu);
+        }
+
+        function closeDetailMoreMenu() {
+            const existing = document.getElementById('detailMoreMenu');
+            if (existing) existing.remove();
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('detailMoreMenu');
+            if (!menu) return;
+            if (menu.contains(e.target)) return;
+            // 点击触发按钮本身已经 toggle 过了,这里只处理外部点击
+            const target = e.target;
+            if (target && target.closest && target.closest('[onclick*="openDetailMoreMenu"]')) return;
+            closeDetailMoreMenu();
+        });
+
         function resolveEntryLocationName(device, runtimeLocationMap) {
             const info = device.entryInfo || {};
             if (info.locationName && info.locationName !== '-') {
@@ -6394,7 +6827,6 @@
             const summary = base || {};
             const snapshot = fault || {};
             const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
-            const deviceId = escapeHtml(summary.deviceId || '');
             const rows = [
                 renderDetailRow('设备状态', summary.statusName || '-'),
                 renderDetailRow('停卖状态', summary.salesName || '-'),
@@ -6409,21 +6841,7 @@
             const note = noteParts.length
                 ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
                 : '';
-            const recoveryAction = `
-                <div class="detail-status-recovery-action">
-                    <div class="detail-status-recovery-head">
-                        <div>
-                            <div class="detail-status-recovery-title">快捷操作</div>
-                            <div class="detail-status-recovery-copy">重启是高频恢复动作，点击后进入确认页，不会直接执行。</div>
-                        </div>
-                    </div>
-                    <div class="detail-status-recovery-actions">
-                        <button type="button" class="detail-status-recovery-btn primary" onclick="openDetailQuickRestart('${deviceId}', '重启系统')">重启系统</button>
-                        <button type="button" class="detail-status-recovery-btn secondary" onclick="openDetailRestartOptions('${deviceId}')">重启其他</button>
-                    </div>
-                </div>
-            `;
-            return renderDetailCard('设备状态', `${rows}${note}${recoveryAction}`, 'detail-card-status');
+            return renderDetailCard('设备状态', `${rows}${note}`, 'detail-card-status');
         }
 
         function renderDeviceOperationSummaryCard(entryData, counts) {
@@ -7627,6 +8045,83 @@
             panel.classList.add('active');
         }
 
+        // Restart split button: 主区、部件菜单、popover 开关
+        function openDetailRestartSystem(deviceId) {
+            openDetailQuickRestart(deviceId, '重启系统');
+        }
+
+        function openDetailRestartPart(deviceId, actionName) {
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            if (targetDeviceId) {
+                activeFaultActionDeviceId = targetDeviceId;
+                detailRemoteActionMode = 'restart';
+            }
+            closeDetailRestartPopover();
+            handleDetailRemoteAction(actionName);
+        }
+
+        function toggleDetailRestartPopover(event, deviceId) {
+            if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
+            if (targetDeviceId) activeFaultActionDeviceId = targetDeviceId;
+            const popover = document.querySelector('.detail-side-restart-popover');
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (!popover || !caret) return;
+            const isOpen = popover.getAttribute('data-open') === 'true';
+            popover.setAttribute('data-open', isOpen ? 'false' : 'true');
+            caret.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        }
+
+        function closeDetailRestartPopover() {
+            const popover = document.querySelector('.detail-side-restart-popover');
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (popover) popover.setAttribute('data-open', 'false');
+            if (caret) caret.setAttribute('aria-expanded', 'false');
+        }
+
+        // 详情页 tabs 切换
+        function switchDetailTab(tabKey) {
+            const validKeys = ['overview', 'run', 'records', 'entry', 'adscreen'];
+            if (!validKeys.includes(tabKey)) tabKey = 'overview';
+
+            document.querySelectorAll('.detail-tab').forEach(el => {
+                const on = el.getAttribute('data-tab') === tabKey;
+                el.classList.toggle('active', on);
+                el.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            document.querySelectorAll('.detail-tab-pane').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-tab-pane') === tabKey);
+            });
+
+            if (typeof history !== 'undefined' && history.replaceState) {
+                history.replaceState(null, '', '#tab=' + tabKey);
+            }
+        }
+
+        function readDetailTabFromHash() {
+            const m = /tab=([a-z]+)/.exec((typeof window !== 'undefined' && window.location && window.location.hash) || '');
+            return m ? m[1] : 'overview';
+        }
+
+        document.addEventListener('click', function(e) {
+            const popover = document.querySelector('.detail-side-restart-popover');
+            if (!popover || popover.getAttribute('data-open') !== 'true') return;
+            if (popover.contains(e.target)) return;
+            const caret = document.querySelector('.detail-side-restart-caret');
+            if (caret && caret.contains(e.target)) return;
+            closeDetailRestartPopover();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            const popover = document.querySelector('.detail-side-restart-popover');
+            if (popover && popover.getAttribute('data-open') === 'true') {
+                closeDetailRestartPopover();
+            }
+        });
+
+        // legacy: 保留以防其他入口引用。split button popover 已取代此入口。
         function openDetailRestartOptions(deviceId) {
             const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
             const panel = document.getElementById('detailRemoteActionSheet');
@@ -7666,6 +8161,7 @@
             if (actionName === '机构重启') {
                 detailRemoteActionMode = 'restart';
                 panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
+                panel.classList.add('active');
                 return;
             }
 
@@ -7674,6 +8170,7 @@
                 detailRemotePendingCommand = actionName;
                 detailRemoteActionMode = 'confirm';
                 panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
+                panel.classList.add('active');
                 return;
             }
 
@@ -8177,34 +8674,40 @@
             `;
         }
 
-        function renderEntryInfoCard(entryData, device) {
+        function renderEntryInfoCard(entryData, device, options) {
             const coreRows = renderEntryCoreRows(entryData);
             const extendedRows = renderEntryAllRows(entryData);
             const locationImages = renderEntryImageGallery(device, 'location', '暂无点位图片');
             const locationChangeRecords = renderLocationChangeRecords(entryData);
-            const body = `
+            const expanded = options && options.expanded;
+            const innerContent = `
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">基础信息</div>
+                    ${coreRows}
+                </div>
+                ${extendedRows ? `
+                    <div class="detail-subsection">
+                        <div class="detail-subsection-title">补充信息</div>
+                        ${extendedRows}
+                    </div>
+                ` : ''}
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">点位图片</div>
+                    ${locationImages}
+                </div>
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">点位变更记录</div>
+                    ${locationChangeRecords}
+                </div>
+            `;
+            const body = expanded
+                ? `<div class="detail-disclosure-content">${innerContent}</div>`
+                : `
                 <details class="detail-disclosure">
                     <summary>展开入场信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">包含入场基础信息、补充配置、点位图片以及点位变更记录，默认折叠以减少首屏干扰。</div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">基础信息</div>
-                            ${coreRows}
-                        </div>
-                        ${extendedRows ? `
-                            <div class="detail-subsection">
-                                <div class="detail-subsection-title">补充信息</div>
-                                ${extendedRows}
-                            </div>
-                        ` : ''}
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">点位图片</div>
-                            ${locationImages}
-                        </div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">点位变更记录</div>
-                            ${locationChangeRecords}
-                        </div>
+                        ${innerContent}
                     </div>
                 </details>
             `;
@@ -8264,22 +8767,28 @@
             `;
         }
 
-        function renderAdScreenInfoCard(device) {
+        function renderAdScreenInfoCard(device, options) {
             const adScreen = normalizeEntryAdScreen(device.entryInfo || {});
-            const body = `
+            const expanded = options && options.expanded;
+            const innerContent = `
+                ${renderDetailAdScreenStage(device, adScreen)}
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">左侧菜单</div>
+                    ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
+                </div>
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">右侧排队号背景</div>
+                    ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
+                </div>
+            `;
+            const body = expanded
+                ? `<div class="detail-disclosure-content">${innerContent}</div>`
+                : `
                 <details class="detail-disclosure">
                     <summary>展开广告屏信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">广告屏画面按左右独立管理，避免误传到错误的物理屏幕。</div>
-                        ${renderDetailAdScreenStage(device, adScreen)}
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">左侧菜单</div>
-                            ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
-                        </div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">右侧排队号背景</div>
-                            ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
-                        </div>
+                        ${innerContent}
                     </div>
                 </details>
             `;
@@ -8294,7 +8803,7 @@
                 ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
                 ${renderDetailRow('运维记录', `${operationCount} 条`)}
                 <div class="detail-subsection">
-                    <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
+                    <button type="button" class="detail-top-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
                 </div>
             `;
             return renderDetailCard('状态记录', body, 'detail-card-records');
@@ -8952,35 +9461,6 @@
             showToast('入场信息已更新');
         }
 
-        function renderDetailAside(detailData) {
-            const summary = detailData?.base || {};
-            return `
-                <aside class="detail-aside">
-                    <div class="detail-aside-stack">
-                        <section class="detail-side-card">
-                            <div class="detail-side-title">设备操作</div>
-                            <div class="detail-side-action-list">
-                                <button type="button" class="detail-side-action-btn primary" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailTemperatureAlarmModal('${escapeHtml(summary.deviceId || '')}')">温度报警设置</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
-                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
-                            </div>
-                        </section>
-                        <section class="detail-side-card">
-                            <div class="detail-side-title">详细信息</div>
-                            <div class="detail-side-action-list">
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('entry')">入场详情</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('adScreen')">广告屏信息</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('technical')">技术状态</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('records')">记录摘要</button>
-                            </div>
-                        </section>
-                    </div>
-                </aside>
-            `;
-        }
-
         function viewDetail(deviceId) {
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
@@ -9002,24 +9482,14 @@
                 abnormal: abnormalRecords.length,
                 operation: operationRecords.length
             };
-            document.getElementById('detailModalBody').innerHTML = `
-                <div class="detail-layout">
-                    <div class="detail-main">
-                        <div class="detail-grid">
-                            <section class="detail-section" id="detail-section-overview">
-                                ${renderDeviceOverviewCard(detailData.base)}
-                            </section>
-                            <section class="detail-section" id="detail-section-status">
-                                ${renderDeviceStatusCard(detailData.base, detailData.fault, detailRecordCounts)}
-                            </section>
-                            <section class="detail-section" id="detail-section-operation-summary">
-                                ${renderDeviceOperationSummaryCard(detailData.entry, detailRecordCounts)}
-                            </section>
-                        </div>
-                    </div>
-                    ${renderDetailAside(detailData)}
-                </div>
-            `;
+            document.getElementById('detailModalBody').innerHTML = renderDetailTabsShell(
+                detailData.base,
+                detailData.fault,
+                detailData.entry,
+                detailRecordCounts,
+                device
+            );
+            switchDetailTab(readDetailTabFromHash());
             detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
             document.getElementById('detailModal').classList.add('active');

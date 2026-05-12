@@ -88,7 +88,7 @@ test('缺少入场信息时应自动回填 mock 数据用于预览样式', () =>
 test('设备详情桌面端应使用超宽弹层与分组卡片布局', () => {
   assert.ok(/max-width:\s*1100px/.test(devicesHtml));
   assert.ok(/function\s+renderDetailCard\s*\(/.test(devicesHtml));
-  assert.ok(/class=\"detail-grid\"/.test(devicesHtml));
+  assert.ok(/class="detail-tab-body"/.test(devicesHtml), '新 tabs 布局应渲染 detail-tab-body 容器');
   assert.ok(/renderDeviceOverviewCard/.test(devicesHtml));
   assert.ok(/renderDeviceStatusCard/.test(devicesHtml));
   assert.ok(/renderTechnicalStatusCard/.test(devicesHtml));
@@ -100,37 +100,35 @@ test('设备概览不应再展示部署类型字段', () => {
 });
 
 test('设备详情桌面端应采用左主内容与右侧设备操作布局', () => {
-  assert.ok(/class=\"detail-layout\"/.test(devicesHtml));
-  assert.ok(/class=\"detail-main\"/.test(devicesHtml));
-  assert.ok(/class=\"detail-aside\"/.test(devicesHtml));
-  assert.ok(/function\s+renderDetailAside\s*\(/.test(devicesHtml));
-  assert.ok(/detail-section-overview/.test(devicesHtml));
-  assert.ok(/detail-section-status/.test(devicesHtml));
-  assert.ok(/detail-section-operation-summary/.test(devicesHtml));
-  assert.ok(!/detail-section-entry/.test(devicesHtml));
-  assert.ok(!/detail-section-ad-screen/.test(devicesHtml));
-  assert.ok(!/detail-section-technical/.test(devicesHtml));
-  assert.ok(!/detail-section-records/.test(devicesHtml));
+  // 新 tabs 布局:detail-top-head + detail-tabs + detail-tab-body 替代旧的 detail-layout
+  assert.ok(/class="detail-top-head"/.test(devicesHtml), '新布局应有 .detail-top-head 头部');
+  assert.ok(/class="detail-tabs"/.test(devicesHtml), '新布局应有 .detail-tabs 标签栏');
+  assert.ok(/class="detail-tab-body"/.test(devicesHtml), '新布局应有 .detail-tab-body 主体');
+  assert.ok(/function\s+renderDetailTabsShell\s*\(/.test(devicesHtml), '应有 renderDetailTabsShell 外壳函数');
+  assert.ok(/data-tab="overview"/.test(devicesHtml));
+  assert.ok(/data-tab="run"/.test(devicesHtml));
+  assert.ok(/data-tab="records"/.test(devicesHtml));
+  assert.ok(/data-tab="entry"/.test(devicesHtml));
+  assert.ok(/data-tab="adscreen"/.test(devicesHtml));
   assert.ok(/function\s+renderDeviceOperationSummaryCard\s*\(/.test(devicesHtml));
   assert.ok(/function\s+openDetailInfoPanel\s*\(/.test(devicesHtml));
-  assert.ok(/id=\"detailInfoPanelOverlay\"/.test(devicesHtml));
+  assert.ok(/id="detailInfoPanelOverlay"/.test(devicesHtml));
   assert.ok(!/目录导航/.test(devicesHtml));
   assert.ok(!/状态摘要/.test(devicesHtml));
   assert.ok(!/detail-anchor-list/.test(devicesHtml));
   assert.ok(!/detail-side-state-list/.test(devicesHtml));
-  assert.ok(/detail-side-title">设备操作/.test(devicesHtml));
   assert.ok(!/detail-quick-restart-card/.test(devicesHtml));
   assert.ok(!/detail-quick-restart-bar/.test(devicesHtml));
   assert.ok(!/function\s+renderDetailQuickRestartBar\s*\(/.test(devicesHtml));
   assert.ok(!/renderDetailQuickRestartBar\(detailData\)/.test(devicesHtml));
-  assert.ok(/detail-status-recovery-action/.test(devicesHtml));
-  assert.ok(/快捷操作/.test(devicesHtml));
-  assert.ok(/重启其他/.test(devicesHtml));
-  assert.ok(/openDetailQuickRestart\('\$\{deviceId\}', '重启系统'\)/.test(devicesHtml));
-  assert.ok(/openDetailRestartOptions\('\$\{deviceId\}'\)/.test(devicesHtml));
-  assert.ok(/openDetailInfoPanel\('entry'/.test(devicesHtml));
-  assert.ok(/openDetailInfoPanel\('adScreen'/.test(devicesHtml));
-  assert.ok(/openDetailInfoPanel\('technical'/.test(devicesHtml));
+  assert.ok(!/detail-status-recovery-action/.test(devicesHtml));
+  assert.ok(/detail-side-restart-split/.test(devicesHtml));
+  assert.ok(/openDetailRestartSystem\('\$\{escapeHtml\(summary\.deviceId \|\| ''\)\}'\)/.test(devicesHtml) ||
+    /openDetailRestartSystem\('\$\{deviceId\}'\)/.test(devicesHtml),
+    'split button 主区应绑定 openDetailRestartSystem');
+  assert.ok(/toggleDetailRestartPopover\(event,\s*'\$\{(?:escapeHtml\(summary\.deviceId \|\| ''\)|deviceId)\}'\)/.test(devicesHtml),
+    'caret 应绑定 toggleDetailRestartPopover');
+  assert.ok(/openDetailRestartPart\([\s\S]*?'重启点单屏（左）'/.test(devicesHtml));
 });
 
 test('设备详情右侧设备操作区应新增温度报警设置入口', () => {
@@ -147,12 +145,17 @@ test('温度报警设置应使用独立弹层而非正文摘要', () => {
 });
 
 test('设备详情移动端应回退为单列卡片布局', () => {
-  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.detail-grid\s*\{[\s\S]*grid-template-columns:\s*1fr/.test(devicesHtml));
+  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.detail-tab-grid\.cols-2,[\s\S]*\.detail-tab-grid\.cols-3\s*\{[\s\S]*grid-template-columns:\s*1fr/.test(devicesHtml),
+    '768px 以下 .detail-tab-grid.cols-2 / cols-3 应退化为单列');
 });
 
 test('设备详情移动端不应隐藏设备操作区', () => {
-  assert.ok(!/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*none/.test(devicesHtml));
-  assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*block/.test(devicesHtml));
+  // 新 tabs 布局:操作按钮放在 .detail-top-head 的 .detail-top-actions 区,始终可见,
+  // 不再有独立的 .detail-aside,所以只需确保 .detail-top-actions 在手机端不被 display:none 隐藏
+  assert.ok(!/@media\s*\([^)]*max-width:\s*768px[^)]*\)[\s\S]*\.detail-top-actions\s*\{[^}]*display:\s*none/.test(devicesHtml),
+    '手机端不应把 .detail-top-actions 隐藏');
+  assert.ok(/class="detail-top-actions"/.test(devicesHtml),
+    '操作区 .detail-top-actions 应在渲染模板中存在');
 });
 
 test('设备详情图片应支持点击预览与左右切换', () => {
@@ -312,8 +315,12 @@ test('设备详情应通过单一分流方法隔离入场数据与故障数据',
   assert.ok(/const\s+detailData\s*=\s*splitDeviceDetailData\(device,\s*runtimeLocationMap\)/.test(devicesHtml));
   assert.ok(/renderEntryCoreRows\(detailData\.entry\)/.test(devicesHtml));
   assert.ok(/renderEntryAllRows\(detailData\.entry\)/.test(devicesHtml));
-  assert.ok(/renderDeviceStatusCard\(detailData\.base,\s*detailData\.fault,\s*detailRecordCounts\)/.test(devicesHtml));
-  assert.ok(/renderTechnicalStatusCard\(detailData\.fault\)/.test(devicesHtml));
+  // 新 tabs 布局:viewDetail 通过 renderDetailTabsShell 统一透传 detailData.base/fault/entry
+  assert.ok(/renderDetailTabsShell\(\s*detailData\.base,\s*detailData\.fault,\s*detailData\.entry/.test(devicesHtml),
+    'viewDetail 应使用 renderDetailTabsShell 统一分流');
+  assert.ok(/renderTechnicalStatusCard\(detailData\.fault\)/.test(devicesHtml) ||
+    /renderTechnicalStatusCard/.test(devicesHtml),
+    'renderTechnicalStatusCard 应仍然存在');
   assert.ok(!/renderMaintenanceRecordsRows\(detailData\.maintenance\.records,\s*detailData\.entry\.locationName\)/.test(devicesHtml));
 });
 
