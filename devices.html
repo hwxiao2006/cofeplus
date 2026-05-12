@@ -8804,7 +8804,7 @@
                 ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
                 ${renderDetailRow('运维记录', `${operationCount} 条`)}
                 <div class="detail-subsection">
-                    <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
+                    <button type="button" class="detail-top-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
                 </div>
             `;
             return renderDetailCard('状态记录', body, 'detail-card-records');
