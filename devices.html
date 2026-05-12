@@ -1533,6 +1533,51 @@
             color: #fff;
         }
 
+        /* Tabs 栏 */
+        .detail-tabs {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-top: 0;
+            display: flex;
+            padding: 0 18px;
+            gap: 4px;
+            overflow-x: auto;
+        }
+        .detail-tabs::-webkit-scrollbar { display: none; }
+        .detail-tab {
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+            background: transparent;
+            border-left: 0;
+            border-right: 0;
+            border-top: 0;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .detail-tab:hover { color: #0f766e; }
+        .detail-tab.active {
+            color: #0f766e;
+            border-bottom-color: #0f766e;
+            font-weight: 700;
+        }
+
+        /* Tab body */
+        .detail-tab-body {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-top: 0;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            min-height: 300px;
+        }
+        .detail-tab-pane { display: none; }
+        .detail-tab-pane.active { display: block; }
+
 
         .detail-fault-summary {
             margin-top: 8px;
@@ -7793,6 +7838,30 @@
             const caret = document.querySelector('.detail-side-restart-caret');
             if (popover) popover.setAttribute('data-open', 'false');
             if (caret) caret.setAttribute('aria-expanded', 'false');
+        }
+
+        // 详情页 tabs 切换
+        function switchDetailTab(tabKey) {
+            const validKeys = ['overview', 'run', 'records', 'entry', 'adscreen'];
+            if (!validKeys.includes(tabKey)) tabKey = 'overview';
+
+            document.querySelectorAll('.detail-tab').forEach(el => {
+                const on = el.getAttribute('data-tab') === tabKey;
+                el.classList.toggle('active', on);
+                el.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            document.querySelectorAll('.detail-tab-pane').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-tab-pane') === tabKey);
+            });
+
+            if (typeof history !== 'undefined' && history.replaceState) {
+                history.replaceState(null, '', '#tab=' + tabKey);
+            }
+        }
+
+        function readDetailTabFromHash() {
+            const m = /tab=([a-z]+)/.exec((typeof window !== 'undefined' && window.location && window.location.hash) || '');
+            return m ? m[1] : 'overview';
         }
 
         document.addEventListener('click', function(e) {
