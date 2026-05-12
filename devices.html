@@ -1644,6 +1644,12 @@
             font-weight: 500;
             margin-left: 8px;
         }
+        .detail-empty-hint {
+            padding: 14px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
 
 
         .detail-fault-summary {
@@ -6564,7 +6570,7 @@
                     <div class="detail-tab-pane" data-tab-pane="run">${renderDetailTabRun(summary, fault, entryData)}</div>
                     <div class="detail-tab-pane" data-tab-pane="records">${renderDetailTabRecords(summary)}</div>
                     <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData, device)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(entryData, fault)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(device)}</div>
                 </div>
             `;
 
@@ -6692,7 +6698,16 @@
                 </div>
             `;
         }
-        function renderDetailTabAdScreen(entryData, fault) { return '<!-- adscreen placeholder -->'; }
+        function renderDetailTabAdScreen(device) {
+            if (!device) {
+                return `<div class="detail-empty-hint">暂无广告屏信息</div>`;
+            }
+            return `
+                <div class="detail-tab-grid cols-2">
+                    <div class="span-all">${renderAdScreenInfoCard(device)}</div>
+                </div>
+            `;
+        }
 
         // 更多菜单占位(后续可接下拉菜单)
         function openDetailMoreMenu(event, deviceId) {
