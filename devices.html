@@ -1572,6 +1572,37 @@
             font-size: 12px;
         }
 
+        /* 更多菜单下拉 */
+        .detail-more-menu {
+            position: absolute;
+            min-width: 180px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+            padding: 6px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .detail-more-menu-item {
+            padding: 8px 12px;
+            border: 0;
+            background: transparent;
+            color: #1f2937;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .detail-more-menu-item:hover {
+            background: #f0fdfa;
+            color: #0f766e;
+        }
+
 
         .detail-fault-summary {
             margin-top: 8px;
@@ -6597,7 +6628,7 @@
         function renderDetailTabEntry(entryData, device) {
             return `
                 <div class="detail-tab-grid cols-2">
-                    <div class="span-all">${renderEntryInfoCard(entryData, device)}</div>
+                    <div class="span-all">${renderEntryInfoCard(entryData, device, { expanded: true })}</div>
                 </div>
             `;
         }
@@ -6607,16 +6638,52 @@
             }
             return `
                 <div class="detail-tab-grid cols-2">
-                    <div class="span-all">${renderAdScreenInfoCard(device)}</div>
+                    <div class="span-all">${renderAdScreenInfoCard(device, { expanded: true })}</div>
                 </div>
             `;
         }
 
-        // 更多菜单占位(后续可接下拉菜单)
+        // 更多菜单:下拉列出非高频操作
         function openDetailMoreMenu(event, deviceId) {
             if (event) event.stopPropagation();
-            console.log('TODO: open more menu for', deviceId);
+            const existing = document.getElementById('detailMoreMenu');
+            if (existing) {
+                existing.remove();
+                return;
+            }
+            const btn = event?.currentTarget;
+            if (!btn) return;
+            const rect = btn.getBoundingClientRect();
+            const menu = document.createElement('div');
+            menu.id = 'detailMoreMenu';
+            menu.className = 'detail-more-menu';
+            menu.setAttribute('role', 'menu');
+            menu.style.top = `${rect.bottom + window.scrollY + 6}px`;
+            menu.style.left = `${rect.right + window.scrollX - 180}px`;
+            const id = escapeHtml(deviceId || '');
+            menu.innerHTML = `
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailTemperatureAlarmModal('${id}')">温度报警设置</button>
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailStatusRecords('${id}')">状态记录</button>
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailEditFaultStatus('${id}')">编辑状态</button>
+                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();goToDeviceMaterials('${id}')">物料页面</button>
+            `;
+            document.body.appendChild(menu);
         }
+
+        function closeDetailMoreMenu() {
+            const existing = document.getElementById('detailMoreMenu');
+            if (existing) existing.remove();
+        }
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('detailMoreMenu');
+            if (!menu) return;
+            if (menu.contains(e.target)) return;
+            // 点击触发按钮本身已经 toggle 过了,这里只处理外部点击
+            const target = e.target;
+            if (target && target.closest && target.closest('[onclick*="openDetailMoreMenu"]')) return;
+            closeDetailMoreMenu();
+        });
 
         function resolveEntryLocationName(device, runtimeLocationMap) {
             const info = device.entryInfo || {};
@@ -8608,34 +8675,40 @@
             `;
         }
 
-        function renderEntryInfoCard(entryData, device) {
+        function renderEntryInfoCard(entryData, device, options) {
             const coreRows = renderEntryCoreRows(entryData);
             const extendedRows = renderEntryAllRows(entryData);
             const locationImages = renderEntryImageGallery(device, 'location', '暂无点位图片');
             const locationChangeRecords = renderLocationChangeRecords(entryData);
-            const body = `
+            const expanded = options && options.expanded;
+            const innerContent = `
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">基础信息</div>
+                    ${coreRows}
+                </div>
+                ${extendedRows ? `
+                    <div class="detail-subsection">
+                        <div class="detail-subsection-title">补充信息</div>
+                        ${extendedRows}
+                    </div>
+                ` : ''}
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">点位图片</div>
+                    ${locationImages}
+                </div>
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">点位变更记录</div>
+                    ${locationChangeRecords}
+                </div>
+            `;
+            const body = expanded
+                ? `<div class="detail-disclosure-content">${innerContent}</div>`
+                : `
                 <details class="detail-disclosure">
                     <summary>展开入场信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">包含入场基础信息、补充配置、点位图片以及点位变更记录，默认折叠以减少首屏干扰。</div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">基础信息</div>
-                            ${coreRows}
-                        </div>
-                        ${extendedRows ? `
-                            <div class="detail-subsection">
-                                <div class="detail-subsection-title">补充信息</div>
-                                ${extendedRows}
-                            </div>
-                        ` : ''}
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">点位图片</div>
-                            ${locationImages}
-                        </div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">点位变更记录</div>
-                            ${locationChangeRecords}
-                        </div>
+                        ${innerContent}
                     </div>
                 </details>
             `;
@@ -8695,22 +8768,28 @@
             `;
         }
 
-        function renderAdScreenInfoCard(device) {
+        function renderAdScreenInfoCard(device, options) {
             const adScreen = normalizeEntryAdScreen(device.entryInfo || {});
-            const body = `
+            const expanded = options && options.expanded;
+            const innerContent = `
+                ${renderDetailAdScreenStage(device, adScreen)}
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">左侧菜单</div>
+                    ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
+                </div>
+                <div class="detail-subsection">
+                    <div class="detail-subsection-title">右侧排队号背景</div>
+                    ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
+                </div>
+            `;
+            const body = expanded
+                ? `<div class="detail-disclosure-content">${innerContent}</div>`
+                : `
                 <details class="detail-disclosure">
                     <summary>展开广告屏信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">广告屏画面按左右独立管理，避免误传到错误的物理屏幕。</div>
-                        ${renderDetailAdScreenStage(device, adScreen)}
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">左侧菜单</div>
-                            ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
-                        </div>
-                        <div class="detail-subsection">
-                            <div class="detail-subsection-title">右侧排队号背景</div>
-                            ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
-                        </div>
+                        ${innerContent}
                     </div>
                 </details>
             `;
