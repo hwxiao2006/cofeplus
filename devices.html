@@ -6662,7 +6662,29 @@
                 </div>
             `;
         }
-        function renderDetailTabRecords(summary) { return '<!-- records placeholder -->'; }
+        function renderDetailTabRecords(summary) {
+            const deviceId = summary?.deviceId || '';
+            const abnormalRecords = (typeof getFaultAbnormalRecords === 'function')
+                ? getFaultAbnormalRecords(deviceId) : [];
+            const operationRecords = (typeof getMaintenanceRecordsByDevice === 'function')
+                ? getMaintenanceRecordsByDevice(deviceId) : [];
+            const abnormalBody = renderDetailStatusRecordItems(abnormalRecords, 'abnormal');
+            const operationBody = renderDetailStatusRecordItems(operationRecords, 'operation');
+            const abnormalCard = renderDetailCard(
+                `异常记录(${abnormalRecords.length})`,
+                abnormalBody
+            );
+            const operationCard = renderDetailCard(
+                `运维记录(${operationRecords.length})`,
+                operationBody
+            );
+            return `
+                <div class="detail-tab-grid cols-2">
+                    ${abnormalCard}
+                    ${operationCard}
+                </div>
+            `;
+        }
         function renderDetailTabEntry(entryData) { return '<!-- entry placeholder -->'; }
         function renderDetailTabAdScreen(entryData, fault) { return '<!-- adscreen placeholder -->'; }
 
