@@ -1578,6 +1578,16 @@
         .detail-tab-pane { display: none; }
         .detail-tab-pane.active { display: block; }
 
+        /* Tab body 通用栅格 */
+        .detail-tab-grid { display: grid; gap: 14px; }
+        .detail-tab-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+        .detail-tab-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .detail-tab-grid > .span-all { grid-column: 1 / -1; }
+        @media (max-width: 768px) {
+            .detail-tab-grid.cols-2,
+            .detail-tab-grid.cols-3 { grid-template-columns: 1fr; }
+        }
+
 
         .detail-fault-summary {
             margin-top: 8px;
@@ -6505,7 +6515,14 @@
         }
 
         // Tab render 占位(Task 4-8 分别实现)
-        function renderDetailTabOverview(summary, fault) { return '<!-- overview placeholder -->'; }
+        function renderDetailTabOverview(summary, fault) {
+            return `
+                <div class="detail-tab-grid cols-2">
+                    ${renderDeviceOverviewCard(summary)}
+                    ${renderDeviceStatusCard(summary, fault)}
+                </div>
+            `;
+        }
         function renderDetailTabRun(summary, fault, entryData) { return '<!-- run placeholder -->'; }
         function renderDetailTabRecords(summary) { return '<!-- records placeholder -->'; }
         function renderDetailTabEntry(entryData) { return '<!-- entry placeholder -->'; }
