@@ -9554,24 +9554,14 @@
                 abnormal: abnormalRecords.length,
                 operation: operationRecords.length
             };
-            document.getElementById('detailModalBody').innerHTML = `
-                <div class="detail-layout">
-                    <div class="detail-main">
-                        <div class="detail-grid">
-                            <section class="detail-section" id="detail-section-overview">
-                                ${renderDeviceOverviewCard(detailData.base)}
-                            </section>
-                            <section class="detail-section" id="detail-section-status">
-                                ${renderDeviceStatusCard(detailData.base, detailData.fault, detailRecordCounts)}
-                            </section>
-                            <section class="detail-section" id="detail-section-operation-summary">
-                                ${renderDeviceOperationSummaryCard(detailData.entry, detailRecordCounts)}
-                            </section>
-                        </div>
-                    </div>
-                    ${renderDetailAside(detailData)}
-                </div>
-            `;
+            document.getElementById('detailModalBody').innerHTML = renderDetailTabsShell(
+                detailData.base,
+                detailData.fault,
+                detailData.entry,
+                detailRecordCounts,
+                device
+            );
+            switchDetailTab(readDetailTabFromHash());
             detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
             document.getElementById('detailModal').classList.add('active');

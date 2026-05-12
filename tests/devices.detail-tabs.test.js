@@ -70,3 +70,19 @@ test('5 个 render tab 占位函数应存在', () => {
   assert.ok(/function\s+renderDetailTabEntry\s*\(/.test(html));
   assert.ok(/function\s+renderDetailTabAdScreen\s*\(/.test(html));
 });
+
+test('viewDetail controller 应调用 renderDetailTabsShell', () => {
+  const start = html.indexOf('function viewDetail(');
+  assert.ok(start >= 0, '未找到 viewDetail 函数');
+  const end = html.indexOf('function closeDetailModal(', start);
+  const body = html.slice(start, end > 0 ? end : start + 5000);
+  assert.ok(/renderDetailTabsShell\(/.test(body), 'viewDetail 应调用 renderDetailTabsShell');
+  assert.ok(!/<div class="detail-layout">/.test(body), 'viewDetail 不应再输出 .detail-layout');
+});
+
+test('viewDetail 渲染后应同步 tab 状态', () => {
+  const start = html.indexOf('function viewDetail(');
+  const end = html.indexOf('function closeDetailModal(', start);
+  const body = html.slice(start, end > 0 ? end : start + 5000);
+  assert.ok(/switchDetailTab\(/.test(body), 'viewDetail 应调用 switchDetailTab');
+});
