@@ -6512,7 +6512,7 @@
         }
 
         // ============ 新详情页:tabs 外壳 ============
-        function renderDetailTabsShell(summary, fault, entryData, counts) {
+        function renderDetailTabsShell(summary, fault, entryData, counts, device) {
             const deviceId = escapeHtml(summary?.deviceId || '-');
             const statusName = escapeHtml(summary?.statusName || '-');
             const statusClass = summary?.status === 'stopped' ? 'stopped'
@@ -6563,7 +6563,7 @@
                     <div class="detail-tab-pane" data-tab-pane="overview">${renderDetailTabOverview(summary, fault)}</div>
                     <div class="detail-tab-pane" data-tab-pane="run">${renderDetailTabRun(summary, fault, entryData)}</div>
                     <div class="detail-tab-pane" data-tab-pane="records">${renderDetailTabRecords(summary)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData, device)}</div>
                     <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(entryData, fault)}</div>
                 </div>
             `;
@@ -6685,7 +6685,13 @@
                 </div>
             `;
         }
-        function renderDetailTabEntry(entryData) { return '<!-- entry placeholder -->'; }
+        function renderDetailTabEntry(entryData, device) {
+            return `
+                <div class="detail-tab-grid cols-2">
+                    <div class="span-all">${renderEntryInfoCard(entryData, device)}</div>
+                </div>
+            `;
+        }
         function renderDetailTabAdScreen(entryData, fault) { return '<!-- adscreen placeholder -->'; }
 
         // 更多菜单占位(后续可接下拉菜单)
