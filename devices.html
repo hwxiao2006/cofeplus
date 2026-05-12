@@ -1588,6 +1588,63 @@
             .detail-tab-grid.cols-3 { grid-template-columns: 1fr; }
         }
 
+        /* Run tab: 温度瓦片 */
+        .detail-temp-tile-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 768px) {
+            .detail-temp-tile-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        .detail-temp-tile {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        .detail-temp-tile-lbl {
+            font-size: 10.5px;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .detail-temp-tile-val {
+            font-size: 20px;
+            font-weight: 700;
+            color: #134e4a;
+            margin: 4px 0 2px;
+        }
+        .detail-temp-tile-sub {
+            font-size: 10.5px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* Run tab: 温度区块卡 */
+        .detail-temp-zone {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .detail-temp-zone-title {
+            font-weight: 600;
+            font-size: 12.5px;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+        .detail-card-action {
+            font-size: 11px;
+            color: #0f766e;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
 
         .detail-fault-summary {
             margin-top: 8px;
@@ -6523,7 +6580,88 @@
                 </div>
             `;
         }
-        function renderDetailTabRun(summary, fault, entryData) { return '<!-- run placeholder -->'; }
+        function renderDetailTabRun(summary, fault, entryData) {
+            const snap = fault || {};
+            const info = entryData?.info || {};
+            const deviceId = escapeHtml(summary?.deviceId || '');
+
+            const tempTiles = `
+                <div class="detail-temp-tile-row">
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">冰箱温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.fridgeTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">fridgeTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">豆仓温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">beanTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">制作仓温度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.craftTemp || '-')}</div>
+                        <div class="detail-temp-tile-sub">craftTemp</div>
+                    </div>
+                    <div class="detail-temp-tile">
+                        <div class="detail-temp-tile-lbl">豆仓湿度</div>
+                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanHumidity || '-')}</div>
+                        <div class="detail-temp-tile-sub">beanHumidity</div>
+                    </div>
+                </div>
+            `;
+
+            const softwareRows = [
+                ['上位机软件', snap.upperSoftware],
+                ['点单屏软件', snap.orderSoftware],
+                ['点单屏系统', snap.orderSystem],
+                ['点单屏内核', snap.orderKernel],
+                ['广告屏版本', snap.adVersion],
+                ['固件版本', snap.firmwareVersion],
+                ['更新时间', snap.updatedAt]
+            ].map(([l, v]) => renderDetailRow(l, v || '-')).join('');
+            const softwareCard = renderDetailCard('软件 / 固件版本', softwareRows);
+
+            const opRows = [
+                renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
+                renderDetailRow('节能模式', info.energyMode || '-'),
+                renderDetailRow('网络信号', info.networkSignal || '-')
+            ].join('');
+            const opCard = renderDetailCard('运营参数', opRows);
+
+            const orgStatusList = Array.isArray(snap.orgStatus) ? snap.orgStatus : [];
+            const chipHtml = orgStatusList.map(part => `
+                <span class="detail-fault-chip ${escapeHtml(part.status || 'normal')}">${escapeHtml(`${part.label || ''} ${part.name || ''}`.trim())}</span>
+            `).join('') || '<span class="detail-empty-hint">暂无机构状态</span>';
+            const orgCard = renderDetailCard('机构状态',
+                `<div class="detail-fault-chip-list">${chipHtml}</div>`);
+
+            const zones = (typeof buildDetailTemperatureAlarmZones === 'function')
+                ? buildDetailTemperatureAlarmZones(summary?.deviceId) : [];
+            const zonesHtml = zones.map(z => `
+                <div class="detail-temp-zone">
+                    <div class="detail-temp-zone-title">${escapeHtml(z.title || '-')}</div>
+                    ${renderDetailRow('温度报警', z.tempAlarm || '-')}
+                    ${z.humidityAlarm ? renderDetailRow('湿度报警', z.humidityAlarm) : ''}
+                    ${z.tempStop ? renderDetailRow('停机温度', z.tempStop) : ''}
+                    ${renderDetailRow('存储温度', z.storageTemp || '-')}
+                    ${z.normalHumidity ? renderDetailRow('正常湿度', z.normalHumidity) : ''}
+                </div>
+            `).join('');
+            const tempAlarmCard = renderDetailCard(
+                '温度报警设置',
+                `<div class="detail-tab-grid cols-3">${zonesHtml}</div>`
+            );
+
+            return `
+                ${tempTiles}
+                <div class="detail-tab-grid cols-2">
+                    ${softwareCard}
+                    ${opCard}
+                    <div class="span-all">${orgCard}</div>
+                    <div class="span-all">${tempAlarmCard}</div>
+                </div>
+            `;
+        }
         function renderDetailTabRecords(summary) { return '<!-- records placeholder -->'; }
         function renderDetailTabEntry(entryData) { return '<!-- entry placeholder -->'; }
         function renderDetailTabAdScreen(entryData, fault) { return '<!-- adscreen placeholder -->'; }
