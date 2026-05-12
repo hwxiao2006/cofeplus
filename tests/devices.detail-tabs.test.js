@@ -48,3 +48,25 @@ test('tab body 容器 CSS 应存在', () => {
 test('switchDetailTab 函数应定义', () => {
   assert.ok(/function\s+switchDetailTab\s*\(/.test(html));
 });
+
+test('renderDetailTabsShell 函数应存在', () => {
+  assert.ok(/function\s+renderDetailTabsShell\s*\(/.test(html));
+});
+
+test('renderDetailTabsShell 渲染结果应包含 5 个 tab 按钮', () => {
+  const fnStart = html.indexOf('function renderDetailTabsShell(');
+  const fnChunk = html.slice(fnStart, fnStart + 5000);
+  assert.ok(/data-tab="overview"/.test(fnChunk));
+  assert.ok(/data-tab="run"/.test(fnChunk));
+  assert.ok(/data-tab="records"/.test(fnChunk));
+  assert.ok(/data-tab="entry"/.test(fnChunk));
+  assert.ok(/data-tab="adscreen"/.test(fnChunk));
+});
+
+test('5 个 render tab 占位函数应存在', () => {
+  assert.ok(/function\s+renderDetailTabOverview\s*\(/.test(html));
+  assert.ok(/function\s+renderDetailTabRun\s*\(/.test(html));
+  assert.ok(/function\s+renderDetailTabRecords\s*\(/.test(html));
+  assert.ok(/function\s+renderDetailTabEntry\s*\(/.test(html));
+  assert.ok(/function\s+renderDetailTabAdScreen\s*\(/.test(html));
+});

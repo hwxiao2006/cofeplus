@@ -6444,6 +6444,79 @@
             `;
         }
 
+        // ============ 新详情页:tabs 外壳 ============
+        function renderDetailTabsShell(summary, fault, entryData, counts) {
+            const deviceId = escapeHtml(summary?.deviceId || '-');
+            const statusName = escapeHtml(summary?.statusName || '-');
+            const statusClass = summary?.status === 'stopped' ? 'stopped'
+                : summary?.status === 'faulted' ? 'faulted' : '';
+            const locationName = escapeHtml(summary?.locationName || '未分配点位');
+            const entered = summary?.entered !== false;
+
+            const head = `
+                <div class="detail-top-head">
+                    <button type="button" class="detail-top-back" onclick="closeDetailModal()">‹</button>
+                    <div class="detail-top-id">${deviceId}</div>
+                    <span class="detail-top-pill ${statusClass}">● ${statusName}</span>
+                    <span class="detail-top-pill entered">${entered ? '已入场' : '未入场'}</span>
+                    <div class="detail-top-loc">${locationName}</div>
+                    <div class="detail-top-actions">
+                        <div class="detail-side-restart-split" style="position:relative">
+                            <button type="button" class="detail-side-restart-primary" onclick="openDetailRestartSystem('${deviceId}')" aria-label="重启设备">
+                                <span class="detail-side-restart-icon" aria-hidden="true"></span>
+                                <span>重启</span>
+                            </button>
+                            <button type="button" class="detail-side-restart-caret" onclick="toggleDetailRestartPopover(event, '${deviceId}')" aria-haspopup="menu" aria-expanded="false" aria-label="选择重启部件">
+                                <span class="detail-side-restart-chevron" aria-hidden="true"></span>
+                            </button>
+                            <div class="detail-side-restart-popover" role="menu" data-open="false">
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（左）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(左)</span></button>
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（右）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(右)</span></button>
+                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启六轴机械臂（注意安全，谨慎使用）')"><span class="detail-side-restart-popover-dot detail-side-restart-popover-dot--danger"></span><span>六轴机械臂</span><span class="detail-side-restart-popover-hint">谨慎</span></button>
+                            </div>
+                        </div>
+                        <button type="button" class="detail-top-action-btn blue" onclick="openDetailRemoteActions('${deviceId}')">远程操作</button>
+                        <button type="button" class="detail-top-action-btn" onclick="openDetailMoreMenu(event, '${deviceId}')">⋯ 更多</button>
+                    </div>
+                </div>
+            `;
+
+            const tabs = `
+                <div class="detail-tabs" role="tablist">
+                    <button type="button" class="detail-tab" role="tab" data-tab="overview" onclick="switchDetailTab('overview')">概览</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="run" onclick="switchDetailTab('run')">运行</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="records" onclick="switchDetailTab('records')">记录</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="entry" onclick="switchDetailTab('entry')">入场</button>
+                    <button type="button" class="detail-tab" role="tab" data-tab="adscreen" onclick="switchDetailTab('adscreen')">广告屏</button>
+                </div>
+            `;
+
+            const body = `
+                <div class="detail-tab-body">
+                    <div class="detail-tab-pane" data-tab-pane="overview">${renderDetailTabOverview(summary, fault)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="run">${renderDetailTabRun(summary, fault, entryData)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="records">${renderDetailTabRecords(summary)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData)}</div>
+                    <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(entryData, fault)}</div>
+                </div>
+            `;
+
+            return head + tabs + body;
+        }
+
+        // Tab render 占位(Task 4-8 分别实现)
+        function renderDetailTabOverview(summary, fault) { return '<!-- overview placeholder -->'; }
+        function renderDetailTabRun(summary, fault, entryData) { return '<!-- run placeholder -->'; }
+        function renderDetailTabRecords(summary) { return '<!-- records placeholder -->'; }
+        function renderDetailTabEntry(entryData) { return '<!-- entry placeholder -->'; }
+        function renderDetailTabAdScreen(entryData, fault) { return '<!-- adscreen placeholder -->'; }
+
+        // 更多菜单占位(后续可接下拉菜单)
+        function openDetailMoreMenu(event, deviceId) {
+            if (event) event.stopPropagation();
+            console.log('TODO: open more menu for', deviceId);
+        }
+
         function resolveEntryLocationName(device, runtimeLocationMap) {
             const info = device.entryInfo || {};
             if (info.locationName && info.locationName !== '-') {
