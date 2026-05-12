@@ -64,25 +64,27 @@ test('renderDeviceStatusCard 不再拼接 recoveryAction', () => {
   assert.ok(!/recoveryAction/.test(html), 'recoveryAction 变量应完全移除');
 });
 
-test('侧栏应在远程操作按钮之前渲染 split button', () => {
-  const listBlock = html.match(/<div class="detail-side-action-list">[\s\S]*?openDetailRemoteActions/);
-  assert.ok(listBlock, '应找到侧栏动作列表');
+test('置顶头应在远程操作按钮之前渲染 split button', () => {
+  // 新布局:split button 从侧栏迁到 .detail-top-head .detail-top-actions
+  const headBlock = html.match(/class="detail-top-actions"[\s\S]*?openDetailRemoteActions/);
+  assert.ok(headBlock, '应找到头部操作区');
   assert.ok(
-    /detail-side-restart-split/.test(listBlock[0]),
+    /detail-side-restart-split/.test(headBlock[0]),
     'detail-side-restart-split 必须出现在远程操作按钮之前'
   );
 });
 
 test('split button 主区应绑定 openDetailRestartSystem(deviceId)', () => {
+  // renderDetailTabsShell 先 const deviceId = escapeHtml(...) 再用 ${deviceId}
   assert.ok(
-    /class="detail-side-restart-primary"[\s\S]*?onclick="openDetailRestartSystem\('\$\{escapeHtml\(summary\.deviceId \|\| ''\)\}'\)"/.test(html),
+    /class="detail-side-restart-primary"[\s\S]*?onclick="openDetailRestartSystem\('\$\{deviceId\}'\)"/.test(html),
     '主区应调用 openDetailRestartSystem'
   );
 });
 
 test('caret 按钮应绑定 toggleDetailRestartPopover', () => {
   assert.ok(
-    /class="detail-side-restart-caret"[\s\S]*?onclick="toggleDetailRestartPopover\(event,\s*'\$\{escapeHtml\(summary\.deviceId \|\| ''\)\}'\)"/.test(html),
+    /class="detail-side-restart-caret"[\s\S]*?onclick="toggleDetailRestartPopover\(event,\s*'\$\{deviceId\}'\)"/.test(html),
     'caret 应调用 toggleDetailRestartPopover'
   );
 });
