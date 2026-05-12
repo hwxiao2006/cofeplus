@@ -720,23 +720,6 @@
             background: #f8fafc;
         }
 
-        .detail-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 300px;
-            gap: 18px;
-            align-items: start;
-        }
-
-        .detail-main {
-            min-width: 0;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: 16px;
-        }
-
         .detail-section {
             scroll-margin-top: 10px;
         }
@@ -1242,68 +1225,6 @@
 
         .quick-location-modal-footer .btn {
             min-width: 112px;
-        }
-
-        .detail-aside {
-            min-width: 0;
-        }
-
-        .detail-aside-stack {
-            position: sticky;
-            top: 2px;
-            display: grid;
-            gap: 12px;
-        }
-
-        .detail-side-card {
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            background: #fff;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-        }
-
-        .detail-side-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .detail-side-action-list {
-            display: grid;
-            gap: 8px;
-        }
-
-        .detail-side-action-btn {
-            width: 100%;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            background: #fff;
-            color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 9px 10px;
-            cursor: pointer;
-            text-align: left;
-            transition: border-color 0.15s ease, background-color 0.15s ease;
-        }
-
-        .detail-side-action-btn:hover {
-            border-color: #bfdbfe;
-            background: #f8fafc;
-        }
-
-        .detail-side-action-btn.primary {
-            border-color: #1d4ed8;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff;
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
-        }
-
-        .detail-side-action-btn.primary:hover {
-            border-color: #1e40af;
-            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
         }
 
         /* teal 专用于重启类恢复操作 —— 不要扩散到成功态或其他按钮 */
@@ -3575,19 +3496,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .detail-layout {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .detail-aside {
-                display: block;
-            }
-
-            .detail-aside-stack {
-                position: static;
-            }
-
         }
 
         @media (max-width: 768px) {
@@ -3651,11 +3559,6 @@
             .detail-modal-body {
                 max-height: 75vh;
                 padding: 12px;
-            }
-
-            .detail-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
             }
 
             .detail-card {
@@ -9478,59 +9381,6 @@
             closeEntryEditModal();
             viewDetail(device.id);
             showToast('入场信息已更新');
-        }
-
-        function renderDetailAside(detailData) {
-            const summary = detailData?.base || {};
-            return `
-                <aside class="detail-aside">
-                    <div class="detail-aside-stack">
-                        <section class="detail-side-card">
-                            <div class="detail-side-title">设备操作</div>
-                            <div class="detail-side-action-list">
-                                <div class="detail-side-restart-split">
-                                    <button type="button" class="detail-side-restart-primary" onclick="openDetailRestartSystem('${escapeHtml(summary.deviceId || '')}')" aria-label="重启设备">
-                                        <span class="detail-side-restart-icon" aria-hidden="true"></span>
-                                        <span>重启设备</span>
-                                    </button>
-                                    <button type="button" class="detail-side-restart-caret" onclick="toggleDetailRestartPopover(event, '${escapeHtml(summary.deviceId || '')}')" aria-haspopup="menu" aria-expanded="false" aria-label="选择重启部件">
-                                        <span class="detail-side-restart-chevron" aria-hidden="true"></span>
-                                    </button>
-                                    <div class="detail-side-restart-popover" role="menu" data-open="false">
-                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（左）')">
-                                            <span class="detail-side-restart-popover-dot" aria-hidden="true"></span>
-                                            <span>点单屏(左)</span>
-                                        </button>
-                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启点单屏（右）')">
-                                            <span class="detail-side-restart-popover-dot" aria-hidden="true"></span>
-                                            <span>点单屏(右)</span>
-                                        </button>
-                                        <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${escapeHtml(summary.deviceId || '')}', '重启六轴机械臂（注意安全，谨慎使用）')">
-                                            <span class="detail-side-restart-popover-dot detail-side-restart-popover-dot--danger" aria-hidden="true"></span>
-                                            <span>六轴机械臂</span>
-                                            <span class="detail-side-restart-popover-hint">谨慎</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <button type="button" class="detail-side-action-btn primary" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailTemperatureAlarmModal('${escapeHtml(summary.deviceId || '')}')">温度报警设置</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
-                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
-                            </div>
-                        </section>
-                        <section class="detail-side-card">
-                            <div class="detail-side-title">详细信息</div>
-                            <div class="detail-side-action-list">
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('entry')">入场详情</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('adScreen')">广告屏信息</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('technical')">技术状态</button>
-                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('records')">记录摘要</button>
-                            </div>
-                        </section>
-                    </div>
-                </aside>
-            `;
         }
 
         function viewDetail(deviceId) {

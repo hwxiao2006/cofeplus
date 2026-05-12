@@ -86,3 +86,19 @@ test('viewDetail 渲染后应同步 tab 状态', () => {
   const body = html.slice(start, end > 0 ? end : start + 5000);
   assert.ok(/switchDetailTab\(/.test(body), 'viewDetail 应调用 switchDetailTab');
 });
+
+test('旧布局 CSS 类应全部移除', () => {
+  assert.ok(!/\.detail-layout\s*\{/.test(html), '.detail-layout 应移除');
+  assert.ok(!/\.detail-main\s*\{/.test(html), '.detail-main 应移除');
+  assert.ok(!/\.detail-grid\s*\{/.test(html), '.detail-grid 应移除');
+  assert.ok(!/\.detail-aside\s*\{/.test(html), '.detail-aside 应移除');
+  assert.ok(!/\.detail-aside-stack\s*\{/.test(html), '.detail-aside-stack 应移除');
+  assert.ok(!/\.detail-side-card\s*\{/.test(html), '.detail-side-card 应移除');
+  assert.ok(!/\.detail-side-title\s*\{/.test(html), '.detail-side-title 应移除');
+  assert.ok(!/\.detail-side-action-list\s*\{/.test(html), '.detail-side-action-list 应移除');
+  assert.ok(!/\.detail-side-action-btn\s*\{/.test(html), '.detail-side-action-btn 应移除');
+});
+
+test('renderDetailAside 函数应移除', () => {
+  assert.ok(!/function\s+renderDetailAside\s*\(/.test(html), 'renderDetailAside 应移除');
+});

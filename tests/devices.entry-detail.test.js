@@ -150,8 +150,12 @@ test('设备详情移动端应回退为单列卡片布局', () => {
 });
 
 test('设备详情移动端不应隐藏设备操作区', () => {
-  assert.ok(!/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*none/.test(devicesHtml));
-  assert.ok(/@media\s*\(max-width:\s*1024px\)[\s\S]*\.detail-aside\s*\{[^}]*display:\s*block/.test(devicesHtml));
+  // 新 tabs 布局:操作按钮放在 .detail-top-head 的 .detail-top-actions 区,始终可见,
+  // 不再有独立的 .detail-aside,所以只需确保 .detail-top-actions 在手机端不被 display:none 隐藏
+  assert.ok(!/@media\s*\([^)]*max-width:\s*768px[^)]*\)[\s\S]*\.detail-top-actions\s*\{[^}]*display:\s*none/.test(devicesHtml),
+    '手机端不应把 .detail-top-actions 隐藏');
+  assert.ok(/class="detail-top-actions"/.test(devicesHtml),
+    '操作区 .detail-top-actions 应在渲染模板中存在');
 });
 
 test('设备详情图片应支持点击预览与左右切换', () => {
