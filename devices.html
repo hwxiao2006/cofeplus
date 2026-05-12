@@ -6663,7 +6663,6 @@
             const id = escapeHtml(deviceId || '');
             menu.innerHTML = `
                 <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailTemperatureAlarmModal('${id}')">温度报警设置</button>
-                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailStatusRecords('${id}')">状态记录</button>
                 <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailEditFaultStatus('${id}')">编辑状态</button>
                 <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();goToDeviceMaterials('${id}')">物料页面</button>
             `;
