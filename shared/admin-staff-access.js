@@ -141,8 +141,98 @@
     };
   }
 
+  // ---- 商户租户隔离 helpers(2026-05-12 spec)----
+  const SUPER_ADMIN_ACCOUNTS = ['superadmin', 'ops'];
+
+  function detectRole(profile) {
+    if (!profile || typeof profile !== 'object') return 'merchant';
+    const account = String(profile.account || profile.username || profile.phone || '')
+      .trim()
+      .toLowerCase();
+    return SUPER_ADMIN_ACCOUNTS.includes(account) ? 'super_admin' : 'merchant';
+  }
+
+  function isSuperAdmin() {
+    const storage = global.localStorage || (global.window && global.window.localStorage);
+    const profile = readSidebarLoginProfile(storage);
+    return !!(profile && profile.role === 'super_admin');
+  }
+
+  function getMerchantScope() {
+    if (isSuperAdmin()) return null;
+    const storage = global.localStorage || (global.window && global.window.localStorage);
+    const profile = readSidebarLoginProfile(storage);
+    const merchantId = String((profile && profile.merchantId) || '').trim();
+    return merchantId || null;
+  }
+
+  function syncMerchantNameAcrossStorage(merchantId, newName) {
+    if (!merchantId || !newName) return;
+    const storage = global.localStorage || (global.window && global.window.localStorage);
+    if (!storage) return;
+
+    // locationsData[].customerName
+    try {
+      const raw = storage.getItem('locationsData');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          let changed = false;
+          arr.forEach((l) => {
+            if (l && l.customerId === merchantId && l.customerName !== newName) {
+              l.customerName = newName;
+              changed = true;
+            }
+          });
+          if (changed) storage.setItem('locationsData', JSON.stringify(arr));
+        }
+      }
+    } catch (e) { /* ignore malformed */ }
+
+    // staffManagersData[].merchantName
+    try {
+      const raw = storage.getItem('staffManagersData');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          let changed = false;
+          arr.forEach((s) => {
+            if (s && s.merchantId === merchantId && s.merchantName !== newName) {
+              s.merchantName = newName;
+              changed = true;
+            }
+          });
+          if (changed) storage.setItem('staffManagersData', JSON.stringify(arr));
+        }
+      }
+    } catch (e) { /* ignore malformed */ }
+
+    // sidebarLoginProfile.merchantName(当前会话)
+    try {
+      const raw = storage.getItem('sidebarLoginProfile');
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p && typeof p === 'object' && p.merchantId === merchantId && p.merchantName !== newName) {
+          p.merchantName = newName;
+          storage.setItem('sidebarLoginProfile', JSON.stringify(p));
+        }
+      }
+    } catch (e) { /* ignore malformed */ }
+  }
+
+  function applyNavLabelsByRole() {
+    const doc = global.document || (global.window && global.window.document);
+    if (!doc || typeof doc.querySelectorAll !== 'function') return;
+    const label = isSuperAdmin() ? '商户管理' : '我的商户';
+    const nodes = doc.querySelectorAll('[data-nav="customers"] .nav-label');
+    Array.prototype.forEach.call(nodes, (el) => {
+      if (el) el.textContent = label;
+    });
+  }
+
   global.CofeAdminStaffAccess = {
     DEVICE_SCOPED_MODULES,
+    SUPER_ADMIN_ACCOUNTS,
     normalizeDeviceIds,
     normalizeModuleDeviceScopes,
     normalizeStaffRecord,
@@ -152,6 +242,11 @@
     readCurrentLoginSession,
     readSidebarLoginProfile,
     readStaffManagers,
-    resolveCurrentStaffAccess
+    resolveCurrentStaffAccess,
+    detectRole,
+    isSuperAdmin,
+    getMerchantScope,
+    syncMerchantNameAcrossStorage,
+    applyNavLabelsByRole
   };
 })(typeof window !== 'undefined' ? window : globalThis);
