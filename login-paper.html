@@ -468,6 +468,7 @@
             </div>
         </section>
     </main>
+    <script src="shared/admin-staff-access.js"></script>
     <script>
         const LOGIN_SESSION_KEY = 'cofeLoginSession';
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -506,18 +507,30 @@
         }
 
         function persistLoginSession(account) {
+            const accountTrim = String(account || '').trim();
+            const detectedRole = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.detectRole === 'function')
+                ? CofeAdminStaffAccess.detectRole({ account: accountTrim })
+                : 'merchant';
+            const isSuper = detectedRole === 'super_admin';
+            const merchantId = isSuper ? '' : SIDEBAR_LOGIN_MERCHANT_ID;
+            const merchantName = isSuper ? '' : SIDEBAR_LOGIN_MERCHANT_NAME;
+
             localStorage.setItem(LOGIN_SESSION_KEY, JSON.stringify({
-                account,
+                account: accountTrim,
                 theme: LOGIN_THEME,
-                merchantId: SIDEBAR_LOGIN_MERCHANT_ID,
-                merchantName: SIDEBAR_LOGIN_MERCHANT_NAME,
+                merchantId,
+                merchantName,
+                role: detectedRole,
                 loggedInAt: new Date().toISOString()
             }));
             localStorage.setItem(SIDEBAR_LOGIN_PROFILE_KEY, JSON.stringify({
-                name: SIDEBAR_LOGIN_DISPLAY_NAME,
-                phone: SIDEBAR_LOGIN_DISPLAY_PHONE,
-                merchantId: SIDEBAR_LOGIN_MERCHANT_ID,
-                merchantName: SIDEBAR_LOGIN_MERCHANT_NAME
+                name: isSuper ? '平台运营' : SIDEBAR_LOGIN_DISPLAY_NAME,
+                phone: isSuper ? accountTrim : SIDEBAR_LOGIN_DISPLAY_PHONE,
+                account: accountTrim,
+                merchantId,
+                merchantName,
+                role: detectedRole
             }));
         }
 
