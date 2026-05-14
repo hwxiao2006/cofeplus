@@ -905,7 +905,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="customers.html" class="nav-item" data-nav="customers"><span class="nav-icon">🏢</span><span class="nav-label">客户管理</span></a>
                     <a href="locations.html" class="nav-item active"><span class="nav-icon">📍</span><span>点位管理</span></a>
                 </div>
             </nav>
@@ -1002,11 +1002,15 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" data-admin-only="locations">
                         <label class="form-label">所属客户（可选）</label>
                         <select class="form-select" id="customerSelect">
                             <option value="">选择客户</option>
                         </select>
+                    </div>
+                    <div class="form-group" id="customerReadonlyGroup" style="display:none;">
+                        <label class="form-label">所属商户</label>
+                        <div class="form-readonly-field" id="customerReadonlyDisplay" style="padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#374151;font-size:14px;">-</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">点位状态</label>
@@ -1051,6 +1055,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-staff-access.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1434,6 +1439,34 @@
             return { normalized, changed };
         }
 
+        // ---- 商户租户隔离辅助 ----
+        function getLocationScope() {
+            return (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
+                ? CofeAdminStaffAccess.getMerchantScope() : null;
+        }
+
+        function isLocationSuperAdmin() {
+            return (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
+                ? CofeAdminStaffAccess.isSuperAdmin() : false;
+        }
+
+        function getCurrentMerchantName() {
+            try {
+                const profile = JSON.parse(localStorage.getItem('sidebarLoginProfile') || '{}');
+                return String(profile.merchantName || '').trim();
+            } catch (e) { return ''; }
+        }
+
+        function applyLocationsRoleVisibility() {
+            const isSuper = isLocationSuperAdmin();
+            const adminOnly = document.querySelectorAll('[data-admin-only="locations"]');
+            adminOnly.forEach((el) => { el.style.display = isSuper ? '' : 'none'; });
+            const readonlyGroup = document.getElementById('customerReadonlyGroup');
+            if (readonlyGroup) readonlyGroup.style.display = isSuper ? 'none' : '';
+        }
+
         // 初始化
         function init() {
             renderSidebarLoginProfile();
@@ -1452,6 +1485,7 @@
             if (changed) {
                 saveToStorage();
             }
+            applyLocationsRoleVisibility();
             loadCustomers();
             renderLocations();
             updateStats();
@@ -1478,20 +1512,27 @@
 
         // 更新统计
         function updateStats() {
-            const total = locationsData.length;
-            const active = locationsData.filter(l => l.status === 'operational').length;
-            
+            const scope = getLocationScope();
+            const visible = scope
+                ? locationsData.filter(l => String(l.customerId || '') === scope)
+                : locationsData;
+            const total = visible.length;
+            const active = visible.filter(l => l.status === 'operational').length;
+
             // 从设备数据计算设备数
             const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
             const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-            
+
             document.getElementById('totalLocations').textContent = total;
             document.getElementById('activeLocations').textContent = active;
             document.getElementById('totalDevices').textContent = devicesData.length || 15;
-            const customerIds = locationsData
+            const customerIds = visible
                 .map(l => String(l.customerId || '').trim())
                 .filter(Boolean);
-            document.getElementById('totalCustomers').textContent = new Set(customerIds).size || customersData.length || 4;
+            const distinctCount = new Set(customerIds).size;
+            document.getElementById('totalCustomers').textContent = scope
+                ? (distinctCount || 1)
+                : (distinctCount || customersData.length || 4);
         }
 
         // 渲染点位列表
@@ -1499,8 +1540,11 @@
             const list = document.getElementById('locationList');
             const filterText = document.getElementById('searchInput').value.trim();
             const categoryFilter = document.getElementById('pointCategoryFilter').value;
+            const scope = getLocationScope();
 
-            let filtered = locationsData;
+            let filtered = scope
+                ? locationsData.filter(l => String(l.customerId || '') === scope)
+                : locationsData;
             if (filterText) {
                 const lower = filterText.toLowerCase();
                 filtered = filtered.filter(l =>
@@ -1570,6 +1614,12 @@
             document.getElementById('locationManager').value = '';
             document.getElementById('locationPhone').value = '';
             document.getElementById('locationRemark').value = '';
+            // 普通用户:用当前商户名填充只读区
+            const scope = getLocationScope();
+            const display = document.getElementById('customerReadonlyDisplay');
+            if (display) {
+                display.textContent = scope ? (getCurrentMerchantName() || scope) : '-';
+            }
             document.getElementById('locationModal').classList.add('active');
         }
 
@@ -1583,6 +1633,11 @@
         function editLocation(id) {
             const location = locationsData.find(l => l.id === id);
             if (!location) return;
+            const scope = getLocationScope();
+            if (scope && String(location.customerId || '') !== scope) {
+                showToast('无权编辑该点位', 'error');
+                return;
+            }
 
             editingLocationId = id;
             loadCustomers();
@@ -1596,6 +1651,11 @@
             document.getElementById('locationManager').value = location.manager || '';
             document.getElementById('locationPhone').value = location.phone || '';
             document.getElementById('locationRemark').value = location.remark || '';
+            const display = document.getElementById('customerReadonlyDisplay');
+            if (display) {
+                display.textContent = location.customerName
+                    || (scope ? (getCurrentMerchantName() || scope) : '-');
+            }
             document.getElementById('locationModal').classList.add('active');
         }
 
@@ -1603,7 +1663,6 @@
         function saveLocation() {
             const name = document.getElementById('locationName').value.trim();
             const code = document.getElementById('locationCode').value.trim();
-            const customerId = document.getElementById('customerSelect').value;
             const status = document.getElementById('locationStatus').value;
             const pointCategory = document.getElementById('locationCategory').value;
             const address = document.getElementById('locationAddress').value.trim();
@@ -1616,27 +1675,42 @@
                 return;
             }
 
-            // 获取客户名称
+            // 商户绑定:普通用户用 scope,超管走选择器
+            const scope = getLocationScope();
             const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-            const customer = customersData.find(c => c.id === customerId);
+            let customerId;
+            let customerName;
+            if (scope) {
+                customerId = scope;
+                customerName = getCurrentMerchantName()
+                    || customersData.find(c => c.id === scope)?.name
+                    || '';
+            } else {
+                customerId = document.getElementById('customerSelect').value;
+                const customer = customersData.find(c => c.id === customerId);
+                customerName = customer?.name || '';
+            }
 
             if (editingLocationId) {
-                // 编辑
+                // 编辑(已在 editLocation 中做过 scope 校验,这里再防御一次)
                 const index = locationsData.findIndex(l => l.id === editingLocationId);
-                if (index !== -1) {
-                    locationsData[index] = {
-                        ...locationsData[index],
-                        name, code, customerId, customerName: customer?.name || '',
-                        status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark
-                    };
+                if (index === -1) return;
+                if (scope && String(locationsData[index].customerId || '') !== scope) {
+                    showToast('无权编辑该点位', 'error');
+                    return;
                 }
+                locationsData[index] = {
+                    ...locationsData[index],
+                    name, code, customerId, customerName,
+                    status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark
+                };
                 showToast('点位信息已更新');
             } else {
                 // 新增
                 const newId = 'L' + String(locationsData.length + 1).padStart(3, '0');
                 locationsData.push({
                     id: newId,
-                    name, code, customerId, customerName: customer?.name || '',
+                    name, code, customerId, customerName,
                     status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark,
                     createTime: new Date().toISOString().split('T')[0]
                 });
@@ -1651,8 +1725,15 @@
 
         // 删除点位
         function deleteLocation(id) {
+            const location = locationsData.find(l => l.id === id);
+            if (!location) return;
+            const scope = getLocationScope();
+            if (scope && String(location.customerId || '') !== scope) {
+                showToast('无权删除该点位', 'error');
+                return;
+            }
             if (!confirm('确定要删除该点位吗？')) return;
-            
+
             locationsData = locationsData.filter(l => l.id !== id);
             saveToStorage();
             renderLocations();
@@ -1681,6 +1762,10 @@
 
         // 初始化
         init();
+        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
+            CofeAdminStaffAccess.applyNavLabelsByRole();
+        }
+    
     </script>
 </body>
 </html>

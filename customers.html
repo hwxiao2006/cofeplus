@@ -969,7 +969,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item active"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="customers.html" class="nav-item active" data-nav="customers"><span class="nav-icon">🏢</span><span class="nav-label">客户管理</span></a>
                     <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
                 </div>
             </nav>
@@ -984,10 +984,10 @@
 
             <header class="header">
                 <div class="header-left">
-                    <h1 class="header-title">客户管理</h1>
-                    <span class="header-desc">管理商户信息和合作关系</span>
+                    <h1 class="header-title" id="pageTitle">客户管理</h1>
+                    <span class="header-desc" id="pageDesc">管理商户信息和合作关系</span>
                 </div>
-                <div class="header-right">
+                <div class="header-right" data-admin-only="customers">
                     <button class="btn btn-primary" onclick="openModal()">
                         <span>➕</span>
                         <span>新增客户</span>
@@ -996,6 +996,11 @@
             </header>
 
             <div class="content">
+                <!-- 商户详情视图(普通用户) -->
+                <section id="merchantProfileSection" style="display:none;"></section>
+
+                <!-- 全局视图(超管) -->
+                <div id="adminListSection" data-admin-only="customers">
                 <!-- 统计卡片 -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -1037,6 +1042,7 @@
                 <div class="customer-list" id="customerList">
                     <!-- 动态生成 -->
                 </div>
+                </div><!-- /#adminListSection -->
             </div>
         </main>
     </div>
@@ -1081,6 +1087,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-staff-access.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1329,8 +1336,88 @@
                 customersData = [...defaultCustomers];
                 saveToStorage();
             }
-            renderCustomers();
-            updateStats();
+            applyRoleVisibility();
+            const scope = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
+                ? CofeAdminStaffAccess.getMerchantScope() : null;
+            if (scope) {
+                renderMerchantProfile(scope);
+            } else {
+                renderCustomers();
+                updateStats();
+            }
+        }
+
+        function applyRoleVisibility() {
+            const isSuper = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
+                ? CofeAdminStaffAccess.isSuperAdmin() : false;
+            const titleEl = document.getElementById('pageTitle');
+            const descEl = document.getElementById('pageDesc');
+            const profileSection = document.getElementById('merchantProfileSection');
+            const adminSection = document.getElementById('adminListSection');
+            if (titleEl) titleEl.textContent = isSuper ? '商户管理' : '我的商户';
+            if (descEl) descEl.textContent = isSuper ? '管理商户信息和合作关系' : '查看与维护我所属商户的资料';
+            if (profileSection) profileSection.style.display = isSuper ? 'none' : 'block';
+            if (adminSection) adminSection.style.display = isSuper ? 'block' : 'none';
+            const adminOnly = document.querySelectorAll('[data-admin-only="customers"]');
+            adminOnly.forEach((el) => { el.style.display = isSuper ? '' : 'none'; });
+            // Mobile header reflects current view label
+            const mob = document.querySelector('.mobile-header strong');
+            if (mob) mob.textContent = isSuper ? '商户管理' : '我的商户';
+        }
+
+        function renderMerchantProfile(merchantId) {
+            const section = document.getElementById('merchantProfileSection');
+            if (!section) return;
+            const merchant = customersData.find((c) => c.id === merchantId);
+            if (!merchant) {
+                section.innerHTML = `
+                    <div class="empty-state" id="merchantProfileEmpty">
+                        <div class="empty-icon">⚠️</div>
+                        <div>未找到你所属的商户信息,请联系管理员</div>
+                    </div>
+                `;
+                return;
+            }
+            section.innerHTML = `
+                <div class="customer-list">
+                    <div class="customer-item" style="grid-template-columns: 1fr; gap: 18px;">
+                        <div class="customer-info">
+                            <div class="customer-name" id="profileNameDisplay">${merchant.name}</div>
+                            <div class="customer-meta">
+                                <span>🆔 ${merchant.id}</span>
+                                <span>👤 <span id="profileContactDisplay">${merchant.contact || '-'}</span></span>
+                                <span>📞 <span id="profilePhoneDisplay">${merchant.phone || '-'}</span></span>
+                            </div>
+                            <div class="customer-meta" style="margin-top: 8px;">
+                                <span>📍 <span id="profileAddressDisplay">${merchant.address || '-'}</span></span>
+                            </div>
+                            <div class="customer-meta" style="margin-top: 8px;">
+                                <span>📝 <span id="profileRemarkDisplay">${merchant.remark || '-'}</span></span>
+                            </div>
+                        </div>
+                        <div class="customer-actions" style="justify-content: flex-end;">
+                            <button class="btn btn-primary" onclick="openMerchantEditModal('${merchant.id}')">
+                                <span>✏️</span><span>编辑商户资料</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openMerchantEditModal(id) {
+            const merchant = customersData.find((c) => c.id === id);
+            if (!merchant) return;
+            editingCustomerId = id;
+            document.getElementById('modalTitle').textContent = '编辑商户资料';
+            document.getElementById('customerName').value = merchant.name || '';
+            document.getElementById('contactName').value = merchant.contact || '';
+            document.getElementById('contactPhone').value = merchant.phone || '';
+            document.getElementById('customerAddress').value = merchant.address || '';
+            document.getElementById('customerRemark').value = merchant.remark || '';
+            document.getElementById('customerModal').classList.add('active');
         }
 
         // 保存到 localStorage
@@ -1467,12 +1554,18 @@
                 // 编辑
                 const index = customersData.findIndex(c => c.id === editingCustomerId);
                 if (index !== -1) {
+                    const previousName = customersData[index].name;
                     customersData[index] = {
                         ...customersData[index],
                         name, contact, phone, address, remark
                     };
+                    if (previousName !== name
+                        && typeof CofeAdminStaffAccess !== 'undefined'
+                        && typeof CofeAdminStaffAccess.syncMerchantNameAcrossStorage === 'function') {
+                        CofeAdminStaffAccess.syncMerchantNameAcrossStorage(editingCustomerId, name);
+                    }
                 }
-                showToast('客户信息已更新');
+                showToast('商户信息已更新');
             } else {
                 // 新增
                 const newId = 'C' + String(customersData.length + 1).padStart(3, '0');
@@ -1486,8 +1579,16 @@
             }
 
             saveToStorage();
-            renderCustomers();
-            updateStats();
+            // 普通用户保留 profile 视图,超管刷新列表
+            const scope = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
+                ? CofeAdminStaffAccess.getMerchantScope() : null;
+            if (scope) {
+                renderMerchantProfile(scope);
+            } else {
+                renderCustomers();
+                updateStats();
+            }
             closeModal();
         }
 
@@ -1523,6 +1624,10 @@
 
         // 初始化
         init();
+        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
+            CofeAdminStaffAccess.applyNavLabelsByRole();
+        }
+    
     </script>
 </body>
 </html>
