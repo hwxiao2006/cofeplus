@@ -1184,6 +1184,9 @@
                 <div class="form-group">
                     <label class="form-label">客户名称 <span class="required">*</span></label>
                     <input type="text" class="form-input" id="customerName" placeholder="输入客户公司名称">
+                    <div class="form-hint" id="customerNameHint" style="display:none;margin-top:6px;color:#9ca3af;font-size:12px;">
+                        🔒 商户名称由平台运营维护,如需修改请联系运营
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -1566,7 +1569,25 @@
             if (!merchant) return;
             editingCustomerId = id;
             document.getElementById('modalTitle').textContent = '编辑商户资料';
-            document.getElementById('customerName').value = merchant.name || '';
+            const nameInput = document.getElementById('customerName');
+            const nameHint = document.getElementById('customerNameHint');
+            nameInput.value = merchant.name || '';
+            const isSuper = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
+                ? CofeAdminStaffAccess.isSuperAdmin() : false;
+            if (!isSuper) {
+                nameInput.readOnly = true;
+                nameInput.style.background = '#f3f4f6';
+                nameInput.style.color = '#6b7280';
+                nameInput.style.cursor = 'not-allowed';
+                if (nameHint) nameHint.style.display = 'block';
+            } else {
+                nameInput.readOnly = false;
+                nameInput.style.background = '';
+                nameInput.style.color = '';
+                nameInput.style.cursor = '';
+                if (nameHint) nameHint.style.display = 'none';
+            }
             document.getElementById('contactName').value = merchant.contact || '';
             document.getElementById('contactPhone').value = merchant.phone || '';
             document.getElementById('customerAddress').value = merchant.address || '';
@@ -1704,19 +1725,25 @@
                 return;
             }
 
+            const isSuper = (typeof CofeAdminStaffAccess !== 'undefined'
+                && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
+                ? CofeAdminStaffAccess.isSuperAdmin() : false;
+
             if (editingCustomerId) {
                 // 编辑
                 const index = customersData.findIndex(c => c.id === editingCustomerId);
                 if (index !== -1) {
                     const previousName = customersData[index].name;
+                    // 防御:非超管不允许改名,即使绕过 readonly 也强制保留旧名
+                    const effectiveName = isSuper ? name : previousName;
                     customersData[index] = {
                         ...customersData[index],
-                        name, contact, phone, address, remark
+                        name: effectiveName, contact, phone, address, remark
                     };
-                    if (previousName !== name
+                    if (isSuper && previousName !== effectiveName
                         && typeof CofeAdminStaffAccess !== 'undefined'
                         && typeof CofeAdminStaffAccess.syncMerchantNameAcrossStorage === 'function') {
-                        CofeAdminStaffAccess.syncMerchantNameAcrossStorage(editingCustomerId, name);
+                        CofeAdminStaffAccess.syncMerchantNameAcrossStorage(editingCustomerId, effectiveName);
                     }
                 }
                 showToast('商户信息已更新');

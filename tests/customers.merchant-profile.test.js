@@ -41,3 +41,28 @@ test('customers.html 找不到自家商户时应显示 fallback 提示', () => {
   assert.ok(/未找到[\s\S]{0,30}商户/.test(html) || /merchantProfileEmpty/.test(html),
     '应有"未找到商户"或类似空态');
 });
+
+test('openMerchantEditModal 应根据 isSuperAdmin 设置 customerName 输入只读状态', () => {
+  const start = html.indexOf('function openMerchantEditModal(');
+  const end = html.indexOf('\n        function ', start + 30);
+  const fn = html.slice(start, end > 0 ? end : start + 3000);
+  assert.ok(/isSuperAdmin/.test(fn), 'openMerchantEditModal 应检查 isSuperAdmin');
+  assert.ok(/readOnly\s*=\s*true/.test(fn) || /\.readOnly\s*=\s*!isSuper/.test(fn),
+    '非超管应把 customerName 设为 readOnly');
+});
+
+test('saveCustomer 应在非超管路径下用旧名覆盖新名(防御绕过 readOnly)', () => {
+  const start = html.indexOf('function saveCustomer(');
+  const end = html.indexOf('\n        function ', start + 30);
+  const fn = html.slice(start, end > 0 ? end : start + 3000);
+  assert.ok(/isSuper\s*\?\s*name\s*:\s*previousName|effectiveName/.test(fn),
+    'saveCustomer 应在非超管时强制保留 previousName');
+  assert.ok(/isSuper\s*&&[\s\S]{0,400}syncMerchantNameAcrossStorage/.test(fn),
+    'syncMerchantNameAcrossStorage 应仅在 isSuper 时触发');
+});
+
+test('客户名称输入框下方应有"由平台运营维护"提示', () => {
+  assert.ok(/customerNameHint/.test(html), '应有提示元素 customerNameHint');
+  assert.ok(/由平台运营维护|由平台.*维护|联系运营/.test(html),
+    '提示文案应说明由运营维护');
+});
