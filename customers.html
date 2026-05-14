@@ -1447,6 +1447,13 @@
         let customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
         let editingCustomerId = null;
 
+        // HTML 实体转义,用于安全嵌入文本节点;不要直接拼到 onclick 等 JS-context 属性
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
         // 默认客户数据
         const defaultCustomers = [
             { id: 'C001', name: '星巴克咖啡', type: 'direct', contact: '张经理', phone: '13800138001', address: '上海市浦东新区', status: 'active', createTime: '2024-01-15', remark: '重点客户' },
@@ -1518,29 +1525,25 @@
             if (merchant.remark) metaParts.push(merchant.remark);
             const metaLine = metaParts.length ? metaParts.join(' · ') : '尚未填写补充信息';
 
-            const escape = (s) => String(s == null ? '' : s)
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-
             const row = (label, value, key) => {
                 const v = value == null || value === '' ? '-' : value;
                 const muted = (v === '-') ? ' muted' : '';
-                return `<div class="merchant-row"><span class="k">${escape(label)}</span><span class="v${muted}" id="${key}">${escape(v)}</span></div>`;
+                return `<div class="merchant-row"><span class="k">${escapeHtml(label)}</span><span class="v${muted}" id="${key}">${escapeHtml(v)}</span></div>`;
             };
 
             section.innerHTML = `
                 <div class="merchant-card">
                     <div class="merchant-head">
-                        <div class="merchant-monogram">${escape(monogram)}</div>
+                        <div class="merchant-monogram">${escapeHtml(monogram)}</div>
                         <div>
                             <div class="merchant-title-row">
-                                <span class="merchant-title" id="profileNameDisplay">${escape(merchant.name || '-')}</span>
-                                <span class="merchant-id">编号 · ${escape(merchant.id)}</span>
+                                <span class="merchant-title" id="profileNameDisplay">${escapeHtml(merchant.name || '-')}</span>
+                                <span class="merchant-id">编号 · ${escapeHtml(merchant.id)}</span>
                                 <span class="merchant-state-pill ${stateClass}">${stateLabel}</span>
                             </div>
-                            <div class="merchant-meta">${escape(metaLine)}</div>
+                            <div class="merchant-meta">${escapeHtml(metaLine)}</div>
                         </div>
-                        <button class="merchant-edit-btn" onclick="openMerchantEditModal('${escape(merchant.id)}')">
+                        <button class="merchant-edit-btn" data-merchant-id="${escapeHtml(merchant.id)}" onclick="openMerchantEditModal(this.dataset.merchantId)">
                             <span>✏️</span><span>编辑资料</span>
                         </button>
                     </div>
@@ -1641,8 +1644,8 @@
                             ${customer.status === 'active' ? '●' : '○'} ${customer.status === 'active' ? '合作中' : '已暂停'}
                         </div>
                         <div class="customer-actions">
-                            <button class="btn-icon" onclick="editCustomer('${customer.id}')" title="编辑">✏️</button>
-                            <button class="btn-icon" onclick="deleteCustomer('${customer.id}')" title="删除">🗑️</button>
+                            <button class="btn-icon" data-customer-id="${escapeHtml(customer.id)}" onclick="editCustomer(this.dataset.customerId)" title="编辑">✏️</button>
+                            <button class="btn-icon" data-customer-id="${escapeHtml(customer.id)}" onclick="deleteCustomer(this.dataset.customerId)" title="删除">🗑️</button>
                         </div>
                     </div>
                 `).join('')}
