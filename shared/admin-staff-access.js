@@ -228,6 +228,22 @@
     Array.prototype.forEach.call(nodes, (el) => {
       if (el) el.textContent = label;
     });
+
+    // 防止 applyAdminSidebarLanguage 等其他逻辑后续覆盖。监听 nav-label 文本变化,自动恢复。
+    if (typeof MutationObserver !== 'undefined' && nodes.length && !global.__cofeNavObserverInstalled) {
+      try {
+        const observer = new MutationObserver(() => {
+          const want = isSuperAdmin() ? '商户管理' : '我的商户';
+          doc.querySelectorAll('[data-nav="customers"] .nav-label').forEach((el) => {
+            if (el && el.textContent !== want) el.textContent = want;
+          });
+        });
+        Array.prototype.forEach.call(nodes, (el) => {
+          observer.observe(el, { childList: true, characterData: true, subtree: true });
+        });
+        global.__cofeNavObserverInstalled = true;
+      } catch (e) { /* MutationObserver unavailable, skip */ }
+    }
   }
 
   global.CofeAdminStaffAccess = {
