@@ -66,3 +66,39 @@ test('客户名称输入框下方应有"由平台运营维护"提示', () => {
   assert.ok(/由平台运营维护|由平台.*维护|联系运营/.test(html),
     '提示文案应说明由运营维护');
 });
+
+test('商户表单应包含故障通知邮箱输入框', () => {
+  assert.ok(/id="customerNotifyEmail"/.test(html), '应有 customerNotifyEmail 输入框');
+  assert.ok(/type="email"/.test(html), '应使用 type=email');
+  assert.ok(/故障通知邮箱|故障邮箱/.test(html), '应有"故障通知邮箱"label');
+});
+
+test('商户详情页应显示故障通知邮箱字段', () => {
+  const start = html.indexOf('function renderMerchantProfile(');
+  const end = html.indexOf('\n        function ', start + 30);
+  const fn = html.slice(start, end > 0 ? end : start + 5000);
+  assert.ok(/notifyEmail/.test(fn) && /故障通知邮箱/.test(fn),
+    'profile 卡应渲染 notifyEmail');
+});
+
+test('saveCustomer 应保存 notifyEmail 字段并校验格式', () => {
+  const start = html.indexOf('function saveCustomer(');
+  const end = html.indexOf('\n        function ', start + 30);
+  const fn = html.slice(start, end > 0 ? end : start + 3000);
+  assert.ok(/notifyEmail/.test(fn), 'saveCustomer 应读取 notifyEmail');
+  assert.ok(/isValidNotifyEmail/.test(fn), '应调用邮箱格式校验');
+});
+
+test('openMerchantEditModal 和 editCustomer 应回填 notifyEmail', () => {
+  const editStart = html.indexOf('function openMerchantEditModal(');
+  const editEnd = html.indexOf('\n        function ', editStart + 30);
+  const editFn = html.slice(editStart, editEnd > 0 ? editEnd : editStart + 3000);
+  assert.ok(/customerNotifyEmail['"]\)\.value\s*=/.test(editFn),
+    'openMerchantEditModal 应回填 customerNotifyEmail');
+
+  const editCustomerStart = html.indexOf('function editCustomer(');
+  const editCustomerEnd = html.indexOf('\n        function ', editCustomerStart + 30);
+  const editCustomerFn = html.slice(editCustomerStart, editCustomerEnd > 0 ? editCustomerEnd : editCustomerStart + 2000);
+  assert.ok(/customerNotifyEmail['"]\)\.value\s*=/.test(editCustomerFn),
+    'editCustomer 应回填 customerNotifyEmail');
+});
