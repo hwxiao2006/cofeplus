@@ -543,6 +543,31 @@
             color: #334155;
         }
 
+        .fault-cell-site-name {
+            line-height: 1.4;
+        }
+
+        .fault-notify-email {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 11.5px;
+            font-weight: 400;
+            color: #0f766e;
+            background: #ccfbf1;
+            padding: 2px 8px;
+            border-radius: 999px;
+            line-height: 1.5;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fault-notify-email-empty {
+            color: #9ca3af;
+            background: #f3f4f6;
+        }
+
         .fault-cell-content {
             color: #b45309;
         }
@@ -2239,6 +2264,34 @@
             `;
         }
 
+        // 解析设备所属商户的故障通知邮箱
+        // 链路: fault.id → devicesData[device.id === fault.id].merchant ('mer001')
+        //       → customerId ('C001') → customersData[c.id === customerId].notifyEmail
+        function getFaultNotifyEmailForDevice(deviceId) {
+            try {
+                const devices = JSON.parse(localStorage.getItem('devicesData') || '[]');
+                const device = devices.find(d => String(d?.id || '').trim() === String(deviceId || '').trim());
+                if (!device) return '';
+                const merchantKey = String(device.merchant || '').trim().toLowerCase();
+                const matched = merchantKey.match(/^mer(\d+)$/i);
+                if (!matched) return '';
+                const customerId = 'C' + String(matched[1]).padStart(3, '0');
+                const customers = JSON.parse(localStorage.getItem('customersData') || '[]');
+                const customer = customers.find(c => String(c?.id || '').trim() === customerId);
+                return String(customer?.notifyEmail || '').trim();
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function renderFaultNotifyEmail(item) {
+            const email = getFaultNotifyEmailForDevice(item.id);
+            if (email) {
+                return `<span class="fault-notify-email" title="故障通知将发送至该邮箱">✉️ 推送至 ${escapeText(email)}</span>`;
+            }
+            return `<span class="fault-notify-email fault-notify-email-empty" title="该商户尚未配置故障通知邮箱">✉️ 未配置通知邮箱</span>`;
+        }
+
         function renderList() {
             const container = document.getElementById('list');
             const data = getFilteredFaults();
@@ -2260,7 +2313,10 @@
                         ${data.map(item => `
                             <article class="fault-table-row">
                                 <div class="fault-cell fault-cell-id" data-label="设备编号">${escapeText(item.id)}</div>
-                                <div class="fault-cell fault-cell-site" data-label="设备地址">${escapeText(item.siteName)}</div>
+                                <div class="fault-cell fault-cell-site" data-label="设备地址">
+                                    <div class="fault-cell-site-name">${escapeText(item.siteName)}</div>
+                                    ${renderFaultNotifyEmail(item)}
+                                </div>
                                 <div class="fault-cell fault-cell-content" data-label="故障内容">${escapeText(getFaultContent(item))}</div>
                                 <div class="fault-cell fault-cell-time" data-label="故障发生时间">${escapeText(getFaultOccurredTime(item))}</div>
                                 <div class="fault-cell fault-cell-action" data-label="操作">
