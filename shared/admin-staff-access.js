@@ -265,4 +265,17 @@
     syncMerchantNameAcrossStorage,
     applyNavLabelsByRole
   };
+
+  // 自动尽早应用,消除 FOUC 闪烁:
+  // - 如果 DOM 还没解析完,等 DOMContentLoaded
+  // - 如果已经解析完,立即跑(脚本加载时机较晚的场景)
+  // MutationObserver 在 applyNavLabelsByRole 内部处理后续覆写
+  const doc = global.document || (global.window && global.window.document);
+  if (doc) {
+    if (doc.readyState === 'loading') {
+      doc.addEventListener('DOMContentLoaded', applyNavLabelsByRole);
+    } else {
+      applyNavLabelsByRole();
+    }
+  }
 })(typeof window !== 'undefined' ? window : globalThis);
