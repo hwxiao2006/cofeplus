@@ -6442,6 +6442,7 @@
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/device-latte-art-library.js"></script>
     <script src="shared/business-tag-library.js"></script>
+    <script src="shared/tag-group-i18n.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -10183,8 +10184,25 @@
         }
 
         function getOrderPreviewSpecLabel(specKey, lang) {
+            if (typeof TagGroupI18n !== 'undefined' && TagGroupI18n) {
+                const stored = TagGroupI18n.readStored(currentDevice);
+                const storedGroup = stored && stored[specKey];
+                if (storedGroup && storedGroup[lang]) return storedGroup[lang];
+            }
             const pack = ORDER_PREVIEW_SPEC_LABELS[specKey] || {};
             return pack[lang] || pack.zh || specKey;
+        }
+
+        const ORDER_PREVIEW_SECTION_VERB = {
+            zh: '选择',
+            en: 'Choose'
+        };
+
+        function getOrderPreviewSectionTitle(specKey, lang) {
+            const name = getOrderPreviewSpecLabel(specKey, lang);
+            const verb = ORDER_PREVIEW_SECTION_VERB[lang];
+            if (!verb) return name;
+            return lang === 'en' ? `${verb} ${name}` : `${verb}${name}`;
         }
 
         function getOrderPreviewRecipeGroupLabel(groupKey, lang) {
@@ -10406,7 +10424,7 @@
 
             return `
                 <section class="order-preview-detail-section">
-                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy('chooseBeans', lang))}</div>
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle('beans', lang))}</div>
                     <div class="order-preview-detail-bean-grid">
                         ${options.map(item => `
                             <button type="button" class="order-preview-detail-bean-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('beans','${encodeURIComponent(item.key)}')">
@@ -10430,7 +10448,7 @@
             const priceInfo = getProductPriceInfo(product);
             return `
                 <section class="order-preview-detail-section">
-                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy(titleKey, lang))}</div>
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle(specKey, lang))}</div>
                     <div class="order-preview-detail-option-row">
                         ${options.map(item => `
                             <button type="button" class="order-preview-detail-option-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('${specKey}','${encodeURIComponent(item.key)}')">

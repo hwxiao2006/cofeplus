@@ -8,10 +8,12 @@ function loadMenuContext(options = {}) {
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const latteArtHelperPath = path.join(__dirname, '..', 'shared', 'device-latte-art-library.js');
   const businessTagHelperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
+  const tagGroupHelperPath = path.join(__dirname, '..', 'shared', 'tag-group-i18n.js');
   const html = fs.readFileSync(htmlPath, 'utf8');
   const sharedScript = fs.readFileSync(sharedPath, 'utf8');
   const latteArtHelperScript = fs.readFileSync(latteArtHelperPath, 'utf8');
   const businessTagHelperScript = fs.readFileSync(businessTagHelperPath, 'utf8');
+  const tagGroupHelperScript = fs.readFileSync(tagGroupHelperPath, 'utf8');
   const match = html.match(/<script>([\s\S]*)<\/script>/);
   if (!match) {
     throw new Error('menu-management.html 中未找到脚本代码');
@@ -196,6 +198,7 @@ function loadMenuContext(options = {}) {
   vm.runInContext(sharedScript, context);
   vm.runInContext(latteArtHelperScript, context);
   vm.runInContext(businessTagHelperScript, context);
+  vm.runInContext(tagGroupHelperScript, context);
   if (options.staffAccessHelper) {
     context.window.CofeAdminStaffAccess = options.staffAccessHelper;
   }
@@ -1202,8 +1205,8 @@ test('点单屏预览：点击商品应打开详情预览层', () => {
 
   const overlay = ctx.document.getElementById('orderPreviewDetailOverlay');
   assert.strictEqual(overlay.classList.contains('active'), true);
-  assert.ok(overlay.innerHTML.includes('选咖啡豆'));
-  assert.ok(overlay.innerHTML.includes('选择糖量'));
+  assert.ok(overlay.innerHTML.includes('选择咖啡豆'));
+  assert.ok(overlay.innerHTML.includes('选择甜度'));
   assert.ok(overlay.innerHTML.includes('选择温度'));
   assert.ok(overlay.innerHTML.includes('选择浓度'));
 });
@@ -3902,4 +3905,45 @@ test('批量固定改价：退出批量模式后应清除成功样式状态', ()
   assert.strictEqual(batchState.successIds.length, 0);
   assert.strictEqual(batchState.selectedIds.length, 0);
   assert.strictEqual(Object.keys(batchState.failedMap).length, 0);
+});
+
+test('订单预览分组标题应优先读取设备级标签分组多语言配置', () => {
+  const ctx = loadMenuContext();
+  // 设备未配置：回退到内置 ORDER_PREVIEW_SPEC_LABELS
+  ctx.currentDevice = 'RCK111';
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '咖啡豆');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'en'), 'Beans');
+
+  // 写入设备级覆盖
+  ctx.TagGroupI18n.writeStored('RCK111', {
+    beans: { zh: '黑豆精选', en: 'Premium Beans' },
+    temperature: { en: 'Heat Level' }
+  });
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '黑豆精选');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'en'), 'Premium Beans');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('temperature', 'en'), 'Heat Level');
+  // 缺该语种 → 走内置 fallback
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('temperature', 'zh'), '温度');
+
+  // 另一设备：互不影响
+  ctx.currentDevice = 'RCK222';
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '咖啡豆');
+});
+
+test('点单屏预览 section 标题应跟随设备级标签分组配置', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK111';
+
+  // 默认：使用内置分组名 + 动词前缀
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'zh'), '选择咖啡豆');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'en'), 'Choose Beans');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('latteArt', 'zh'), '选择拉花');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('latteArt', 'en'), 'Choose Latte Art');
+
+  // 覆盖后：section 标题立即跟随新分组名
+  ctx.TagGroupI18n.writeStored('RCK111', {
+    beans: { zh: '黑豆精选', en: 'Premium Beans' }
+  });
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'zh'), '选择黑豆精选');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'en'), 'Choose Premium Beans');
 });

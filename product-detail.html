@@ -1463,11 +1463,127 @@
         }
 
         .tag-drawer-side-header {
-            padding: 18px 16px 10px;
+            padding: 14px 14px 12px;
             border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .tag-drawer-side-header-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .tag-drawer-side-manage-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--primary-dark);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tag-drawer-side-manage-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .tag-group-manage-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1300;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .tag-group-manage-overlay.active {
+            display: flex;
+        }
+
+        .tag-group-manage-modal {
+            width: min(820px, 100%);
+            max-height: calc(100vh - 60px);
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tag-group-manage-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .tag-group-manage-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .tag-group-manage-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .tag-group-manage-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .tag-group-manage-notice {
+            font-size: 12px;
+            color: #92400e;
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .tag-group-manage-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #fafbfc;
+            flex-shrink: 0;
+        }
+
+        .tag-group-manage-body .multilang-grid-label {
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tag-group-manage-body .multilang-grid-label .spec-key {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .tag-tree {
@@ -2928,7 +3044,10 @@
     <div class="tag-drawer-overlay" id="tagConfigDrawer">
         <div class="tag-drawer">
             <aside class="tag-drawer-side">
-                <div class="tag-drawer-side-header">标签类型</div>
+                <div class="tag-drawer-side-header">
+                    <span class="tag-drawer-side-header-title">标签类型</span>
+                    <button type="button" class="tag-drawer-side-manage-btn" onclick="openTagGroupManageModal()" title="管理分组名称的多语言">⚙ 管理</button>
+                </div>
                 <div class="tag-tree" id="tagTree"></div>
             </aside>
             <section class="tag-drawer-main">
@@ -2942,6 +3061,23 @@
                     <button class="btn btn-primary" onclick="saveTagConfigDrawer()">保存</button>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <div class="tag-group-manage-overlay" id="tagGroupManageModal">
+        <div class="tag-group-manage-modal">
+            <div class="tag-group-manage-header">
+                <div>
+                    <div class="tag-group-manage-title">标签分组名称管理</div>
+                    <div class="tag-group-manage-subtitle" id="tagGroupManageSubtitle">设备级配置 · 该设备下所有商品共享 · 保存后立即生效</div>
+                </div>
+                <button class="modal-close" onclick="closeTagGroupManageModal()">×</button>
+            </div>
+            <div class="tag-group-manage-body" id="tagGroupManageBody"></div>
+            <div class="tag-group-manage-footer">
+                <button class="btn btn-default" onclick="closeTagGroupManageModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveTagGroupManageModal()">保存所有分组</button>
+            </div>
         </div>
     </div>
 
@@ -3096,6 +3232,7 @@
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/tag-group-i18n.js"></script>
     <script>
 
         const BusinessTags = window.CofeBusinessTags || (typeof globalThis !== 'undefined' ? globalThis.CofeBusinessTags : null);
@@ -4943,7 +5080,7 @@
             if (!body || !subtitle) return;
 
             const cfg = getTagConfigBySpec(recipeEditorState.specKey);
-            const specTitle = cfg ? cfg.title : recipeEditorState.specKey;
+            const specTitle = cfg ? getTagGroupLabel(cfg.specKey, currentLang) : recipeEditorState.specKey;
             subtitle.textContent = `${specTitle} · ${recipeEditorState.tagLabel}`;
 
             body.innerHTML = recipeEditorState.recipe.groupOrder.map((groupKey) => {
@@ -5232,7 +5369,7 @@
             recipeImpactState = {
                 specKey: recipeEditorState.specKey,
                 tagKey: recipeEditorState.tagKey,
-                specTitle: getTagConfigBySpec(recipeEditorState.specKey)?.title || recipeEditorState.specKey,
+                specTitle: getTagGroupLabel(recipeEditorState.specKey, currentLang) || recipeEditorState.specKey,
                 tagLabel: recipeEditorState.tagLabel,
                 linkId,
                 recipe: normalizeRecipeData(recipeEditorState.recipe, recipeEditorState.tagLabel),
@@ -5821,7 +5958,7 @@
                     const afterLabel = afterDefault ? getTagLabel(cfg.specKey, afterDefault, lang) : '';
                     if (beforeLabel !== afterLabel) {
                         rows.push({
-                            field: `${cfg.title}默认项`,
+                            field: `${getTagGroupLabel(cfg.specKey, lang)}默认项`,
                             before: beforeLabel,
                             after: afterLabel
                         });
@@ -5834,7 +5971,7 @@
                 const beforeKey = sourceProduct.defaultOptions?.[cfg.specKey] || '';
                 const afterKey = updatedProduct.defaultOptions?.[cfg.specKey] || '';
                 return {
-                    field: `${cfg.title}默认`,
+                    field: `${getTagGroupLabel(cfg.specKey, currentLang)}默认`,
                     before: beforeKey ? getTagLabel(cfg.specKey, beforeKey, currentLang) : '',
                     after: afterKey ? getTagLabel(cfg.specKey, afterKey, currentLang) : ''
                 };
@@ -5851,7 +5988,7 @@
                     const after = Number(updatedProduct.tagExtraPrices?.[cfg.specKey]?.[tagKey] || 0);
                     if (before !== after) {
                         recipeExtraPriceRows.push({
-                            field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey}`,
+                            field: `${getTagGroupLabel(cfg.specKey, currentLang)} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey}`,
                             before,
                             after
                         });
@@ -5873,7 +6010,7 @@
                         const after = Number(afterRecipe.groups?.[groupCfg.key]?.percent || 100);
                         if (before !== after) {
                             recipePercentRows.push({
-                                field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey} · ${groupCfg.title}`,
+                                field: `${getTagGroupLabel(cfg.specKey, currentLang)} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey} · ${groupCfg.title}`,
                                 before: `${before}%`,
                                 after: `${after}%`
                             });
@@ -6442,6 +6579,7 @@
             });
 
             setActiveRecipeSpec(activeRecipeSpecKey);
+            refreshOptionTitles();
 
             const recipeModal = document.getElementById('recipeEditorModal');
             if (recipeModal) {
@@ -6475,6 +6613,13 @@
             if (businessTagModal) {
                 businessTagModal.addEventListener('click', function(e) {
                     if (e.target === businessTagModal) closeProductBusinessTagEditor();
+                });
+            }
+
+            const tagGroupManageModal = document.getElementById('tagGroupManageModal');
+            if (tagGroupManageModal) {
+                tagGroupManageModal.addEventListener('click', function(e) {
+                    if (e.target === tagGroupManageModal) closeTagGroupManageModal();
                 });
             }
 
@@ -6514,6 +6659,11 @@
                 const businessTagModal = document.getElementById('productBusinessTagEditorModal');
                 if (businessTagModal && businessTagModal.classList.contains('active')) {
                     closeProductBusinessTagEditor();
+                    return;
+                }
+                const tagGroupManage = document.getElementById('tagGroupManageModal');
+                if (tagGroupManage && tagGroupManage.classList.contains('active')) {
+                    closeTagGroupManageModal();
                     return;
                 }
                 const modal = document.getElementById('recipeEditorModal');
@@ -6682,9 +6832,127 @@
             const tree = document.getElementById('tagTree');
             tree.innerHTML = tagConfigs.map(cfg => `
                 <button class="tag-tree-item ${cfg.specKey === drawerActiveSpecKey ? 'active' : ''}" onclick="switchDrawerTag('${cfg.specKey}')">
-                    ${cfg.title}
+                    ${escAttr(getTagGroupLabel(cfg.specKey, currentLang))}
                 </button>
             `).join('');
+        }
+
+        function getTagGroupLabel(specKey, lang = currentLang) {
+            if (typeof TagGroupI18n === 'undefined' || !TagGroupI18n) {
+                const cfg = getTagConfigBySpec(specKey);
+                return cfg ? cfg.title : specKey;
+            }
+            const resolved = TagGroupI18n.getGroupLabel(currentDevice, specKey, lang);
+            if (resolved) return resolved;
+            const cfg = getTagConfigBySpec(specKey);
+            return cfg ? cfg.title : specKey;
+        }
+
+        function refreshOptionTitles() {
+            const langs = (typeof getDeviceLangs === 'function' ? getDeviceLangs() : []) || [];
+            const primaryLang = langs[0] || currentLang || 'zh';
+            tagConfigs.forEach(cfg => {
+                const list = document.getElementById(cfg.listId);
+                if (!list) return;
+                const card = list.closest('.option-card');
+                if (!card) return;
+                const titleEl = card.querySelector('.option-title');
+                if (!titleEl) return;
+                titleEl.textContent = getTagGroupLabel(cfg.specKey, primaryLang) || cfg.title || cfg.specKey;
+            });
+        }
+
+        function openTagGroupManageModal() {
+            renderTagGroupManageBody();
+            const subtitle = document.getElementById('tagGroupManageSubtitle');
+            if (subtitle) {
+                subtitle.textContent = `设备级配置 · 设备 ${currentDevice} · 该设备下所有商品共享 · 保存后立即生效`;
+            }
+            document.getElementById('tagGroupManageModal').classList.add('active');
+        }
+
+        function closeTagGroupManageModal() {
+            document.getElementById('tagGroupManageModal').classList.remove('active');
+        }
+
+        function renderTagGroupManageBody() {
+            const body = document.getElementById('tagGroupManageBody');
+            if (!body) return;
+            const langs = getDeviceLangs();
+            const headerCells = langs.map(lang => {
+                const isPrimary = lang === langs[0];
+                const chip = isPrimary
+                    ? '<span class="multilang-status-chip default">默认语种</span>'
+                    : '<span class="multilang-status-chip">可选语种</span>';
+                return `
+                    <div class="multilang-grid-head-cell">
+                        <div class="multilang-grid-head-top">
+                            <div class="multilang-grid-lang-name">${escAttr(getLangName(lang))}</div>
+                            <span class="multilang-grid-lang-code">${escAttr(lang)}</span>
+                        </div>
+                        <div class="multilang-grid-meta">${chip}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const rows = tagConfigs.map(cfg => {
+                const cells = langs.map(lang => {
+                    const value = getTagGroupLabel(cfg.specKey, lang);
+                    return `
+                        <div class="multilang-grid-cell">
+                            <div class="form-group">
+                                <input type="text" class="form-input tag-group-manage-input"
+                                    data-spec-key="${escAttr(cfg.specKey)}"
+                                    data-lang="${escAttr(lang)}"
+                                    value="${escAttr(value)}"
+                                    placeholder="请输入${escAttr(getLangName(lang))}分组名">
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                return `
+                    <div class="multilang-grid-row" style="--lang-count:${langs.length};">
+                        <div class="multilang-grid-label">${escAttr(getTagGroupLabel(cfg.specKey, 'zh') || cfg.title)} <span class="spec-key">${escAttr(cfg.specKey)}</span></div>
+                        ${cells}
+                    </div>
+                `;
+            }).join('');
+
+            body.innerHTML = `
+                <div class="tag-group-manage-notice">⚠️ 修改后会同步影响：商品详情卡片、标签配置抽屉、影响分析、订单预览等所有显示分组名称的地方。仅作用于当前设备（${escAttr(currentDevice)}）。</div>
+                <div class="multilang-sheet" style="--lang-count:${langs.length}; margin-bottom:0;">
+                    <div class="multilang-grid-scroll">
+                        <div class="multilang-grid-head" style="--lang-count:${langs.length};">
+                            <div class="multilang-grid-corner">分组</div>
+                            ${headerCells}
+                        </div>
+                        ${rows}
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveTagGroupManageModal() {
+            const body = document.getElementById('tagGroupManageBody');
+            if (!body) return;
+            const inputs = body.querySelectorAll('.tag-group-manage-input');
+            const data = {};
+            inputs.forEach(input => {
+                const specKey = input.dataset.specKey;
+                const lang = input.dataset.lang;
+                const value = (input.value || '').trim();
+                if (!specKey || !lang || !value) return;
+                if (!data[specKey]) data[specKey] = {};
+                data[specKey][lang] = value;
+            });
+            if (typeof TagGroupI18n !== 'undefined' && TagGroupI18n) {
+                TagGroupI18n.writeStored(currentDevice, data);
+            }
+            renderTagTree();
+            renderDrawerEditor();
+            refreshOptionTitles();
+            closeTagGroupManageModal();
+            if (typeof showToast === 'function') showToast('分组名称已保存');
         }
 
         function renderDrawerEditor() {
@@ -6692,7 +6960,7 @@
             if (!cfg) return;
             const langs = getDeviceLangs();
             const container = document.getElementById('tagDrawerEditor');
-            document.getElementById('tagDrawerTitle').textContent = `${cfg.title}标签配置`;
+            document.getElementById('tagDrawerTitle').textContent = `${getTagGroupLabel(cfg.specKey, currentLang)}标签配置`;
             ensureTagI18n(cfg.specKey);
             refreshOptionListLabels(cfg.specKey);
 
@@ -6714,7 +6982,7 @@
 
             html += buildMultilangGridMarkup({
                 editorKey: 'tag-drawer',
-                title: `${cfg.title}标签`,
+                title: `${getTagGroupLabel(cfg.specKey, currentLang)}标签`,
                 hint: '桌面端可横向对照多语种标签，移动端按语种切换编辑。',
                 summary: `共 ${langs.length} 种语种`,
                 langs,
@@ -6734,7 +7002,7 @@
                         renderInput(lang) {
                             return `
                                 <div class="form-group">
-                                    <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${cfg.title}标签">
+                                    <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${getTagGroupLabel(cfg.specKey, lang)}标签">
                                 </div>
                             `;
                         }
@@ -6856,7 +7124,7 @@
             tagSyncState = {
                 specKey: cfg.specKey,
                 tagKey,
-                specTitle: cfg.title,
+                specTitle: getTagGroupLabel(cfg.specKey, currentLang),
                 previousLabels,
                 nextLabels,
                 affectedEntries,
