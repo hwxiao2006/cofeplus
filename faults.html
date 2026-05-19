@@ -487,7 +487,7 @@
         }
 
         .fault-table-head,
-        .fault-table-row {
+        .fault-row-summary {
             display: grid;
             grid-template-columns: 128px minmax(220px, 1.2fr) minmax(230px, 1.4fr) 186px 110px;
             gap: 14px;
@@ -511,10 +511,14 @@
         }
 
         .fault-table-row {
-            min-height: 68px;
             border-bottom: 1px solid #edf2f7;
             background: #fff;
             transition: background-color 0.18s ease;
+        }
+
+        .fault-row-summary {
+            min-height: 68px;
+            cursor: pointer;
         }
 
         .fault-table-row:hover {
@@ -523,6 +527,61 @@
 
         .fault-table-row:last-child {
             border-bottom: none;
+        }
+
+        .fault-row-caret {
+            display: inline-block;
+            margin-right: 6px;
+            color: #64748b;
+            font-size: 12px;
+            transition: transform 0.15s ease;
+        }
+
+        .fault-table-row.is-expanded .fault-row-caret {
+            color: #0f766e;
+        }
+
+        .fault-row-detail {
+            display: none;
+            padding: 14px 18px 18px 156px;
+            background: #f8fafc;
+            border-top: 1px dashed #e2e8f0;
+            font-size: 13px;
+            color: #1f2937;
+        }
+
+        .fault-table-row.is-expanded .fault-row-detail {
+            display: block;
+        }
+
+        .fault-row-detail-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #0f766e;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .fault-row-handling-list {
+            margin: 0;
+            padding-left: 18px;
+            line-height: 1.75;
+        }
+
+        .fault-row-handling-list li {
+            color: #1f2937;
+        }
+
+        .fault-row-handling-empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        @media (max-width: 1024px) {
+            .fault-row-detail {
+                padding-left: 18px;
+            }
         }
 
         .fault-cell {
@@ -942,7 +1001,7 @@
             }
 
             .fault-table-head,
-            .fault-table-row {
+            .fault-row-summary {
                 grid-template-columns: 112px minmax(180px, 1fr) minmax(180px, 1.2fr) 158px 100px;
                 gap: 10px;
                 padding: 0 14px;
@@ -1040,6 +1099,19 @@
                 border-radius: 12px;
                 box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
                 padding: 0 14px 14px;
+            }
+
+            .fault-row-summary {
+                display: block;
+                padding: 0;
+                grid-template-columns: none;
+                gap: 0;
+                min-height: 0;
+            }
+
+            .fault-row-detail {
+                padding: 14px 0 4px;
+                margin-top: 6px;
             }
 
             .fault-table-row:hover {
@@ -1246,6 +1318,7 @@
     <div id="operationRecordPage" class="status-page-overlay"></div>
 
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/fault-library.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1945,11 +2018,35 @@
         }
 
         function getFaultContent(item) {
+            // 优先使用 mock 故障库,提供有意义的故障描述
+            if (typeof CofeFaultLibrary !== 'undefined') {
+                const lib = CofeFaultLibrary.getFaultForDevice(item.id);
+                if (lib && lib.description) return lib.description;
+            }
             const abnormalParts = (item.orgStatus || []).filter(part => part.status === 'fault' || part.status === 'lost');
             if (abnormalParts.length) {
                 return abnormalParts.map(part => `${part.name}${part.status === 'lost' ? '失联' : '故障'}`).join('，');
             }
             return `${item.id} 设备异常`;
+        }
+
+        function getFaultHandling(item) {
+            if (typeof CofeFaultLibrary !== 'undefined') {
+                const lib = CofeFaultLibrary.getFaultForDevice(item.id);
+                if (lib && Array.isArray(lib.handling)) return lib.handling;
+            }
+            return [];
+        }
+
+        function toggleFaultRowExpand(deviceId) {
+            const safeId = String(deviceId || '');
+            const row = document.querySelector(`.fault-table-row[data-device-id="${CSS.escape(safeId)}"]`);
+            if (!row) return;
+            const open = row.classList.toggle('is-expanded');
+            const detail = row.querySelector('.fault-row-detail');
+            if (detail) detail.setAttribute('aria-hidden', open ? 'false' : 'true');
+            const caret = row.querySelector('.fault-row-caret');
+            if (caret) caret.textContent = open ? '▾' : '▸';
         }
 
         function getFaultOccurredTime(item) {
@@ -2310,20 +2407,34 @@
                         <div>操作</div>
                     </div>
                     <div class="fault-table-body">
-                        ${data.map(item => `
-                            <article class="fault-table-row">
-                                <div class="fault-cell fault-cell-id" data-label="设备编号">${escapeText(item.id)}</div>
-                                <div class="fault-cell fault-cell-site" data-label="设备地址">
-                                    <div class="fault-cell-site-name">${escapeText(item.siteName)}</div>
-                                    ${renderFaultNotifyEmail(item)}
+                        ${data.map(item => {
+                            const handlingList = getFaultHandling(item);
+                            const safeId = escapeText(item.id);
+                            return `
+                            <article class="fault-table-row" data-device-id="${safeId}">
+                                <div class="fault-row-summary" onclick="toggleFaultRowExpand('${safeId}')" role="button" tabindex="0" aria-expanded="false">
+                                    <div class="fault-cell fault-cell-id" data-label="设备编号">
+                                        <span class="fault-row-caret" aria-hidden="true">▸</span>
+                                        ${safeId}
+                                    </div>
+                                    <div class="fault-cell fault-cell-site" data-label="设备地址">
+                                        <div class="fault-cell-site-name">${escapeText(item.siteName)}</div>
+                                        ${renderFaultNotifyEmail(item)}
+                                    </div>
+                                    <div class="fault-cell fault-cell-content" data-label="故障内容">${escapeText(getFaultContent(item))}</div>
+                                    <div class="fault-cell fault-cell-time" data-label="故障发生时间">${escapeText(getFaultOccurredTime(item))}</div>
+                                    <div class="fault-cell fault-cell-action" data-label="操作" onclick="event.stopPropagation()">
+                                        ${renderFaultActions(item)}
+                                    </div>
                                 </div>
-                                <div class="fault-cell fault-cell-content" data-label="故障内容">${escapeText(getFaultContent(item))}</div>
-                                <div class="fault-cell fault-cell-time" data-label="故障发生时间">${escapeText(getFaultOccurredTime(item))}</div>
-                                <div class="fault-cell fault-cell-action" data-label="操作">
-                                    ${renderFaultActions(item)}
+                                <div class="fault-row-detail" aria-hidden="true">
+                                    <div class="fault-row-detail-label">如何处理</div>
+                                    ${handlingList.length
+                                        ? `<ol class="fault-row-handling-list">${handlingList.map(h => `<li>${escapeText(h)}</li>`).join('')}</ol>`
+                                        : '<div class="fault-row-handling-empty">暂无处理建议,请联系运维</div>'}
                                 </div>
                             </article>
-                        `).join('')}
+                        `;}).join('')}
                     </div>
                 </section>
             `;
