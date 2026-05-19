@@ -517,7 +517,7 @@
         }
 
         .fault-row-summary {
-            min-height: 68px;
+            min-height: 86px;
             cursor: pointer;
         }
 
@@ -530,28 +530,74 @@
         }
 
         .fault-row-caret {
-            display: inline-block;
-            margin-right: 6px;
-            color: #64748b;
-            font-size: 12px;
-            transition: transform 0.15s ease;
-        }
-
-        .fault-table-row.is-expanded .fault-row-caret {
-            color: #0f766e;
+            display: none;
         }
 
         .fault-row-detail {
             display: none;
             padding: 14px 18px 18px 156px;
-            background: #f8fafc;
-            border-top: 1px dashed #e2e8f0;
+            background: #f0fdfa;
+            border-top: 1px dashed #99f6e4;
             font-size: 13px;
             color: #1f2937;
         }
 
         .fault-table-row.is-expanded .fault-row-detail {
             display: block;
+        }
+
+        .fault-cell-desc {
+            font-weight: 500;
+            line-height: 1.45;
+            color: #0f172a;
+        }
+
+        .fault-cell-step-preview {
+            margin-top: 6px;
+            font-size: 12.5px;
+            color: #475569;
+            line-height: 1.45;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .fault-cell-step-bullet {
+            color: #0f766e;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fault-cell-step-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fault-cell-step-more {
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .fault-cell-step-more::after {
+            content: ' ▾';
+        }
+
+        .fault-table-row.is-expanded .fault-cell-step-more::after {
+            content: ' ▴';
+        }
+
+        .fault-cell-step-more:hover {
+            text-decoration: underline;
+        }
+
+        .fault-cell-step-empty {
+            color: #9ca3af;
+            font-style: italic;
         }
 
         .fault-row-detail-label {
@@ -2410,25 +2456,35 @@
                         ${data.map(item => {
                             const handlingList = getFaultHandling(item);
                             const safeId = escapeText(item.id);
+                            const description = escapeText(getFaultContent(item));
+                            const firstStep = handlingList[0] ? escapeText(handlingList[0]) : '';
+                            const moreCount = handlingList.length;
+                            const stepPreview = firstStep
+                                ? `<div class="fault-cell-step-preview">
+                                       <span class="fault-cell-step-bullet">①</span>
+                                       <span class="fault-cell-step-text">${firstStep}</span>
+                                       ${moreCount > 0 ? `<span class="fault-cell-step-more" onclick="event.stopPropagation();toggleFaultRowExpand('${safeId}')">查看全部 ${moreCount} 步</span>` : ''}
+                                   </div>`
+                                : `<div class="fault-cell-step-preview fault-cell-step-empty">暂无处理建议,请联系运维</div>`;
                             return `
                             <article class="fault-table-row" data-device-id="${safeId}">
                                 <div class="fault-row-summary" onclick="toggleFaultRowExpand('${safeId}')" role="button" tabindex="0" aria-expanded="false">
-                                    <div class="fault-cell fault-cell-id" data-label="设备编号">
-                                        <span class="fault-row-caret" aria-hidden="true">▸</span>
-                                        ${safeId}
-                                    </div>
+                                    <div class="fault-cell fault-cell-id" data-label="设备编号">${safeId}</div>
                                     <div class="fault-cell fault-cell-site" data-label="设备地址">
                                         <div class="fault-cell-site-name">${escapeText(item.siteName)}</div>
                                         ${renderFaultNotifyEmail(item)}
                                     </div>
-                                    <div class="fault-cell fault-cell-content" data-label="故障内容">${escapeText(getFaultContent(item))}</div>
+                                    <div class="fault-cell fault-cell-content" data-label="故障内容">
+                                        <div class="fault-cell-desc">${description}</div>
+                                        ${stepPreview}
+                                    </div>
                                     <div class="fault-cell fault-cell-time" data-label="故障发生时间">${escapeText(getFaultOccurredTime(item))}</div>
                                     <div class="fault-cell fault-cell-action" data-label="操作" onclick="event.stopPropagation()">
                                         ${renderFaultActions(item)}
                                     </div>
                                 </div>
                                 <div class="fault-row-detail" aria-hidden="true">
-                                    <div class="fault-row-detail-label">如何处理</div>
+                                    <div class="fault-row-detail-label">如何处理 · 完整步骤</div>
                                     ${handlingList.length
                                         ? `<ol class="fault-row-handling-list">${handlingList.map(h => `<li>${escapeText(h)}</li>`).join('')}</ol>`
                                         : '<div class="fault-row-handling-empty">暂无处理建议,请联系运维</div>'}

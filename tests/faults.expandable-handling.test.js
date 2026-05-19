@@ -56,7 +56,7 @@ test('faults.html 应有 toggleFaultRowExpand 函数', () => {
 test('故障行模板应有 data-device-id 属性和 fault-row-summary/fault-row-detail 结构', () => {
   // 找 renderList 内部模板
   const renderListIdx = html.indexOf('function renderList(');
-  const body = html.slice(renderListIdx, renderListIdx + 4000);
+  const body = html.slice(renderListIdx, renderListIdx + 5000);
   assert.ok(/data-device-id="\$\{safeId\}"/.test(body),
     '故障行 article 应有 data-device-id 属性');
   assert.ok(/<div class="fault-row-summary"/.test(body),
@@ -67,6 +67,27 @@ test('故障行模板应有 data-device-id 属性和 fault-row-summary/fault-row
     '应有 ordered list 用于处理步骤');
   assert.ok(/fault-row-handling-empty|暂无处理建议/.test(body),
     '应有空状态 fallback');
+});
+
+test('故障行应在故障内容下方常驻显示「第一步预览」 (Option A)', () => {
+  const renderListIdx = html.indexOf('function renderList(');
+  const body = html.slice(renderListIdx, renderListIdx + 5000);
+  assert.ok(/fault-cell-step-preview/.test(body),
+    'summary 应有 fault-cell-step-preview 显示第一条处理步骤');
+  assert.ok(/fault-cell-step-bullet/.test(body),
+    '应有 fault-cell-step-bullet (①)');
+  assert.ok(/fault-cell-step-more/.test(body),
+    '应有 fault-cell-step-more 「查看全部 N 步」链接');
+  assert.ok(/查看全部 \$\{moreCount\} 步/.test(body),
+    '链接文案应显示总步数');
+});
+
+test('fault-cell-step-* CSS 应存在', () => {
+  assert.ok(/\.fault-cell-step-preview\s*\{[\s\S]*?font-size:\s*12\.5px/.test(html));
+  assert.ok(/\.fault-cell-step-more\s*\{[\s\S]*?color:\s*#0f766e/.test(html));
+  // 折叠/展开应反映在 ▾/▴ 切换
+  assert.ok(/\.fault-cell-step-more::after\s*\{[\s\S]*?▾/.test(html));
+  assert.ok(/\.fault-table-row\.is-expanded\s+\.fault-cell-step-more::after\s*\{[\s\S]*?▴/.test(html));
 });
 
 test('故障行 detail 默认折叠 (display:none),展开时 display:block', () => {
