@@ -166,6 +166,21 @@
     return merchantId || null;
   }
 
+  function convertMerchantKeyToMerchantId(merchantKey) {
+    const matched = String(merchantKey || '').trim().match(/^mer(\d+)$/i);
+    if (!matched) return '';
+    return `C${matched[1].padStart(3, '0')}`;
+  }
+
+  function getMerchantDeviceIds(merchantId, devices) {
+    const normalizedMerchantId = String(merchantId || '').trim();
+    if (!normalizedMerchantId) return [];
+    return (Array.isArray(devices) ? devices : [])
+      .filter((device) => device && convertMerchantKeyToMerchantId(device.merchant) === normalizedMerchantId)
+      .map((device) => String(device.id || '').trim())
+      .filter(Boolean);
+  }
+
   function syncMerchantNameAcrossStorage(merchantId, newName) {
     if (!merchantId || !newName) return;
     const storage = global.localStorage || (global.window && global.window.localStorage);
@@ -262,6 +277,8 @@
     detectRole,
     isSuperAdmin,
     getMerchantScope,
+    convertMerchantKeyToMerchantId,
+    getMerchantDeviceIds,
     syncMerchantNameAcrossStorage,
     applyNavLabelsByRole
   };
