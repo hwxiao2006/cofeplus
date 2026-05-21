@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>产品需求文档：商品管理（按用户流程）</title>
+<style>
+  :root {
+    --bg: #eef3f7;
+    --page: #fff;
+    --text: #162033;
+    --muted: #667085;
+    --line: #d9e4ee;
+    --accent: #109c93;
+    --accent-soft: rgba(16, 156, 147, 0.12);
+    --warn: #b45309;
+    --warn-soft: #fff7ed;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #f8fbfd 0%, var(--bg) 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7;
+  }
+  .page { max-width: 1180px; margin: 28px auto 56px; padding: 0 20px; }
+  .shell { background: var(--page); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08); }
+  header { padding: 42px 48px 30px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #fff 0%, #f4fbfb 58%, #eef6fb 100%); }
+  .kicker { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: var(--accent-soft); color: #0a6d67; font-size: 13px; font-weight: 700; }
+  h1 { margin: 16px 0 10px; font-size: 38px; line-height: 1.18; }
+  .meta { margin: 0; color: var(--muted); font-size: 15px; }
+  .note { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: #f8fbfd; color: #344054; font-size: 14px; }
+  nav { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px 48px 0; }
+  nav a { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; color: #475467; text-decoration: none; font-size: 13px; font-weight: 600; }
+  main { padding: 8px 48px 48px; }
+  section { margin-top: 34px; padding-top: 8px; border-top: 1px solid var(--line); }
+  h2 { margin: 0 0 14px; font-size: 25px; }
+  h3 { margin: 0 0 12px; font-size: 20px; }
+  ul, ol { margin: 10px 0 16px 22px; padding: 0; }
+  li { margin: 7px 0; }
+  code { padding: 2px 6px; border-radius: 6px; background: #eef3f8; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.92em; }
+  .story { margin-top: 18px; padding: 22px; border: 1px solid rgba(16, 156, 147, 0.16); border-radius: 20px; background: linear-gradient(180deg, rgba(16, 156, 147, 0.04) 0%, #fff 28%); }
+  .status { display: inline-flex; margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--accent-soft); color: #0f766e; }
+  .status.off { background: var(--warn-soft); color: var(--warn); }
+  .warning { padding: 14px 16px; border: 1px solid #fed7aa; border-radius: 16px; background: var(--warn-soft); color: #7c2d12; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 14px; }
+  th, td { padding: 10px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: #f8fbfd; }
+  @media (max-width: 900px) {
+    .page { padding: 0 12px; }
+    header { padding: 28px 20px 20px; }
+    nav { padding: 16px 20px 0; }
+    main { padding: 8px 20px 28px; }
+    h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <header>
+        <div class="kicker">Product PRD</div>
+        <h1>产品需求文档：商品管理（按用户流程）</h1>
+        <p class="meta">当前版本按生产页面 <code>https://cofeplus.pages.dev</code> 的商品管理实现口径整理，用于开发、测试和验收对齐。</p>
+        <div class="note"><strong>截图标准：</strong> PRD 截图和页面状态以后统一以生产域名 <code>https://cofeplus.pages.dev</code> 为准；不得使用与生产 UI 不一致的示意图替代。</div>
+      </header>
+      <nav>
+        <a href="#scope">范围</a>
+        <a href="#flows">用户流程</a>
+        <a href="#rules">业务规则</a>
+        <a href="#out">不实现项</a>
+        <a href="#acceptance">验收</a>
+      </nav>
+      <main>
+        <section id="scope">
+          <h2>1. 范围说明</h2>
+          <p>商品管理当前只覆盖商品列表维护、商品编辑、分类维护、设备语言与币种配置、印花图片设置、批量改价和批量上下架。</p>
+          <p>商品运营标识本期只支持 <code>是否热销</code> 一个布尔能力。点单屏、商品卡片和商品详情页都以商品字段 <code>featured</code> 作为唯一来源。</p>
+          <div class="warning">业务标签功能本期不实现。已完成的业务标签方案保留在独立恢复分支 <code>codex/business-tags-archive</code>，后续需要恢复时从该分支重新评估合并。</div>
+        </section>
+
+        <section id="flows">
+          <h2>2. 用户流程</h2>
+          <div class="story">
+            <h3>UF001：查看商品管理工作区 <span class="status">实现</span></h3>
+            <ol>
+              <li>用户进入商品管理页，默认打开 <code>菜单管理</code>。</li>
+              <li>页面展示当前设备、分类导航、商品搜索、商品总数和在售商品数。</li>
+              <li>商品卡片展示图片、名称、售价、原价展示文案、上下架状态和编辑入口。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF002：编辑商品基础信息 <span class="status">实现</span></h3>
+            <ol>
+              <li>用户点击商品进入详情页。</li>
+              <li>用户可编辑多语言名称、描述、售价、原价展示文案、上下架状态和是否热销。</li>
+              <li>保存后商品列表和点单屏预览同步展示最新信息。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF003：设置是否热销 <span class="status">实现</span></h3>
+            <ol>
+              <li>用户在商品详情页切换 <code>是否热销</code>。</li>
+              <li>系统保存 <code>featured</code> 字段。</li>
+              <li>点单屏和商品管理卡片只在 <code>featured = true</code> 时展示“热销”。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF004：配置设备语言和币种 <span class="status">实现</span></h3>
+            <ol>
+              <li>用户进入 <code>基本设置</code>。</li>
+              <li>用户维护当前设备可见语言、隐藏语言恢复、默认语言和币种。</li>
+              <li>保存后点单屏和相关后台页面按当前设备配置展示。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF005：复制商品 <span class="status">实现，范围收敛</span></h3>
+            <ol>
+              <li>用户在商品管理页点击复制商品。</li>
+              <li>本期只支持复制到一台机器上。</li>
+              <li>用户选择目标分类和模板商品后进入商品详情复制流程，确认后生成新商品。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF006：批量改价与批量上下架 <span class="status">实现</span></h3>
+            <ol>
+              <li>用户进入 <code>批量改价</code>。</li>
+              <li>用户按当前筛选范围勾选商品。</li>
+              <li>用户可批量固定改价、仅改原价展示文案，或批量上下架。</li>
+            </ol>
+          </div>
+          <div class="story">
+            <h3>UF007：分类排序和商品分类调整 <span class="status off">本期不实现</span></h3>
+            <p>本期不实现分类排序调整，也不实现商品所属分类调整。界面、测试用例和验收报告中都应标记为未实现，不作为本次提测通过项。</p>
+          </div>
+        </section>
+
+        <section id="rules">
+          <h2>3. 关键业务规则</h2>
+          <table>
+            <thead><tr><th>能力</th><th>当前规则</th></tr></thead>
+            <tbody>
+              <tr><td>热销标识</td><td>只读取并保存 <code>featured</code>。旧数据中已有的标签字段仅可用于兼容读取，不再作为编辑和保存对象。</td></tr>
+              <tr><td>原价展示文案</td><td>字段含义是点单屏价格旁的展示文案，可能是划线原价，也可能是“X折”等文案。后台文案不应限定为只能表达原价。</td></tr>
+              <tr><td>业务标签</td><td>本期不提供标签库、标签绑定、隐藏、恢复、新建、编辑和排序能力。</td></tr>
+              <tr><td>复制商品</td><td>本期只支持复制到一台机器，不支持一次复制到多台机器。</td></tr>
+              <tr><td>设备作用域</td><td>语言、币种、印花图片和商品复制都以当前设备为操作上下文。</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="out">
+          <h2>4. 本期不实现项</h2>
+          <ul>
+            <li>业务标签管理、商品业务标签绑定、业务标签隐藏与恢复。</li>
+            <li>分类排序调整。</li>
+            <li>商品所属分类调整。</li>
+            <li>复制商品到多台机器。</li>
+          </ul>
+        </section>
+
+        <section id="acceptance">
+          <h2>5. 验收标准</h2>
+          <ul>
+            <li>商品详情页存在 <code>是否热销</code> 开关，并保存到 <code>featured</code>。</li>
+            <li>商品管理卡片和点单屏预览仅根据 <code>featured</code> 展示“热销”。</li>
+            <li>页面不出现业务标签管理入口、业务标签编辑区或标签库配置流程。</li>
+            <li>UF007 明确标记为本期不实现。</li>
+            <li>复制商品流程只允许单目标机器。</li>
+            <li>PRD 中不出现面向开发实现细节的浏览器传输变量名，避免开发和测试误解。</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

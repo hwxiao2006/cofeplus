@@ -7,10 +7,15 @@ const html = fs.readFileSync(
   path.join(__dirname, '..', 'tasks', 'prd-product-management-user-flow.html'),
   'utf8'
 );
+const extensionlessHtml = fs.readFileSync(
+  path.join(__dirname, '..', 'tasks', 'prd-product-management-user-flow'),
+  'utf8'
+);
 
 test('商品管理 PRD 应提供独立 HTML 产物并使用生产域名作为截图标准', () => {
   assert.ok(html.includes('产品需求文档：商品管理（按用户流程）'));
   assert.ok(html.includes('https://cofeplus.pages.dev'));
+  assert.strictEqual(extensionlessHtml, html);
 });
 
 test('商品管理 PRD 应明确当前只支持是否热销，不实现业务标签功能', () => {
