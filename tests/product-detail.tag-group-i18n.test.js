@@ -54,9 +54,8 @@ function createRuntime(storageSeed = {}) {
 this.__test = {
   getTagGroupLabel,
   renderTagTree,
-  renderTagGroupManageBody,
   refreshOptionTitles,
-  saveTagGroupManageModal,
+  persistDrawerCurrentGroupName,
   tagConfigs,
   setCurrentDevice(value) { currentDevice = value; },
   setCurrentLang(value) { currentLang = value; },
@@ -188,28 +187,7 @@ test('保存分组名称后 renderTagTree 立即返回新名', () => {
   assert.ok(!tree.innerHTML.includes('咖啡豆'), 'tag-tree 不应再显示默认中文分组名');
 });
 
-test('renderTagGroupManageBody 为每个分组每种语种渲染输入框', () => {
-  const { api } = createRuntime({
-    deviceLanguageConfig_RCK111: JSON.stringify({
-      langs: ['zh', 'en'],
-      hiddenLangs: [],
-      langNames: { zh: '中文', en: 'English' }
-    })
-  });
-  api.setCurrentDevice('RCK111');
-  api.renderTagGroupManageBody();
-  const body = api.getDocument().getElementById('tagGroupManageBody');
-  api.tagConfigs.forEach(cfg => {
-    assert.ok(
-      body.innerHTML.includes(`data-spec-key="${cfg.specKey}"`),
-      `应渲染 ${cfg.specKey} 的输入项`
-    );
-  });
-  const inputCount = (body.innerHTML.match(/class="form-input tag-group-manage-input"/g) || []).length;
-  assert.strictEqual(inputCount, api.tagConfigs.length * 2, '应渲染 8 分组 × 2 语种 = 16 个输入');
-});
-
-test('saveTagGroupManageModal 把表单值写入存储', () => {
+test('persistDrawerCurrentGroupName 将当前分组的多语言输入写入存储', () => {
   const { api, storage } = createRuntime({
     deviceLanguageConfig_RCK111: JSON.stringify({
       langs: ['zh', 'en'],
@@ -218,25 +196,56 @@ test('saveTagGroupManageModal 把表单值写入存储', () => {
     })
   });
   api.setCurrentDevice('RCK111');
-  api.setProductData({ id: 1, names: { zh: '商品' }, tagI18n: {}, defaultOptions: {}, tagExtraPrices: {}, specs: {} });
-
-  // mock body.querySelectorAll to return fake input nodes
-  const body = api.getDocument().getElementById('tagGroupManageBody');
-  body.querySelectorAll = function () {
-    return [
-      { dataset: { specKey: 'beans', lang: 'zh' }, value: '黑豆' },
-      { dataset: { specKey: 'beans', lang: 'en' }, value: 'Beans' },
-      { dataset: { specKey: 'temperature', lang: 'zh' }, value: '温度' },
-      { dataset: { specKey: 'temperature', lang: 'en' }, value: 'Temperature' }
-    ];
-  };
   api.setDrawerActiveSpec('beans');
-  api.saveTagGroupManageModal();
+
+  // Stub the drawer editor with the per-language inputs the function looks for.
+  const editor = api.getDocument().getElementById('tagDrawerEditor');
+  const inputs = {
+    zh: { value: '黑豆精选' },
+    en: { value: 'Premium Beans' }
+  };
+  editor.querySelector = function (selector) {
+    const match = selector.match(/\.drawer-group-name-lang-(\w+)/);
+    return match ? inputs[match[1]] || null : null;
+  };
+
+  const changed = api.persistDrawerCurrentGroupName();
+  assert.strictEqual(changed, true, '检测到改动时应返回 true');
 
   const stored = JSON.parse(storage.tagGroupI18n_RCK111 || '{}');
-  assert.strictEqual(stored.beans?.zh, '黑豆');
-  assert.strictEqual(stored.beans?.en, 'Beans');
-  assert.strictEqual(stored.temperature?.zh, '温度');
+  assert.strictEqual(stored.beans?.zh, '黑豆精选');
+  assert.strictEqual(stored.beans?.en, 'Premium Beans');
+});
+
+test('persistDrawerCurrentGroupName 不会清空其它分组', () => {
+  const { api, storage } = createRuntime({
+    deviceLanguageConfig_RCK111: JSON.stringify({
+      langs: ['zh', 'en'],
+      hiddenLangs: [],
+      langNames: { zh: '中文', en: 'English' }
+    }),
+    tagGroupI18n_RCK111: JSON.stringify({
+      temperature: { zh: '温度自定义' }
+    })
+  });
+  api.setCurrentDevice('RCK111');
+  api.setDrawerActiveSpec('beans');
+
+  const editor = api.getDocument().getElementById('tagDrawerEditor');
+  const inputs = {
+    zh: { value: '黑豆精选' },
+    en: { value: 'Premium Beans' }
+  };
+  editor.querySelector = function (selector) {
+    const match = selector.match(/\.drawer-group-name-lang-(\w+)/);
+    return match ? inputs[match[1]] || null : null;
+  };
+
+  api.persistDrawerCurrentGroupName();
+
+  const stored = JSON.parse(storage.tagGroupI18n_RCK111 || '{}');
+  assert.strictEqual(stored.beans?.zh, '黑豆精选');
+  assert.strictEqual(stored.temperature?.zh, '温度自定义', '其它分组应保留原值');
 });
 
 test('refreshOptionTitles 在缺少 DOM 卡片时优雅退出（不抛错）', () => {

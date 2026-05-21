@@ -1228,7 +1228,9 @@
             font-weight: 700;
             color: var(--text-primary);
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
+            gap: 6px;
         }
 
         .multilang-grid-cell {
@@ -1262,6 +1264,14 @@
         .multilang-sheet .form-textarea {
             min-height: 72px;
             resize: vertical;
+        }
+
+        .multilang-row-sub-label {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         .option-card {
@@ -1463,127 +1473,26 @@
         }
 
         .tag-drawer-side-header {
-            padding: 14px 14px 12px;
+            padding: 18px 16px 10px;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .tag-drawer-side-header-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
         }
 
-        .tag-drawer-side-manage-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-            border: 1px solid var(--primary);
-            border-radius: 8px;
-            background: #fff;
-            color: var(--primary-dark);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.2s;
+        .multilang-sheet.is-group-name {
+            background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #fde68a;
         }
 
-        .tag-drawer-side-manage-btn:hover {
-            background: var(--primary-light);
-        }
-
-        .tag-group-manage-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 1300;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .tag-group-manage-overlay.active {
-            display: flex;
-        }
-
-        .tag-group-manage-modal {
-            width: min(820px, 100%);
-            max-height: calc(100vh - 60px);
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tag-group-manage-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            flex-shrink: 0;
-        }
-
-        .tag-group-manage-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .tag-group-manage-subtitle {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .tag-group-manage-body {
-            padding: 16px 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .tag-group-manage-notice {
-            font-size: 12px;
+        .multilang-sheet.is-group-name .multilang-sheet-summary {
+            background: rgba(245, 158, 11, 0.18);
             color: #92400e;
+        }
+
+        .multilang-sheet.is-group-name .multilang-grid-corner,
+        .multilang-sheet.is-group-name .multilang-grid-label {
             background: #fef3c7;
-            border: 1px solid #fde68a;
-            border-radius: 8px;
-            padding: 10px 12px;
-            margin-bottom: 14px;
-            line-height: 1.5;
-        }
-
-        .tag-group-manage-footer {
-            padding: 14px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            background: #fafbfc;
-            flex-shrink: 0;
-        }
-
-        .tag-group-manage-body .multilang-grid-label {
-            gap: 6px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .tag-group-manage-body .multilang-grid-label .spec-key {
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .tag-tree {
@@ -3044,10 +2953,7 @@
     <div class="tag-drawer-overlay" id="tagConfigDrawer">
         <div class="tag-drawer">
             <aside class="tag-drawer-side">
-                <div class="tag-drawer-side-header">
-                    <span class="tag-drawer-side-header-title">标签类型</span>
-                    <button type="button" class="tag-drawer-side-manage-btn" onclick="openTagGroupManageModal()" title="管理分组名称的多语言">⚙ 管理</button>
-                </div>
+                <div class="tag-drawer-side-header">标签类型</div>
                 <div class="tag-tree" id="tagTree"></div>
             </aside>
             <section class="tag-drawer-main">
@@ -3061,23 +2967,6 @@
                     <button class="btn btn-primary" onclick="saveTagConfigDrawer()">保存</button>
                 </div>
             </section>
-        </div>
-    </div>
-
-    <div class="tag-group-manage-overlay" id="tagGroupManageModal">
-        <div class="tag-group-manage-modal">
-            <div class="tag-group-manage-header">
-                <div>
-                    <div class="tag-group-manage-title">标签分组名称管理</div>
-                    <div class="tag-group-manage-subtitle" id="tagGroupManageSubtitle">设备级配置 · 该设备下所有商品共享 · 保存后立即生效</div>
-                </div>
-                <button class="modal-close" onclick="closeTagGroupManageModal()">×</button>
-            </div>
-            <div class="tag-group-manage-body" id="tagGroupManageBody"></div>
-            <div class="tag-group-manage-footer">
-                <button class="btn btn-default" onclick="closeTagGroupManageModal()">取消</button>
-                <button class="btn btn-primary" onclick="saveTagGroupManageModal()">保存所有分组</button>
-            </div>
         </div>
     </div>
 
@@ -4002,6 +3891,75 @@
             return i18n[lang] || i18n.zh || tagKey;
         }
 
+        function ensureTagDescI18n(specKey, targetProduct = productData) {
+            if (!targetProduct || typeof targetProduct !== 'object') return;
+            if (!targetProduct.tagDescI18n || typeof targetProduct.tagDescI18n !== 'object') {
+                targetProduct.tagDescI18n = {};
+            }
+            if (specKey && (!targetProduct.tagDescI18n[specKey] || typeof targetProduct.tagDescI18n[specKey] !== 'object')) {
+                targetProduct.tagDescI18n[specKey] = {};
+            }
+        }
+
+        function getTagDesc(specKey, tagKey, lang, targetProduct = productData) {
+            const entry = targetProduct?.tagDescI18n?.[specKey]?.[tagKey];
+            if (!entry || typeof entry !== 'object') return '';
+            return entry[lang] || entry.zh || entry.en || '';
+        }
+
+        function getDrawerTagDesc(specKey, tagKey, lang) {
+            return getTagDesc(specKey, tagKey, lang, productData);
+        }
+
+        function cloneTagDescs(specKey, tagKey, targetProduct = productData) {
+            const out = {};
+            const entry = targetProduct?.tagDescI18n?.[specKey]?.[tagKey] || {};
+            const langs = getDeviceLangs();
+            const seen = new Set();
+            const collect = (lang) => {
+                if (seen.has(lang)) return;
+                seen.add(lang);
+                const raw = entry[lang];
+                if (raw === undefined || raw === null) return;
+                const text = String(raw).trim();
+                if (text) out[lang] = text;
+            };
+            langs.forEach(collect);
+            ['zh', 'en'].forEach(collect);
+            return out;
+        }
+
+        function hasTagDescChanged(previousDescs, nextDescs) {
+            const previous = previousDescs || {};
+            const next = nextDescs || {};
+            const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+            for (const key of keys) {
+                const before = String(previous[key] || '').trim();
+                const after = String(next[key] || '').trim();
+                if (before !== after) return true;
+            }
+            return false;
+        }
+
+        function setTagDescsForProduct(targetProduct, specKey, tagKey, nextDescs) {
+            if (!targetProduct || typeof targetProduct !== 'object' || !specKey || !tagKey) return;
+            ensureTagDescI18n(specKey, targetProduct);
+            const spec = targetProduct.tagDescI18n[specKey];
+            const cleaned = {};
+            Object.entries(nextDescs || {}).forEach(([lang, value]) => {
+                const text = String(value == null ? '' : value).trim();
+                if (text) cleaned[lang] = text;
+            });
+            if (Object.keys(cleaned).length) {
+                spec[tagKey] = cleaned;
+            } else {
+                delete spec[tagKey];
+            }
+            if (!Object.keys(spec).length) {
+                delete targetProduct.tagDescI18n[specKey];
+            }
+        }
+
         function refreshOptionListLabels(specKey) {
             const cfg = getTagConfigBySpec(specKey);
             if (!cfg) return;
@@ -4850,7 +4808,18 @@
 
             const beforeLabel = getTagCompareLabel(tagSyncState.previousLabels, tagSyncState.tagKey);
             const afterLabel = getTagCompareLabel(tagSyncState.nextLabels, tagSyncState.tagKey);
-            subtitle.textContent = `${tagSyncState.specTitle}："${beforeLabel}" 已改为 "${afterLabel}"，勾选后将同步到以下商品`;
+            const labelRenamed = tagSyncState.labelChanged && beforeLabel !== afterLabel;
+            const parts = [];
+            if (labelRenamed) {
+                parts.push(`"${beforeLabel}" 已改为 "${afterLabel}"`);
+            }
+            if (tagSyncState.descChanged) {
+                parts.push(labelRenamed ? '描述同时更新' : `"${afterLabel}" 的描述已更新`);
+            }
+            if (!parts.length) {
+                parts.push(`"${afterLabel}" 配置已更新`);
+            }
+            subtitle.textContent = `${tagSyncState.specTitle}：${parts.join('，')}，勾选后将同步到以下商品`;
 
             const total = tagSyncState.affectedEntries.length;
             const selected = tagSyncState.selectedIds.size;
@@ -4885,12 +4854,14 @@
 
             if (productData) {
                 setTagLabelsForProduct(productData, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                setTagDescsForProduct(productData, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextDescs);
                 changedProducts.push(productData);
             }
 
             selectedEntries.forEach(item => {
                 if (!item.product) return;
                 setTagLabelsForProduct(item.product, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                setTagDescsForProduct(item.product, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextDescs);
                 changedProducts.push(item.product);
             });
 
@@ -6616,13 +6587,6 @@
                 });
             }
 
-            const tagGroupManageModal = document.getElementById('tagGroupManageModal');
-            if (tagGroupManageModal) {
-                tagGroupManageModal.addEventListener('click', function(e) {
-                    if (e.target === tagGroupManageModal) closeTagGroupManageModal();
-                });
-            }
-
             document.addEventListener('click', function(e) {
                 const selector = document.getElementById('productCategorySelector');
                 if (selector && !selector.contains(e.target)) {
@@ -6659,11 +6623,6 @@
                 const businessTagModal = document.getElementById('productBusinessTagEditorModal');
                 if (businessTagModal && businessTagModal.classList.contains('active')) {
                     closeProductBusinessTagEditor();
-                    return;
-                }
-                const tagGroupManage = document.getElementById('tagGroupManageModal');
-                if (tagGroupManage && tagGroupManage.classList.contains('active')) {
-                    closeTagGroupManageModal();
                     return;
                 }
                 const modal = document.getElementById('recipeEditorModal');
@@ -6862,97 +6821,45 @@
             });
         }
 
-        function openTagGroupManageModal() {
-            renderTagGroupManageBody();
-            const subtitle = document.getElementById('tagGroupManageSubtitle');
-            if (subtitle) {
-                subtitle.textContent = `设备级配置 · 设备 ${currentDevice} · 该设备下所有商品共享 · 保存后立即生效`;
-            }
-            document.getElementById('tagGroupManageModal').classList.add('active');
-        }
-
-        function closeTagGroupManageModal() {
-            document.getElementById('tagGroupManageModal').classList.remove('active');
-        }
-
-        function renderTagGroupManageBody() {
-            const body = document.getElementById('tagGroupManageBody');
-            if (!body) return;
+        function persistDrawerCurrentGroupName() {
+            if (typeof TagGroupI18n === 'undefined' || !TagGroupI18n) return false;
+            const cfg = getTagConfigBySpec(drawerActiveSpecKey);
+            if (!cfg) return false;
             const langs = getDeviceLangs();
-            const headerCells = langs.map(lang => {
-                const isPrimary = lang === langs[0];
-                const chip = isPrimary
-                    ? '<span class="multilang-status-chip default">默认语种</span>'
-                    : '<span class="multilang-status-chip">可选语种</span>';
-                return `
-                    <div class="multilang-grid-head-cell">
-                        <div class="multilang-grid-head-top">
-                            <div class="multilang-grid-lang-name">${escAttr(getLangName(lang))}</div>
-                            <span class="multilang-grid-lang-code">${escAttr(lang)}</span>
-                        </div>
-                        <div class="multilang-grid-meta">${chip}</div>
-                    </div>
-                `;
-            }).join('');
-
-            const rows = tagConfigs.map(cfg => {
-                const cells = langs.map(lang => {
-                    const value = getTagGroupLabel(cfg.specKey, lang);
-                    return `
-                        <div class="multilang-grid-cell">
-                            <div class="form-group">
-                                <input type="text" class="form-input tag-group-manage-input"
-                                    data-spec-key="${escAttr(cfg.specKey)}"
-                                    data-lang="${escAttr(lang)}"
-                                    value="${escAttr(value)}"
-                                    placeholder="请输入${escAttr(getLangName(lang))}分组名">
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                return `
-                    <div class="multilang-grid-row" style="--lang-count:${langs.length};">
-                        <div class="multilang-grid-label">${escAttr(getTagGroupLabel(cfg.specKey, 'zh') || cfg.title)} <span class="spec-key">${escAttr(cfg.specKey)}</span></div>
-                        ${cells}
-                    </div>
-                `;
-            }).join('');
-
-            body.innerHTML = `
-                <div class="tag-group-manage-notice">⚠️ 修改后会同步影响：商品详情卡片、标签配置抽屉、影响分析、订单预览等所有显示分组名称的地方。仅作用于当前设备（${escAttr(currentDevice)}）。</div>
-                <div class="multilang-sheet" style="--lang-count:${langs.length}; margin-bottom:0;">
-                    <div class="multilang-grid-scroll">
-                        <div class="multilang-grid-head" style="--lang-count:${langs.length};">
-                            <div class="multilang-grid-corner">分组</div>
-                            ${headerCells}
-                        </div>
-                        ${rows}
-                    </div>
-                </div>
-            `;
+            const editor = document.getElementById('tagDrawerEditor');
+            if (!editor) return false;
+            const stored = TagGroupI18n.readStored(currentDevice);
+            const next = { ...stored };
+            const groupMap = { ...(next[cfg.specKey] || {}) };
+            let changed = false;
+            langs.forEach(lang => {
+                const input = editor.querySelector(`.drawer-group-name-lang-${lang}`);
+                if (!input) return;
+                const value = (input.value || '').trim();
+                const before = groupMap[lang] || '';
+                if (value) {
+                    if (groupMap[lang] !== value) changed = true;
+                    groupMap[lang] = value;
+                } else if (before) {
+                    delete groupMap[lang];
+                    changed = true;
+                }
+            });
+            if (!changed) return false;
+            if (Object.keys(groupMap).length) next[cfg.specKey] = groupMap;
+            else delete next[cfg.specKey];
+            TagGroupI18n.writeStored(currentDevice, next);
+            return true;
         }
 
-        function saveTagGroupManageModal() {
-            const body = document.getElementById('tagGroupManageBody');
-            if (!body) return;
-            const inputs = body.querySelectorAll('.tag-group-manage-input');
-            const data = {};
-            inputs.forEach(input => {
-                const specKey = input.dataset.specKey;
-                const lang = input.dataset.lang;
-                const value = (input.value || '').trim();
-                if (!specKey || !lang || !value) return;
-                if (!data[specKey]) data[specKey] = {};
-                data[specKey][lang] = value;
-            });
-            if (typeof TagGroupI18n !== 'undefined' && TagGroupI18n) {
-                TagGroupI18n.writeStored(currentDevice, data);
-            }
+        function applyDrawerGroupNameUpdates() {
             renderTagTree();
-            renderDrawerEditor();
             refreshOptionTitles();
-            closeTagGroupManageModal();
-            if (typeof showToast === 'function') showToast('分组名称已保存');
+            const titleEl = document.getElementById('tagDrawerTitle');
+            const cfg = getTagConfigBySpec(drawerActiveSpecKey);
+            if (titleEl && cfg) {
+                titleEl.textContent = `${getTagGroupLabel(cfg.specKey, currentLang)}标签配置`;
+            }
         }
 
         function renderDrawerEditor() {
@@ -6971,7 +6878,43 @@
             const currentDefault = getDefaultOption(cfg.specKey);
             drawerActiveLang = ensureActiveMultilangLang(drawerActiveLang, langs, currentLang || langs[0]);
 
-            let html = `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
+            let html = '';
+            html += buildMultilangGridMarkup({
+                editorKey: 'tag-drawer-group-name',
+                title: '分组名称',
+                hint: '该分组在客户菜单和商品详情页都会用到，请填写每种语言。仅作用于当前设备。',
+                summary: `共 ${langs.length} 种语种`,
+                langs,
+                activeLang: drawerActiveLang,
+                setActiveHandler: 'setDrawerActiveLang',
+                getStatus(lang) {
+                    const state = getMultilangCompletionState([
+                        getTagGroupLabel(cfg.specKey, lang)
+                    ]);
+                    return state === 'filled'
+                        ? { label: lang === langs[0] ? '默认语种' : '已填写', tone: lang === langs[0] ? 'default' : 'filled' }
+                        : { label: '待补充', tone: 'empty' };
+                },
+                rows: [
+                    {
+                        label: '分组名称',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <input type="text" class="form-input drawer-group-name-lang-${lang}" value="${escAttr(getTagGroupLabel(cfg.specKey, lang))}" placeholder="请输入${getLangName(lang)}分组名">
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
+            // give the group-name sheet its accent class
+            html = html.replace(
+                '<div class="multilang-sheet" data-editor-key="tag-drawer-group-name"',
+                '<div class="multilang-sheet is-group-name" data-editor-key="tag-drawer-group-name"'
+            );
+
+            html += `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
             html += `<div class="existing-tags">`;
             html += tagKeys.map(tagKey => `
                 <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" onclick="selectDrawerTag('${tagKey}')">
@@ -7003,6 +6946,16 @@
                             return `
                                 <div class="form-group">
                                     <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${getTagGroupLabel(cfg.specKey, lang)}标签">
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        label: '描述<div class="multilang-row-sub-label">仅本商品有效 · 保存时可同步到其它商品 · 仅咖啡豆区在点单屏展示</div>',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <textarea class="form-textarea drawer-tag-desc-lang-${lang}" rows="2" placeholder="请输入${getLangName(lang)}描述（选填）">${escAttr(getDrawerTagDesc(cfg.specKey, drawerSelectedTagKey, lang))}</textarea>
                                 </div>
                             `;
                         }
@@ -7043,6 +6996,18 @@
                 else delete productData.tagI18n[cfg.specKey][drawerSelectedTagKey][lang];
             });
 
+            const descMap = {};
+            let hasDescInput = false;
+            langs.forEach(lang => {
+                const descEl = document.querySelector('.drawer-tag-desc-lang-' + lang);
+                if (!descEl) return;
+                hasDescInput = true;
+                descMap[lang] = (descEl.value || '').trim();
+            });
+            if (hasDescInput) {
+                setTagDescsForProduct(productData, cfg.specKey, drawerSelectedTagKey, descMap);
+            }
+
             const extraPriceInput = document.getElementById('drawerTagExtraPrice');
             const extraPriceValue = extraPriceInput ? extraPriceInput.value : 0;
             setTagExtraPrice(cfg.specKey, drawerSelectedTagKey, extraPriceValue);
@@ -7064,12 +7029,14 @@
 
         function selectDrawerTag(tagKey) {
             persistDrawerCurrentTag();
+            persistDrawerCurrentGroupName();
             drawerSelectedTagKey = tagKey;
             renderDrawerEditor();
         }
 
         function switchDrawerTag(specKey) {
             persistDrawerCurrentTag();
+            if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             drawerActiveSpecKey = specKey;
             drawerSelectedTagKey = getCurrentSelectedTagKey(specKey) || getTagKeys(specKey)[0] || '';
             renderTagTree();
@@ -7092,7 +7059,9 @@
             const cfg = getTagConfigBySpec(drawerActiveSpecKey);
             const tagKey = drawerSelectedTagKey;
             const previousLabels = (cfg && tagKey) ? cloneTagLabels(cfg.specKey, tagKey, productData) : {};
+            const previousDescs = (cfg && tagKey) ? cloneTagDescs(cfg.specKey, tagKey, productData) : {};
             persistDrawerCurrentTag();
+            if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             if (!cfg || !tagKey) {
                 closeTagConfigDrawer();
                 showToast('标签配置已更新');
@@ -7100,6 +7069,7 @@
             }
 
             const nextLabels = cloneTagLabels(cfg.specKey, tagKey, productData);
+            const nextDescs = cloneTagDescs(cfg.specKey, tagKey, productData);
             persistRecipeChanges(productData ? [productData] : []);
 
             if (isCopyWorkflowActive()) {
@@ -7108,7 +7078,9 @@
                 return;
             }
 
-            if (!hasTagLabelChanged(previousLabels, nextLabels)) {
+            const labelChanged = hasTagLabelChanged(previousLabels, nextLabels);
+            const descChanged = hasTagDescChanged(previousDescs, nextDescs);
+            if (!labelChanged && !descChanged) {
                 closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
@@ -7127,6 +7099,10 @@
                 specTitle: getTagGroupLabel(cfg.specKey, currentLang),
                 previousLabels,
                 nextLabels,
+                previousDescs,
+                nextDescs,
+                labelChanged,
+                descChanged,
                 affectedEntries,
                 selectedIds: new Set()
             };

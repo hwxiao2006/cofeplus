@@ -10178,6 +10178,11 @@
         }
 
         function getOrderPreviewOptionDesc(product, specKey, key, lang) {
+            const productDesc = product?.tagDescI18n?.[specKey]?.[key];
+            if (productDesc && typeof productDesc === 'object') {
+                const text = productDesc[lang] || productDesc.zh || productDesc.en || '';
+                if (text) return text;
+            }
             const libraryItem = getPreviewOptionLibraryItem(specKey, key);
             if (!libraryItem || !libraryItem.desc) return '';
             return libraryItem.desc[lang] || libraryItem.desc.zh || libraryItem.desc.en || '';
