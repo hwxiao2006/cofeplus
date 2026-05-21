@@ -10,40 +10,6 @@
         lid: '倡导环保 不使用杯盖',
         latteArt: '无'
     };
-    const SHARED_DEFAULT_BUSINESS_TAGS = {
-        tag_signature: {
-            id: 'tag_signature',
-            names: {
-                zh: '招牌',
-                en: 'Signature'
-            },
-            status: 'active'
-        },
-        tag_new: {
-            id: 'tag_new',
-            names: {
-                zh: '新品',
-                en: 'New'
-            },
-            status: 'active'
-        },
-        tag_breakfast: {
-            id: 'tag_breakfast',
-            names: {
-                zh: '早餐搭配',
-                en: 'Breakfast'
-            },
-            status: 'active'
-        },
-        tag_hidden: {
-            id: 'tag_hidden',
-            names: {
-                zh: '隐藏标签',
-                en: 'Hidden tag'
-            },
-            status: 'disabled'
-        }
-    };
     const SHARED_ORDER_NICKNAME_POOL = ['咖啡星球', '晨间拿铁', '豆香控', '午后微糖', '不加冰', '夜猫子', '燕麦党', '双份浓缩'];
     const SHARED_DEFAULT_ORDER_BASE = {
         year: 2026,
@@ -57,24 +23,14 @@
     const SHARED_MIN_ORDER_RECORDS = 20;
     const SHARED_MULTI_ITEM_ORDER_COUNT = 5;
 
-    function normalizeBusinessTagIds(tagIds) {
-        return Array.from(new Set((Array.isArray(tagIds) ? tagIds : [])
-            .map(tagId => String(tagId || '').trim())
-            .filter(Boolean)));
-    }
-
     function normalizeMockProduct(product) {
         const sourceProduct = product || {};
-        const derivedBusinessTagIds = Array.isArray(sourceProduct.businessTagIds)
-            ? sourceProduct.businessTagIds
-            : (sourceProduct.featured ? ['tag_signature'] : []);
         return {
             ...sourceProduct,
             defaultOptions: {
                 ...SHARED_PRODUCT_DEFAULT_OPTIONS,
                 ...(sourceProduct.defaultOptions || {})
-            },
-            businessTagIds: normalizeBusinessTagIds(derivedBusinessTagIds)
+            }
         };
     }
 
@@ -394,7 +350,6 @@
         },
         defaultDevices: SHARED_DEFAULT_DEVICES,
         defaultOrders: SHARED_DEFAULT_ORDERS,
-        defaultBusinessTags: SHARED_DEFAULT_BUSINESS_TAGS,
         defaultProducts: SHARED_DEFAULT_PRODUCTS,
         helpers: {
             clone(value) {

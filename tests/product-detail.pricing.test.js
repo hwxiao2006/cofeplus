@@ -154,8 +154,9 @@ test('商品编辑表单不应包含单商品币种输入项', () => {
   assert.ok(!html.includes('id="productCurrency"'));
 });
 
-test('商品编辑表单不应再包含推荐商品开关', () => {
-  assert.ok(!html.includes('id="featuredSwitch"'));
+test('商品编辑表单应包含是否热销开关，且不再使用推荐商品文案', () => {
+  assert.ok(html.includes('id="featuredSwitch"'));
+  assert.ok(html.includes('是否热销'));
   assert.ok(!html.includes('推荐商品'));
 });
 
@@ -163,11 +164,12 @@ test('商品编辑表单应包含原价输入项', () => {
   assert.ok(html.includes('id="productOriginalPrice"'));
 });
 
-test('商品编辑表单应包含业务标签编辑区', () => {
-  assert.ok(html.includes('业务标签'));
-  assert.ok(html.includes('id="productBusinessTagSummary"'));
-  assert.ok(html.includes('id="productBusinessTagEditBtn"'));
-  assert.ok(html.includes('id="productBusinessTagEditorModal"'));
+test('商品编辑表单不应包含业务标签编辑区', () => {
+  assert.ok(!html.includes('业务标签'));
+  assert.ok(!html.includes('id="productBusinessTagSummary"'));
+  assert.ok(!html.includes('id="productBusinessTagEditBtn"'));
+  assert.ok(!html.includes('id="productBusinessTagEditorModal"'));
+  assert.ok(!html.includes('shared/business-tag-library.js'));
 });
 
 test('商品编辑表单应将所属分类改为可编辑多分类选择', () => {
@@ -202,20 +204,20 @@ test('saveProduct 应持久化 originalPrice 字段', () => {
   assert.ok(/originalPrice\s*,/.test(html) || /originalPrice:\s*originalPrice/.test(html));
 });
 
-test('saveProduct 应持久化有序 businessTagIds，而不是布尔推荐开关', () => {
-  assert.ok(/let\s+selectedBusinessTagIds\s*=\s*\[\]/.test(html));
-  assert.ok(/function\s+moveSelectedBusinessTag\s*\(/.test(html));
-  assert.ok(/mergeProductTagIds\(/.test(html));
-  assert.ok(/businessTagIds:\s*mergedBusinessTagIds/.test(html));
-  assert.ok(!/featured:\s*document\.getElementById\('featuredSwitch'\)\.checked/.test(html));
+test('saveProduct 应持久化 featured 热销字段，而不是业务标签字段', () => {
+  assert.ok(/featured:\s*document\.getElementById\('featuredSwitch'\)\?\.checked\s*===\s*true/.test(html));
+  assert.ok(!/let\s+selectedBusinessTagIds\s*=\s*\[\]/.test(html));
+  assert.ok(!/function\s+moveSelectedBusinessTag\s*\(/.test(html));
+  assert.ok(!/mergeProductTagIds\(/.test(html));
+  assert.ok(!/businessTagIds:\s*mergedBusinessTagIds/.test(html));
 });
 
-test('商品详情页应加载共享业务标签 helper，并移除 prompt 式单语标签编辑', () => {
-  assert.ok(html.includes('shared/business-tag-library.js'));
-  assert.ok(/const\s+BusinessTags\s*=\s*window\.CofeBusinessTags/.test(html));
+test('商品详情页不应加载业务标签 helper 或保存协调器', () => {
+  assert.ok(!html.includes('shared/business-tag-library.js'));
+  assert.ok(!/const\s+BusinessTags\s*=\s*window\.CofeBusinessTags/.test(html));
   assert.ok(!/prompt\('请输入业务标签名称'\)/.test(html));
   assert.ok(!/prompt\('修改业务标签名称'/.test(html));
-  assert.ok(/const\s+TagProductSaveCoordinator\s*=\s*\{/.test(html));
+  assert.ok(!/const\s+TagProductSaveCoordinator\s*=\s*\{/.test(html));
 });
 
 test('商品详情页应提供点单屏预览按钮与内嵌预览弹层', () => {
@@ -234,8 +236,10 @@ test('商品详情页预览点单屏应带当前设备和 openOrderPreview 参�
   assert.ok(/embedOrderPreview/.test(html));
 });
 
-test('saveProduct 应兼容首次保存 legacy featured 商品时物化 tag_signature', () => {
-  assert.ok(/const\s+existingIds\s*=\s*getProductBusinessTagIds\(productData\)/.test(html));
+test('商品详情页应兼容旧 businessTagIds 读取热销状态，但保存时不再写回业务标签', () => {
+  assert.ok(/function\s+resolveFeaturedFlag\s*\(/.test(html));
+  assert.ok(extractFunctionSource('resolveFeaturedFlag').includes('businessTagIds'));
+  assert.ok(!extractFunctionSource('saveProduct').includes('businessTagIds'));
 });
 
 test('saveProduct 应持久化商品所属分类，并要求至少选择一个分类', () => {
