@@ -18,6 +18,13 @@ test('商品管理 PRD 应提供独立 HTML 产物并使用生产域名作为截
   assert.strictEqual(extensionlessHtml, html);
 });
 
+test('商品管理 PRD 应保留按用户流程组织的截图', () => {
+  assert.ok((html.match(/<figure class="doc-image">/g) || []).length >= 9);
+  assert.ok(html.includes('UF-001 商品管理概览'));
+  assert.ok(html.includes('../screenshots/product-prd/uf005-category-manage.png'));
+  assert.ok(html.includes('../screenshots/product-prd/uf012-preview.png'));
+});
+
 test('商品管理 PRD 应明确当前只支持是否热销，不实现业务标签功能', () => {
   assert.ok(html.includes('是否热销'));
   assert.ok(html.includes('featured'));
@@ -26,7 +33,7 @@ test('商品管理 PRD 应明确当前只支持是否热销，不实现业务标
 });
 
 test('商品管理 PRD 应标记 UF007 不实现，并收敛复制商品范围', () => {
-  assert.ok(html.includes('UF007'));
+  assert.ok(html.includes('UF-007'));
   assert.ok(html.includes('分类排序调整'));
   assert.ok(html.includes('商品所属分类调整'));
   assert.ok(html.includes('本期不实现'));
