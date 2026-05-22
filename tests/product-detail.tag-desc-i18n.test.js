@@ -36,8 +36,6 @@ function createElement(id) {
 function createRuntime() {
     const tagGroupHelperScript = fs.readFileSync(
         path.join(__dirname, '..', 'shared', 'tag-group-i18n.js'), 'utf8');
-    const businessTagHelperScript = fs.readFileSync(
-        path.join(__dirname, '..', 'shared', 'business-tag-library.js'), 'utf8');
     const html = fs.readFileSync(
         path.join(__dirname, '..', 'product-detail.html'), 'utf8');
     const script = `${extractInlineScript(html)}
@@ -92,9 +90,7 @@ this.__test = {
     };
 
     vm.runInNewContext(tagGroupHelperScript, context);
-    vm.runInNewContext(businessTagHelperScript, context);
     context.TagGroupI18n = context.window.TagGroupI18n || context.TagGroupI18n;
-    context.BusinessTags = context.window.CofeBusinessTags || context.CofeBusinessTags;
     vm.runInNewContext(script, context);
     return { ctx: context, api: context.__test, storage, elements };
 }

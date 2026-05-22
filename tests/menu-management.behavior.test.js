@@ -7,12 +7,10 @@ function loadMenuContext(options = {}) {
   const htmlPath = path.join(__dirname, '..', 'menu-management.html');
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const latteArtHelperPath = path.join(__dirname, '..', 'shared', 'device-latte-art-library.js');
-  const businessTagHelperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
   const tagGroupHelperPath = path.join(__dirname, '..', 'shared', 'tag-group-i18n.js');
   const html = fs.readFileSync(htmlPath, 'utf8');
   const sharedScript = fs.readFileSync(sharedPath, 'utf8');
   const latteArtHelperScript = fs.readFileSync(latteArtHelperPath, 'utf8');
-  const businessTagHelperScript = fs.readFileSync(businessTagHelperPath, 'utf8');
   const tagGroupHelperScript = fs.readFileSync(tagGroupHelperPath, 'utf8');
   const match = html.match(/<script>([\s\S]*)<\/script>/);
   if (!match) {
@@ -197,7 +195,6 @@ function loadMenuContext(options = {}) {
   vm.createContext(context);
   vm.runInContext(sharedScript, context);
   vm.runInContext(latteArtHelperScript, context);
-  vm.runInContext(businessTagHelperScript, context);
   vm.runInContext(tagGroupHelperScript, context);
   if (options.staffAccessHelper) {
     context.window.CofeAdminStaffAccess = options.staffAccessHelper;
@@ -1128,14 +1125,9 @@ test('菜单管理顶部统计应按商品 ID 去重计算商品总数和在售�
   assert.strictEqual(ctx.document.getElementById('onSaleProducts').textContent, 1);
 });
 
-test('点单屏预览：业务标签应显示前两个启用标签并隐藏停用标签', () => {
+test('点单屏预览：仅根据 featured 展示热销标识', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
-  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
-    tag_new: { id: 'tag_new', names: { zh: '新品', en: 'New' }, status: 'active' },
-    tag_hidden: { id: 'tag_hidden', names: { zh: '隐藏标签', en: 'Hidden tag' }, status: 'hidden' }
-  };
   ctx.productsData = {
     测试分类: {
       icon: '☕',
@@ -1145,6 +1137,7 @@ test('点单屏预览：业务标签应显示前两个启用标签并隐藏停�
           id: 101,
           price: 19.9,
           onSale: true,
+          featured: true,
           names: { zh: '测试拿铁', en: 'Test Latte' },
           descs: { zh: '测试描述', en: 'Test description' },
           businessTagIds: ['tag_signature', 'tag_new', 'tag_hidden']
@@ -1155,20 +1148,17 @@ test('点单屏预览：业务标签应显示前两个启用标签并隐藏停�
   ctx.openOrderPreviewModal();
 
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
-  assert.ok(productHtml.includes('招牌'));
-  assert.ok(productHtml.includes('新品'));
-  assert.ok(!productHtml.includes('隐藏标签'));
-  assert.ok(!productHtml.includes('order-preview-featured-badge'));
+  assert.ok(productHtml.includes('热销'));
+  assert.ok(productHtml.includes('order-preview-featured-badge'));
+  assert.ok(!productHtml.includes('招牌'));
+  assert.ok(!productHtml.includes('新品'));
+  assert.ok(!productHtml.includes('业务标签'));
+  assert.ok(!productHtml.includes('business-tag'));
 });
 
-test('点单屏预览：切换语言后业务标签文案应同步', () => {
+test('点单屏预览：非 featured 商品不展示热销标识', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
-  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
-    tag_new: { id: 'tag_new', names: { zh: '新品', en: 'New' }, status: 'active' },
-    tag_hidden: { id: 'tag_hidden', names: { zh: '隐藏标签', en: 'Hidden tag' }, status: 'hidden' }
-  };
   ctx.productsData = {
     测试分类: {
       icon: '☕',
@@ -1178,6 +1168,7 @@ test('点单屏预览：切换语言后业务标签文案应同步', () => {
           id: 101,
           price: 19.9,
           onSale: true,
+          featured: false,
           names: { zh: '测试拿铁', en: 'Test Latte' },
           descs: { zh: '测试描述', en: 'Test description' },
           businessTagIds: ['tag_signature', 'tag_new', 'tag_hidden']
@@ -1186,13 +1177,11 @@ test('点单屏预览：切换语言后业务标签文案应同步', () => {
     }
   };
   ctx.openOrderPreviewModal();
-  ctx.setOrderPreviewLang('en');
 
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
-  assert.ok(productHtml.includes('Signature'));
-  assert.ok(productHtml.includes('New'));
-  assert.ok(!productHtml.includes('Hidden tag'));
+  assert.ok(!productHtml.includes('热销'));
   assert.ok(!productHtml.includes('order-preview-featured-badge'));
+  assert.ok(!productHtml.includes('business-tag'));
 });
 
 test('点单屏预览：点击商品应打开详情预览层', () => {
@@ -2106,16 +2095,13 @@ test('基础设置：语言卡片不应展示默认点单屏语言和已启用�
   assert.ok(!html.includes('id="settingsVisibleLangCount"'));
 });
 
-test('基础设置：应提供紧凑业务标签管理卡片，并只展示启用中和已隐藏统计', () => {
+test('基础设置：不再展示业务标签管理入口', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(html.includes('业务标签管理'));
-  assert.ok(html.includes('管理标签'));
-  assert.ok(html.includes('启用中'));
-  assert.ok(html.includes('已隐藏'));
-  assert.ok(html.includes('id="businessTagSettingsSummary"'));
-  assert.ok(html.includes('id="businessTagManagerDrawer"'));
-  assert.ok(!html.includes('设备语言数'));
-  assert.ok(!html.includes('最近更新'));
+  assert.ok(!html.includes('业务标签管理'));
+  assert.ok(!html.includes('管理标签'));
+  assert.ok(!html.includes('id="businessTagSettingsSummary"'));
+  assert.ok(!html.includes('id="businessTagManagerDrawer"'));
+  assert.ok(!html.includes('shared/business-tag-library.js'));
 });
 
 test('按钮归属：预览点单屏在基本设置tab，新增分类不在基本设置tab', () => {
@@ -2640,25 +2626,37 @@ test('菜单管理商品卡片：应统一提供上下架与编辑双按钮', ()
   assert.ok(offSaleHtml.includes('>上架<'));
 });
 
-test('菜单管理商品卡片：业务标签应叠加在商品图片上方', () => {
+test('菜单管理商品卡片：仅根据 featured 展示热销标识', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
-  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' }
-  };
 
-  const productHtml = ctx.renderMenuManageProductCard({
+  const hotHtml = ctx.renderMenuManageProductCard({
     id: 8,
     price: 18,
     onSale: true,
+    featured: true,
     image: 'https://example.com/test.png',
     names: { zh: '燕麦拿铁' },
     descs: { zh: '测试描述' },
     businessTagIds: ['tag_signature']
   }, { categoryKey: '测试分类' });
+  const normalHtml = ctx.renderMenuManageProductCard({
+    id: 9,
+    price: 18,
+    onSale: true,
+    featured: false,
+    image: 'https://example.com/test.png',
+    names: { zh: '普通拿铁' },
+    descs: { zh: '测试描述' },
+    businessTagIds: ['tag_signature']
+  }, { categoryKey: '测试分类' });
 
-  assert.ok(productHtml.includes('product-business-tag-list product-business-tag-list-overlay'));
-  assert.ok(/<div class="product-image-wrapper">[\s\S]*product-business-tag-list product-business-tag-list-overlay[\s\S]*<\/div>\s*<div class="product-content">/.test(productHtml));
+  assert.ok(hotHtml.includes('热销'));
+  assert.ok(hotHtml.includes('product-hot-badge'));
+  assert.ok(!hotHtml.includes('tag_signature'));
+  assert.ok(!hotHtml.includes('product-business-tag'));
+  assert.ok(!normalHtml.includes('热销'));
+  assert.ok(!normalHtml.includes('product-hot-badge'));
 });
 
 test('菜单管理商品卡片：桌面端 footer 不应横向挤压价格区', () => {
@@ -2667,7 +2665,7 @@ test('菜单管理商品卡片：桌面端 footer 不应横向挤压价格区', 
   assert.ok(/\.product-price-single\s*\{[\s\S]*white-space:\s*nowrap;/.test(html));
   assert.ok(/\.product-card\.product-row\s+\.product-footer\s*\{[\s\S]*flex-direction:\s*column;[\s\S]*align-items:\s*stretch;/.test(html));
   assert.ok(/\.product-card\.product-row\s+\.product-actions\s*\{[\s\S]*width:\s*100%;[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/.test(html));
-  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(html));
+  assert.ok(/\.product-hot-badge\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(html));
 });
 
 test('菜单管理商品卡片：上架和下架按钮应使用不同状态色', () => {
@@ -2678,17 +2676,14 @@ test('菜单管理商品卡片：上架和下架按钮应使用不同状态色',
   assert.ok(/saleActionClass\s*=\s*isOnSale\s*\?\s*'product-action-btn-sale-off'\s*:\s*'product-action-btn-sale-on'/.test(html));
 });
 
-test('菜单管理商品卡片：业务标签应悬浮在商品图右上角，不占用正文布局', () => {
+test('菜单管理商品卡片：热销标识应悬浮在商品图右上角，不占用正文布局', () => {
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
-  ctx.window.COFE_SHARED_MOCK_DATA.defaultBusinessTags = {
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌', en: 'Signature' }, status: 'active' },
-    tag_recommend: { id: 'tag_recommend', names: { zh: '推荐', en: 'Recommend' }, status: 'active' }
-  };
   const product = {
     id: 9,
     price: 10,
     onSale: true,
+    featured: true,
     names: { zh: '卡布其诺*' },
     descs: { zh: '金奖黑咖-浓香意式、热、标准' },
     businessTagIds: ['tag_signature', 'tag_recommend']
@@ -2697,9 +2692,9 @@ test('菜单管理商品卡片：业务标签应悬浮在商品图右上角，�
   const cardHtml = ctx.renderMenuManageProductCard(product, { categoryKey: '奶咖系列' });
   const source = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
 
-  assert.ok(/<div class="product-image-wrapper">[\s\S]*product-business-tag-list product-business-tag-list-overlay/.test(cardHtml));
-  assert.ok(!/<div class="product-content">[\s\S]*product-business-tag-list/.test(cardHtml));
-  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(source));
+  assert.ok(/<div class="product-image-wrapper">[\s\S]*product-hot-badge/.test(cardHtml));
+  assert.ok(!/<div class="product-content">[\s\S]*product-hot-badge/.test(cardHtml));
+  assert.ok(/\.product-hot-badge\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(source));
 });
 
 test('菜单管理工作区：当前分类模式应提供调整商品顺序入口，全部分类模式不显示', () => {
@@ -2974,58 +2969,6 @@ test('保存基础设置后，应将当前设备联系信息保存到独立存�
   assert.ok(ctx.document.getElementById('orderPreviewProducts').innerHTML.includes('400-800-1234'));
   assert.ok(ctx.document.getElementById('orderPreviewProducts').innerHTML.includes('support@example.com'));
   assert.ok(toastMessages.some(message => message.includes('基础设置已保存')));
-});
-
-test('基础设置：设备无可见语言时应阻止保存业务标签改动', () => {
-  const ctx = loadMenuContext();
-  ctx.showToast = () => {};
-  ctx.deviceConfig[ctx.currentDevice].langs = [];
-  ctx.deviceConfig[ctx.currentDevice].hiddenLangs = [];
-  ctx.localStorage.setItem('menuBusinessTagLibrary', JSON.stringify({
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌' }, status: 'active' }
-  }));
-  ctx.document.getElementById('globalCurrencySelect').value = 'USD';
-
-  const beforeLibrary = ctx.localStorage.getItem('menuBusinessTagLibrary');
-  const result = ctx.saveMenuBasicSettings();
-
-  assert.strictEqual(result, false);
-  assert.strictEqual(ctx.localStorage.getItem('menuBusinessTagLibrary'), beforeLibrary);
-});
-
-test('基础设置：保存业务标签失败时应回滚基础设置快照并保持抽屉打开', () => {
-  const ctx = loadMenuContext();
-  ctx.showToast = () => {};
-  ctx.localStorage.setItem('menuBasicSettings', JSON.stringify({ currency: 'CNY' }));
-  ctx.localStorage.setItem('menuBusinessTagLibrary', JSON.stringify({
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌' }, status: 'active' }
-  }));
-  ctx.document.getElementById('globalCurrencySelect').value = 'USD';
-  ctx.persistMenuBasicSettings = () => {
-    ctx.localStorage.setItem('menuBasicSettings', JSON.stringify({ currency: 'USD' }));
-  };
-  ctx.collectBusinessTagLibraryDraft = () => ({
-    tag_signature: { id: 'tag_signature', names: { zh: '招牌' }, status: 'active' },
-    tag_new: { id: 'tag_new', names: { zh: '新品' }, status: 'active' }
-  });
-  ctx.persistBusinessTagLibrary = () => {
-    throw new Error('boom');
-  };
-
-  const beforeLibrary = ctx.localStorage.getItem('menuBusinessTagLibrary');
-  let result;
-  let threw = false;
-  try {
-    result = ctx.saveMenuBasicSettings();
-  } catch (error) {
-    threw = true;
-  }
-
-  assert.strictEqual(threw, false);
-  assert.strictEqual(result, false);
-  assert.strictEqual(JSON.parse(ctx.localStorage.getItem('menuBasicSettings')).currency, 'CNY');
-  assert.strictEqual(ctx.localStorage.getItem('menuBusinessTagLibrary'), beforeLibrary);
-  assert.strictEqual(ctx.document.getElementById('businessTagManagerDrawer').classList.contains('active'), true);
 });
 
 test('基础设置：非法邮箱应阻止保存联系信息', () => {
