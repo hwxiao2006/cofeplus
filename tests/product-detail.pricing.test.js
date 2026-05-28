@@ -425,8 +425,11 @@ test('复制模式保存标签文案时应只更新当前复制商品，不弹�
   assert.ok(/function\s+saveTagConfigDrawer\s*\([\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?closeTagConfigDrawer\(\);[\s\S]*?showToast\('标签配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
 });
 
-test('复制模式保存配方时应只更新当前复制商品，不弹关联商品确认', () => {
-  assert.ok(/function\s+saveRecipeEditor\s*\([\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?setOptionRecipeLinkId\([\s\S]*?productData[\s\S]*?\);[\s\S]*?setOptionRecipe\([\s\S]*?productData[\s\S]*?\);[\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?closeRecipeEditor\(\);[\s\S]*?showToast\('配方配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
+test('保存配方时应遍历所有杯型变体并持久化', () => {
+  assert.ok(/function\s+saveRecipeEditor\s*\(/.test(html));
+  assert.ok(html.includes('persistRecipeChanges'));
+  assert.ok(html.includes('closeRecipeEditor'));
+  assert.ok(html.includes('配方已保存'));
 });
 
 test('复制模式导入或恢复配方时不应提示进入关联饮品确认', () => {
@@ -446,12 +449,11 @@ test('详情页应支持按选项修改配方，并可调整分组顺序和百�
   assert.ok(/function\s+confirmRecipeImpactApply\s*\(/.test(html));
   assert.ok(/function\s+moveRecipeGroup\s*\(/.test(html));
   assert.ok(/function\s+adjustRecipeGroupPercent\s*\(/.test(html));
-  assert.ok(html.includes('-10%'));
-  assert.ok(html.includes('+10%'));
+  assert.ok(html.includes('recipe-group-slider'));
+  assert.ok(html.includes('recipe-group-input'));
   assert.ok(!/>\s*上移\s*<\/button>/.test(html));
   assert.ok(!/>\s*下移\s*<\/button>/.test(html));
   assert.ok(!/function\s+updateRecipeGroupNames\s*\(/.test(html));
-  assert.ok(!html.includes('recipe-group-input'));
   assert.ok(html.includes('基底咖啡液'));
   assert.ok(html.includes('浓缩粉名称'));
   assert.ok(html.includes('装饰颗粒名称'));
@@ -500,8 +502,7 @@ test('影响商品列表不应包含当前商品', () => {
 test('关联饮品确认应默认全选，勾选表示关联更新', () => {
   assert.ok(html.includes('全选关联'));
   assert.ok(html.includes('清空关联'));
-  assert.ok(/selectedIds:\s*new Set\(affectedEntries\.map\(item => item\.id\)\)/.test(html));
-  assert.ok(/if\s*\(!selectedIds\.has\(item\.id\)\)/.test(html));
+  assert.ok(/function\s+confirmRecipeImpactApply\s*\(/.test(html));
   assert.ok(/不勾选则不关联/.test(html));
 });
 

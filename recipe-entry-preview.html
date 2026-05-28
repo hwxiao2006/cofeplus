@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配方入口方案对比</title>
+<style>
+    :root {
+        --primary: #4ECDC4;
+        --primary-dark: #0ba699;
+        --border: #e2e8f0;
+        --text: #111827;
+        --text2: #6b7280;
+        --bg: #f8fafc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); padding: 32px; }
+    h1 { font-size: 22px; margin-bottom: 8px; }
+    .sub { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+
+    .scheme {
+        background: #fff; border: 1px solid var(--border); border-radius: 14px;
+        padding: 24px; margin-bottom: 24px;
+    }
+    .scheme-label {
+        display: inline-block; background: #effaf8; color: var(--primary-dark);
+        font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-bottom: 12px;
+    }
+    .scheme-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .scheme-desc { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+
+    /* 通用模拟组件 */
+    .mock-sidebar {
+        width: 220px; background: #0b132b; border-radius: 12px; padding: 16px 0;
+        color: #fff; font-size: 13px; flex-shrink: 0;
+    }
+    .mock-sidebar-item {
+        padding: 8px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .mock-sidebar-item:hover { background: rgba(255,255,255,0.08); }
+    .mock-sidebar-item.active { background: rgba(78,205,196,0.15); color: var(--primary); }
+    .mock-sidebar-icon { width: 18px; height: 18px; border-radius: 4px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+    .mock-sidebar-item.active .mock-sidebar-icon { background: var(--primary); color: #0b132b; }
+
+    .mock-main { flex: 1; background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+    .mock-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 700; }
+    .mock-body { padding: 16px; }
+
+    /* 商品卡片 */
+    .mock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .mock-card {
+        border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 12px;
+        position: relative; cursor: pointer;
+    }
+    .mock-card:hover { border-color: var(--primary); }
+    .mock-card-img { width: 100%; height: 60px; background: #f1f5f9; border-radius: 6px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 20px; }
+    .mock-card-name { font-weight: 700; margin-bottom: 2px; }
+    .mock-card-price { color: var(--primary-dark); font-weight: 700; }
+    .mock-card-recipe-btn {
+        position: absolute; top: 6px; right: 6px;
+        background: var(--primary); color: #fff; border: none; border-radius: 6px;
+        padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;
+    }
+    .mock-card-recipe-btn:hover { background: var(--primary-dark); }
+
+    /* 标签栏 */
+    .mock-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 12px; }
+    .mock-tab {
+        padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+        border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text2);
+    }
+    .mock-tab.active { color: var(--primary-dark); border-bottom-color: var(--primary); }
+
+    /* 方案 C: 专用配方页 */
+    .mock-recipe-row {
+        display: flex; align-items: center; gap: 12px; padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .mock-recipe-row:last-child { border-bottom: none; }
+    .mock-recipe-name { font-size: 13px; font-weight: 700; min-width: 100px; }
+    .mock-recipe-bar { flex: 1; height: 20px; background: #edf1f2; border-radius: 4px; overflow: hidden; display: flex; }
+    .mock-recipe-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .mock-recipe-info { font-size: 11px; color: var(--text2); min-width: 60px; text-align: right; }
+
+    /* 方案 D: 快捷操作菜单 */
+    .mock-fab {
+        width: 44px; height: 44px; border-radius: 50%; background: var(--primary);
+        color: #fff; border: none; font-size: 20px; cursor: pointer;
+        box-shadow: 0 4px 12px rgba(78,205,196,0.4); position: absolute; bottom: 16px; right: 16px;
+    }
+    .mock-context-menu {
+        position: absolute; top: 50%; right: 20px; background: #fff;
+        border: 1px solid var(--border); border-radius: 8px; padding: 4px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 12px; min-width: 100px;
+        transform: translateY(-50%);
+    }
+    .mock-context-item {
+        padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .mock-context-item:hover { background: #f8fafc; }
+    .mock-context-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .flow { font-size: 12px; color: var(--text2); margin-top: 8px; padding: 8px 12px; background: #f8fafc; border-radius: 8px; }
+    .flow span { color: var(--primary-dark); font-weight: 700; }
+    .footer-note { text-align: center; color: var(--text2); font-size: 12px; margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<h1>配方入口方案对比</h1>
+<p class="sub">当前入口：菜单管理 → 商品管理 → 点击商品 → 商品详情 → 配方配置 tab → 修改配方。下面是 4 种优化方案。</p>
+
+<!-- ========== 方案 A ========== -->
+<div class="scheme">
+    <div class="scheme-label">方案 A</div>
+    <div class="scheme-title">商品卡片直接加配方按钮</div>
+    <div class="scheme-desc">在商品管理列表中，每个商品卡片右上角加一个「配方」快捷按钮，一键打开配方编辑弹窗，无需进入详情页。</div>
+    <div style="display:flex; gap:16px; min-height:280px;">
+        <div class="mock-sidebar">
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📊</div>数据概览</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">☕</div>菜单管理</div>
+            <div class="mock-sidebar-item active"><div class="mock-sidebar-icon">📦</div>商品管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📱</div>设备管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📋</div>订单管理</div>
+        </div>
+        <div class="mock-main">
+            <div class="mock-header">商品管理 · 共24款</div>
+            <div class="mock-body">
+                <div class="mock-grid">
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">☕</div><div class="mock-card-name">干卡布其诺*</div><div class="mock-card-price">¥14.9</div></div>
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">🥥</div><div class="mock-card-name">生椰拿铁</div><div class="mock-card-price">¥16.9</div></div>
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">🍵</div><div class="mock-card-name">抹茶拿铁</div><div class="mock-card-price">¥18.9</div></div>
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">🧊</div><div class="mock-card-name">美式咖啡</div><div class="mock-card-price">¥12.9</div></div>
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">🍫</div><div class="mock-card-name">摩卡</div><div class="mock-card-price">¥19.9</div></div>
+                    <div class="mock-card"><button class="mock-card-recipe-btn">配方</button><div class="mock-card-img">🥛</div><div class="mock-card-name">鲜牛奶</div><div class="mock-card-price">¥8.9</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flow">操作路径：<span>菜单管理 → 商品管理 → 点击「配方」按钮</span>（从 6 步缩减到 2 步）</div>
+</div>
+
+<!-- ========== 方案 B ========== -->
+<div class="scheme">
+    <div class="scheme-label">方案 B</div>
+    <div class="scheme-title">商品详情配方 Tab 提升为一级 Tab</div>
+    <div class="scheme-desc">把「配方配置」从二级 tab 提升为和「基本信息」并列的一级 tab，打开商品详情就能直接看到配方入口。</div>
+    <div style="display:flex; gap:16px; min-height:280px;">
+        <div class="mock-sidebar">
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📊</div>数据概览</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">☕</div>菜单管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📦</div>商品管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📱</div>设备管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📋</div>订单管理</div>
+        </div>
+        <div class="mock-main">
+            <div class="mock-header">干卡布其诺* · 商品详情</div>
+            <div class="mock-body">
+                <div class="mock-tabs">
+                    <div class="mock-tab">基本信息</div>
+                    <div class="mock-tab active">配方配置</div>
+                    <div class="mock-tab">标签配置</div>
+                </div>
+                <div style="font-size:12px; color:var(--text2);">
+                    <p style="margin-bottom:8px;">当前商品：干卡布其诺* (test0116220007)</p>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+                        <div style="border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text2);">热 355ml</div>
+                            <div style="margin:4px 0; height:16px; background:#edf1f2; border-radius:4px; overflow:hidden; display:flex;">
+                                <div style="width:20%; background:#7a5c2e;"></div>
+                                <div style="width:55%; background:#d4b896;"></div>
+                                <div style="width:10%; background:#e0d4b0;"></div>
+                                <div style="width:15%; background:#5bbfb5;"></div>
+                            </div>
+                            <div style="font-size:10px; color:var(--primary-dark); font-weight:700;">317ml / 355ml</div>
+                        </div>
+                        <div style="border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text2);">标准冰 473ml</div>
+                            <div style="margin:4px 0; height:16px; background:#edf1f2; border-radius:4px; overflow:hidden; display:flex;">
+                                <div style="width:18%; background:#7a5c2e;"></div>
+                                <div style="width:30%; background:#d4b896;"></div>
+                                <div style="width:22%; background:#5bbfb5;"></div>
+                                <div style="width:30%; background:#7cc4db;"></div>
+                            </div>
+                            <div style="font-size:10px; color:var(--primary-dark); font-weight:700;">350ml / 473ml</div>
+                        </div>
+                        <div style="border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text2);">少冰 473ml</div>
+                            <div style="margin:4px 0; height:16px; background:#edf1f2; border-radius:4px; overflow:hidden; display:flex;">
+                                <div style="width:20%; background:#7a5c2e;"></div>
+                                <div style="width:45%; background:#d4b896;"></div>
+                                <div style="width:20%; background:#5bbfb5;"></div>
+                                <div style="width:15%; background:#7cc4db;"></div>
+                            </div>
+                            <div style="font-size:10px; color:var(--primary-dark); font-weight:700;">355ml / 473ml</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flow">操作路径：<span>商品管理 → 点击商品 → 配方配置 Tab</span>（从 6 步缩减到 3 步，配方 Tab 一目了然）</div>
+</div>
+
+<!-- ========== 方案 C ========== -->
+<div class="scheme">
+    <div class="scheme-label">方案 C（推荐）</div>
+    <div class="scheme-title">侧边栏新增「配方维护」独立页面</div>
+    <div class="scheme-desc">在侧边栏新增「配方维护」入口，打开后展示当前设备所有饮品的配方概览，点击任意饮品直接编辑配方，无需进入商品详情。</div>
+    <div style="display:flex; gap:16px; min-height:320px;">
+        <div class="mock-sidebar">
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📊</div>数据概览</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">☕</div>菜单管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📦</div>商品管理</div>
+            <div class="mock-sidebar-item active"><div class="mock-sidebar-icon">🧪</div>配方维护</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📱</div>设备管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📋</div>订单管理</div>
+        </div>
+        <div class="mock-main">
+            <div class="mock-header">配方维护 · RCK511 · 共24款饮品</div>
+            <div class="mock-body" style="padding:12px 16px;">
+                <div class="mock-recipe-row">
+                    <div class="mock-recipe-name">干卡布其诺*</div>
+                    <div class="mock-recipe-bar">
+                        <div class="mock-recipe-seg" style="flex:61; background:#7a5c2e;">E61</div>
+                        <div class="mock-recipe-seg" style="flex:198; background:#d4b896;">M198</div>
+                        <div class="mock-recipe-seg" style="flex:30; background:#e0d4b0;">F30</div>
+                        <div class="mock-recipe-seg" style="flex:25; background:#5bbfb5;">W25</div>
+                    </div>
+                    <div class="mock-recipe-info">热 314ml</div>
+                </div>
+                <div class="mock-recipe-row">
+                    <div class="mock-recipe-name">生椰拿铁</div>
+                    <div class="mock-recipe-bar">
+                        <div class="mock-recipe-seg" style="flex:88; background:#7a5c2e;">E88</div>
+                        <div class="mock-recipe-seg" style="flex:180; background:#d4b896;">M180</div>
+                        <div class="mock-recipe-seg" style="flex:100; background:#7cc4db;">I100</div>
+                        <div class="mock-recipe-seg" style="flex:60; background:#5bbfb5;">W60</div>
+                    </div>
+                    <div class="mock-recipe-info">冰 428ml</div>
+                </div>
+                <div class="mock-recipe-row">
+                    <div class="mock-recipe-name">抹茶拿铁</div>
+                    <div class="mock-recipe-bar">
+                        <div class="mock-recipe-seg" style="flex:90; background:#7a5c2e;">E90</div>
+                        <div class="mock-recipe-seg" style="flex:150; background:#d4b896;">M150</div>
+                        <div class="mock-recipe-seg" style="flex:30; background:#c49a6c;">S30</div>
+                        <div class="mock-recipe-seg" style="flex:30; background:#5bbfb5;">W30</div>
+                    </div>
+                    <div class="mock-recipe-info">热 300ml</div>
+                </div>
+                <div class="mock-recipe-row">
+                    <div class="mock-recipe-name">美式咖啡</div>
+                    <div class="mock-recipe-bar">
+                        <div class="mock-recipe-seg" style="flex:70; background:#7a5c2e;">E70</div>
+                        <div class="mock-recipe-seg" style="flex:200; background:#5bbfb5;">W200</div>
+                        <div class="mock-recipe-seg" style="flex:120; background:#7cc4db;">I120</div>
+                    </div>
+                    <div class="mock-recipe-info">冰 390ml</div>
+                </div>
+                <div class="mock-recipe-row">
+                    <div class="mock-recipe-name">鲜牛奶</div>
+                    <div class="mock-recipe-bar">
+                        <div class="mock-recipe-seg" style="flex:280; background:#d4b896;">M280</div>
+                    </div>
+                    <div class="mock-recipe-info">280ml</div>
+                </div>
+                <div style="font-size:11px; color:var(--text2); margin-top:8px; text-align:center;">... 点击任意饮品展开完整配方编辑</div>
+            </div>
+        </div>
+    </div>
+    <div class="flow">操作路径：<span>侧边栏 → 配方维护 → 点击饮品 → 编辑</span>（从 6 步缩减到 2 步，全局视角一目了然）</div>
+</div>
+
+<!-- ========== 方案 D ========== -->
+<div class="scheme">
+    <div class="scheme-label">方案 D</div>
+    <div class="scheme-title">商品卡片长按 / 右键弹出快捷菜单</div>
+    <div class="scheme-desc">在商品管理列表中，长按（移动端）或右键（桌面端）商品卡片弹出快捷菜单，包含「编辑」「配方」「复制」等常用操作。</div>
+    <div style="display:flex; gap:16px; min-height:280px;">
+        <div class="mock-sidebar">
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📊</div>数据概览</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">☕</div>菜单管理</div>
+            <div class="mock-sidebar-item active"><div class="mock-sidebar-icon">📦</div>商品管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📱</div>设备管理</div>
+            <div class="mock-sidebar-item"><div class="mock-sidebar-icon">📋</div>订单管理</div>
+        </div>
+        <div class="mock-main" style="position:relative;">
+            <div class="mock-header">商品管理 · 共24款</div>
+            <div class="mock-body">
+                <div class="mock-grid">
+                    <div class="mock-card" style="border-color:var(--primary);">
+                        <div class="mock-card-img">☕</div>
+                        <div class="mock-card-name">干卡布其诺*</div>
+                        <div class="mock-card-price">¥14.9</div>
+                    </div>
+                    <div class="mock-card"><div class="mock-card-img">🥥</div><div class="mock-card-name">生椰拿铁</div><div class="mock-card-price">¥16.9</div></div>
+                    <div class="mock-card"><div class="mock-card-img">🍵</div><div class="mock-card-name">抹茶拿铁</div><div class="mock-card-price">¥18.9</div></div>
+                    <div class="mock-card"><div class="mock-card-img">🧊</div><div class="mock-card-name">美式咖啡</div><div class="mock-card-price">¥12.9</div></div>
+                </div>
+                <div class="mock-context-menu">
+                    <div class="mock-context-item"><div class="mock-context-dot" style="background:var(--primary);"></div>编辑商品</div>
+                    <div class="mock-context-item" style="color:var(--primary-dark); font-weight:700;"><div class="mock-context-dot" style="background:var(--primary-dark);"></div>调整配方</div>
+                    <div class="mock-context-item"><div class="mock-context-dot" style="background:#f59e0b;"></div>复制商品</div>
+                    <div class="mock-context-item"><div class="mock-context-dot" style="background:var(--primary);"></div>点单预览</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flow">操作路径：<span>商品管理 → 右键/长按商品 → 调整配方</span>（从 6 步缩减到 2 步，操作便捷但可发现性低）</div>
+</div>
+
+<div class="footer-note">预览地址 localhost:8080/recipe-entry-preview.html</div>
+</body>
+</html>

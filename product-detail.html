@@ -1890,6 +1890,132 @@
             color: var(--text-muted);
         }
 
+        .recipe-group-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            cursor: pointer;
+        }
+        .recipe-group-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: #0ba699;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .recipe-group-slider::-moz-range-thumb {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: #0ba699;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .recipe-group-input {
+            width: 52px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px;
+            outline: none;
+            background: #f8fafc;
+        }
+        .recipe-group-input:focus {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.15);
+        }
+
+        .cup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+        .cup-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cup-card:hover { border-color: #c8d8dc; }
+        .cup-card.active {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.12);
+            cursor: default;
+        }
+        .cup-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cup-card-title .dot {
+            width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
+        }
+        .cup-card:not(.active) .cup-card-title .dot { background: var(--border); }
+        .cup-fill-track {
+            width: 100%; background: #edf1f2; border-radius: 8px;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .cup-fill-content {
+            display: flex; border-radius: 7px; overflow: hidden;
+            transition: width 0.3s ease;
+        }
+        .cup-fill-seg {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; min-width: 0;
+            padding: 0 3px; transition: flex 0.3s ease; white-space: nowrap;
+        }
+        .cup-fill-seg span { color: rgba(255,255,255,0.9); }
+        .cup-fill-detail {
+            display: flex; gap: 12px; margin-top: 4px; font-size: 11px;
+        }
+        .cup-fill-detail .item { display: flex; align-items: center; gap: 4px; }
+        .cup-fill-detail .dot { width: 8px; height: 8px; border-radius: 2px; }
+        .cup-fill-detail .label { color: var(--text-muted); }
+        .cup-fill-detail .val { color: var(--text-primary); font-weight: 700; }
+        .cup-fill-detail .overflow { color: #ef4444; font-weight: 700; }
+        .cup-param-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+        .cup-param-tag {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 12px; font-weight: 700; padding: 3px 8px;
+            border-radius: 6px; border: 1px solid var(--border);
+        }
+        .cup-edit-row {
+            display: grid; grid-template-columns: 48px 1fr 60px; gap: 8px;
+            align-items: center; margin-bottom: 4px;
+        }
+        .cup-edit-label { font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .cup-edit-slider {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 5px; border-radius: 3px;
+            background: #e2e8f0; outline: none; cursor: pointer;
+        }
+        .cup-edit-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+            background: #0ba699; cursor: pointer; border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .cup-edit-input {
+            width: 100%; text-align: center; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; font-weight: 700; padding: 2px 4px;
+            outline: none; background: #f8fafc;
+        }
+        .cup-edit-input:focus {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.12);
+        }
         .recipe-group-percent {
             min-width: 54px;
             text-align: center;
@@ -2254,7 +2380,7 @@
             .product-detail-tabs {
                 width: 100%;
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
             .product-detail-tab-btn {
@@ -2556,6 +2682,12 @@
             .recipe-group-controls {
                 width: 100%;
                 justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .recipe-group-slider {
+                width: 100%;
             }
         }
 
@@ -2706,7 +2838,8 @@
 
                 <div class="product-detail-tabs" role="tablist" aria-label="商品详情分组">
                     <button type="button" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" onclick="switchProductDetailTab('basic')">基本信息</button>
-                    <button type="button" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" onclick="switchProductDetailTab('recipe')">配方配置</button>
+                    <button type="button" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" onclick="switchProductDetailTab('recipe')">🧪 配方配置</button>
+                    <button type="button" class="product-detail-tab-btn" id="productDetailTabTagsBtn" aria-selected="false" onclick="switchProductDetailTab('tags')">⚙️ 选项配置</button>
                 </div>
 
                 <section class="product-detail-tab-panel active" id="productDetailBasicPanel">
@@ -2776,15 +2909,95 @@
                     </div>
                 </section>
 
-                <section class="product-detail-tab-panel" id="productDetailRecipePanel">
-                    <div class="option-toolbar">
-                        <div class="option-toolbar-title">配方配置</div>
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn btn-default" id="openRecipeEditorBtn" onclick="openRecipeEditorForActiveSpec()">修改配方</button>
-                            <button class="btn btn-default" onclick="openTagConfigDrawer('beans')">标签配置</button>
+                <section class="product-detail-tab-panel" id="productDetailTagsPanel">
+                    <div class="form-card" style="margin-bottom:16px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                            <h2 class="form-section-title" style="margin-bottom:0;">选项配置</h2>
+                            <button class="btn btn-default" id="openTagConfigDrawerBtn" onclick="openTagConfigDrawer('beans')">编辑多语言文案</button>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="tagOptionsGrid">
+                            <div class="option-card active-spec" data-spec-key="beans">
+                                <div class="option-title">BEAN / 咖啡豆</div>
+                                <div class="option-list" id="beanOptions">
+                                    <div class="option-item" data-value="精品咖啡-翡翠瑰夏">精品咖啡-翡翠瑰夏</div>
+                                    <div class="option-item selected" data-value="金奖黑咖-浓香意式">金奖黑咖-浓香意式</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="temperature">
+                                <div class="option-title">TEMPERATURE / 温度</div>
+                                <div class="option-list" id="tempOptions">
+                                    <div class="option-item selected" data-value="热">热</div>
+                                    <div class="option-item" data-value="标准冰">标准冰</div>
+                                    <div class="option-item" data-value="少冰">少冰</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="strength">
+                                <div class="option-title">PROFILE / 浓度</div>
+                                <div class="option-list" id="profileOptions">
+                                    <div class="option-item selected" data-value="标准">标准</div>
+                                    <div class="option-item" data-value="加1份浓缩">加1份浓缩</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="syrup">
+                                <div class="option-title">SYRUP / 糖浆</div>
+                                <div class="option-list" id="syrupOptions">
+                                    <div class="option-item selected" data-value="蔗糖糖浆">蔗糖糖浆</div>
+                                    <div class="option-item" data-value="香草糖浆">香草糖浆</div>
+                                    <div class="option-item" data-value="榛果糖浆">榛果糖浆</div>
+                                    <div class="option-item" data-value="焦糖海盐糖浆">焦糖海盐糖浆</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="sweetness">
+                                <div class="option-title">SWEETNESS / 甜度</div>
+                                <div class="option-list" id="sweetnessOptions">
+                                    <div class="option-item selected" data-value="无糖">无糖</div>
+                                    <div class="option-item" data-value="少糖">少糖</div>
+                                    <div class="option-item" data-value="标准糖">标准糖</div>
+                                    <div class="option-item" data-value="多糖">多糖</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="cupsize">
+                                <div class="option-title">CUPSIZE / 杯型</div>
+                                <div class="option-list" id="cupsizeOptions">
+                                    <div class="option-item selected" data-value="355ml">355ml</div>
+                                    <div class="option-item" data-value="473ml">473ml</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="lid">
+                                <div class="option-title">LID / 杯盖</div>
+                                <div class="option-list" id="lidOptions">
+                                    <div class="option-item selected" data-value="倡导环保 不使用杯盖">倡导环保 不使用杯盖</div>
+                                    <div class="option-item" data-value="需要杯盖">需要杯盖</div>
+                                </div>
+                            </div>
+
+                            <div class="option-card" data-spec-key="latteArt">
+                                <div class="option-title">LATTE-ART / 拉花</div>
+                                <div class="option-list" id="latteArtOptions">
+                                    <div class="option-item selected" data-value="无">无</div>
+                                    <div class="option-item" data-value="随机拉花">随机拉花</div>
+                                    <div class="option-item" data-value="上传图片">上传图片</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </section>
 
+                <section class="product-detail-tab-panel" id="productDetailRecipePanel">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                        <div style="font-size:14px; font-weight:700;">配方配置 · 直接调整各杯型成分</div>
+                        <button class="btn btn-primary" id="saveRecipeInlineBtn" onclick="saveRecipeInline()">保存配方</button>
+                    </div>
+                    <div id="recipeInlineBody"></div>
+                </section>
+
+                <section id="recipeHiddenOptions" style="display:none;">
                     <div class="option-card active-spec" data-spec-key="beans">
                         <div class="option-title">BEAN / 咖啡豆</div>
                         <div class="option-list" id="beanOptions">
@@ -2797,8 +3010,8 @@
                         <div class="option-title">TEMPERATURE / 温度</div>
                         <div class="option-list" id="tempOptions">
                             <div class="option-item selected" data-value="热">热</div>
-                            <div class="option-item" data-value="冰">冰</div>
-                            <div class="option-item" data-value="常温">常温</div>
+                            <div class="option-item" data-value="标准冰">标准冰</div>
+                            <div class="option-item" data-value="少冰">少冰</div>
                         </div>
                     </div>
 
@@ -2807,17 +3020,16 @@
                         <div class="option-list" id="profileOptions">
                             <div class="option-item selected" data-value="标准">标准</div>
                             <div class="option-item" data-value="加1份浓缩">加1份浓缩</div>
-                            <div class="option-item" data-value="加2份浓缩">加2份浓缩</div>
                         </div>
                     </div>
 
                     <div class="option-card" data-spec-key="syrup">
                         <div class="option-title">SYRUP / 糖浆</div>
                         <div class="option-list" id="syrupOptions">
-                            <div class="option-item selected" data-value="甘蔗冰糖糖浆">甘蔗冰糖糖浆</div>
-                            <div class="option-item" data-value="香草风味糖浆">香草风味糖浆</div>
-                            <div class="option-item" data-value="榛果风味糖浆">榛果风味糖浆</div>
-                            <div class="option-item" data-value="无糖浆">无糖浆</div>
+                            <div class="option-item selected" data-value="蔗糖糖浆">蔗糖糖浆</div>
+                            <div class="option-item" data-value="香草糖浆">香草糖浆</div>
+                            <div class="option-item" data-value="榛果糖浆">榛果糖浆</div>
+                            <div class="option-item" data-value="焦糖海盐糖浆">焦糖海盐糖浆</div>
                         </div>
                     </div>
 
@@ -2836,7 +3048,6 @@
                         <div class="option-list" id="cupsizeOptions">
                             <div class="option-item selected" data-value="355ml">355ml</div>
                             <div class="option-item" data-value="473ml">473ml</div>
-                            <div class="option-item" data-value="592ml">592ml</div>
                         </div>
                     </div>
 
@@ -3414,6 +3625,7 @@
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
             { key: 'milk', title: '奶量', multi: false, defaultNames: ['牛奶'] },
+            { key: 'foam', title: '奶泡', multi: false, defaultNames: ['奶泡'] },
             { key: 'water', title: '水量', multi: false, defaultNames: ['水'] },
             { key: 'ice', title: '冰量', multi: false, defaultNames: ['冰'] },
             { key: 'powders', title: '浓缩粉名称', multi: true, defaultNames: [] },
@@ -3421,6 +3633,16 @@
             { key: 'decorToppings', title: '装饰颗粒名称', multi: true, defaultNames: [] }
         ];
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
+        const RECIPE_COMP_CONFIGS = [
+            { key: 'E', groupKey: 'baseCoffeeLiquid', label: '浓缩', color: '#7a5c2e', light: '#f5f0e1' },
+            { key: 'M', groupKey: 'milk',             label: '奶',   color: '#d4b896', light: '#fdf8f0' },
+            { key: 'F', groupKey: 'foam',             label: '奶泡', color: '#e0d4b0', light: '#fefcf4' },
+            { key: 'W', groupKey: 'water',            label: '热水', color: '#5bbfb5', light: '#effaf8' },
+            { key: 'I', groupKey: 'ice',              label: '冰',   color: '#7cc4db', light: '#f0f8fb' },
+            { key: 'S', groupKey: 'syrup',            label: '糖浆', color: '#c49a6c', light: '#fdf6ee' },
+            { key: 'P', groupKey: 'powders',          label: '粉',   color: '#a08060', light: '#f8f4ee' },
+            { key: 'G', groupKey: 'decorToppings',    label: '颗粒', color: '#8aaa6c', light: '#f4f8ee' }
+        ];
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         let selectedBusinessTagIds = [];
         let productBusinessTagDraft = null;
@@ -4037,17 +4259,22 @@
         function switchProductDetailTab(tabKey) {
             const nextTab = tabKey === 'recipe'
                 ? 'recipe'
+                : tabKey === 'tags'
+                ? 'tags'
                 : (isCopyWorkflowActive() && tabKey === 'confirm' ? 'confirm' : 'basic');
             currentProductDetailTab = nextTab;
 
             const isBasic = nextTab === 'basic';
             const isRecipe = nextTab === 'recipe';
+            const isTags = nextTab === 'tags';
             const isConfirm = nextTab === 'confirm';
             const basicBtn = document.getElementById('productDetailTabBasicBtn');
             const recipeBtn = document.getElementById('productDetailTabRecipeBtn');
+            const tagsBtn = document.getElementById('productDetailTabTagsBtn');
             const confirmBtn = document.getElementById('productCopyStepConfirm');
             const basicPanel = document.getElementById('productDetailBasicPanel');
             const recipePanel = document.getElementById('productDetailRecipePanel');
+            const tagsPanel = document.getElementById('productDetailTagsPanel');
             const confirmPanel = document.getElementById('productDetailConfirmPanel');
 
             if (basicBtn) {
@@ -4058,6 +4285,10 @@
                 recipeBtn.classList.toggle('active', isRecipe);
                 recipeBtn.setAttribute('aria-selected', isRecipe ? 'true' : 'false');
             }
+            if (tagsBtn) {
+                tagsBtn.classList.toggle('active', isTags);
+                tagsBtn.setAttribute('aria-selected', isTags ? 'true' : 'false');
+            }
             if (confirmBtn) {
                 confirmBtn.classList.toggle('active', isConfirm);
             }
@@ -4066,6 +4297,9 @@
             }
             if (recipePanel) {
                 recipePanel.classList.toggle('active', isRecipe);
+            }
+            if (tagsPanel) {
+                tagsPanel.classList.toggle('active', isTags);
             }
             if (confirmPanel) {
                 confirmPanel.classList.toggle('active', isConfirm);
@@ -4086,6 +4320,10 @@
                     renderCopyConfirmPanel();
                 }
                 updateCopyWorkflowActions();
+            }
+
+            if (isRecipe) {
+                renderInlineRecipe();
             }
         }
 
@@ -4280,7 +4518,8 @@
                     : [...cfg.defaultNames];
                 groups[cfg.key] = {
                     names,
-                    percent: 100
+                    percent: 100,
+                    ml: 0
                 };
             });
 
@@ -4310,7 +4549,8 @@
                 const names = namesRaw.map(item => String(item || '').trim()).filter(Boolean);
                 groups[cfg.key] = {
                     names: cfg.multi ? names : (names.length ? [names[0]] : []),
-                    percent: normalizeRecipePercent(sourceGroup?.percent ?? defaultGroup.percent)
+                    percent: normalizeRecipePercent(sourceGroup?.percent ?? defaultGroup.percent),
+                    ml: Number(sourceGroup?.ml ?? defaultGroup.ml) || 0
                 };
             });
 
@@ -5020,17 +5260,21 @@
 
         function openRecipeEditor(specKey) {
             if (!productData) return;
-            const optionInfo = getSelectedOptionInfo(specKey);
-            if (!optionInfo) {
-                showToast('请先在该分组选择一个选项', 'error');
+
+            const variants = getCupVariants();
+            if (!variants.length) {
+                showToast('未找到杯型配置', 'error');
                 return;
             }
 
             recipeEditorState = {
-                specKey: optionInfo.specKey,
-                tagKey: optionInfo.tagKey,
-                tagLabel: optionInfo.tagLabel,
-                recipe: getOptionRecipe(optionInfo.specKey, optionInfo.tagKey, optionInfo.tagLabel)
+                variants: variants.map(v => ({
+                    label: v.label,
+                    capacity: v.capacity,
+                    tagKey: v.tagKey,
+                    recipe: getOptionRecipe('cupsize', v.tagKey, v.label)
+                })),
+                activeIndex: 0
             };
 
             renderRecipeEditor();
@@ -5050,52 +5294,141 @@
             const subtitle = document.getElementById('recipeEditorSubtitle');
             if (!body || !subtitle) return;
 
-            const cfg = getTagConfigBySpec(recipeEditorState.specKey);
-            const specTitle = cfg ? getTagGroupLabel(cfg.specKey, currentLang) : recipeEditorState.specKey;
-            subtitle.textContent = `${specTitle} · ${recipeEditorState.tagLabel}`;
+            subtitle.textContent = productData.names?.[currentLang] || productData.names?.zh || '';
 
-            body.innerHTML = recipeEditorState.recipe.groupOrder.map((groupKey) => {
-                const groupCfg = getRecipeGroupConfig(groupKey);
-                if (!groupCfg) return '';
-                const groupData = recipeEditorState.recipe.groups[groupKey] || { names: [], percent: 100 };
-                const recipeNames = formatRecipeGroupNames(groupData.names, groupCfg.multi);
+            const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
+                const isActive = idx === recipeEditorState.activeIndex;
+                const recipe = variant.recipe;
+                const total = RECIPE_COMP_CONFIGS.reduce((s, c) => s + (recipe.groups[c.groupKey]?.ml || 0), 0);
+                const overflow = total > variant.capacity;
+                const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
+
+                const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + ml : ''}</span></div>`;
+                    }).join('');
+
+                const paramTags = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${ml}ml</span>`;
+                    }).join('');
+
+                const editRows = isActive ? RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                    const ml = recipe.groups[c.groupKey].ml;
+                    return `
+                        <div class="cup-edit-row">
+                            <span class="cup-edit-label" style="color:${c.color};">${c.label}</span>
+                            <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
+                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   oninput="onCupSlider(this)">
+                            <input type="number" class="cup-edit-input" min="0" max="500" step="1"
+                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   onchange="onCupInput(this)">
+                        </div>
+                    `;
+                }).join('') : '';
 
                 return `
-                    <div class="recipe-group-card" data-group-key="${groupKey}" draggable="true">
-                        <div class="recipe-group-top">
-                            <div class="recipe-group-heading">
-                                <button type="button" class="recipe-group-drag-handle" aria-label="拖拽排序">⠿</button>
-                                <div class="recipe-group-title">${groupCfg.title}</div>
-                            </div>
-                            <div class="recipe-group-controls">
-                                <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', -10)">-10%</button>
-                                <span class="recipe-group-percent">${normalizeRecipePercent(groupData.percent)}%</span>
-                                <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', 10)">+10%</button>
-                            </div>
+                    <div class="cup-card ${isActive ? 'active' : ''}" onclick="setActiveCup(${idx})">
+                        <div class="cup-card-title">
+                            <span class="dot"></span>
+                            ${variant.label}
                         </div>
-                        <div class="recipe-group-field">
-                            <label class="recipe-group-field-label">${groupCfg.multi ? '原料名称（多个）' : '原料名称'}</label>
-                            <div class="recipe-group-value">${escAttr(recipeNames)}</div>
-                            <div class="recipe-group-hint">名称在当前选项里只读展示，如需改名称请走标签配置。</div>
+                        <div class="cup-fill-track" style="height:28px;">
+                            <div class="cup-fill-content" style="width:${pct}%;">${fillSegs}</div>
                         </div>
+                        <div class="cup-fill-detail">
+                            <span class="item">
+                                <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
+                                <span class="label">配置总量</span>
+                                <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
+                            </span>
+                            <span class="item">
+                                <span class="dot" style="background:#e2e8f0;"></span>
+                                <span class="label">标准杯量</span>
+                                <span class="val">${variant.capacity}ml</span>
+                            </span>
+                            ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
+                        </div>
+                        <div class="cup-param-tags">${paramTags}</div>
+                        ${editRows}
                     </div>
                 `;
             }).join('');
 
-            if (typeof body.querySelectorAll === 'function') {
-                const cards = body.querySelectorAll('.recipe-group-card[data-group-key]');
-                cards.forEach(card => {
-                    card.addEventListener('dragstart', startRecipeGroupDrag);
-                    card.addEventListener('dragover', handleRecipeGroupDragOver);
-                    card.addEventListener('dragend', endRecipeGroupDrag);
-                });
+            body.innerHTML = `<div class="cup-grid">${cardsHtml}</div>`;
+        }
 
-                ensureRecipeGroupTouchListeners();
-                const handles = body.querySelectorAll('.recipe-group-drag-handle');
-                handles.forEach(handle => {
-                    handle.addEventListener('touchstart', startRecipeGroupTouchDrag, { passive: false });
+        function getCupVariants() {
+            if (!productData) return [];
+            const tempCfg = getTagConfigBySpec('temperature');
+            const cupCfg = getTagConfigBySpec('cupsize');
+            if (!tempCfg || !cupCfg) return [];
+            const tempContainer = document.getElementById(tempCfg.listId);
+            const cupContainer = document.getElementById(cupCfg.listId);
+            if (!tempContainer || !cupContainer) return [];
+
+            const tempItems = tempContainer.querySelectorAll('.option-item');
+            const cupItems = cupContainer.querySelectorAll('.option-item');
+            const variants = [];
+
+            const cupList = Array.from(cupItems).map(item => ({
+                key: item.dataset.tagKey || item.dataset.value,
+                value: item.dataset.value,
+                capacity: parseInt(item.dataset.value) || 325
+            }));
+
+            tempItems.forEach(tempItem => {
+                const tempKey = tempItem.dataset.tagKey || tempItem.dataset.value;
+                const tempLabel = tempItem.dataset.value || tempKey;
+                const isHot = tempKey === '热';
+
+                const cup = isHot ? cupList[0] : (cupList[1] || cupList[0]);
+                if (!cup) return;
+
+                variants.push({
+                    label: tempLabel + ' 约' + cup.capacity + 'ML',
+                    capacity: cup.capacity,
+                    tagKey: tempKey
                 });
+            });
+            return variants;
+        }
+
+        function setActiveCup(idx) {
+            if (!recipeEditorState) return;
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditor();
+        }
+
+        function onCupSlider(el) {
+            const comp = el.dataset.comp;
+            const idx = Number(el.dataset.idx);
+            const val = Number(el.value);
+            const variant = recipeEditorState.variants[idx];
+            if (variant && variant.recipe.groups[comp]) {
+                variant.recipe.groups[comp].ml = val;
             }
+            renderRecipeEditor();
+        }
+
+        function onCupInput(el) {
+            const comp = el.dataset.comp;
+            const idx = Number(el.dataset.idx);
+            let val = Number(el.value);
+            if (!Number.isFinite(val) || val < 0) val = 0;
+            if (val > 500) val = 500;
+            const variant = recipeEditorState.variants[idx];
+            if (variant && variant.recipe.groups[comp]) {
+                variant.recipe.groups[comp].ml = val;
+            }
+            renderRecipeEditor();
         }
 
         function createRecipeGroupDropPlaceholder(height = 72) {
@@ -5303,52 +5636,40 @@
             renderRecipeEditor();
         }
 
+        function adjustRecipeGroupSlider(groupKey, value) {
+            if (!recipeEditorState) return;
+            const group = recipeEditorState.recipe.groups[groupKey];
+            if (!group) return;
+            group.percent = normalizeRecipePercent(Number(value));
+            renderRecipeEditor();
+        }
+
+        function adjustRecipeGroupInput(groupKey, value) {
+            if (!recipeEditorState) return;
+            const group = recipeEditorState.recipe.groups[groupKey];
+            if (!group) return;
+            const num = Number(value);
+            if (!Number.isFinite(num)) return;
+            group.percent = normalizeRecipePercent(num);
+            renderRecipeEditor();
+        }
+
         function saveRecipeEditor() {
             if (!recipeEditorState || !productData) return;
-            const linkId = getOptionRecipeLinkId(
-                recipeEditorState.specKey,
-                recipeEditorState.tagKey,
-                productData
-            );
 
-            if (isCopyWorkflowActive()) {
-                setOptionRecipeLinkId(
-                    recipeEditorState.specKey,
-                    recipeEditorState.tagKey,
-                    linkId,
-                    productData
-                );
+            recipeEditorState.variants.forEach(variant => {
                 setOptionRecipe(
-                    recipeEditorState.specKey,
-                    recipeEditorState.tagKey,
-                    recipeEditorState.recipe,
-                    recipeEditorState.tagLabel,
+                    'cupsize',
+                    variant.tagKey,
+                    variant.recipe,
+                    variant.label,
                     productData
                 );
-                persistRecipeChanges(productData ? [productData] : []);
-                closeRecipeEditor();
-                showToast('配方配置已更新');
-                return;
-            }
+            });
 
-            const affectedEntries = getRecipeImpactEntries(
-                recipeEditorState.specKey,
-                recipeEditorState.tagKey,
-                linkId
-            );
-
-            recipeImpactState = {
-                specKey: recipeEditorState.specKey,
-                tagKey: recipeEditorState.tagKey,
-                specTitle: getTagGroupLabel(recipeEditorState.specKey, currentLang) || recipeEditorState.specKey,
-                tagLabel: recipeEditorState.tagLabel,
-                linkId,
-                recipe: normalizeRecipeData(recipeEditorState.recipe, recipeEditorState.tagLabel),
-                affectedEntries,
-                selectedIds: new Set(affectedEntries.map(item => item.id))
-            };
-
-            openRecipeImpactModal();
+            persistRecipeChanges([productData]);
+            closeRecipeEditor();
+            showToast('配方已保存');
         }
 
         function escAttr(v) {
@@ -6388,8 +6709,11 @@
             const categoryJson = params.get('category');
             const productId = Number(params.get('id'));
             currentDevice = params.get('device') || 'RCK111';
-            if (detailTab === 'recipe') {
+            if (detailTab === 'recipe' || params.get('tab') === 'recipe') {
                 switchProductDetailTab('recipe');
+            }
+            if (detailTab === 'tags') {
+                switchProductDetailTab('tags');
             }
 
             if (payloadKey) {
@@ -6682,18 +7006,64 @@
             });
         }
 
+        function ensureMockRecipes() {
+            if (!productData) return;
+            if (productData.optionRecipes && Object.keys(productData.optionRecipes).length > 0) {
+                const cupRecipes = productData.optionRecipes['cupsize'] || {};
+                const hasMl = Object.values(cupRecipes).some(r => {
+                    if (!r || !r.groups) return false;
+                    return Object.values(r.groups).some(g => (g.ml || 0) > 0);
+                });
+                if (hasMl) return;
+            }
+
+            const groupOrder = ['baseCoffeeLiquid', 'syrup', 'milk', 'foam', 'water', 'ice', 'powders', 'concentrates', 'decorToppings'];
+            const makeRecipe = (mlOverrides) => {
+                const groups = {};
+                groupOrder.forEach(key => {
+                    groups[key] = { names: [], percent: 100, ml: mlOverrides[key] || 0 };
+                });
+                return { groupOrder, groups };
+            };
+
+            const seed = (productData.id || 1) - 1;
+            const presets = [
+                { baseCoffeeLiquid: 80, syrup: 25, milk: 180, foam: 20, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 60, syrup: 0, milk: 200, foam: 35, water: 25, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 90, syrup: 30, milk: 150, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 70, syrup: 0, milk: 0, foam: 0, water: 200, ice: 120, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 0, syrup: 0, milk: 280, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+            ];
+            const preset = presets[seed % presets.length];
+
+            productData.optionRecipes = productData.optionRecipes || {};
+            productData.optionRecipeLinks = productData.optionRecipeLinks || {};
+            productData.optionRecipes['cupsize'] = {
+                '热': makeRecipe({ ...preset, water: preset.water || 30, ice: 0 }),
+                '标准冰': makeRecipe({ ...preset, water: preset.water || 60, ice: preset.ice || 100, foam: 0 }),
+                '少冰': makeRecipe({ ...preset, water: preset.water || 60, ice: 70, foam: 0 })
+            };
+            productData.optionRecipeLinks['cupsize'] = {
+                '热': 'cupsize:热:' + productData.id,
+                '标准冰': 'cupsize:标准冰:' + productData.id,
+                '少冰': 'cupsize:少冰:' + productData.id
+            };
+        }
+
+        let inlineRecipeState = null;
+
         function fillFormData() {
             renderProductCategorySelector();
-            
+
             // 图片
             document.getElementById('productImage').value = productData.image || '';
             updateImagePreview();
-            
+
             // 价格
             document.getElementById('productPrice').value = productData.price || '';
             document.getElementById('productOriginalPrice').value = productData.originalPrice || '';
             updatePricePreview();
-            
+
             document.getElementById('onSaleSwitch').checked = productData.onSale !== false;
             updateOnSaleLabel();
             resetProductBusinessTagDraftState();
@@ -6714,6 +7084,106 @@
                 }
                 sortOptionListByPreferred(meta.listId, preferred || '');
             });
+        }
+
+        function renderInlineRecipe() {
+            if (!productData) return;
+            const body = document.getElementById('recipeInlineBody');
+            if (!body) return;
+
+            ensureMockRecipes();
+
+            const variants = getCupVariants();
+            if (!variants.length) {
+                body.innerHTML = '<div style="padding:32px; text-align:center; color:var(--text-muted);">暂无杯型配置，请先在基本信息中设置选项</div>';
+                return;
+            }
+
+            recipeEditorState = {
+                variants: variants.map(v => ({
+                    label: v.label,
+                    capacity: v.capacity,
+                    tagKey: v.tagKey,
+                    recipe: getOptionRecipe('cupsize', v.tagKey, v.label)
+                })),
+                activeIndex: 0
+            };
+
+            renderRecipeEditorInline();
+        }
+
+        function renderRecipeEditorInline() {
+            if (!recipeEditorState) return;
+            const body = document.getElementById('recipeInlineBody');
+            if (!body) return;
+
+            const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
+                const isActive = idx === recipeEditorState.activeIndex;
+                const recipe = variant.recipe;
+                const total = RECIPE_COMP_CONFIGS.reduce((s, c) => s + (recipe.groups[c.groupKey]?.ml || 0), 0);
+                const overflow = total > variant.capacity;
+                const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
+
+                const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + ml : ''}</span></div>`;
+                    }).join('');
+
+                const paramTags = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${ml}ml</span>`;
+                    }).join('');
+
+                const editRows = isActive ? RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                    const ml = recipe.groups[c.groupKey].ml;
+                    return `
+                        <div class="cup-edit-row">
+                            <span class="cup-edit-label" style="color:${c.color};">${c.label}</span>
+                            <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
+                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   oninput="onCupSlider(this)">
+                            <input type="number" class="cup-edit-input" min="0" max="500" step="1"
+                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   onchange="onCupInput(this)">
+                        </div>
+                    `;
+                }).join('') : '';
+
+                return `
+                    <div class="cup-card ${isActive ? 'active' : ''}" onclick="setActiveCup(${idx})">
+                        <div class="cup-card-title">
+                            <span class="dot"></span>
+                            ${variant.label}
+                        </div>
+                        <div class="cup-fill-track" style="height:28px;">
+                            <div class="cup-fill-content" style="width:${pct}%;">${fillSegs}</div>
+                        </div>
+                        <div class="cup-fill-detail">
+                            <span class="item">
+                                <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
+                                <span class="label">配置总量</span>
+                                <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
+                            </span>
+                            <span class="item">
+                                <span class="dot" style="background:#e2e8f0;"></span>
+                                <span class="label">标准杯量</span>
+                                <span class="val">${variant.capacity}ml</span>
+                            </span>
+                            ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
+                        </div>
+                        <div class="cup-param-tags">${paramTags}</div>
+                        ${editRows}
+                    </div>
+                `;
+            }).join('');
+
+            body.innerHTML = `<div class="cup-grid">${cardsHtml}</div>`;
         }
 
         function updateImagePreview() {
