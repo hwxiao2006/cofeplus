@@ -1958,12 +1958,37 @@
             margin-bottom: 10px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .cup-card-name {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
             gap: 6px;
         }
         .cup-card-title .dot {
+            flex: 0 0 auto;
             width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
         }
         .cup-card:not(.active) .cup-card-title .dot { background: var(--border); }
+        .cup-card-reset-btn {
+            flex: 0 0 auto;
+            border: 1px solid rgba(148, 163, 184, 0.38);
+            background: #fff;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cup-card-reset-btn:hover {
+            border-color: rgba(11, 166, 153, 0.42);
+            color: #0b8f85;
+            background: rgba(11, 166, 153, 0.06);
+        }
         .cup-fill-track {
             width: 100%; background: #edf1f2; border-radius: 8px;
             overflow: hidden; border: 1px solid var(--border);
@@ -2837,12 +2862,12 @@
                 <div class="copy-flow-summary" id="copyFlowSummary"></div>
 
                 <div class="product-detail-tabs" role="tablist" aria-label="商品详情分组">
-                    <button type="button" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" onclick="switchProductDetailTab('basic')">基本信息</button>
-                    <button type="button" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" onclick="switchProductDetailTab('recipe')">🧪 配方配置</button>
-                    <button type="button" class="product-detail-tab-btn" id="productDetailTabTagsBtn" aria-selected="false" onclick="switchProductDetailTab('tags')">⚙️ 选项配置</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" aria-controls="productDetailBasicPanel" onclick="switchProductDetailTab('basic')">基本信息</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" aria-controls="productDetailRecipePanel" onclick="switchProductDetailTab('recipe')">🧪 配方配置</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn" id="productDetailTabTagsBtn" aria-selected="false" aria-controls="productDetailTagsPanel" onclick="switchProductDetailTab('tags')">⚙️ 选项配置</button>
                 </div>
 
-                <section class="product-detail-tab-panel active" id="productDetailBasicPanel">
+                <section class="product-detail-tab-panel active" id="productDetailBasicPanel" role="tabpanel" aria-labelledby="productDetailTabBasicBtn">
                     <div class="form-card">
                         <h2 class="form-section-title">基本信息</h2>
 
@@ -2909,7 +2934,7 @@
                     </div>
                 </section>
 
-                <section class="product-detail-tab-panel" id="productDetailTagsPanel">
+                <section class="product-detail-tab-panel" id="productDetailTagsPanel" role="tabpanel" aria-labelledby="productDetailTabTagsBtn">
                     <div class="form-card" style="margin-bottom:16px;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
                             <h2 class="form-section-title" style="margin-bottom:0;">选项配置</h2>
@@ -2989,7 +3014,7 @@
                     </div>
                 </section>
 
-                <section class="product-detail-tab-panel" id="productDetailRecipePanel">
+                <section class="product-detail-tab-panel" id="productDetailRecipePanel" role="tabpanel" aria-labelledby="productDetailTabRecipeBtn">
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
                         <div style="font-size:14px; font-weight:700;">配方配置 · 直接调整各杯型成分</div>
                         <button class="btn btn-primary" id="saveRecipeInlineBtn" onclick="saveRecipeInline()">保存配方</button>
@@ -2997,77 +3022,7 @@
                     <div id="recipeInlineBody"></div>
                 </section>
 
-                <section id="recipeHiddenOptions" style="display:none;">
-                    <div class="option-card active-spec" data-spec-key="beans">
-                        <div class="option-title">BEAN / 咖啡豆</div>
-                        <div class="option-list" id="beanOptions">
-                            <div class="option-item" data-value="精品咖啡-翡翠瑰夏">精品咖啡-翡翠瑰夏</div>
-                            <div class="option-item selected" data-value="金奖黑咖-浓香意式">金奖黑咖-浓香意式</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="temperature">
-                        <div class="option-title">TEMPERATURE / 温度</div>
-                        <div class="option-list" id="tempOptions">
-                            <div class="option-item selected" data-value="热">热</div>
-                            <div class="option-item" data-value="标准冰">标准冰</div>
-                            <div class="option-item" data-value="少冰">少冰</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="strength">
-                        <div class="option-title">PROFILE / 浓度</div>
-                        <div class="option-list" id="profileOptions">
-                            <div class="option-item selected" data-value="标准">标准</div>
-                            <div class="option-item" data-value="加1份浓缩">加1份浓缩</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="syrup">
-                        <div class="option-title">SYRUP / 糖浆</div>
-                        <div class="option-list" id="syrupOptions">
-                            <div class="option-item selected" data-value="蔗糖糖浆">蔗糖糖浆</div>
-                            <div class="option-item" data-value="香草糖浆">香草糖浆</div>
-                            <div class="option-item" data-value="榛果糖浆">榛果糖浆</div>
-                            <div class="option-item" data-value="焦糖海盐糖浆">焦糖海盐糖浆</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="sweetness">
-                        <div class="option-title">SWEETNESS / 甜度</div>
-                        <div class="option-list" id="sweetnessOptions">
-                            <div class="option-item selected" data-value="无糖">无糖</div>
-                            <div class="option-item" data-value="少糖">少糖</div>
-                            <div class="option-item" data-value="标准糖">标准糖</div>
-                            <div class="option-item" data-value="多糖">多糖</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="cupsize">
-                        <div class="option-title">CUPSIZE / 杯型</div>
-                        <div class="option-list" id="cupsizeOptions">
-                            <div class="option-item selected" data-value="355ml">355ml</div>
-                            <div class="option-item" data-value="473ml">473ml</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="lid">
-                        <div class="option-title">LID / 杯盖</div>
-                        <div class="option-list" id="lidOptions">
-                            <div class="option-item selected" data-value="倡导环保 不使用杯盖">倡导环保 不使用杯盖</div>
-                            <div class="option-item" data-value="需要杯盖">需要杯盖</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="latteArt">
-                        <div class="option-title">LATTE-ART / 拉花</div>
-                        <div class="option-list" id="latteArtOptions">
-                            <div class="option-item selected" data-value="无">无</div>
-                            <div class="option-item" data-value="随机拉花">随机拉花</div>
-                            <div class="option-item" data-value="上传图片">上传图片</div>
-                        </div>
-                    </div>
-                </section>
+                <!-- recipeHiddenOptions removed: option cards now live in #productDetailTagsPanel. -->
 
                 <section class="product-detail-tab-panel" id="productDetailConfirmPanel">
                     <div class="copy-confirm-block" id="copyConfirmImageSection">
@@ -3594,6 +3549,7 @@
         let copyWorkflowState = null;
         let activeRecipeSpecKey = 'beans';
         let recipeEditorState = null;
+        let recipeEditorInitialState = null;
         let recipeGroupDraggedKey = '';
         let recipeGroupDraggedElement = null;
         let recipeGroupDropPlaceholder = null;
@@ -5276,6 +5232,7 @@
                 })),
                 activeIndex: 0
             };
+            recipeEditorInitialState = cloneProductValue(recipeEditorState);
 
             renderRecipeEditor();
             document.getElementById('recipeEditorModal').classList.add('active');
@@ -5286,10 +5243,17 @@
             if (modal) modal.classList.remove('active');
             resetRecipeGroupDragState();
             recipeEditorState = null;
+            recipeEditorInitialState = null;
         }
 
         function renderRecipeEditor() {
             if (!recipeEditorState) return;
+
+            const inlineBody = document.getElementById('recipeInlineBody');
+            if (inlineBody) {
+                try { renderRecipeEditorInline(); } catch (e) { /* keep going */ }
+            }
+
             const body = document.getElementById('recipeEditorBody');
             const subtitle = document.getElementById('recipeEditorSubtitle');
             if (!body || !subtitle) return;
@@ -5327,8 +5291,9 @@
                             <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
                                    value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
                                    oninput="onCupSlider(this)">
-                            <input type="number" class="cup-edit-input" min="0" max="500" step="1"
+                            <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
                                    value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
                                    onchange="onCupInput(this)">
                         </div>
                     `;
@@ -5429,6 +5394,20 @@
                 variant.recipe.groups[comp].ml = val;
             }
             renderRecipeEditor();
+        }
+
+        function selectCupInputValue(input, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!input || typeof input.select !== 'function') return;
+            setTimeout(() => {
+                try {
+                    input.select();
+                } catch (e) {
+                    // Older browsers may not allow selecting number inputs.
+                }
+            }, 0);
         }
 
         function createRecipeGroupDropPlaceholder(height = 72) {
@@ -5654,8 +5633,9 @@
             renderRecipeEditor();
         }
 
-        function saveRecipeEditor() {
+        function saveRecipeEditor(options = {}) {
             if (!recipeEditorState || !productData) return;
+            const keepInlineEditor = Boolean(options.keepInlineEditor);
 
             recipeEditorState.variants.forEach(variant => {
                 setOptionRecipe(
@@ -5668,8 +5648,17 @@
             });
 
             persistRecipeChanges([productData]);
-            closeRecipeEditor();
+            if (keepInlineEditor) {
+                recipeEditorInitialState = cloneProductValue(recipeEditorState);
+                renderRecipeEditorInline();
+            } else {
+                closeRecipeEditor();
+            }
             showToast('配方已保存');
+        }
+
+        function saveRecipeInline() {
+            saveRecipeEditor({ keepInlineEditor: true });
         }
 
         function escAttr(v) {
@@ -7084,6 +7073,10 @@
                 }
                 sortOptionListByPreferred(meta.listId, preferred || '');
             });
+
+            if (currentProductDetailTab === 'recipe') {
+                renderInlineRecipe();
+            }
         }
 
         function renderInlineRecipe() {
@@ -7108,8 +7101,22 @@
                 })),
                 activeIndex: 0
             };
+            recipeEditorInitialState = cloneProductValue(recipeEditorState);
 
             renderRecipeEditorInline();
+        }
+
+        function resetRecipeInlineVariant(idx, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!recipeEditorState || !recipeEditorInitialState) return;
+            const initialVariant = recipeEditorInitialState.variants?.[idx];
+            if (!initialVariant || !recipeEditorState.variants?.[idx]) return;
+            recipeEditorState.variants[idx].recipe = cloneProductValue(initialVariant.recipe);
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditorInline();
+            showToast('已恢复当前杯型到修改前');
         }
 
         function renderRecipeEditorInline() {
@@ -7148,8 +7155,9 @@
                             <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
                                    value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
                                    oninput="onCupSlider(this)">
-                            <input type="number" class="cup-edit-input" min="0" max="500" step="1"
+                            <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
                                    value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
+                                   onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
                                    onchange="onCupInput(this)">
                         </div>
                     `;
@@ -7158,8 +7166,8 @@
                 return `
                     <div class="cup-card ${isActive ? 'active' : ''}" onclick="setActiveCup(${idx})">
                         <div class="cup-card-title">
-                            <span class="dot"></span>
-                            ${variant.label}
+                            <span class="cup-card-name"><span class="dot"></span>${variant.label}</span>
+                            <button type="button" class="cup-card-reset-btn" onclick="resetRecipeInlineVariant(${idx}, event)">恢复修改前</button>
                         </div>
                         <div class="cup-fill-track" style="height:28px;">
                             <div class="cup-fill-content" style="width:${pct}%;">${fillSegs}</div>

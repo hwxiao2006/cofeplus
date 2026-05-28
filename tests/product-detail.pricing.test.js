@@ -360,10 +360,18 @@ test('详情页应支持渲染当前商品的多分类归属并切换分类勾�
 test('详情页应将基本信息与配方配置拆分为分页签', () => {
   assert.ok(html.includes('id="productDetailTabBasicBtn"'));
   assert.ok(html.includes('id="productDetailTabRecipeBtn"'));
+  assert.ok(html.includes('id="productDetailTabTagsBtn"'));
   assert.ok(html.includes('id="productDetailBasicPanel"'));
   assert.ok(html.includes('id="productDetailRecipePanel"'));
+  assert.ok(html.includes('id="productDetailTagsPanel"'));
+  assert.ok(/role="tab"[^>]*id="productDetailTabBasicBtn"[^>]*aria-controls="productDetailBasicPanel"/.test(html));
+  assert.ok(/role="tab"[^>]*id="productDetailTabRecipeBtn"[^>]*aria-controls="productDetailRecipePanel"/.test(html));
+  assert.ok(/role="tab"[^>]*id="productDetailTabTagsBtn"[^>]*aria-controls="productDetailTagsPanel"/.test(html));
+  assert.ok(/id="productDetailRecipePanel"[^>]*role="tabpanel"[^>]*aria-labelledby="productDetailTabRecipeBtn"/.test(html));
   assert.ok(/function\s+switchProductDetailTab\s*\(/.test(html));
   assert.ok(/switchProductDetailTab\('basic'\)/.test(html));
+  assert.ok(/switchProductDetailTab\('recipe'\)/.test(html));
+  assert.ok(/switchProductDetailTab\('tags'\)/.test(html));
 });
 
 test('基本信息中的多语言商品信息应改为矩阵式桌面布局并带移动端语种切换', () => {
@@ -437,10 +445,52 @@ test('复制模式导入或恢复配方时不应提示进入关联饮品确认',
   assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'基底咖啡配方已导入'\s*:\s*'基底咖啡配方已导入，正在进入关联饮品确认'\)/.test(html));
 });
 
-test('详情页应支持按选项修改配方，并可调整分组顺序和百分比', () => {
-  const editBtnCount = (html.match(/>修改配方</g) || []).length;
-  assert.strictEqual(editBtnCount, 1);
-  assert.ok(html.includes('id="openRecipeEditorBtn"'));
+test('详情页应将配方修改提升为顶层内联面板', () => {
+  assert.ok(!html.includes('id="openRecipeEditorBtn"'));
+  assert.ok(html.includes('id="recipeInlineBody"'));
+  assert.ok(html.includes('id="saveRecipeInlineBtn"'));
+  assert.ok(/function\s+renderInlineRecipe\s*\(/.test(html));
+  assert.ok(/function\s+renderRecipeEditorInline\s*\(/.test(html));
+  assert.ok(/function\s+saveRecipeInline\s*\(/.test(html));
+  assert.ok(/let\s+recipeEditorInitialState\s*=\s*null/.test(html));
+  assert.ok(/recipeEditorInitialState\s*=\s*cloneProductValue\(recipeEditorState\)/.test(html));
+  assert.ok(/saveRecipeEditor\(\{\s*keepInlineEditor:\s*true\s*\}\)/.test(html));
+  assert.ok(/renderInlineRecipe\(\)/.test(html));
+  assert.ok(html.includes('oninput="onCupSlider(this)"'));
+  assert.ok(html.includes('onchange="onCupInput(this)"'));
+  assert.ok(/function\s+fillFormData\s*\([\s\S]*?if\s*\(currentProductDetailTab === 'recipe'\)\s*\{[\s\S]*?renderInlineRecipe\(\);[\s\S]*?\}/.test(html));
+});
+
+test('内联配方每个杯型卡片应支持撤销本卡片未保存修改', () => {
+  assert.ok(/function\s+resetRecipeInlineVariant\s*\(/.test(html));
+  assert.ok(html.includes('cup-card-reset-btn'));
+  assert.ok(html.includes('恢复修改前'));
+  assert.ok(/onclick="resetRecipeInlineVariant\(\$\{idx\}, event\)"/.test(html));
+  assert.ok(/recipeEditorState\.variants\[idx\]\.recipe\s*=\s*cloneProductValue\(initialVariant\.recipe\)/.test(html));
+  assert.ok(/showToast\('已恢复当前杯型到修改前'\)/.test(html));
+});
+
+test('配方数值输入框点击或聚焦时应自动选中当前数值', () => {
+  assert.ok(/function\s+selectCupInputValue\s*\(/.test(html));
+  assert.ok(!html.includes('type="number" class="cup-edit-input"'));
+  assert.ok(html.includes('type="text" class="cup-edit-input" inputmode="numeric"'));
+  assert.ok(html.includes('onfocus="selectCupInputValue(this)"'));
+  assert.ok(html.includes('onclick="selectCupInputValue(this, event)"'));
+  assert.ok(/event\.stopPropagation\(\)/.test(html));
+  assert.ok(/input\.select\(\)/.test(html));
+});
+
+test('详情页应将选项配置独立到顶层分页签并移除隐藏副本', () => {
+  assert.ok(html.includes('id="productDetailTagsPanel"'));
+  assert.ok(html.includes('id="tagOptionsGrid"'));
+  assert.ok(!html.includes('id="recipeHiddenOptions"'));
+  ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'].forEach(specKey => {
+    assert.ok(html.includes(`data-spec-key="${specKey}"`));
+  });
+  assert.ok(html.includes('openTagConfigDrawerBtn'));
+});
+
+test('详情页仍保留配方分组排序和关联饮品确认能力', () => {
   assert.ok(/function\s+openRecipeEditorForActiveSpec\s*\(/.test(html));
   assert.ok(html.includes('id="recipeEditorModal"'));
   assert.ok(html.includes('id="recipeImpactModal"'));
