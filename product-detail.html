@@ -5991,8 +5991,11 @@
             }
 
             if (!Object.keys(names).length) {
+                // 兜底：只写中文槽位；不要把中文 key 塞进 en，
+                // 否则会在 EN 模式下让英文字段误显示成中文。
+                // 英文渲染时会按 names.en → names.zh → key 的顺序兜底，
+                // 自然回到中文，但 en 数据本身保持空。
                 names.zh = key;
-                names.en = key;
             }
 
             return { key, names };
