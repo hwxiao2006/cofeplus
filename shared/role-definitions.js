@@ -77,51 +77,19 @@
       }
     },
 
-    finance: {
-      id: 'finance',
-      name: '财务人员',
-      description: '查看订单和退款处理',
-      icon: '💰',
+    staff: {
+      id: 'staff',
+      name: '职员',
+      description: '基础查看权限，可根据需要添加其他权限',
+      icon: '💼',
       order: 4,
       permissions: [
         'ops.overview',
-        'ops.orders',
-        'ops.orders.refund'
-      ],
-      defaultModuleScopes: {
-        orders: { mode: 'custom', deviceIds: [] }
-      }
-    },
-
-    warehouse: {
-      id: 'warehouse',
-      name: '库管/物料员',
-      description: '负责物料补货和货道管理',
-      icon: '📦',
-      order: 5,
-      permissions: [
-        'ops.overview',
         'ops.devices',
-        'ops.materials',
-        'ops.materials.laneNameEdit',
-        'ops.materials.laneMaterialEdit'
-      ],
-      defaultModuleScopes: {
-        devices: { mode: 'custom', deviceIds: [] }
-      }
-    },
-
-    cashier: {
-      id: 'cashier',
-      name: '收银员',
-      description: '查看订单和基础数据（只读）',
-      icon: '💳',
-      order: 6,
-      permissions: [
-        'ops.overview',
         'ops.orders'
       ],
       defaultModuleScopes: {
+        devices: { mode: 'custom', deviceIds: [] },
         orders: { mode: 'custom', deviceIds: [] }
       }
     },
