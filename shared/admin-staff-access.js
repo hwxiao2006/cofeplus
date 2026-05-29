@@ -158,6 +158,23 @@
     return !!(profile && profile.role === 'super_admin');
   }
 
+  function getAdminSidebarLang() {
+    const storage = global.localStorage || (global.window && global.window.localStorage);
+    try {
+      return storage && storage.getItem('adminSidebarLang') === 'en' ? 'en' : 'zh';
+    } catch (e) {
+      return 'zh';
+    }
+  }
+
+  function getCustomerNavLabel() {
+    const lang = getAdminSidebarLang();
+    if (isSuperAdmin()) {
+      return lang === 'en' ? 'Merchant Management' : '商户管理';
+    }
+    return lang === 'en' ? 'My Merchants' : '我的商户';
+  }
+
   function getMerchantScope() {
     if (isSuperAdmin()) return null;
     const storage = global.localStorage || (global.window && global.window.localStorage);
@@ -238,7 +255,7 @@
   function applyNavLabelsByRole() {
     const doc = global.document || (global.window && global.window.document);
     if (!doc || typeof doc.querySelectorAll !== 'function') return;
-    const label = isSuperAdmin() ? '商户管理' : '我的商户';
+    const label = getCustomerNavLabel();
     const nodes = doc.querySelectorAll('[data-nav="customers"] .nav-label');
     Array.prototype.forEach.call(nodes, (el) => {
       if (el) el.textContent = label;
@@ -248,7 +265,7 @@
     if (typeof MutationObserver !== 'undefined' && nodes.length && !global.__cofeNavObserverInstalled) {
       try {
         const observer = new MutationObserver(() => {
-          const want = isSuperAdmin() ? '商户管理' : '我的商户';
+          const want = getCustomerNavLabel();
           doc.querySelectorAll('[data-nav="customers"] .nav-label').forEach((el) => {
             if (el && el.textContent !== want) el.textContent = want;
           });
@@ -275,6 +292,7 @@
     readStaffManagers,
     resolveCurrentStaffAccess,
     detectRole,
+    getAdminSidebarLang,
     isSuperAdmin,
     getMerchantScope,
     convertMerchantKeyToMerchantId,
