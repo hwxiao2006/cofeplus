@@ -2017,6 +2017,76 @@
             font-size: 12px; font-weight: 700; padding: 3px 8px;
             border-radius: 6px; border: 1px solid var(--border);
         }
+        .cup-component-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .cup-component-control {
+            display: grid;
+            grid-template-columns: minmax(62px, 0.8fr) auto minmax(82px, 1fr) auto;
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 10px;
+            background: #fbfdfe;
+        }
+        .cup-component-control.locked {
+            grid-template-columns: minmax(62px, 0.8fr) minmax(82px, 1fr);
+            background: #f8fafc;
+        }
+        .recipe-component-name {
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .recipe-stepper-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(148, 163, 184, 0.42);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .recipe-stepper-btn:hover {
+            border-color: rgba(11, 166, 153, 0.46);
+            color: #0b8f85;
+            background: rgba(11, 166, 153, 0.06);
+        }
+        .recipe-component-value {
+            display: grid;
+            grid-template-columns: minmax(48px, 1fr) auto;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            padding: 2px 6px;
+        }
+        .recipe-component-unit {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .recipe-component-readonly {
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 900;
+            text-align: right;
+        }
+        .recipe-component-step {
+            grid-column: 1 / -1;
+            color: var(--text-muted);
+            font-size: 11px;
+            line-height: 1.35;
+        }
         .cup-edit-row {
             display: grid; grid-template-columns: 48px 1fr 60px; gap: 8px;
             align-items: center; margin-bottom: 4px;
@@ -2265,6 +2335,45 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+
+        .recipe-impact-diff-block {
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .recipe-impact-diff-title {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .recipe-impact-diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .recipe-impact-diff-table th,
+        .recipe-impact-diff-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            text-align: left;
+        }
+
+        .recipe-impact-diff-table th {
+            color: var(--text-muted);
+            background: #fbfdfe;
+            font-weight: 800;
+        }
+
+        .recipe-impact-diff-delta.positive { color: #059669; font-weight: 800; }
+        .recipe-impact-diff-delta.negative { color: #dc2626; font-weight: 800; }
 
         .recipe-impact-footer {
             padding: 14px 20px 18px;
@@ -3193,21 +3302,19 @@
             <div class="recipe-impact-header">
                 <div>
                     <div class="recipe-impact-title">影响商品确认</div>
-                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">勾选的商品将关联更新</div>
+                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">确认后会强制同步所有关联商品</div>
                 </div>
                 <button class="modal-close" type="button" onclick="closeRecipeImpactModal()">×</button>
             </div>
             <div class="recipe-impact-toolbar">
-                <div class="left">
-                    <button type="button" class="recipe-control-btn" onclick="selectAllRecipeImpactLinks()">全选关联</button>
-                    <button type="button" class="recipe-control-btn" onclick="clearRecipeImpactLinks()">清空关联</button>
-                </div>
-                <div class="right" id="recipeImpactSummary">关联 0 个，不关联 0 个</div>
+                <div class="left" id="recipeImpactActions" style="display:none;"></div>
+                <div class="right" id="recipeImpactSummary">强制同步 0 个关联商品</div>
             </div>
+            <div class="recipe-impact-body" id="recipeImpactDiffBody"></div>
             <div class="recipe-impact-body" id="recipeImpactBody"></div>
             <div class="recipe-impact-footer">
                 <button class="btn btn-default" type="button" onclick="closeRecipeImpactModal()">取消</button>
-                <button class="btn btn-primary" type="button" onclick="confirmRecipeImpactApply()">确认保存</button>
+                <button class="btn btn-primary" type="button" onclick="confirmRecipeImpactApply()">确认并强制同步</button>
             </div>
         </div>
     </div>
@@ -3287,6 +3394,7 @@
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
     <script src="shared/tag-group-i18n.js"></script>
     <script>
 
@@ -3599,6 +3707,19 @@
             { key: 'P', groupKey: 'powders',          label: '粉',   color: '#a08060', light: '#f8f4ee' },
             { key: 'G', groupKey: 'decorToppings',    label: '颗粒', color: '#8aaa6c', light: '#f4f8ee' }
         ];
+        const RECIPE_COMPONENT_RULES = {
+            baseCoffeeLiquid: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false, editable: false },
+            milk: { unit: 'ml', step: 5, min: 0, max: 500, continuous: true },
+            foam: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
+            water: { unit: 'ml', step: 5, min: 0, max: 500, continuous: true },
+            ice: { unit: 'g', step: 10, min: 0, max: 500, continuous: false },
+            syrup: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
+            powders: { unit: 'g', step: 1, min: 0, max: 200, continuous: false },
+            concentrates: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
+            decorToppings: { unit: 'g', step: 1, min: 0, max: 200, continuous: false }
+        };
+        let recipeComponentHoldTimer = null;
+        let recipeComponentHoldInterval = null;
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         let selectedBusinessTagIds = [];
         let productBusinessTagDraft = null;
@@ -4453,6 +4574,41 @@
             return RECIPE_GROUP_CONFIGS.find(item => item.key === groupKey) || null;
         }
 
+        function getRecipeComponentRule(groupKey) {
+            return RECIPE_COMPONENT_RULES[groupKey] || { unit: 'ml', step: 1, min: 0, max: 500, continuous: false };
+        }
+
+        function normalizeRecipeComponentValue(value, rule) {
+            const activeRule = rule || getRecipeComponentRule('');
+            const step = Number(activeRule.step) > 0 ? Number(activeRule.step) : 1;
+            const min = Number.isFinite(Number(activeRule.min)) ? Number(activeRule.min) : 0;
+            const max = Number.isFinite(Number(activeRule.max)) ? Number(activeRule.max) : 500;
+            const parsed = Number(value);
+            const bounded = Math.max(min, Math.min(max, Number.isFinite(parsed) ? parsed : min));
+            return Math.round(bounded / step) * step;
+        }
+
+        function formatRecipeComponentDose(value, groupKey) {
+            const rule = getRecipeComponentRule(groupKey);
+            return `${normalizeRecipeComponentValue(value, rule)}${rule.unit}`;
+        }
+
+        function getRecipeVolumeTotal(recipe) {
+            if (!recipe || !recipe.groups) return 0;
+            return RECIPE_COMP_CONFIGS
+                .filter(c => getRecipeComponentRule(c.groupKey).unit === 'ml')
+                .reduce((sum, c) => sum + (Number(recipe.groups[c.groupKey]?.ml) || 0), 0);
+        }
+
+        function getRecipeNonVolumeSummary(recipe) {
+            if (!recipe || !recipe.groups) return '';
+            return RECIPE_COMP_CONFIGS
+                .filter(c => getRecipeComponentRule(c.groupKey).unit !== 'ml')
+                .filter(c => (Number(recipe.groups[c.groupKey]?.ml) || 0) > 0)
+                .map(c => `${c.label} ${formatRecipeComponentDose(recipe.groups[c.groupKey].ml, c.groupKey)}`)
+                .join(' · ');
+        }
+
         function normalizeRecipePercent(value) {
             const num = Number(value);
             if (!Number.isFinite(num)) return 100;
@@ -5071,6 +5227,71 @@
             return `${specKey}:${tagKey}:keep:${productId}:${Date.now()}`;
         }
 
+        function getRecipeVariantDiffs(beforeRecipe, afterRecipe) {
+            const diffs = [];
+            RECIPE_COMP_CONFIGS.forEach(config => {
+                const rule = getRecipeComponentRule(config.groupKey);
+                const before = normalizeRecipeComponentValue(beforeRecipe?.groups?.[config.groupKey]?.ml || 0, rule);
+                const after = normalizeRecipeComponentValue(afterRecipe?.groups?.[config.groupKey]?.ml || 0, rule);
+                if (before === after) return;
+                diffs.push({
+                    groupKey: config.groupKey,
+                    label: config.label,
+                    unit: rule.unit,
+                    before,
+                    after,
+                    delta: after - before
+                });
+            });
+            return diffs;
+        }
+
+        function formatRecipeDiffDelta(diff) {
+            const sign = diff.delta > 0 ? '+' : '';
+            return `${sign}${diff.delta}${diff.unit}`;
+        }
+
+        function prepareRecipeImpactState() {
+            if (!recipeEditorState || !productData) return null;
+            const variants = [];
+            const affectedByKey = new Map();
+
+            recipeEditorState.variants.forEach((variant, idx) => {
+                const initialVariant = recipeEditorInitialState?.variants?.[idx];
+                const beforeRecipe = initialVariant?.recipe || getOptionRecipe('cupsize', variant.tagKey, variant.label);
+                const afterRecipe = variant.recipe;
+                const diffs = getRecipeVariantDiffs(beforeRecipe, afterRecipe);
+                if (!diffs.length) return;
+
+                const linkId = getOptionRecipeLinkId('cupsize', variant.tagKey, productData);
+                const affectedEntries = getRecipeImpactEntries('cupsize', variant.tagKey, linkId);
+                variants.push({
+                    specKey: 'cupsize',
+                    tagKey: variant.tagKey,
+                    tagLabel: variant.label,
+                    linkId,
+                    recipe: cloneProductValue(afterRecipe),
+                    diffs,
+                    affectedEntries
+                });
+
+                affectedEntries.forEach(item => {
+                    const key = `${item.id}:${variant.tagKey}`;
+                    affectedByKey.set(key, {
+                        ...item,
+                        variantLabel: variant.label,
+                        diffs
+                    });
+                });
+            });
+
+            return {
+                forceSync: true,
+                variants,
+                affectedEntries: Array.from(affectedByKey.values()).sort((a, b) => a.id - b.id)
+            };
+        }
+
         function openRecipeImpactModal() {
             if (!recipeImpactState) return;
             renderRecipeImpactModal();
@@ -5108,16 +5329,43 @@
         function renderRecipeImpactModal() {
             if (!recipeImpactState) return;
             const subtitle = document.getElementById('recipeImpactSubtitle');
+            const diffBody = document.getElementById('recipeImpactDiffBody');
             const body = document.getElementById('recipeImpactBody');
             const summary = document.getElementById('recipeImpactSummary');
-            if (!subtitle || !body || !summary) return;
+            const actions = document.getElementById('recipeImpactActions');
+            if (!subtitle || !diffBody || !body || !summary) return;
 
             const total = recipeImpactState.affectedEntries.length;
-            const linked = recipeImpactState.selectedIds.size;
-            const unlinked = Math.max(0, total - linked);
+            if (actions) actions.style.display = 'none';
 
-            subtitle.textContent = `当前商品会直接更新。以下为关联商品：勾选后将同步新配方，不勾选则不关联`;
-            summary.textContent = `关联 ${linked} 个，不关联 ${unlinked} 个`;
+            subtitle.textContent = `当前商品会直接更新。确认后会强制同步所有关联商品，不再单独选择是否同步`;
+            summary.textContent = `强制同步 ${total} 个关联商品`;
+
+            diffBody.innerHTML = recipeImpactState.variants.map(variant => `
+                <div class="recipe-impact-diff-block">
+                    <div class="recipe-impact-diff-title">${escAttr(variant.tagLabel)} · 修改前后数值对比</div>
+                    <table class="recipe-impact-diff-table">
+                        <thead>
+                            <tr>
+                                <th>成分</th>
+                                <th>修改前</th>
+                                <th>修改后</th>
+                                <th>差值</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${variant.diffs.map(diff => `
+                                <tr>
+                                    <td>${escAttr(diff.label)}</td>
+                                    <td>${diff.before}${diff.unit}</td>
+                                    <td>${diff.after}${diff.unit}</td>
+                                    <td class="recipe-impact-diff-delta ${diff.delta >= 0 ? 'positive' : 'negative'}">${formatRecipeDiffDelta(diff)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `).join('');
 
             if (!total) {
                 body.innerHTML = '<div class="recipe-impact-empty">没有关联商品受影响，确认后仅更新当前商品</div>';
@@ -5125,17 +5373,16 @@
             }
 
             body.innerHTML = recipeImpactState.affectedEntries.map(item => {
-                const checked = recipeImpactState.selectedIds.has(item.id);
                 return `
-                    <label class="recipe-impact-item">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleRecipeImpactLink('${item.id}', this.checked)">
+                    <div class="recipe-impact-item">
                         <div class="recipe-impact-item-body">
                             <div class="recipe-impact-item-name">
                                 ${escAttr(item.name)}
+                                <span class="recipe-impact-item-tag">${escAttr(item.variantLabel)}</span>
                             </div>
-                            <div class="recipe-impact-item-meta">ID: ${item.id} · 分类: ${escAttr(item.categoryName)}</div>
+                            <div class="recipe-impact-item-meta">ID: ${item.id} · 分类: ${escAttr(item.categoryName)} · 将强制同步</div>
                         </div>
-                    </label>
+                    </div>
                 `;
             }).join('');
         }
@@ -5164,54 +5411,58 @@
 
         function confirmRecipeImpactApply() {
             if (!recipeImpactState) return;
-            const total = recipeImpactState.affectedEntries.length;
-            const linked = recipeImpactState.selectedIds.size;
-            const updatedCount = Math.max(0, linked);
-            const selectedIds = recipeImpactState.selectedIds;
+            const updatedIds = new Set(recipeImpactState.affectedEntries.map(item => item.id));
             const changedProducts = [];
             const currentProductId = Number(productData?.id);
 
             if (productData && Number.isFinite(currentProductId)) {
-                setOptionRecipeLinkId(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.linkId,
-                    productData
-                );
-                setOptionRecipe(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.recipe,
-                    recipeImpactState.tagLabel,
-                    productData
-                );
+                recipeImpactState.variants.forEach(variant => {
+                    setOptionRecipeLinkId(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.linkId,
+                        productData
+                    );
+                    setOptionRecipe(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.recipe,
+                        variant.tagLabel,
+                        productData
+                    );
+                });
                 changedProducts.push(productData);
             }
 
-            recipeImpactState.affectedEntries.forEach(item => {
-                const product = item.product;
-                if (!product) return;
-                if (!selectedIds.has(item.id)) {
-                    const isolatedLinkId = buildUniqueRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, item.id);
-                    setOptionRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, isolatedLinkId, product);
-                    changedProducts.push(product);
-                    return;
-                }
-                setOptionRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, recipeImpactState.linkId, product);
-                setOptionRecipe(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.recipe,
-                    item.tagLabel,
-                    product
-                );
-                changedProducts.push(product);
+            const changedProductMap = new Map();
+            recipeImpactState.variants.forEach(variant => {
+                variant.affectedEntries.forEach(item => {
+                    const product = item.product;
+                    if (!product) return;
+                    setOptionRecipeLinkId(variant.specKey, variant.tagKey, variant.linkId, product);
+                    setOptionRecipe(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.recipe,
+                        item.tagLabel || variant.tagLabel,
+                        product
+                    );
+                    changedProductMap.set(item.id, product);
+                });
             });
+            changedProductMap.forEach(product => changedProducts.push(product));
 
             persistRecipeChanges(changedProducts);
+            if (recipeEditorState) {
+                recipeEditorInitialState = cloneProductValue(recipeEditorState);
+            }
             closeRecipeImpactModal();
-            closeRecipeEditor();
-            showToast(`配方已保存，已更新当前商品 + ${updatedCount} 个关联商品`);
+            if (currentProductDetailTab === 'recipe') {
+                renderRecipeEditorInline();
+            } else {
+                closeRecipeEditor();
+            }
+            showToast(`配方已保存，已强制同步 ${updatedIds.size} 个关联商品`);
         }
 
         function openRecipeEditor(specKey) {
@@ -5263,38 +5514,59 @@
             const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
                 const isActive = idx === recipeEditorState.activeIndex;
                 const recipe = variant.recipe;
-                const total = RECIPE_COMP_CONFIGS.reduce((s, c) => s + (recipe.groups[c.groupKey]?.ml || 0), 0);
+                const total = getRecipeVolumeTotal(recipe);
+                const nonVolumeSummary = getRecipeNonVolumeSummary(recipe);
                 const overflow = total > variant.capacity;
                 const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
 
                 const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => getRecipeComponentRule(c.groupKey).unit === 'ml')
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                         const ml = recipe.groups[c.groupKey].ml;
-                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + ml : ''}</span></div>`;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + formatRecipeComponentDose(ml, c.groupKey) : ''}</span></div>`;
                     }).join('');
 
                 const paramTags = RECIPE_COMP_CONFIGS
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                         const ml = recipe.groups[c.groupKey].ml;
-                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${ml}ml</span>`;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${formatRecipeComponentDose(ml, c.groupKey)}</span>`;
                     }).join('');
 
                 const editRows = isActive ? RECIPE_COMP_CONFIGS
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                     const ml = recipe.groups[c.groupKey].ml;
+                    const rule = getRecipeComponentRule(c.groupKey);
+                    if (rule.editable === false) {
+                        return `
+                            <div class="cup-component-control locked">
+                                <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                                <span class="recipe-component-readonly">${formatRecipeComponentDose(ml, c.groupKey)}</span>
+                                <span class="recipe-component-step">基底咖啡数值由配方文件维护，不可在此修改</span>
+                            </div>
+                        `;
+                    }
+                    const holdHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', -1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', -1, event)"`;
+                    const plusHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', 1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', 1, event)"`;
                     return `
-                        <div class="cup-edit-row">
-                            <span class="cup-edit-label" style="color:${c.color};">${c.label}</span>
-                            <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
-                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
-                                   oninput="onCupSlider(this)">
-                            <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
-                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
-                                   onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
-                                   onchange="onCupInput(this)">
+                        <div class="cup-component-control">
+                            <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                            <button type="button" class="recipe-stepper-btn" ${holdHandlers} aria-label="${c.label}减少${rule.step}${rule.unit}">-</button>
+                            <span class="recipe-component-value">
+                                <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
+                                       value="${normalizeRecipeComponentValue(ml, rule)}" data-comp="${c.groupKey}" data-idx="${idx}" data-step="${rule.step}" data-unit="${rule.unit}"
+                                       onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
+                                       onblur="onCupInput(this)" onchange="onCupInput(this)">
+                                <span class="recipe-component-unit">${rule.unit}</span>
+                            </span>
+                            <button type="button" class="recipe-stepper-btn" ${plusHandlers} aria-label="${c.label}增加${rule.step}${rule.unit}">+</button>
+                            <span class="recipe-component-step">每次 ${rule.step}${rule.unit}${rule.continuous ? '，可按住连续调整' : ''}</span>
                         </div>
                     `;
                 }).join('') : '';
@@ -5311,7 +5583,7 @@
                         <div class="cup-fill-detail">
                             <span class="item">
                                 <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
-                                <span class="label">配置总量</span>
+                                <span class="label">容量总量</span>
                                 <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
                             </span>
                             <span class="item">
@@ -5322,7 +5594,8 @@
                             ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
                         </div>
                         <div class="cup-param-tags">${paramTags}</div>
-                        ${editRows}
+                        ${nonVolumeSummary ? `<div class="cup-fill-detail"><span class="item"><span class="label">其他成分</span><span class="val">${nonVolumeSummary}</span></span></div>` : ''}
+                        ${editRows ? `<div class="cup-component-grid">${editRows}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -5375,7 +5648,9 @@
         function onCupSlider(el) {
             const comp = el.dataset.comp;
             const idx = Number(el.dataset.idx);
-            const val = Number(el.value);
+            const rule = getRecipeComponentRule(comp);
+            if (rule.editable === false) return;
+            const val = normalizeRecipeComponentValue(el.value, rule);
             const variant = recipeEditorState.variants[idx];
             if (variant && variant.recipe.groups[comp]) {
                 variant.recipe.groups[comp].ml = val;
@@ -5386,14 +5661,57 @@
         function onCupInput(el) {
             const comp = el.dataset.comp;
             const idx = Number(el.dataset.idx);
-            let val = Number(el.value);
-            if (!Number.isFinite(val) || val < 0) val = 0;
-            if (val > 500) val = 500;
+            const rule = getRecipeComponentRule(comp);
+            if (rule.editable === false) return;
+            const val = normalizeRecipeComponentValue(el.value, rule);
+            el.value = val;
             const variant = recipeEditorState.variants[idx];
             if (variant && variant.recipe.groups[comp]) {
                 variant.recipe.groups[comp].ml = val;
             }
             renderRecipeEditor();
+        }
+
+        function adjustRecipeComponentDose(idx, groupKey, direction, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!recipeEditorState) return;
+            const variant = recipeEditorState.variants?.[idx];
+            const group = variant?.recipe?.groups?.[groupKey];
+            if (!group) return;
+            const rule = getRecipeComponentRule(groupKey);
+            if (rule.editable === false) return;
+            const delta = (Number(direction) >= 0 ? 1 : -1) * rule.step;
+            group.ml = normalizeRecipeComponentValue((Number(group.ml) || 0) + delta, rule);
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditor();
+        }
+
+        function stopRecipeComponentHold() {
+            if (recipeComponentHoldTimer) {
+                clearTimeout(recipeComponentHoldTimer);
+                recipeComponentHoldTimer = null;
+            }
+            if (recipeComponentHoldInterval) {
+                clearInterval(recipeComponentHoldInterval);
+                recipeComponentHoldInterval = null;
+            }
+        }
+
+        function startRecipeComponentHold(idx, groupKey, direction, event) {
+            if (event && typeof event.preventDefault === 'function') {
+                event.preventDefault();
+            }
+            adjustRecipeComponentDose(idx, groupKey, direction, event);
+            const rule = getRecipeComponentRule(groupKey);
+            if (!rule.continuous) return;
+            stopRecipeComponentHold();
+            recipeComponentHoldTimer = setTimeout(() => {
+                recipeComponentHoldInterval = setInterval(() => {
+                    adjustRecipeComponentDose(idx, groupKey, direction, event);
+                }, 90);
+            }, 260);
         }
 
         function selectCupInputValue(input, event) {
@@ -5637,24 +5955,17 @@
             if (!recipeEditorState || !productData) return;
             const keepInlineEditor = Boolean(options.keepInlineEditor);
 
-            recipeEditorState.variants.forEach(variant => {
-                setOptionRecipe(
-                    'cupsize',
-                    variant.tagKey,
-                    variant.recipe,
-                    variant.label,
-                    productData
-                );
-            });
-
-            persistRecipeChanges([productData]);
-            if (keepInlineEditor) {
-                recipeEditorInitialState = cloneProductValue(recipeEditorState);
-                renderRecipeEditorInline();
-            } else {
-                closeRecipeEditor();
+            const nextImpactState = prepareRecipeImpactState();
+            if (!nextImpactState || !nextImpactState.variants.length) {
+                showToast('配方未发生变化');
+                return;
             }
-            showToast('配方已保存');
+
+            recipeImpactState = {
+                ...nextImpactState,
+                keepInlineEditor
+            };
+            openRecipeImpactModal();
         }
 
         function saveRecipeInline() {
@@ -7127,38 +7438,59 @@
             const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
                 const isActive = idx === recipeEditorState.activeIndex;
                 const recipe = variant.recipe;
-                const total = RECIPE_COMP_CONFIGS.reduce((s, c) => s + (recipe.groups[c.groupKey]?.ml || 0), 0);
+                const total = getRecipeVolumeTotal(recipe);
+                const nonVolumeSummary = getRecipeNonVolumeSummary(recipe);
                 const overflow = total > variant.capacity;
                 const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
 
                 const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => getRecipeComponentRule(c.groupKey).unit === 'ml')
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                         const ml = recipe.groups[c.groupKey].ml;
-                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + ml : ''}</span></div>`;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + formatRecipeComponentDose(ml, c.groupKey) : ''}</span></div>`;
                     }).join('');
 
                 const paramTags = RECIPE_COMP_CONFIGS
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                         const ml = recipe.groups[c.groupKey].ml;
-                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${ml}ml</span>`;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${formatRecipeComponentDose(ml, c.groupKey)}</span>`;
                     }).join('');
 
                 const editRows = isActive ? RECIPE_COMP_CONFIGS
                     .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
                     .map(c => {
                     const ml = recipe.groups[c.groupKey].ml;
+                    const rule = getRecipeComponentRule(c.groupKey);
+                    if (rule.editable === false) {
+                        return `
+                            <div class="cup-component-control locked">
+                                <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                                <span class="recipe-component-readonly">${formatRecipeComponentDose(ml, c.groupKey)}</span>
+                                <span class="recipe-component-step">基底咖啡数值由配方文件维护，不可在此修改</span>
+                            </div>
+                        `;
+                    }
+                    const holdHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', -1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', -1, event)"`;
+                    const plusHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', 1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', 1, event)"`;
                     return `
-                        <div class="cup-edit-row">
-                            <span class="cup-edit-label" style="color:${c.color};">${c.label}</span>
-                            <input type="range" class="cup-edit-slider" min="0" max="500" step="1"
-                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
-                                   oninput="onCupSlider(this)">
-                            <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
-                                   value="${ml}" data-comp="${c.groupKey}" data-idx="${idx}"
-                                   onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
-                                   onchange="onCupInput(this)">
+                        <div class="cup-component-control">
+                            <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                            <button type="button" class="recipe-stepper-btn" ${holdHandlers} aria-label="${c.label}减少${rule.step}${rule.unit}">-</button>
+                            <span class="recipe-component-value">
+                                <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
+                                       value="${normalizeRecipeComponentValue(ml, rule)}" data-comp="${c.groupKey}" data-idx="${idx}" data-step="${rule.step}" data-unit="${rule.unit}"
+                                       onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
+                                       onblur="onCupInput(this)" onchange="onCupInput(this)">
+                                <span class="recipe-component-unit">${rule.unit}</span>
+                            </span>
+                            <button type="button" class="recipe-stepper-btn" ${plusHandlers} aria-label="${c.label}增加${rule.step}${rule.unit}">+</button>
+                            <span class="recipe-component-step">每次 ${rule.step}${rule.unit}${rule.continuous ? '，可按住连续调整' : ''}</span>
                         </div>
                     `;
                 }).join('') : '';
@@ -7175,7 +7507,7 @@
                         <div class="cup-fill-detail">
                             <span class="item">
                                 <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
-                                <span class="label">配置总量</span>
+                                <span class="label">容量总量</span>
                                 <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
                             </span>
                             <span class="item">
@@ -7186,7 +7518,8 @@
                             ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
                         </div>
                         <div class="cup-param-tags">${paramTags}</div>
-                        ${editRows}
+                        ${nonVolumeSummary ? `<div class="cup-fill-detail"><span class="item"><span class="label">其他成分</span><span class="val">${nonVolumeSummary}</span></span></div>` : ''}
+                        ${editRows ? `<div class="cup-component-grid">${editRows}</div>` : ''}
                     </div>
                 `;
             }).join('');

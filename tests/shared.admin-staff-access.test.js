@@ -211,3 +211,29 @@ test('applyNavLabelsByRole sets label to 我的商户 for merchant', () => {
   sb.CofeAdminStaffAccess.applyNavLabelsByRole();
   assert.strictEqual(label.textContent, '我的商户');
 });
+
+test('applyNavLabelsByRole uses English role labels when adminSidebarLang is en', () => {
+  const merchant = loadSandbox({
+    adminSidebarLang: 'en',
+    sidebarLoginProfile: JSON.stringify({ role: 'merchant', merchantId: 'C001' })
+  });
+  const merchantLabel = { textContent: '原' };
+  merchant.document.querySelectorAll = (sel) => {
+    if (sel === '[data-nav="customers"] .nav-label') return [merchantLabel];
+    return [];
+  };
+  merchant.CofeAdminStaffAccess.applyNavLabelsByRole();
+  assert.strictEqual(merchantLabel.textContent, 'My Merchants');
+
+  const superAdmin = loadSandbox({
+    adminSidebarLang: 'en',
+    sidebarLoginProfile: JSON.stringify({ role: 'super_admin' })
+  });
+  const superAdminLabel = { textContent: '原' };
+  superAdmin.document.querySelectorAll = (sel) => {
+    if (sel === '[data-nav="customers"] .nav-label') return [superAdminLabel];
+    return [];
+  };
+  superAdmin.CofeAdminStaffAccess.applyNavLabelsByRole();
+  assert.strictEqual(superAdminLabel.textContent, 'Merchant Management');
+});
