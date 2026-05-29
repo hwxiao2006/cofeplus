@@ -423,6 +423,32 @@ test('页面正文 i18n helper 应覆盖动态数值 PATTERNS（照片数 / 已�
     assert.deepStrictEqual(nodes.map(n => n.nodeValue), samples.map(([, en]) => en));
 });
 
+test('页面正文 i18n helper 应递归翻译 PATTERNS 捕获组里的中文 token + 整段无匹配时的兜底', () => {
+    const helper = read('shared/admin-page-i18n.js');
+    const samples = [
+        ['3D拉花 · 商品列表', '3D Latte Art · Product List'],
+        ['本店王牌 · 商品列表', 'House Signature · Product List'],
+        ['已选 3 个商品 · 太平洋咖啡', 'Selected 3 products · Pacific Coffee'],
+        ['金奖黑咖-浓香意式、热、标准', 'Gold Black Coffee - Bold Italian, Hot, Standard']
+    ];
+    const nodes = samples.map(([zh]) => ({ nodeType: 3, nodeValue: zh, parentElement: null }));
+    const document = {
+        body: { nodeType: 1, tagName: 'BODY', childNodes: nodes, attributes: [], dataset: {} },
+        title: '',
+        addEventListener() {},
+        querySelectorAll() { return []; }
+    };
+    const context = {
+        window: { addEventListener() {} },
+        document,
+        localStorage: { getItem() { return 'en'; } },
+        MutationObserver: function () { this.observe = function () {}; }
+    };
+    vm.runInNewContext(helper, context);
+    context.window.CofeAdminPageI18n.apply();
+    assert.deepStrictEqual(nodes.map(n => n.nodeValue), samples.map(([, en]) => en));
+});
+
 // 覆盖率回归护栏：扫 17 个根页面、抽取可见中文，计算未翻译数；
 // 阀值给 30（容忍少量边角文案），任何人新增中文 UI 又忘了补字典就会立刻 fail。
 test('页面正文 i18n 字典对 17 个根页面的覆盖率应保持高位（未翻译 < 30）', () => {
