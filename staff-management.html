@@ -751,6 +751,140 @@
             margin-top: 12px;
         }
 
+        /* 角色选择样式 */
+        .role-selection-section {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+
+        .role-selection-section + .section-block {
+            margin-top: 12px;
+        }
+
+        .role-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .role-card {
+            border: 2px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+            min-height: 88px;
+            position: relative;
+        }
+
+        .role-card:hover {
+            border-color: #bfe9e6;
+            background: #f0fbfa;
+        }
+
+        .role-card.selected {
+            border-color: #4ECDC4;
+            background: linear-gradient(180deg, #ecfbf9 0%, #f0fbfa 100%);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2);
+        }
+
+        .role-card-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .role-card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .role-card-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .role-card-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ECDC4;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .role-card.selected .role-card-check {
+            display: flex;
+        }
+
+        .role-summary-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f0fbfa;
+            border: 1px solid #d6ece7;
+            margin-top: 12px;
+        }
+
+        .role-summary-icon {
+            font-size: 18px;
+        }
+
+        .role-summary-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .role-summary-action {
+            font-size: 12px;
+            color: #0f766e;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .role-summary-action:hover {
+            text-decoration: underline;
+        }
+
+        .permission-customization-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #c2410c;
+        }
+
+        .permission-customization-hint.hidden {
+            display: none;
+        }
+
         .staff-modal-basic-section {
             margin-bottom: 12px;
         }
@@ -1680,6 +1814,10 @@
                 padding: 10px 14px;
             }
 
+            .role-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .manager-list {
                 padding: 10px;
                 gap: 8px;
@@ -1964,6 +2102,17 @@
                     </div>
                 </section>
 
+                <section class="role-selection-section" id="roleSelectionSection">
+                    <div class="section-title">选择角色<span class="required">*</span></div>
+                    <p class="section-helper">选择角色模板可快速分配权限，之后可以微调</p>
+                    <div class="role-cards-grid" id="roleCardsGrid"></div>
+                    <div class="role-summary-bar" id="roleSummaryBar" hidden>
+                        <span class="role-summary-icon" id="roleSummaryIcon">🏪</span>
+                        <span class="role-summary-text" id="roleSummaryText">已选择：店长</span>
+                        <button type="button" class="role-summary-action" onclick="resetRoleSelection()">重新选择</button>
+                    </div>
+                </section>
+
                 <section class="section-block staff-device-section" id="staffDeviceSection">
                     <div class="staff-config-section-head">
                         <div>
@@ -1986,6 +2135,10 @@
                             <p class="permission-section-note">在每个页面行里设置可进入页面和可查看设备。</p>
                         </div>
                         <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                    </div>
+                    <div class="permission-customization-hint" id="permissionCustomizationHint">
+                        <span>ℹ️</span>
+                        <span id="permissionCustomizationText">基于"店长"角色，已添加 1 项权限，移除 1 项权限</span>
                     </div>
                     <div class="permission-tree" id="permissionTree">
                         <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
@@ -2166,6 +2319,8 @@
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/admin-page-i18n.js"></script>
+    <script src="shared/permissions-registry.js"></script>
+    <script src="shared/role-definitions.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2422,6 +2577,10 @@
         let moduleScopeSearchKeyword = '';
         let showOnlySelectedModuleScopeDevices = false;
 
+        // 角色相关变量
+        let selectedRoleId = 'custom';
+        let isRoleFirstSelection = true;
+
         const defaultDeviceMap = {
             C001: ['RCK386', 'RCK385', 'RCK384', 'RCK409'],
             C002: ['RCK410', 'RCK406', 'RCK404'],
@@ -2523,6 +2682,50 @@
             { moduleKey: 'faults', label: '故障列表', permission: 'ops.faults' }
         ];
 
+        // 使用权限注册表中的数据（如果可用）
+        const permissionRegistry = window.CofePermissionsRegistry || {};
+        const roleDefinitions = window.CofeRoleDefinitions || {};
+
+        // 获取权限树（优先使用注册表）
+        function getPermissionTreeGroups() {
+            if (permissionRegistry.getPermissionTree) {
+                return permissionRegistry.getPermissionTree();
+            }
+            return permissionTreeGroups;
+        }
+
+        // 获取所有角色模板
+        function getAllRoles() {
+            if (roleDefinitions.getAllRoleTemplates) {
+                return roleDefinitions.getAllRoleTemplates();
+            }
+            return [];
+        }
+
+        // 获取角色权限
+        function getRolePermissions(roleId) {
+            if (roleDefinitions.getRolePermissions) {
+                return roleDefinitions.getRolePermissions(roleId);
+            }
+            return [];
+        }
+
+        // 获取角色默认模块范围
+        function getRoleDefaultModuleScopes(roleId) {
+            if (roleDefinitions.getRoleDefaultModuleScopes) {
+                return roleDefinitions.getRoleDefaultModuleScopes(roleId);
+            }
+            return {};
+        }
+
+        // 计算权限变更
+        function calculatePermissionChanges(roleId, finalPermissions) {
+            if (roleDefinitions.calculatePermissionChanges) {
+                return roleDefinitions.calculatePermissionChanges(roleId, finalPermissions);
+            }
+            return { added: [], removed: [], fromRole: null };
+        }
+
         const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
         const allPermissionKeySet = new Set(allPermissionKeys);
         const legacyPermissionMigrationMap = {
@@ -2587,10 +2790,129 @@
         function init() {
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
+            renderRoleCards();
             renderPermissionTree();
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             renderManagers();
             updateStats();
+        }
+
+        // ========== 角色相关函数 ==========
+
+        function renderRoleCards() {
+            const grid = document.getElementById('roleCardsGrid');
+            if (!grid) return;
+
+            const roles = getAllRoles();
+            if (!roles.length) {
+                grid.innerHTML = '<div class="empty-state">暂无角色模板</div>';
+                return;
+            }
+
+            grid.innerHTML = roles.map(role => `
+                <div class="role-card ${selectedRoleId === role.id ? 'selected' : ''}"
+                     data-role-id="${role.id}"
+                     onclick="selectRole('${role.id}')">
+                    <div class="role-card-check">✓</div>
+                    <span class="role-card-icon">${role.icon || '👤'}</span>
+                    <span class="role-card-name">${role.name}</span>
+                    <span class="role-card-desc">${role.description || ''}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectRole(roleId) {
+            selectedRoleId = roleId;
+            isRoleFirstSelection = false;
+
+            // 更新卡片选中状态
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.toggle('selected', card.dataset.roleId === roleId);
+            });
+
+            // 显示/隐藏角色摘要栏
+            const summaryBar = document.getElementById('roleSummaryBar');
+            if (summaryBar) {
+                if (roleId === 'custom') {
+                    summaryBar.hidden = true;
+                } else {
+                    const role = getRoleTemplate(roleId);
+                    if (role) {
+                        document.getElementById('roleSummaryIcon').textContent = role.icon || '👤';
+                        document.getElementById('roleSummaryText').textContent = `已选择：${role.name}`;
+                        summaryBar.hidden = false;
+                    }
+                }
+            }
+
+            // 应用角色权限
+            applyRolePermissions(roleId);
+
+            // 更新权限微调提示
+            updatePermissionCustomizationHint();
+        }
+
+        function getRoleTemplate(roleId) {
+            if (roleDefinitions.getRoleTemplate) {
+                return roleDefinitions.getRoleTemplate(roleId);
+            }
+            return null;
+        }
+
+        function applyRolePermissions(roleId) {
+            if (roleId === 'custom') {
+                // 自定义角色，不改变现有权限
+                return;
+            }
+
+            const rolePermissions = getRolePermissions(roleId);
+            const roleModuleScopes = getRoleDefaultModuleScopes(roleId);
+
+            // 更新权限选中状态
+            document.querySelectorAll('input[name="permission"]').forEach(input => {
+                input.checked = rolePermissions.includes(input.value);
+            });
+
+            // 更新模块设备范围
+            const assignedDevices = getAssignedDeviceIds();
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(roleModuleScopes, assignedDevices);
+
+            // 刷新权限UI
+            refreshPermissionSelectionUi();
+        }
+
+        function resetRoleSelection() {
+            selectedRoleId = 'custom';
+            renderRoleCards();
+            document.getElementById('roleSummaryBar').hidden = true;
+            updatePermissionCustomizationHint();
+        }
+
+        function updatePermissionCustomizationHint() {
+            const hint = document.getElementById('permissionCustomizationHint');
+            const hintText = document.getElementById('permissionCustomizationText');
+
+            if (!hint || !hintText) return;
+
+            const currentPermissions = getSelectedPermissionValues();
+            const changes = calculatePermissionChanges(selectedRoleId, currentPermissions);
+
+            if (selectedRoleId === 'custom' || (!changes.added.length && !changes.removed.length)) {
+                hint.classList.add('hidden');
+                return;
+            }
+
+            const parts = [];
+            if (changes.added.length) {
+                parts.push(`添加 ${changes.added.length} 项`);
+            }
+            if (changes.removed.length) {
+                parts.push(`移除 ${changes.removed.length} 项`);
+            }
+
+            const roleName = changes.fromRole?.name || '该角色';
+            hintText.textContent = `基于"${roleName}"，${parts.join('，')}权限`;
+            hint.classList.remove('hidden');
         }
 
         function bootstrapStaffManagers() {
@@ -2893,13 +3215,15 @@
         }
 
         function refreshPermissionSelectionUi() {
-            permissionTreeGroups.forEach((group) => {
+            const groups = getPermissionTreeGroups();
+            groups.forEach((group) => {
                 syncPermissionParentState(group.key);
                 updatePermissionGroupDisplay(group.key);
                 syncPermissionGroupVisibility(group.key);
             });
             updatePermissionSelectionStats();
             renderModuleDeviceScopeRows();
+            updatePermissionCustomizationHint();
         }
 
         function renderPermissionTree() {
@@ -3388,6 +3712,13 @@
 
             expandedPermissionGroups.clear();
             renderPermissionTree();
+
+            // 重置角色选择
+            selectedRoleId = 'custom';
+            isRoleFirstSelection = true;
+            renderRoleCards();
+            document.getElementById('roleSummaryBar').hidden = true;
+            updatePermissionCustomizationHint();
         }
 
         function fillStaffForm(targetStaff) {
@@ -3395,12 +3726,30 @@
             document.getElementById('staffPhone').value = targetStaff.phone || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
 
+            // 恢复角色信息
+            const staffRole = targetStaff.role || {};
+            selectedRoleId = staffRole.id || 'custom';
+            isRoleFirstSelection = false;
+            renderRoleCards();
+
+            const summaryBar = document.getElementById('roleSummaryBar');
+            if (summaryBar && selectedRoleId !== 'custom') {
+                const role = getRoleTemplate(selectedRoleId);
+                if (role) {
+                    document.getElementById('roleSummaryIcon').textContent = role.icon || '👤';
+                    document.getElementById('roleSummaryText').textContent = `已选择：${role.name}`;
+                    summaryBar.hidden = false;
+                }
+            } else if (summaryBar) {
+                summaryBar.hidden = true;
+            }
+
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
             expandedPermissionGroups.clear();
-            renderPermissionTree();
+            refreshPermissionSelectionUi();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -3663,7 +4012,13 @@
                 phone,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
-                moduleDeviceScopes: normalizedModuleDeviceScopes
+                moduleDeviceScopes: normalizedModuleDeviceScopes,
+                role: selectedRoleId !== 'custom' ? {
+                    id: selectedRoleId,
+                    name: getRoleTemplate(selectedRoleId)?.name || '未知角色',
+                    appliedAt: new Date().toISOString().slice(0, 10)
+                } : null,
+                permissionChanges: calculatePermissionChanges(selectedRoleId, selectedPermissions)
             };
 
             let nextStaffManagersData = staffManagersData.slice();
