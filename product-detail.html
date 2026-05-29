@@ -3049,7 +3049,7 @@
                             <h2 class="form-section-title" style="margin-bottom:0;">选项配置</h2>
                             <button class="btn btn-default" id="openTagConfigDrawerBtn" onclick="openTagConfigDrawer('beans')">编辑多语言文案</button>
                         </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="tagOptionsGrid">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="tagOptionsGrid" data-admin-i18n-ignore="true">
                             <div class="option-card active-spec" data-spec-key="beans">
                                 <div class="option-title">BEAN / 咖啡豆</div>
                                 <div class="option-list" id="beanOptions">
@@ -3571,6 +3571,15 @@
                 // ignore localStorage write failures
             }
             renderAdminSidebarTranslations();
+            // 选项面板按 admin lang 重新渲染：tag 选项 chip 和 group title 都来自商品自己的 i18n 数据。
+            if (typeof refreshOptionTitles === 'function') {
+                try { refreshOptionTitles(); } catch (e) { /* keep going */ }
+            }
+            if (typeof refreshOptionListLabels === 'function' && Array.isArray(tagConfigs)) {
+                tagConfigs.forEach(cfg => {
+                    try { refreshOptionListLabels(cfg.specKey); } catch (e) { /* keep going */ }
+                });
+            }
         }
 
 
@@ -4259,17 +4268,32 @@
             }
         }
 
+        // 选项 chip 的显示语言优先跟随 admin sidebar，让运营端切到 EN 之后
+        // 看到的是"商品本身的 en 字段"或"中文兜底"——而不是 i18n 字典硬翻的假英文。
+        function getProductOptionDisplayLang() {
+            try { return localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY) === 'en' ? 'en' : 'zh'; }
+            catch (e) { return 'zh'; }
+        }
+
         function refreshOptionListLabels(specKey) {
             const cfg = getTagConfigBySpec(specKey);
             if (!cfg) return;
             const list = document.getElementById(cfg.listId);
             if (!list) return;
 
+            const displayLang = getProductOptionDisplayLang();
             list.querySelectorAll('.option-item').forEach(item => {
                 if (!item.dataset.tagKey) item.dataset.tagKey = item.dataset.value;
                 const key = item.dataset.tagKey;
                 item.dataset.value = key;
-                item.textContent = getTagLabel(specKey, key, currentLang);
+                // 兜底：admin lang → currentLang → zh → key 本身。
+                // 注意：这里**只**读商品自己的 productData.tagI18n，
+                // 不会触发 i18n 字典翻译，所以英文模式下没有英文数据时会诚实显示中文。
+                const i18n = productData?.tagI18n?.[specKey]?.[key] || {};
+                item.textContent = i18n[displayLang]
+                    || i18n[currentLang]
+                    || i18n.zh
+                    || key;
             });
         }
 
@@ -7622,7 +7646,11 @@
         }
 
         function refreshOptionTitles() {
+            // 分组标题也按 admin lang 优先取，没有再回落到 device primary lang。
+            // 因为 #tagOptionsGrid 标了 data-admin-i18n-ignore，i18n 字典不会再插一脚，
+            // 显示的就是商品/设备数据里的真实 group label。
             const langs = (typeof getDeviceLangs === 'function' ? getDeviceLangs() : []) || [];
+            const adminLang = getProductOptionDisplayLang();
             const primaryLang = langs[0] || currentLang || 'zh';
             tagConfigs.forEach(cfg => {
                 const list = document.getElementById(cfg.listId);
@@ -7631,7 +7659,10 @@
                 if (!card) return;
                 const titleEl = card.querySelector('.option-title');
                 if (!titleEl) return;
-                titleEl.textContent = getTagGroupLabel(cfg.specKey, primaryLang) || cfg.title || cfg.specKey;
+                titleEl.textContent = getTagGroupLabel(cfg.specKey, adminLang)
+                    || getTagGroupLabel(cfg.specKey, primaryLang)
+                    || cfg.title
+                    || cfg.specKey;
             });
         }
 
