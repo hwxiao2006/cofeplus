@@ -329,6 +329,49 @@ test('页面正文 i18n helper 应覆盖登录页、旧商品页和配方入口�
     ]);
 });
 
+test('页面正文 i18n helper 不应翻译 input.value（避免把表单里的中文数据替换为英文）', () => {
+    const helper = read('shared/admin-page-i18n.js');
+    // 模拟多语言矩阵里的中文 input：value 是真实的中文数据 "热"，
+    // 不能被替换成 'Hot'，否则用户看到 zh 槽位显示英文、保存时还会把英文写回到 zh。
+    const input = {
+        nodeType: 1,
+        tagName: 'INPUT',
+        childNodes: [],
+        attributes: [
+            { name: 'value', value: '热' },
+            { name: 'placeholder', value: '请输入名称' }
+        ],
+        dataset: {},
+        getAttribute(name) {
+            const attr = this.attributes.find(item => item.name === name);
+            return attr ? attr.value : null;
+        },
+        setAttribute(name, value) {
+            const attr = this.attributes.find(item => item.name === name);
+            if (attr) attr.value = value;
+            else this.attributes.push({ name, value });
+        }
+    };
+    const document = {
+        body: { nodeType: 1, tagName: 'BODY', childNodes: [input], attributes: [], dataset: {} },
+        title: '',
+        addEventListener() {},
+        querySelectorAll() { return []; }
+    };
+    const context = {
+        window: { addEventListener() {} },
+        document,
+        localStorage: { getItem() { return 'en'; } },
+        MutationObserver: function () { this.observe = function () {}; }
+    };
+    vm.runInNewContext(helper, context);
+    context.window.CofeAdminPageI18n.apply();
+    // value 不可被改：表单数据保持原样
+    assert.strictEqual(input.getAttribute('value'), '热');
+    // placeholder 仍可翻：那是 UI 文案；dict 里有"请输入名称" → "Name"
+    assert.strictEqual(input.getAttribute('placeholder'), 'Name');
+});
+
 test('页面正文 i18n helper 应翻译每个页面共享的侧边栏 / 顶栏 chrome', () => {
     const helper = read('shared/admin-page-i18n.js');
     const nodes = [

@@ -1,6 +1,9 @@
 (function () {
     const LANG_KEY = 'adminSidebarLang';
-    const ATTRS = ['placeholder', 'title', 'aria-label', 'value'];
+    // 不翻译 input.value —— 这是用户数据（多语言字段、价格、ID 等），不是 UI 文案。
+    // 实际按钮文案应该用 <button>X</button> 的 textContent，必要时配合 aria-label，
+    // 不能依赖 input[type=submit value="X"] 来表达 UI。
+    const ATTRS = ['placeholder', 'title', 'aria-label'];
     const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA']);
 
     const TEXT = {
