@@ -751,6 +751,262 @@
             margin-top: 12px;
         }
 
+        /* 角色选择样式 */
+        .role-selection-section {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+
+        .role-selection-section + .section-block {
+            margin-top: 12px;
+        }
+
+        .role-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .role-card {
+            border: 2px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+            min-height: 88px;
+            position: relative;
+        }
+
+        .role-card:hover {
+            border-color: #bfe9e6;
+            background: #f0fbfa;
+        }
+
+        .role-card.selected {
+            border-color: #4ECDC4;
+            background: linear-gradient(180deg, #ecfbf9 0%, #f0fbfa 100%);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2);
+        }
+
+        .role-card-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .role-card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .role-card-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .role-card-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ECDC4;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .role-card.selected .role-card-check {
+            display: flex;
+        }
+
+        /* 当前角色条：永远只回答"我是谁"；撤销按钮仅在 lastCommitSnapshot != null 时显示 */
+        .role-current-banner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f0fbfa;
+            border: 1px solid #d6ece7;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* hidden 属性遇到 display:flex 不会生效，显式补齐 */
+        .role-current-banner[hidden],
+        .role-switch-preview[hidden],
+        .role-banner-undo[hidden] {
+            display: none !important;
+        }
+
+        .role-banner-icon {
+            font-size: 18px;
+        }
+
+        .role-banner-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .role-banner-name {
+            font-weight: 700;
+            color: #0f766e;
+        }
+
+        .role-banner-undo {
+            margin-left: auto;
+            background: #fff;
+            border: 1px solid #4ECDC4;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .role-banner-undo:hover {
+            background: #ecfbf9;
+        }
+
+        /* 待确认切换：点新卡片后展示的对比 + 操作条 */
+        .role-switch-preview {
+            border-radius: 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 12px 14px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .role-switch-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .role-switch-arrow {
+            color: #f59e0b;
+            font-size: 16px;
+            margin: 0 4px;
+        }
+
+        .role-switch-detail {
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .role-switch-warning {
+            color: #c2410c;
+            background: #ffedd5;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .role-switch-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .role-switch-actions .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .role-switch-actions .btn-primary {
+            background: #4ECDC4;
+            color: #fff;
+        }
+
+        .role-switch-actions .btn-primary:hover {
+            background: #0f766e;
+        }
+
+        .role-switch-actions .btn-ghost {
+            background: #fff;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .role-switch-actions .btn-ghost:hover {
+            background: #f1f5f9;
+        }
+
+        /* 待确认状态的卡片：虚线橙边 + 待确认角标 */
+        .role-card[data-pending="true"] {
+            border-style: dashed;
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .role-card-pending-mark {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f59e0b;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .role-card[data-pending="true"] .role-card-pending-mark {
+            display: flex;
+        }
+
+        .role-card[data-pending="true"] .role-card-check {
+            display: none;
+        }
+
+        .permission-customization-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #c2410c;
+        }
+
+        .permission-customization-hint.hidden {
+            display: none;
+        }
+
         .staff-modal-basic-section {
             margin-bottom: 12px;
         }
@@ -1680,6 +1936,10 @@
                 padding: 10px 14px;
             }
 
+            .role-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .manager-list {
                 padding: 10px;
                 gap: 8px;
@@ -1964,6 +2224,36 @@
                     </div>
                 </section>
 
+                <section class="role-selection-section" id="roleSelectionSection">
+                    <div class="section-title">选择角色<span class="required">*</span></div>
+                    <p class="section-helper">选择角色模板可快速分配权限，之后可以微调</p>
+
+                    <div class="role-current-banner" id="roleCurrentBanner" hidden>
+                        <span class="role-banner-icon" id="roleCurrentIcon">👑</span>
+                        <span class="role-banner-label">当前角色：</span>
+                        <span class="role-banner-name" id="roleCurrentName">超级管理员</span>
+                        <button type="button" class="role-banner-undo" id="roleCurrentUndoBtn" onclick="undoRoleSwitch()" hidden>↩ 撤销切换</button>
+                    </div>
+
+                    <div class="role-switch-preview" id="roleSwitchPreview" hidden>
+                        <div class="role-switch-line">
+                            <span id="roleSwitchFromIcon">👑</span>
+                            <span id="roleSwitchFromName">超级管理员</span>
+                            <span class="role-switch-arrow">→</span>
+                            <span id="roleSwitchToIcon">🏪</span>
+                            <span id="roleSwitchToName">店长</span>
+                        </div>
+                        <div class="role-switch-detail" id="roleSwitchDetail"></div>
+                        <div class="role-switch-warning" id="roleSwitchWarning" hidden></div>
+                        <div class="role-switch-actions">
+                            <button type="button" class="btn btn-ghost" onclick="cancelRoleSwitch()">取消，保留原角色</button>
+                            <button type="button" class="btn btn-primary" onclick="confirmRoleSwitch()">确认切换</button>
+                        </div>
+                    </div>
+
+                    <div class="role-cards-grid" id="roleCardsGrid"></div>
+                </section>
+
                 <section class="section-block staff-device-section" id="staffDeviceSection">
                     <div class="staff-config-section-head">
                         <div>
@@ -1986,6 +2276,10 @@
                             <p class="permission-section-note">在每个页面行里设置可进入页面和可查看设备。</p>
                         </div>
                         <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                    </div>
+                    <div class="permission-customization-hint" id="permissionCustomizationHint">
+                        <span>ℹ️</span>
+                        <span id="permissionCustomizationText">基于"店长"角色，已添加 1 项权限，移除 1 项权限</span>
                     </div>
                     <div class="permission-tree" id="permissionTree">
                         <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
@@ -2166,6 +2460,8 @@
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/admin-page-i18n.js"></script>
+    <script src="shared/permissions-registry.js"></script>
+    <script src="shared/role-definitions.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2422,6 +2718,14 @@
         let moduleScopeSearchKeyword = '';
         let showOnlySelectedModuleScopeDevices = false;
 
+        // 角色相关变量
+        // committedRoleId：已确认的角色，写入员工记录用
+        // pendingRoleId：待确认的目标角色，null 表示无切换中
+        // lastCommitSnapshot：上一次 confirm 前的快照，撤销用；铁律：只在 confirmRoleSwitch() 里赋值
+        let committedRoleId = 'custom';
+        let pendingRoleId = null;
+        let lastCommitSnapshot = null;
+
         const defaultDeviceMap = {
             C001: ['RCK386', 'RCK385', 'RCK384', 'RCK409'],
             C002: ['RCK410', 'RCK406', 'RCK404'],
@@ -2523,6 +2827,50 @@
             { moduleKey: 'faults', label: '故障列表', permission: 'ops.faults' }
         ];
 
+        // 使用权限注册表中的数据（如果可用）
+        const permissionRegistry = window.CofePermissionsRegistry || {};
+        const roleDefinitions = window.CofeRoleDefinitions || {};
+
+        // 获取权限树（优先使用注册表）
+        function getPermissionTreeGroups() {
+            if (permissionRegistry.getPermissionTree) {
+                return permissionRegistry.getPermissionTree();
+            }
+            return permissionTreeGroups;
+        }
+
+        // 获取所有角色模板
+        function getAllRoles() {
+            if (roleDefinitions.getAllRoleTemplates) {
+                return roleDefinitions.getAllRoleTemplates();
+            }
+            return [];
+        }
+
+        // 获取角色权限
+        function getRolePermissions(roleId) {
+            if (roleDefinitions.getRolePermissions) {
+                return roleDefinitions.getRolePermissions(roleId);
+            }
+            return [];
+        }
+
+        // 获取角色默认模块范围
+        function getRoleDefaultModuleScopes(roleId) {
+            if (roleDefinitions.getRoleDefaultModuleScopes) {
+                return roleDefinitions.getRoleDefaultModuleScopes(roleId);
+            }
+            return {};
+        }
+
+        // 计算权限变更
+        function calculatePermissionChanges(roleId, finalPermissions) {
+            if (roleDefinitions.calculatePermissionChanges) {
+                return roleDefinitions.calculatePermissionChanges(roleId, finalPermissions);
+            }
+            return { added: [], removed: [], fromRole: null };
+        }
+
         const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
         const allPermissionKeySet = new Set(allPermissionKeys);
         const legacyPermissionMigrationMap = {
@@ -2587,10 +2935,271 @@
         function init() {
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
             renderPermissionTree();
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             renderManagers();
             updateStats();
+        }
+
+        // ========== 角色相关函数 ==========
+
+        function renderRoleCards() {
+            const grid = document.getElementById('roleCardsGrid');
+            if (!grid) return;
+
+            const roles = getAllRoles();
+            if (!roles.length) {
+                grid.innerHTML = '<div class="empty-state">暂无角色模板</div>';
+                return;
+            }
+
+            grid.innerHTML = roles.map(role => {
+                const isSelected = role.id === committedRoleId;
+                const isPending = role.id === pendingRoleId;
+                return `
+                <div class="role-card ${isSelected ? 'selected' : ''}"
+                     data-role-id="${role.id}"
+                     data-pending="${isPending ? 'true' : 'false'}"
+                     onclick="requestRoleSwitch('${role.id}')">
+                    <div class="role-card-check">✓</div>
+                    <div class="role-card-pending-mark">⋯</div>
+                    <span class="role-card-icon">${role.icon || '👤'}</span>
+                    <span class="role-card-name">${role.name}</span>
+                    <span class="role-card-desc">${role.description || ''}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function getRoleTemplate(roleId) {
+            if (roleDefinitions.getRoleTemplate) {
+                return roleDefinitions.getRoleTemplate(roleId);
+            }
+            return null;
+        }
+
+        // 用户点角色卡片：进入"待确认"状态，权限树暂不改动
+        function requestRoleSwitch(roleId) {
+            // 同角色无操作
+            if (roleId === committedRoleId && !pendingRoleId) return;
+
+            // 在 pending 中再点回原角色 = 取消
+            if (pendingRoleId && roleId === committedRoleId) {
+                cancelRoleSwitch();
+                return;
+            }
+
+            pendingRoleId = roleId;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 确认切换：唯一允许给 lastCommitSnapshot 赋值的地方
+        function confirmRoleSwitch() {
+            if (!pendingRoleId) return;
+            // 保存撤销点（铁律：仅此一处）
+            lastCommitSnapshot = snapshotCurrentRoleState();
+            committedRoleId = pendingRoleId;
+            pendingRoleId = null;
+            applyRolePermissions(committedRoleId);
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 取消切换：清掉 pending，回到 B 状态
+        function cancelRoleSwitch() {
+            pendingRoleId = null;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 撤销：把 committedRoleId 还原为 snapshot 里的角色，权限/scopes 一并回滚
+        function undoRoleSwitch() {
+            if (!lastCommitSnapshot) return;
+            committedRoleId = lastCommitSnapshot.roleId;
+            pendingRoleId = null;
+            restoreFromSnapshot(lastCommitSnapshot);
+            lastCommitSnapshot = null;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        function snapshotCurrentRoleState() {
+            return {
+                roleId: committedRoleId,
+                permissions: Array.from(document.querySelectorAll('input[name="permission"]:checked'))
+                    .map((input) => input.value),
+                moduleScopes: JSON.parse(JSON.stringify(currentModuleDeviceScopes || {}))
+            };
+        }
+
+        function restoreFromSnapshot(snapshot) {
+            const set = new Set(snapshot.permissions || []);
+            document.querySelectorAll('input[name="permission"]').forEach((input) => {
+                input.checked = set.has(input.value);
+            });
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(
+                snapshot.moduleScopes || {},
+                getAssignedDeviceIds()
+            );
+            refreshPermissionSelectionUi();
+        }
+
+        function applyRolePermissions(roleId) {
+            if (roleId === 'custom') {
+                return;
+            }
+
+            const rolePermissions = getRolePermissions(roleId);
+            const roleModuleScopes = getRoleDefaultModuleScopes(roleId);
+
+            document.querySelectorAll('input[name="permission"]').forEach(input => {
+                input.checked = rolePermissions.includes(input.value);
+            });
+
+            const assignedDevices = getAssignedDeviceIds();
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(roleModuleScopes, assignedDevices);
+
+            refreshPermissionSelectionUi();
+        }
+
+        function renderRoleCurrentBanner() {
+            const banner = document.getElementById('roleCurrentBanner');
+            if (!banner) return;
+
+            // 待确认切换时，让对比条占位
+            if (pendingRoleId) {
+                banner.hidden = true;
+                return;
+            }
+
+            if (!committedRoleId || committedRoleId === 'custom') {
+                banner.hidden = true;
+                return;
+            }
+
+            const role = getRoleTemplate(committedRoleId);
+            if (!role) {
+                banner.hidden = true;
+                return;
+            }
+
+            document.getElementById('roleCurrentIcon').textContent = role.icon || '👤';
+            document.getElementById('roleCurrentName').textContent = role.name;
+            // 撤销按钮：仅在 lastCommitSnapshot != null 时显示
+            document.getElementById('roleCurrentUndoBtn').hidden = !lastCommitSnapshot;
+            banner.hidden = false;
+        }
+
+        function renderRoleSwitchPreview() {
+            const preview = document.getElementById('roleSwitchPreview');
+            if (!preview) return;
+
+            if (!pendingRoleId) {
+                preview.hidden = true;
+                return;
+            }
+
+            const fromRole = (committedRoleId && committedRoleId !== 'custom')
+                ? getRoleTemplate(committedRoleId)
+                : { icon: '⚙️', name: '自定义' };
+            const toRole = getRoleTemplate(pendingRoleId);
+            if (!toRole) {
+                preview.hidden = true;
+                return;
+            }
+
+            document.getElementById('roleSwitchFromIcon').textContent = fromRole?.icon || '⚙️';
+            document.getElementById('roleSwitchFromName').textContent = fromRole?.name || '自定义';
+            document.getElementById('roleSwitchToIcon').textContent = toRole.icon || '👤';
+            document.getElementById('roleSwitchToName').textContent = toRole.name;
+
+            // 计算切换影响
+            const currentChecked = new Set(
+                Array.from(document.querySelectorAll('input[name="permission"]:checked'))
+                    .map((input) => input.value)
+            );
+            const targetPerms = new Set(getRolePermissions(pendingRoleId));
+            let kept = 0, added = 0, removed = 0;
+            targetPerms.forEach((p) => { (currentChecked.has(p) ? kept++ : added++); });
+            currentChecked.forEach((p) => { if (!targetPerms.has(p)) removed++; });
+            document.getElementById('roleSwitchDetail').textContent =
+                `保留 ${kept} 项重叠权限，引入 ${toRole.name} 的 ${added} 项默认权限，移除 ${removed} 项不在新角色范围内的权限`;
+
+            // 自定义微调丢失警告（基于当前 committedRoleId 计算）
+            const warning = document.getElementById('roleSwitchWarning');
+            if (committedRoleId && committedRoleId !== 'custom') {
+                const changes = calculatePermissionChanges(
+                    committedRoleId,
+                    Array.from(currentChecked)
+                );
+                if ((changes.added && changes.added.length) || (changes.removed && changes.removed.length)) {
+                    const parts = [];
+                    if (changes.added.length) parts.push(`${changes.added.length} 项自定义新增`);
+                    if (changes.removed.length) parts.push(`${changes.removed.length} 项自定义移除`);
+                    warning.textContent = `⚠ 你在原角色基础上的 ${parts.join(' / ')} 将被覆盖`;
+                    warning.hidden = false;
+                } else {
+                    warning.hidden = true;
+                }
+            } else {
+                // 从 custom 切到角色时，提示当前自定义权限会被替换
+                if (currentChecked.size > 0) {
+                    warning.textContent = `⚠ 你当前的 ${currentChecked.size} 项自定义权限将被新角色的默认权限替换`;
+                    warning.hidden = false;
+                } else {
+                    warning.hidden = true;
+                }
+            }
+
+            preview.hidden = false;
+        }
+
+        // 用户主动改了权限 checkbox 后，撤销点失效（避免回滚丢掉新微调）
+        function invalidateRoleSnapshotOnManualEdit() {
+            if (lastCommitSnapshot) {
+                lastCommitSnapshot = null;
+                renderRoleCurrentBanner();
+            }
+        }
+
+        function updatePermissionCustomizationHint() {
+            const hint = document.getElementById('permissionCustomizationHint');
+            const hintText = document.getElementById('permissionCustomizationText');
+
+            if (!hint || !hintText) return;
+
+            // 切换待确认时不显示微调提示，避免和对比条信息打架
+            if (pendingRoleId) {
+                hint.classList.add('hidden');
+                return;
+            }
+
+            const currentPermissions = getSelectedPermissionValues();
+            const changes = calculatePermissionChanges(committedRoleId, currentPermissions);
+
+            if (committedRoleId === 'custom' || (!changes.added.length && !changes.removed.length)) {
+                hint.classList.add('hidden');
+                return;
+            }
+
+            const parts = [];
+            if (changes.added.length) {
+                parts.push(`添加 ${changes.added.length} 项`);
+            }
+            if (changes.removed.length) {
+                parts.push(`移除 ${changes.removed.length} 项`);
+            }
+
+            const roleName = changes.fromRole?.name || '该角色';
+            hintText.textContent = `基于"${roleName}"，${parts.join('，')}权限`;
+            hint.classList.remove('hidden');
         }
 
         function bootstrapStaffManagers() {
@@ -2820,6 +3429,8 @@
         }
 
         function handlePermissionParentChange(groupKey, checked) {
+            // 用户主动改权限 → 撤销点失效（仅限有 snapshot 时）
+            invalidateRoleSnapshotOnManualEdit();
             getPermissionChildInputs(groupKey).forEach((input) => {
                 input.checked = checked;
             });
@@ -2827,6 +3438,8 @@
         }
 
         function handlePermissionChildChange(groupKey) {
+            // 用户主动改权限 → 撤销点失效（仅限有 snapshot 时）
+            invalidateRoleSnapshotOnManualEdit();
             const group = getPermissionGroupConfig(groupKey);
             const childInputs = getPermissionChildInputs(groupKey);
             if (!group || !childInputs.length) {
@@ -2893,13 +3506,15 @@
         }
 
         function refreshPermissionSelectionUi() {
-            permissionTreeGroups.forEach((group) => {
+            const groups = getPermissionTreeGroups();
+            groups.forEach((group) => {
                 syncPermissionParentState(group.key);
                 updatePermissionGroupDisplay(group.key);
                 syncPermissionGroupVisibility(group.key);
             });
             updatePermissionSelectionStats();
             renderModuleDeviceScopeRows();
+            updatePermissionCustomizationHint();
         }
 
         function renderPermissionTree() {
@@ -3388,6 +4003,15 @@
 
             expandedPermissionGroups.clear();
             renderPermissionTree();
+
+            // 重置角色选择（注意：lastCommitSnapshot 必须显式置 null，避免"刚打开就出现撤销按钮"）
+            committedRoleId = 'custom';
+            pendingRoleId = null;
+            lastCommitSnapshot = null;
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
+            updatePermissionCustomizationHint();
         }
 
         function fillStaffForm(targetStaff) {
@@ -3395,12 +4019,21 @@
             document.getElementById('staffPhone').value = targetStaff.phone || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
 
+            // 恢复角色信息（回填不是切换，绝不触发 toast/撤销 UI）
+            const staffRole = targetStaff.role || {};
+            committedRoleId = staffRole.id || 'custom';
+            pendingRoleId = null;
+            lastCommitSnapshot = null;   // 铁律：回填时必须显式清掉
+
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
             expandedPermissionGroups.clear();
-            renderPermissionTree();
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
+            refreshPermissionSelectionUi();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -3663,7 +4296,13 @@
                 phone,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
-                moduleDeviceScopes: normalizedModuleDeviceScopes
+                moduleDeviceScopes: normalizedModuleDeviceScopes,
+                role: committedRoleId !== 'custom' ? {
+                    id: committedRoleId,
+                    name: getRoleTemplate(committedRoleId)?.name || '未知角色',
+                    appliedAt: new Date().toISOString().slice(0, 10)
+                } : null,
+                permissionChanges: calculatePermissionChanges(committedRoleId, selectedPermissions)
             };
 
             let nextStaffManagersData = staffManagersData.slice();
