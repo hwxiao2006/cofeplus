@@ -78,7 +78,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <li>已有微调必须受保护：切换角色前明确提示自定义新增 / 自定义移除会被覆盖。</li>
 <li>切换后必须可撤销一次：<code>撤销切换</code> 只在刚确认切换且未继续手动改权限时显示。</li>
 <li>微调必须有基准：权限树上方显示 <code>基于&quot;&lt;角色名&gt;&quot;角色，已添加 N 项权限，移除 M 项权限</code>。</li>
-<li>保存数据必须可追溯：人员记录保存 <code>role</code>、<code>permissions</code>、<code>permissionChanges</code>、<code>devices</code>、<code>moduleDeviceScopes</code>。</li>
+<li>保存数据必须可追溯：人员记录要把角色、最终权限、与模板的差异、负责设备列表、模块设备范围都保存下来。</li>
 </ul>
 <p>旧版能力（人员列表、基础信息、设备选择、启用 / 停用、桌面端设备展开）仍保留，但不再是本版的主要差异点。</p>
 <h2 id="1.-介绍-概述">1. 介绍 / 概述</h2>
@@ -234,7 +234,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <ul>
 <li><span class="checkbox">□</span>用户点击非当前角色卡片后，权限树 checkbox 必须保持不变，直到用户点击 <code>确认切换</code>。</li>
 <li><span class="checkbox">□</span>对比条必须包含原角色名、箭头、新角色名、保留 / 新增 / 移除统计。</li>
-<li><span class="checkbox">□</span>若原角色基础上存在用户自定义（基于 <code>calculatePermissionChanges</code> 计算），必须显示黄色警告行。</li>
+<li><span class="checkbox">□</span>若用户在原角色基础上做过自定义微调（系统对比当前权限与原角色默认即可识别），必须显示黄色警告行。</li>
 <li><span class="checkbox">□</span>新角色卡片在待确认期间必须用虚线边框区分于已确认状态。</li>
 <li><span class="checkbox">□</span>原角色卡片在待确认期间保留绿色选中态。</li>
 <li><span class="checkbox">□</span>用户在 pending 状态再点回原角色卡片，等同于 <code>取消，保留原角色</code>。</li>
@@ -278,12 +278,12 @@ tbody tr:last-child td { border-bottom: 0; }
 <p><strong>验收标准：</strong></p>
 <ul>
 <li><span class="checkbox">□</span>微调统计必须显示在权限树上方的橙色 <code>.permission-customization-hint</code> 条上。</li>
-<li><span class="checkbox">□</span>微调统计文案必须包含基准角色名（用 <code>committedRoleId</code> 计算）。</li>
+<li><span class="checkbox">□</span>微调统计文案必须包含基准角色名（与当前已确认角色比较）。</li>
 <li><span class="checkbox">□</span>当前权限等于角色默认权限时，橙色提示条隐藏。</li>
 <li><span class="checkbox">□</span>当前 <code>committedRoleId == 'custom'</code> 时，橙色提示条隐藏。</li>
 <li><span class="checkbox">□</span>微调发生时，“当前角色”条上不出现“已微调 +N/-M”徽标。</li>
 <li><span class="checkbox">□</span>父子权限联动规则保留：勾选子权限自动带上模块一级查看权限；取消一级查看权限会清空该模块其他子权限。</li>
-<li><span class="checkbox">□</span>微调会保存为该员工的 <code>permissions</code> 与 <code>permissionChanges</code>，下次进入编辑可还原。</li>
+<li><span class="checkbox">□</span>微调会保存为该员工的最终权限与"与模板的差异"两份记录，下次进入编辑可还原。</li>
 </ul>
 <p><strong>参考截图：</strong></p>
 <figure class="doc-image"><img alt="UF-008 角色基础上的权限微调" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDQwIiBoZWlnaHQ9Ijk2MCIgdmlld0JveD0iMCAwIDE0NDAgOTYwIj4KICAgIDxyZWN0IHdpZHRoPSIxNDQwIiBoZWlnaHQ9Ijk2MCIgZmlsbD0iI2VkZjJmNyIvPgogICAgPHJlY3QgeD0iODAiIHk9IjU2IiB3aWR0aD0iMTI4MCIgaGVpZ2h0PSI4NDgiIHJ4PSIyNiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDdlMmVlIi8+CiAgICA8cmVjdCB4PSI4MCIgeT0iNTYiIHdpZHRoPSIxMjgwIiBoZWlnaHQ9IjkyIiByeD0iMjYiIGZpbGw9IiNmOGZiZmQiLz4KICAgIDx0ZXh0IHg9IjEyMiIgeT0iMTEyIiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiMxNzIwMzMiIHRleHQtYW5jaG9yPSJzdGFydCI+VUYtMDA4IOWcqOinkuiJsuWfuuehgOS4iuW+ruiwg+adg+mZkDwvdGV4dD4KICAgIDx0ZXh0IHg9IjEyMiIgeT0iMTM4IiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIGZvbnQtd2VpZ2h0PSI1MDAiIGZpbGw9IiM2NjcwODUiIHRleHQtYW5jaG9yPSJzdGFydCI+6KeS6Imy5L2c5Li65Z+65YeG77yM5b6u6LCD5beu5byC5Zyo5p2D6ZmQ5qCR5LiK5pa55qmZ6Imy5o+Q56S65p2h5bGV56S644CCPC90ZXh0PgogICAgPGxpbmUgeDE9IjgwIiB5MT0iMTQ4IiB4Mj0iMTM2MCIgeTI9IjE0OCIgc3Ryb2tlPSIjZDdlMmVlIi8+CiAgICA8cmVjdCB4PSIxMjIiIHk9IjE5NiIgd2lkdGg9IjEyMDAiIGhlaWdodD0iNjIiIHJ4PSIxNiIgZmlsbD0iI2VjZmRmNSIgc3Ryb2tlPSIjOTlmNmU0Ii8+CiAgPHRleHQgeD0iMTU0IiB5PSIyMzUiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMSIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iIzA0Nzg1NyIgdGV4dC1hbmNob3I9InN0YXJ0Ij7lvZPliY3op5LoibLvvJrlupfplb88L3RleHQ+PHRleHQgeD0iMTAzOCIgeT0iMjM1IiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwNDc4NTciIHRleHQtYW5jaG9yPSJzdGFydCI+5LiN5pi+56S64oCc5bey5b6u6LCD4oCd5b695qCHPC90ZXh0PgogIDxyZWN0IHg9IjEyMiIgeT0iMjg2IiB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI1OCIgcng9IjE0IiBmaWxsPSIjZmZmN2VkIiBzdHJva2U9IiNmZWQ3YWEiLz48dGV4dCB4PSIxNTQiIHk9IjMyMiIgZm9udC1mYW1pbHk9IlBpbmdGYW5nIFNDLCBNaWNyb3NvZnQgWWFIZWksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjOWEzNDEyIiB0ZXh0LWFuY2hvcj0ic3RhcnQiPuWfuuS6juKAnOW6l+mVv+KAneinkuiJsu+8jOW3sua3u+WKoCAxIOmhueadg+mZkO+8jOenu+mZpCAyIOmhueadg+mZkDwvdGV4dD4KICA8cmVjdCB4PSIxMjIiIHk9IjM4NCIgd2lkdGg9IjEyMDAiIGhlaWdodD0iMzEwIiByeD0iMTgiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iI2Q3ZTJlZSIvPgogIDx0ZXh0IHg9IjE1NCIgeT0iNDI4IiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjEiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiMxNzIwMzMiIHRleHQtYW5jaG9yPSJzdGFydCI+6I+c5Y2V5p2D6ZmQ6YWN572uPC90ZXh0PjxyZWN0IHg9IjExMjAiIHk9IjQwNiIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIzMCIgcng9IjE1IiBmaWxsPSIjZjBmZGZhIiBzdHJva2U9IiM5OWY2ZTQiLz48dGV4dCB4PSIxMTkwIiB5PSI0MjYiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzA0Nzg1NyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5bey6YCJIDEyIOmhuTwvdGV4dD4KICA8cmVjdCB4PSIxNTQiIHk9IjQ2NiIgd2lkdGg9IjExMzYiIGhlaWdodD0iNTQiIHJ4PSIxMiIgZmlsbD0iI2Y4ZmJmZCIgc3Ryb2tlPSIjZDdlMmVlIi8+PHRleHQgeD0iMTgwIiB5PSI1MDAiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iIzE3MjAzMyIgdGV4dC1hbmNob3I9InN0YXJ0Ij7orqLljZU8L3RleHQ+PHRleHQgeD0iNDcwIiB5PSI1MDAiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjUwMCIgZmlsbD0iIzY2NzA4NSIgdGV4dC1hbmNob3I9InN0YXJ0Ij7mn6XnnIvorqLljZXjgIHorqLljZXpgIDmrL48L3RleHQ+PHRleHQgeD0iMTE2MCIgeT0iNTAwIiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiMxMDljOTMiIHRleHQtYW5jaG9yPSJzdGFydCI+Mi8yPC90ZXh0PgogIDxyZWN0IHg9IjE1NCIgeT0iNTMyIiB3aWR0aD0iMTEzNiIgaGVpZ2h0PSI1NCIgcng9IjEyIiBmaWxsPSIjZmZmN2VkIiBzdHJva2U9IiNmZWQ3YWEiLz48dGV4dCB4PSIxODAiIHk9IjU2NiIgZm9udC1mYW1pbHk9IlBpbmdGYW5nIFNDLCBNaWNyb3NvZnQgWWFIZWksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjMTcyMDMzIiB0ZXh0LWFuY2hvcj0ic3RhcnQiPuWVhuWTgeeuoeeQhjwvdGV4dD48dGV4dCB4PSI0NzAiIHk9IjU2NiIgZm9udC1mYW1pbHk9IlBpbmdGYW5nIFNDLCBNaWNyb3NvZnQgWWFIZWksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWEzNDEyIiB0ZXh0LWFuY2hvcj0ic3RhcnQiPisg57yW6L6R6YWN5pa577yI6Ieq5a6a5LmJ5paw5aKe77yJPC90ZXh0Pjx0ZXh0IHg9IjExNjAiIHk9IjU2NiIgZm9udC1mYW1pbHk9IlBpbmdGYW5nIFNDLCBNaWNyb3NvZnQgWWFIZWksIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjOWEzNDEyIiB0ZXh0LWFuY2hvcj0ic3RhcnQiPjUvNTwvdGV4dD4KICA8cmVjdCB4PSIxNTQiIHk9IjU5OCIgd2lkdGg9IjExMzYiIGhlaWdodD0iNTQiIHJ4PSIxMiIgZmlsbD0iI2Y4ZmJmZCIgc3Ryb2tlPSIjZDdlMmVlIi8+PHRleHQgeD0iMTgwIiB5PSI2MzIiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iIzE3MjAzMyIgdGV4dC1hbmNob3I9InN0YXJ0Ij7kurrlkZjnrqHnkIY8L3RleHQ+PHRleHQgeD0iNDcwIiB5PSI2MzIiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlhMzQxMiIgdGV4dC1hbmNob3I9InN0YXJ0Ij4tIOS6uuWRmOe7tOaKpO+8iOebuOWvueW6l+mVv+enu+mZpO+8iTwvdGV4dD48dGV4dCB4PSIxMTYwIiB5PSI2MzIiIGZvbnQtZmFtaWx5PSJQaW5nRmFuZyBTQywgTWljcm9zb2Z0IFlhSGVpLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iIzlhMzQxMiIgdGV4dC1hbmNob3I9InN0YXJ0Ij4xLzI8L3RleHQ+CiAgPHJlY3QgeD0iMTIyIiB5PSI3MzIiIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjcwIiByeD0iMTYiIGZpbGw9IiNmOGZiZmQiIHN0cm9rZT0iI2Q3ZTJlZSIvPjx0ZXh0IHg9IjE1NCIgeT0iNzc1IiBmb250LWZhbWlseT0iUGluZ0ZhbmcgU0MsIE1pY3Jvc29mdCBZYUhlaSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM0NzU0NjciIHRleHQtYW5jaG9yPSJzdGFydCI+5L+d5a2Y5pe25YaZ5YWlIHBlcm1pc3Npb25DaGFuZ2Vz77yaYmFzZVJvbGVJZD1zdG9yZU1hbmFnZXIsIGFkZGVkPVtvcHMucHJvZHVjdHMucmVjaXBlXSwgcmVtb3ZlZD1bb3BzLnN0YWZmLm1hbmFnZV08L3RleHQ+CiAgPC9zdmc+" loading="lazy"><figcaption>UF-008 角色基础上的权限微调</figcaption></figure>
@@ -328,8 +328,8 @@ tbody tr:last-child td { border-bottom: 0; }
 <li><span class="checkbox">□</span>同一商户下手机号不得重复。</li>
 <li><span class="checkbox">□</span>必须至少选择一个权限。</li>
 <li><span class="checkbox">□</span>必须至少选择一个当前商户下的负责设备。</li>
-<li><span class="checkbox">□</span>保存数据必须包含 <code>role</code> 字段：当前若有角色为 <code>{ id, name, appliedAt }</code>；若为手动自定义，则明确标记为自定义角色，不保存内建角色 ID。</li>
-<li><span class="checkbox">□</span>保存数据必须包含 <code>permissionChanges</code> 字段，记录该员工权限相对角色默认的差异（添加项、移除项）。</li>
+<li><span class="checkbox">□</span>保存数据必须包含角色信息：选择了内建角色时保存角色 ID、名称、应用时间；手动自定义时明确标记为自定义角色，不挂任何内建角色 ID。</li>
+<li><span class="checkbox">□</span>保存数据必须包含权限差异记录，明确这位员工的权限相对角色默认有哪些新增、哪些移除。</li>
 <li><span class="checkbox">□</span>新增人员默认账号状态为 <code>已启用</code>。</li>
 <li><span class="checkbox">□</span>编辑成功后更新原记录，不新增重复人员。</li>
 <li><span class="checkbox">□</span>保存成功后刷新列表与顶部统计。</li>
@@ -425,28 +425,28 @@ tbody tr:last-child td { border-bottom: 0; }
 <th>退出结果</th>
 </tr></thead><tbody>
 <tr>
-<td><code>custom</code></td>
+<td>「自定义（无角色）」</td>
 <td>新增弹窗初始态，或历史员工无角色字段</td>
 <td>无当前角色条；权限树按现有勾选显示</td>
 <td>手动改权限、选择角色卡片</td>
-<td>选择角色后进入 <code>pendingRoleSwitch</code></td>
+<td>选择角色后进入 「待确认切换」</td>
 </tr>
 <tr>
-<td><code>committedRole</code></td>
+<td>「已确认角色」</td>
 <td>已确认某个角色，或编辑员工回填已有角色</td>
 <td>绿色当前角色条；对应角色卡片绿色选中</td>
 <td>手动微调权限、选择其他角色、保存</td>
-<td>选其他角色进入 <code>pendingRoleSwitch</code>；微调后保持当前角色</td>
+<td>选其他角色进入 「待确认切换」；微调后保持当前角色</td>
 </tr>
 <tr>
-<td><code>pendingRoleSwitch</code></td>
+<td>「待确认切换」</td>
 <td>点击非当前角色卡片</td>
 <td>橙色对比条；新角色虚线待确认；原角色仍选中</td>
 <td>确认切换、取消切换、点回原角色</td>
-<td>确认后进入 <code>committedRole</code>；取消后回到进入前状态</td>
+<td>确认后进入 「已确认角色」；取消后回到进入前状态</td>
 </tr>
 <tr>
-<td><code>undoAvailable</code></td>
+<td>「可撤销」</td>
 <td>确认切换后且尚未手动改动权限</td>
 <td>当前角色条右侧显示 <code>撤销切换</code></td>
 <td>撤销切换、手动改权限、保存</td>
@@ -462,36 +462,13 @@ tbody tr:last-child td { border-bottom: 0; }
 </ul>
 <h2 id="6.-数据保存契约">6. 数据保存契约</h2>
 <p>人员记录至少包含以下字段：</p>
-<pre><code>{
-    id: 'staff-001',
-    merchantId: 'C001',
-    username: '王店长',
-    phone: '13800138000',
-    status: 'enabled',
-    role: {
-        id: 'storeManager',
-        name: '店长',
-        appliedAt: '2026-06-01T10:00:00.000Z'
-    },
-    permissions: ['ops.overview', 'ops.orders', 'ops.orders.refund'],
-    permissionChanges: {
-        baseRoleId: 'storeManager',
-        added: ['ops.orders.refund'],
-        removed: []
-    },
-    devices: ['RCK386', 'RCK385'],
-    moduleDeviceScopes: {
-        orders: { mode: 'inherit', deviceIds: [] },
-        faults: { mode: 'custom', deviceIds: ['RCK386'] }
-    },
-    createdAt: '2026-06-01T10:00:00.000Z'
-}</code></pre>
+<div class="table-wrap"><table><thead><tr><th>字段</th><th>含义</th><th>示例</th><th>备注</th></tr></thead><tbody><tr><td>人员 ID</td><td>系统生成的人员唯一标识</td><td><code>staff-001</code></td><td>编辑保存时不可变</td></tr><tr><td>商户 ID</td><td>所属商户</td><td><code>C001</code></td><td>跟随登录态写入</td></tr><tr><td>用户名</td><td>显示给运营人员看的名字</td><td><code>王店长</code></td><td>必填</td></tr><tr><td>手机号</td><td>登录账号</td><td><code>13800138000</code></td><td>必填，需通过格式校验，同商户下唯一</td></tr><tr><td>账号状态</td><td>启用 / 停用</td><td><code>enabled</code></td><td>默认为启用</td></tr><tr><td>角色信息</td><td>当前角色的 ID、名称、应用时间</td><td>店长，2026-06-01 10:00</td><td>自定义时明确标记为自定义角色</td></tr><tr><td>最终权限</td><td>这位员工保存时实际生效的权限项集合</td><td>查看总览、查看订单、订单退款</td><td>不含角色信息也能独立读懂</td></tr><tr><td>权限差异记录</td><td>相对基准角色默认的新增项与移除项</td><td>基准：店长；新增：订单退款；移除：无</td><td>自定义角色时基准记为自定义</td></tr><tr><td>负责设备列表</td><td>这位员工可管理的设备</td><td>RCK386, RCK385</td><td>不能跨商户</td></tr><tr><td>模块设备范围</td><td>各权限模块可查看的设备子集</td><td>订单：继承全部；故障：仅 RCK386</td><td>必须是负责设备列表的子集</td></tr><tr><td>创建时间</td><td>人员记录创建时间</td><td><code>2026-06-01 10:00</code></td><td>编辑保存时不可变</td></tr></tbody></table></div>
 <p>保存规则：</p>
 <ul>
-<li><code>role</code> 为内建角色时保存 <code>{ id, name, appliedAt }</code>；手动自定义无内建角色时保存自定义标识，避免被误判为某个模板角色。</li>
-<li><code>permissionChanges</code> 必须用当前保存时的权限相对角色默认权限计算；无角色时 <code>baseRoleId</code> 可为 <code>custom</code>。</li>
-<li><code>moduleDeviceScopes.*.deviceIds</code> 必须是 <code>devices</code> 的子集。</li>
-<li>编辑保存必须保留原 <code>id</code> 与 <code>createdAt</code>，只更新业务字段。</li>
+<li>选择内建角色时，保存角色 ID、名称、应用时间；手动自定义时明确标记为自定义角色，不挂任何内建角色 ID，避免被误判为某个模板。</li>
+<li>权限差异记录必须用保存时的实际权限对比角色默认权限计算；如果是自定义角色，基准记为自定义。</li>
+<li>任何模块的设备范围都必须落在负责设备列表内，不能出现负责设备里没有的设备。</li>
+<li>编辑保存时必须保留原始的人员 ID 与创建时间，只更新业务字段。</li>
 </ul>
 <h2 id="7.-功能需求">7. 功能需求</h2>
 <h3 id="7.1-页面与列表">7.1 页面与列表</h3>
@@ -514,9 +491,9 @@ tbody tr:last-child td { border-bottom: 0; }
 <h3 id="7.3-角色模板系统">7.3 角色模板系统</h3>
 <ul>
 <li>FR-12：系统必须内建 4 个角色模板：<code>超级管理员</code>、<code>店长</code>、<code>运维人员</code>、<code>职员</code>。</li>
-<li>FR-13：每个角色模板必须包含 <code>id</code>、<code>name</code>、<code>description</code>、<code>icon</code>、<code>permissions[]</code>、<code>defaultModuleScopes</code>。</li>
-<li>FR-14：角色卡片必须展示图标、角色名称、角色描述，并提供 <code>selected</code> 与 <code>pending</code> 两种视觉状态。</li>
-<li>FR-15：未选择任何角色（<code>custom</code>）时，系统不强制要求角色，但权限校验仍按 FR-36 执行。</li>
+<li>FR-13：每个角色模板必须包含角色 ID、角色名称、描述文案、图标、默认权限集合、默认模块设备范围。</li>
+<li>FR-14：角色卡片必须展示图标、角色名称、角色描述，并提供「已选中」与「待确认」两种视觉状态。</li>
+<li>FR-15：未选择任何角色（即自定义模式）时，系统不强制要求角色，但权限校验仍按 FR-36 执行。</li>
 <li>FR-16：系统必须把角色作为权限的默认模板：当前权限可在模板基础上微调，差异由 <code>calculatePermissionChanges()</code> 计算。</li>
 </ul>
 <h3 id="7.4-角色切换交互-两步-+-撤销">7.4 角色切换交互（两步 + 撤销）</h3>
@@ -548,7 +525,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <li>FR-35：系统必须支持以下权限模块：<code>总览</code>、<code>设备</code>、<code>商品管理</code>、<code>物料</code>、<code>订单</code>、<code>故障列表</code>、<code>人员管理</code>。</li>
 <li>FR-36：至少选择一个权限才能保存。</li>
 <li>FR-37：系统必须支持父子权限联动规则：勾选子权限自动带上模块一级查看权限；取消一级查看权限会清空该模块其他子权限。</li>
-<li>FR-38：当前权限若与 <code>committedRoleId</code> 默认不同，权限树上方的橙色提示条必须显示 <code>基于&quot;&lt;角色名&gt;&quot;角色，已添加 N 项权限，移除 M 项权限</code>。</li>
+<li>FR-38：当前权限若与已确认角色的默认权限不同，权限树上方的橙色提示条必须显示 <code>基于&quot;&lt;角色名&gt;&quot;角色，已添加 N 项权限，移除 M 项权限</code>。</li>
 <li>FR-39：待确认切换状态下，橙色微调提示条必须隐藏，避免与对比条信息冲突。</li>
 </ul>
 <h3 id="7.7-负责设备与模块范围">7.7 负责设备与模块范围</h3>
@@ -563,8 +540,8 @@ tbody tr:last-child td { border-bottom: 0; }
 </ul>
 <h3 id="7.8-保存、状态与数据形态">7.8 保存、状态与数据形态</h3>
 <ul>
-<li>FR-47：保存时人员记录必须包含 <code>role</code> 字段。</li>
-<li>FR-48：保存时人员记录必须包含 <code>permissionChanges</code> 字段。</li>
+<li>FR-47：保存时人员记录必须包含角色信息（角色 ID、名称、应用时间；自定义则记为自定义）。</li>
+<li>FR-48：保存时人员记录必须包含权限差异记录（相对角色默认的新增项与移除项）。</li>
 <li>FR-49：新增人员成功后，系统默认其账号状态为 <code>已启用</code>。</li>
 <li>FR-50：保存成功后必须刷新列表与顶部汇总。</li>
 <li>FR-51：编辑人员时，弹窗必须回填原有用户名、手机号、角色、权限和设备数据。</li>
@@ -698,7 +675,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <tr>
 <td>模块范围覆盖</td>
 <td>确认角色切换</td>
-<td>按新角色 <code>defaultModuleScopes</code> 覆盖</td>
+<td>按新角色的默认模块设备范围覆盖</td>
 <td>撤销时一并回滚</td>
 </tr>
 <tr>
@@ -740,7 +717,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <li><span class="checkbox">□</span>编辑已有角色员工时，当前角色条静默出现，撤销按钮不出现。</li>
 <li><span class="checkbox">□</span>确认角色切换后，撤销按钮出现；手动改权限后撤销按钮消失。</li>
 <li><span class="checkbox">□</span>微调提示条只在“有已确认角色且权限与模板不同”时出现。</li>
-<li><span class="checkbox">□</span>保存后 <code>role</code>、<code>permissions</code>、<code>permissionChanges</code>、<code>devices</code>、<code>moduleDeviceScopes</code> 数据完整。</li>
+<li><span class="checkbox">□</span>保存后角色、权限列表、权限差异记录、负责设备列表、模块设备范围这五项数据完整。</li>
 <li><span class="checkbox">□</span>当前商户下手机号唯一校验生效。</li>
 <li><span class="checkbox">□</span>移动端无重复大标题、无横向滚动。</li>
 <li><span class="checkbox">□</span>桌面端设备摘要展开只影响当前人员卡片。</li>
