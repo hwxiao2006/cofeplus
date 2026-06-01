@@ -72,7 +72,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <p>这版不是旧的“人员列表 + 权限勾选”PRD，而是把人员管理升级为“角色模板驱动的权限配置流程”。</p>
 <p>本版必须优先实现和验收以下变化：</p>
 <ul>
-<li>角色模板成为新增 / 编辑员工的第一入口：内建 <code>超级管理员</code>、<code>店长</code>、<code>运维人员</code>、<code>职员</code> 4 个角色。</li>
+<li>角色模板成为新增 / 编辑员工的第一入口：内建超级管理员、店长、运维人员、职员 4 个角色。</li>
 <li>角色切换必须是两步确认：点角色卡片只进入待确认，不得立即覆盖现有权限。</li>
 <li>切换影响必须可见：展示 <code>原角色 -&gt; 新角色</code>、保留权限数、新增权限数、移除权限数。</li>
 <li>已有微调必须受保护：切换角色前明确提示自定义新增 / 自定义移除会被覆盖。</li>
@@ -177,7 +177,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <p><strong>主流程：</strong></p>
 <ol>
 <li>用户进入新增弹窗。</li>
-<li><code>选择角色</code> 区域展示 4 张角色卡片：<code>超级管理员</code> / <code>店长</code> / <code>运维人员</code> / <code>职员</code>。</li>
+<li>「选择角色」区域展示 4 张角色卡片：超级管理员 / 店长 / 运维人员 / 职员。</li>
 <li>用户点击其中一张卡片。</li>
 <li>因为当前还没有任何“已确认角色”（新建场景），系统进入待确认切换状态。</li>
 <li>橙色对比条显示 <code>自定义 -&gt; 店长</code>，并说明保留 / 新增 / 移除权限数量。</li>
@@ -186,7 +186,7 @@ tbody tr:last-child td { border-bottom: 0; }
 </ol>
 <p><strong>验收标准：</strong></p>
 <ul>
-<li><span class="checkbox">□</span>角色模板覆盖：<code>超级管理员</code>（拥有所有权限）、<code>店长</code>（门店日常运营）、<code>运维人员</code>（设备安装与故障处理）、<code>职员</code>（基础查看权限）。</li>
+<li><span class="checkbox">□</span>角色模板覆盖：超级管理员（拥有所有权限）、店长（门店日常运营）、运维人员（设备安装与故障处理）、职员（基础查看权限）。</li>
 <li><span class="checkbox">□</span>每张卡片必须展示图标、角色名称、角色描述。</li>
 <li><span class="checkbox">□</span>用户点击卡片后不立即写入权限，必须经过确认。</li>
 <li><span class="checkbox">□</span>对比条必须显示“原角色 -&gt; 新角色”两个角色名及保留 / 新增 / 移除三类数量。</li>
@@ -277,10 +277,10 @@ tbody tr:last-child td { border-bottom: 0; }
 </ol>
 <p><strong>验收标准：</strong></p>
 <ul>
-<li><span class="checkbox">□</span>微调统计必须显示在权限树上方的橙色 <code>.permission-customization-hint</code> 条上。</li>
+<li><span class="checkbox">□</span>微调统计必须显示在权限树上方的橙色「权限微调提示条」上。</li>
 <li><span class="checkbox">□</span>微调统计文案必须包含基准角色名（与当前已确认角色比较）。</li>
 <li><span class="checkbox">□</span>当前权限等于角色默认权限时，橙色提示条隐藏。</li>
-<li><span class="checkbox">□</span>当前 <code>committedRoleId == 'custom'</code> 时，橙色提示条隐藏。</li>
+<li><span class="checkbox">□</span>当前角色为自定义（无内建角色）时，橙色提示条隐藏。</li>
 <li><span class="checkbox">□</span>微调发生时，“当前角色”条上不出现“已微调 +N/-M”徽标。</li>
 <li><span class="checkbox">□</span>父子权限联动规则保留：勾选子权限自动带上模块一级查看权限；取消一级查看权限会清空该模块其他子权限。</li>
 <li><span class="checkbox">□</span>微调会保存为该员工的最终权限与"与模板的差异"两份记录，下次进入编辑可还原。</li>
@@ -408,13 +408,13 @@ tbody tr:last-child td { border-bottom: 0; }
 </tbody></table></div>
 <p>权限模块必须至少包含：</p>
 <ul>
-<li><code>总览</code>：查看总览。</li>
-<li><code>设备</code>：查看设备。</li>
-<li><code>商品管理</code>：查看商品管理、新增语言、更改币种、编辑商品、编辑配方。</li>
-<li><code>物料</code>：查看物料、编辑货道名称、编辑货道物料。</li>
-<li><code>订单</code>：查看订单、订单退款。</li>
-<li><code>故障列表</code>：查看故障列表。</li>
-<li><code>人员管理</code>：查看人员管理、人员维护。</li>
+<li>总览：查看总览。</li>
+<li>设备：查看设备。</li>
+<li>商品管理：查看商品管理、新增语言、更改币种、编辑商品、编辑配方。</li>
+<li>物料：查看物料、编辑货道名称、编辑货道物料。</li>
+<li>订单：查看订单、订单退款。</li>
+<li>故障列表：查看故障列表。</li>
+<li>人员管理：查看人员管理、人员维护。</li>
 </ul>
 <h2 id="5.-角色切换状态机">5. 角色切换状态机</h2>
 <div class="table-wrap"><table><thead><tr>
@@ -490,11 +490,11 @@ tbody tr:last-child td { border-bottom: 0; }
 </ul>
 <h3 id="7.3-角色模板系统">7.3 角色模板系统</h3>
 <ul>
-<li>FR-12：系统必须内建 4 个角色模板：<code>超级管理员</code>、<code>店长</code>、<code>运维人员</code>、<code>职员</code>。</li>
+<li>FR-12：系统必须内建 4 个角色模板：超级管理员、店长、运维人员、职员。</li>
 <li>FR-13：每个角色模板必须包含角色 ID、角色名称、描述文案、图标、默认权限集合、默认模块设备范围。</li>
 <li>FR-14：角色卡片必须展示图标、角色名称、角色描述，并提供「已选中」与「待确认」两种视觉状态。</li>
 <li>FR-15：未选择任何角色（即自定义模式）时，系统不强制要求角色，但权限校验仍按 FR-36 执行。</li>
-<li>FR-16：系统必须把角色作为权限的默认模板：当前权限可在模板基础上微调，差异由 <code>calculatePermissionChanges()</code> 计算。</li>
+<li>FR-16：系统必须把角色作为权限的默认模板：当前权限可在模板基础上微调，差异由系统对比当前权限与角色默认权限计算。</li>
 </ul>
 <h3 id="7.4-角色切换交互-两步-+-撤销">7.4 角色切换交互（两步 + 撤销）</h3>
 <ul>
@@ -510,7 +510,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <h3 id="7.5-当前角色显示与撤销">7.5 当前角色显示与撤销</h3>
 <ul>
 <li>FR-25：当员工已经确认使用某个内建角色，且当前没有待确认切换时，“当前角色”条必须显示 <code>图标 + 当前角色：角色名</code>。</li>
-<li>FR-26：“当前角色”条上不得显示“已微调”徽标或类似动效，微调状态完全交给橙色 <code>.permission-customization-hint</code>。</li>
+<li>FR-26：“当前角色”条上不得显示“已微调”徽标或类似动效，微调状态完全交给权限树上方的橙色「权限微调提示条」。</li>
 <li>FR-27：撤销按钮只允许出现在“当前角色”条右侧，不得使用任何独立 toast 容器。</li>
 <li>FR-28：撤销按钮仅在“刚确认角色切换且尚未继续手动调整权限或设备范围”的窗口内显示；其他场景一律隐藏。</li>
 <li>FR-29：用户在确认切换后手动改动任意权限 checkbox 或设备范围，系统必须立即隐藏撤销按钮。</li>
@@ -522,7 +522,7 @@ tbody tr:last-child td { border-bottom: 0; }
 <li>FR-32：菜单权限配置必须采用轻量行式模块布局。</li>
 <li>FR-33：权限区域必须展示总选中数量。</li>
 <li>FR-34：权限模块必须支持展开查看子权限项。</li>
-<li>FR-35：系统必须支持以下权限模块：<code>总览</code>、<code>设备</code>、<code>商品管理</code>、<code>物料</code>、<code>订单</code>、<code>故障列表</code>、<code>人员管理</code>。</li>
+<li>FR-35：系统必须支持以下权限模块：总览、设备、商品管理、物料、订单、故障列表、人员管理。</li>
 <li>FR-36：至少选择一个权限才能保存。</li>
 <li>FR-37：系统必须支持父子权限联动规则：勾选子权限自动带上模块一级查看权限；取消一级查看权限会清空该模块其他子权限。</li>
 <li>FR-38：当前权限若与已确认角色的默认权限不同，权限树上方的橙色提示条必须显示 <code>基于&quot;&lt;角色名&gt;&quot;角色，已添加 N 项权限，移除 M 项权限</code>。</li>
