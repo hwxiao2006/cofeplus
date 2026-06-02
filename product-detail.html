@@ -2141,8 +2141,8 @@
             font-family: inherit;
         }
         .recipe-cup-switch-item.active {
-            border-color: #45c8c3;
-            background: #f2fffd;
+            border-color: var(--primary);
+            background: var(--primary-light);
         }
         .recipe-cup-switch-head {
             display: flex;
@@ -7938,12 +7938,6 @@
             return 'milk';
         }
 
-        function escapeRecipeText(value) {
-            return String(value == null ? '' : value)
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        }
-
         function renderRecipeSegmentBar(cup) {
             const ingredients = Array.isArray(cup && cup.ingredients) ? cup.ingredients : [];
             const mlIngredients = ingredients.filter((item) => String(item.unit).toLowerCase() === 'ml' && normalizeRecipeAmount(item.value) > 0);
@@ -7953,7 +7947,7 @@
                     ${mlIngredients.map((ingredient) => {
                         const value = normalizeRecipeAmount(ingredient.value);
                         const width = Math.max(8, Math.round((value / total) * 100));
-                        return `<div class="recipe-segment ${getRecipeSegmentClass(ingredient.key)}" style="width:${width}%">${escapeRecipeText(ingredient.label)} ${value}${ingredient.unit}</div>`;
+                        return `<div class="recipe-segment ${getRecipeSegmentClass(ingredient.key)}" style="width:${width}%">${escAttr(ingredient.label)} ${value}${ingredient.unit}</div>`;
                     }).join('')}
                 </div>
             `;
@@ -7988,7 +7982,7 @@
             if (!ingredient.editable) {
                 return `
                     <div class="recipe-readonly-ingredient">
-                        <div class="recipe-ingredient-name ${segmentClass}">${escapeRecipeText(ingredient.label)} ${normalizeRecipeAmount(ingredient.value)}${ingredient.unit}</div>
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(ingredient.label)} ${normalizeRecipeAmount(ingredient.value)}${ingredient.unit}</div>
                         <div class="recipe-ingredient-hint">基底咖啡数值由配方文件维护，不可在此修改。</div>
                     </div>
                 `;
@@ -7998,7 +7992,7 @@
             return `
                 <div class="recipe-ingredient-editor">
                     <div>
-                        <div class="recipe-ingredient-name ${segmentClass}">${escapeRecipeText(ingredient.label)}</div>
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(ingredient.label)}</div>
                         <div class="recipe-ingredient-hint">每次 ${step}${ingredient.unit}</div>
                     </div>
                     <div class="recipe-stepper">
@@ -8024,8 +8018,8 @@
             editor.innerHTML = `
                 <div class="recipe-editor-head">
                     <div>
-                        <div class="recipe-editor-title">${escapeRecipeText(cup.label)}</div>
-                        <div class="recipe-editor-note">当前正在编辑${escapeRecipeText(cup.label)}成分，浓缩由配方文件维护。</div>
+                        <div class="recipe-editor-title">${escAttr(cup.label)}</div>
+                        <div class="recipe-editor-note">当前正在编辑${escAttr(cup.label)}成分，浓缩由配方文件维护。</div>
                     </div>
                     <button class="btn btn-default" type="button" onclick="restoreActiveRecipeCup()">恢复当前杯型修改前</button>
                 </div>
@@ -8060,10 +8054,10 @@
                 return `
                     <button class="recipe-cup-switch-item ${active ? 'active' : ''}" type="button" onclick="switchRecipeCup('${cup.key}')">
                         <div class="recipe-cup-switch-head">
-                            <span>${escapeRecipeText(cup.label)}</span>
+                            <span>${escAttr(cup.label)}</span>
                             <span class="recipe-cup-status ${changed ? '' : 'neutral'}">${changed ? '已修改' : '未修改'}</span>
                         </div>
-                        <div class="recipe-cup-switch-meta">${escapeRecipeText(formatRecipeCupMeta(cup))}</div>
+                        <div class="recipe-cup-switch-meta">${escAttr(formatRecipeCupMeta(cup))}</div>
                     </button>
                 `;
             }).join('');
@@ -8105,7 +8099,7 @@
                 <div class="recipe-change-list">
                     ${changedIngredients.map((ingredient) => `
                         <div class="recipe-change-item">
-                            <span>${escapeRecipeText(ingredient.label)}</span>
+                            <span>${escAttr(ingredient.label)}</span>
                             <strong>${getRecipeIngredientOriginalValue(cup, ingredient.key)}${ingredient.unit} → ${normalizeRecipeAmount(ingredient.value)}${ingredient.unit}</strong>
                         </div>
                     `).join('')}
