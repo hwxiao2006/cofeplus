@@ -1,6 +1,9 @@
 (function () {
     const LANG_KEY = 'adminSidebarLang';
-    const ATTRS = ['placeholder', 'title', 'aria-label', 'value'];
+    // 不翻译 input.value —— 这是用户数据（多语言字段、价格、ID 等），不是 UI 文案。
+    // 实际按钮文案应该用 <button>X</button> 的 textContent，必要时配合 aria-label，
+    // 不能依赖 input[type=submit value="X"] 来表达 UI。
+    const ATTRS = ['placeholder', 'title', 'aria-label'];
     const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA']);
 
     const TEXT = {
@@ -771,7 +774,102 @@
         '生椰拿铁': 'Coconut Latte',
         '鲜牛奶': 'Fresh Milk',
         '（从 6 步缩减到 2 步，全局视角一目了然）': '(Reduced from 6 steps to 2; global view at a glance)',
-        '（从 6 步缩减到 2 步，操作便捷但可发现性低）': '(Reduced from 6 steps to 2; convenient but low discoverability)'
+        '（从 6 步缩减到 2 步，操作便捷但可发现性低）': '(Reduced from 6 steps to 2; convenient but low discoverability)',
+        // === Mock 类目名称（admin-mock-data 现有 zh，菜单管理类目栏 / 商品列表 header 引用） ===
+        '3D拉花': '3D Latte Art',
+        '生椰系列': 'Coconut Series',
+        '手工拉花': 'Handcrafted Latte Art',
+        '一杯冰块': 'Iced Cup',
+        '各国王牌': 'Global Signatures',
+        '各国美式': 'Global Americano',
+        '新鲜乳饮': 'Fresh Milk Drinks',
+        '本店王牌': 'House Signature',
+        '儿童专享': 'Kids Special',
+        '夜间安享': 'Late Night',
+        '热水': 'Hot Water',
+        '茶饮/特调': 'Tea / Specialty',
+        '奶咖': 'Milk Coffee',
+        '浓缩咖啡': 'Espresso',
+        '热饮': 'Hot Drinks',
+        '冷饮': 'Cold Drinks',
+        // === Mock 业务标签 chip ===
+        '推荐': 'Recommended',
+        '招牌': 'Signature',
+        '新品': 'New',
+        '早餐搭配': 'Breakfast',
+        '隐藏标签': 'Hidden Tag',
+        '编辑标签': 'Edit Tag',
+        // === Mock 商户 / 客户 / 点位（演示数据） ===
+        '星巴克咖啡': 'Starbucks Coffee',
+        '瑞幸咖啡': 'Luckin Coffee',
+        '太平洋咖啡': 'Pacific Coffee',
+        'Costa咖啡': 'Costa Coffee',
+        '咖啡星球': 'Coffee Planet',
+        '上海市中心店': 'Shanghai Downtown',
+        '北京朝阳门店': 'Beijing Chaoyang Gate',
+        '广州天河店': 'Guangzhou Tianhe',
+        '深圳南山店': 'Shenzhen Nanshan',
+        // === Mock 商品名（菜单管理 / 配方预览常见） ===
+        '鲜牛奶*': 'Fresh Milk*',
+        '美式拿铁*': 'Americano Latte*',
+        '美式拿铁': 'Americano Latte',
+        '卡布其诺*': 'Cappuccino*',
+        '新·澳白*': 'New · Flat White*',
+        '白玉兰拿铁': 'Magnolia Latte',
+        '橘皮拿铁': 'Orange Peel Latte',
+        '金奖黑咖-浓香意式': 'Gold Black Coffee - Bold Italian',
+        // === 状态 / 按钮（截图中可见） ===
+        '上架': 'Publish',
+        '不在售': 'Off Sale',
+        '已下架': 'Unlisted',
+        '已添加语言': 'Added Languages',
+        '已切换到设备': 'Switched to device',
+        '保存修改': 'Save Changes',
+        '编辑标签': 'Edit Tag',
+        // === 杯型 / 配方常用 ===
+        '中杯': 'Medium',
+        '大杯': 'Large',
+        '杯': 'cup',
+        '冰': 'Ice',
+        '冰量': 'Ice Amount',
+        '奶量': 'Milk Amount',
+        '水量': 'Water Amount',
+        '浓缩液': 'Espresso Liquid',
+        '基底咖啡液': 'Base Coffee Liquid',
+        '加奶': 'Add Milk',
+        '加糖浆': 'Add Syrup',
+        '加sho': 'Add Shot',
+        '装饰颗粒名称': 'Decoration Topping Name',
+        '浓缩粉名称': 'Espresso Powder Name',
+        '名称': 'Name',
+        '商户': 'Merchant',
+        '分类名称': 'Category Name',
+        '未选择': 'None Selected',
+        '未选择分类': 'No Category Selected',
+        '未配置': 'Not Configured',
+        '未入场': 'Not Onboarded',
+        '请填写': 'Please fill in',
+        '请输入有效的价格': 'Enter a valid price',
+        '设备不存在，请输入完整设备编号': 'Device not found. Enter the full device ID.',
+        '业务标签保存失败，请重试': 'Failed to save business tags. Please retry.',
+        '当前浏览器不支持定位功能': 'This browser does not support geolocation',
+        '商品ID': 'Product ID',
+        '暂无可选分类': 'No categories available',
+        '日本語': '日本語',
+        '种语言': ' languages',
+        '已选': 'Selected',
+        '项变更': ' changes',
+        '远程操作 ·': 'Remote action ·',
+        '下发指令：': 'Send command: ',
+        '缺少分类：': 'Missing categories: ',
+        '当前位置（经度': 'Current location (longitude',
+        // === 时间单位 ===
+        '年': 'y',
+        '月': 'mo',
+        '日': 'd',
+        // === 菜单管理：默认展示提示 + 标题模板 ===
+        '默认只展示当前分类，分类很多时页面也不会无限拉长。': 'By default only the current category is shown; the page stays compact even with many categories.',
+        '默认只展示当前分类，分类很多时页面也不会无限拉长': 'By default only the current category is shown; the page stays compact even with many categories'
     };
 
     const PATTERNS = [
@@ -821,7 +919,31 @@
         [/^已选择\s*(\d+)\s*个$/, '$1 selected'],
         [/^强制同步\s*(\d+)\s*个关联商品$/, 'Force-sync $1 linked products'],
         [/^已选\s*(\d+)\s*个商品$/, '$1 products selected'],
-        [/^已选\s*(\d+)\s*台设备$/, '$1 devices selected']
+        [/^已选\s*(\d+)\s*台设备$/, '$1 devices selected'],
+        // === 追加：动态类目标题、设备汇总、订单条目 ===
+        [/^(.+?)\s*·\s*商品列表$/, '$1 · Product List'],
+        [/^(.+?)\s*·\s*共\s*(\d+)\s*款$/, '$1 · $2 items'],
+        [/^已切换到设备\s*(.+)$/, 'Switched to device $1'],
+        [/^已添加语言\s*[:：]?\s*(.+)$/, 'Added language: $1'],
+        [/^(\d+)\s*种语言$/, '$1 languages'],
+        [/^(\d+)\s*项变更$/, '$1 changes'],
+        [/^(\d+)\s*个商品$/, '$1 products'],
+        [/^(\d+)\s*台设备$/, '$1 devices'],
+        [/^共\s*(\d+)\s*台$/, '$1 devices total'],
+        [/^(\d+)\s*台$/, '$1 devices'],
+        [/^个商品$/, 'products'],
+        [/^缺少分类[:：]\s*(.+)$/, 'Missing categories: $1'],
+        // === 商品卡片副标题：spec、温度、浓度三段顿号拼接（菜单管理常见组合） ===
+        [/^金奖黑咖-浓香意式、热、标准$/, 'Gold Black Coffee - Bold Italian, Hot, Standard'],
+        [/^金奖黑咖-浓香意式、热、加1份浓缩$/, 'Gold Black Coffee - Bold Italian, Hot, Add 1 Espresso Shot'],
+        [/^金奖黑咖-浓香意式、标准冰、标准$/, 'Gold Black Coffee - Bold Italian, Regular Ice, Standard'],
+        [/^金奖黑咖-浓香意式、少冰、标准$/, 'Gold Black Coffee - Bold Italian, Less Ice, Standard'],
+        [/^精品咖啡-翡翠瑰夏、热、标准$/, 'Specialty Coffee - Emerald Geisha, Hot, Standard'],
+        // 兜底：三段顿号拼接，纯做分隔符替换（实际可读性已大幅提升）
+        [/^(.+?)、热、(.+)$/, '$1, Hot, $2'],
+        [/^(.+?)、标准冰、(.+)$/, '$1, Regular Ice, $2'],
+        [/^(.+?)、少冰、(.+)$/, '$1, Less Ice, $2'],
+        [/^(.+?)、冰、(.+)$/, '$1, Iced, $2']
     ];
 
     function getLang() {
@@ -836,6 +958,20 @@
         return String(value || '').replace(/\s+/g, ' ').trim();
     }
 
+    function translateChineseSubstrings(text) {
+        // Pattern 替换之后，捕获组里可能仍是中文（例如 "3D拉花 · Product List"），
+        // 把每段含中文的 token（允许混 ASCII / 数字 / 连字符）再过一遍 TEXT 字典，命中就替换。
+        return text.replace(/[A-Za-z0-9一-鿿\-_*·]+/g, chunk => {
+            if (!/[一-鿿]/.test(chunk)) return chunk;
+            const n = normalize(chunk);
+            if (Object.prototype.hasOwnProperty.call(TEXT, n)) return TEXT[n];
+            for (let i = 0; i < PATTERNS.length; i += 1) {
+                if (PATTERNS[i][0].test(n)) return n.replace(PATTERNS[i][0], PATTERNS[i][1]);
+            }
+            return chunk;
+        });
+    }
+
     function translate(value, lang) {
         const key = normalize(value);
         if (!key) return value;
@@ -843,7 +979,15 @@
             if (Object.prototype.hasOwnProperty.call(TEXT, key)) return TEXT[key];
             for (let i = 0; i < PATTERNS.length; i += 1) {
                 const pattern = PATTERNS[i][0];
-                if (pattern.test(key)) return key.replace(pattern, PATTERNS[i][1]);
+                if (pattern.test(key)) {
+                    const replaced = key.replace(pattern, PATTERNS[i][1]);
+                    return translateChineseSubstrings(replaced);
+                }
+            }
+            // 兜底：原串没整段命中，也尝试把可识别的中文 token 替掉
+            if (/[一-鿿]/.test(key)) {
+                const swapped = translateChineseSubstrings(key);
+                if (swapped !== key) return swapped;
             }
             return value;
         }
@@ -854,7 +998,12 @@
         const key = normalize(value);
         if (!key) return false;
         if (Object.prototype.hasOwnProperty.call(TEXT, key)) return true;
-        return PATTERNS.some(item => item[0].test(key));
+        if (PATTERNS.some(item => item[0].test(key))) return true;
+        // 兜底：如果含中文 token，substring 兜底可能能翻译一部分
+        if (/[一-鿿]/.test(key)) {
+            return translateChineseSubstrings(key) !== key;
+        }
+        return false;
     }
 
     function preserveWhitespace(original, translated) {

@@ -329,6 +329,49 @@ test('页面正文 i18n helper 应覆盖登录页、旧商品页和配方入口�
     ]);
 });
 
+test('页面正文 i18n helper 不应翻译 input.value（避免把表单里的中文数据替换为英文）', () => {
+    const helper = read('shared/admin-page-i18n.js');
+    // 模拟多语言矩阵里的中文 input：value 是真实的中文数据 "热"，
+    // 不能被替换成 'Hot'，否则用户看到 zh 槽位显示英文、保存时还会把英文写回到 zh。
+    const input = {
+        nodeType: 1,
+        tagName: 'INPUT',
+        childNodes: [],
+        attributes: [
+            { name: 'value', value: '热' },
+            { name: 'placeholder', value: '请输入名称' }
+        ],
+        dataset: {},
+        getAttribute(name) {
+            const attr = this.attributes.find(item => item.name === name);
+            return attr ? attr.value : null;
+        },
+        setAttribute(name, value) {
+            const attr = this.attributes.find(item => item.name === name);
+            if (attr) attr.value = value;
+            else this.attributes.push({ name, value });
+        }
+    };
+    const document = {
+        body: { nodeType: 1, tagName: 'BODY', childNodes: [input], attributes: [], dataset: {} },
+        title: '',
+        addEventListener() {},
+        querySelectorAll() { return []; }
+    };
+    const context = {
+        window: { addEventListener() {} },
+        document,
+        localStorage: { getItem() { return 'en'; } },
+        MutationObserver: function () { this.observe = function () {}; }
+    };
+    vm.runInNewContext(helper, context);
+    context.window.CofeAdminPageI18n.apply();
+    // value 不可被改：表单数据保持原样
+    assert.strictEqual(input.getAttribute('value'), '热');
+    // placeholder 仍可翻：那是 UI 文案；dict 里有"请输入名称" → "Name"
+    assert.strictEqual(input.getAttribute('placeholder'), 'Name');
+});
+
 test('页面正文 i18n helper 应翻译每个页面共享的侧边栏 / 顶栏 chrome', () => {
     const helper = read('shared/admin-page-i18n.js');
     const nodes = [
@@ -404,6 +447,32 @@ test('页面正文 i18n helper 应覆盖动态数值 PATTERNS（照片数 / 已�
         ['强制同步 12 个关联商品', 'Force-sync 12 linked products'],
         ['已选 2 个商品', '2 products selected'],
         ['已选 3 台设备', '3 devices selected']
+    ];
+    const nodes = samples.map(([zh]) => ({ nodeType: 3, nodeValue: zh, parentElement: null }));
+    const document = {
+        body: { nodeType: 1, tagName: 'BODY', childNodes: nodes, attributes: [], dataset: {} },
+        title: '',
+        addEventListener() {},
+        querySelectorAll() { return []; }
+    };
+    const context = {
+        window: { addEventListener() {} },
+        document,
+        localStorage: { getItem() { return 'en'; } },
+        MutationObserver: function () { this.observe = function () {}; }
+    };
+    vm.runInNewContext(helper, context);
+    context.window.CofeAdminPageI18n.apply();
+    assert.deepStrictEqual(nodes.map(n => n.nodeValue), samples.map(([, en]) => en));
+});
+
+test('页面正文 i18n helper 应递归翻译 PATTERNS 捕获组里的中文 token + 整段无匹配时的兜底', () => {
+    const helper = read('shared/admin-page-i18n.js');
+    const samples = [
+        ['3D拉花 · 商品列表', '3D Latte Art · Product List'],
+        ['本店王牌 · 商品列表', 'House Signature · Product List'],
+        ['已选 3 个商品 · 太平洋咖啡', 'Selected 3 products · Pacific Coffee'],
+        ['金奖黑咖-浓香意式、热、标准', 'Gold Black Coffee - Bold Italian, Hot, Standard']
     ];
     const nodes = samples.map(([zh]) => ({ nodeType: 3, nodeValue: zh, parentElement: null }));
     const document = {
