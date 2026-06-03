@@ -75,10 +75,12 @@ test('人员管理页：移动端头部应与订单和商品页保持一致', ()
   assert.ok(/@media \(max-width: 768px\)[\s\S]*?\.header-title\s*\{\s*display:\s*none;/.test(staffHtml), '移动端应隐藏重复的大标题');
 });
 
-test('人员管理页：添加人员表单应移除授权与 openId 输入，并暂时隐藏公众号推送', () => {
+test('人员管理页：添加人员表单应保留精简结构并新增公众号 OpenID 字段', () => {
   assert.ok(staffHtml.includes('基本信息<span class="required">*</span>'));
   assert.ok(staffHtml.includes('用户名'));
   assert.ok(staffHtml.includes('手机号'));
+  assert.ok(staffHtml.includes('公众号 OpenID'));
+  assert.ok(staffHtml.includes('id="staffWechatOpenId"'));
   assert.ok(!/步骤 1 · 可管理设备/.test(staffHtml));
   assert.ok(!/步骤 2 · 页面权限/.test(staffHtml));
   assert.ok(!/步骤 3 · 页面设备范围/.test(staffHtml));
@@ -94,7 +96,6 @@ test('人员管理页：添加人员表单应移除授权与 openId 输入，并
   assert.ok(!staffHtml.includes('for="wechatOpenid"'));
   assert.ok(!staffHtml.includes('id="opsOpenid"'));
   assert.ok(!staffHtml.includes('id="wechatOpenid"'));
-  assert.ok(!staffHtml.includes('公众号推送'));
   assert.ok(!staffHtml.includes('设备池'));
   assert.ok(!staffHtml.includes('负责设备号'));
   assert.ok(!staffHtml.includes('全部负责设备'));
@@ -167,7 +168,8 @@ test('人员管理页：应支持编辑人员信息和负责设备', () => {
   assert.ok(/renderDevicePicker\(selectedMerchantId,\s*targetStaff\.devices\s*\|\|\s*\[\]\)/.test(staffHtml));
   assert.ok(/function\s+normalizeStaffPermissions\s*\(permissions\)/.test(staffHtml));
   assert.ok(/const\s+staffIndex\s*=\s*staffManagersData\.findIndex\(\(item\)\s*=>\s*item\.id\s*===\s*editingStaffId\);/.test(staffHtml));
-  assert.ok(/staffManagersData\[staffIndex\]\s*=\s*\{[\s\S]*devices:\s*selectedDevices/.test(staffHtml));
+  assert.ok(/nextStaff\s*=\s*\{[\s\S]*devices:\s*selectedDevices[\s\S]*nextStaffManagersData\[staffIndex\]\s*=\s*nextStaff/.test(staffHtml));
+  assert.ok(/validateAndCommitStaffChange\(beforeStaff/.test(staffHtml));
   assert.ok(/showToast\(editingStaffId\s*\?\s*'人员信息已更新'\s*:\s*'人员新增成功'\)/.test(staffHtml));
 });
 
@@ -227,10 +229,11 @@ test('人员管理页：应使用运营菜单权限树替代旧角色权限，�
   assert.ok(renderManagersBlockMatch, '应存在 renderManagers 逻辑');
   const renderManagersBlock = renderManagersBlockMatch[0];
   assert.ok(/manager-device-summary/.test(renderManagersBlock));
+  assert.ok(/已绑公众号/.test(renderManagersBlock), '列表页应展示公众号绑定状态徽章');
   assert.ok(!/manager-panel-title">权限/.test(renderManagersBlock), '列表页不应展示权限面板');
-  assert.ok(!/manager-panel-title">公众号推送/.test(renderManagersBlock), '列表页不应展示公众号推送面板');
+  assert.ok(!/manager-panel-title">公众号推送/.test(renderManagersBlock), '列表页不应恢复旧公众号推送面板');
   assert.ok(!/运维 openId:/.test(renderManagersBlock), '列表页不应展示运维 openId');
-  assert.ok(!/公众号 openId:/.test(renderManagersBlock), '列表页不应展示公众号 openId');
+  assert.ok(!/公众号 openId:/.test(renderManagersBlock), '列表页不应展示旧 openId 文案');
   assert.ok(!/manager-panel manager-device-panel/.test(renderManagersBlock), '列表页不应继续使用独立设备面板');
 });
 

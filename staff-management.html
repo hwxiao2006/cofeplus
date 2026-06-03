@@ -1961,6 +1961,13 @@
                             <label class="form-label" for="staffPhone">手机号</label>
                             <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
                         </div>
+                        <div class="form-item">
+                            <label class="form-label" for="staffWechatOpenId">公众号 OpenID</label>
+                            <input type="text" class="form-input" id="staffWechatOpenId" placeholder="员工本人在咖啡运营公众号下的 OpenID" maxlength="128">
+                            <div class="form-hint" style="font-size:12px;color:#6b7280;margin-top:4px;">
+                                配置后,当所属商户开启「公众号推送」时,本人将接收授权范围内的故障消息
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -2165,6 +2172,7 @@
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/fault-notify-channels.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2539,8 +2547,9 @@
                 merchantName: '星巴克咖啡',
                 username: '王运维',
                 phone: '13800138021',
+                wechatOpenId: '',
                 accountEnabled: true,
-                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.faults', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
                 moduleDeviceScopes: {
                     devices: { mode: 'inherit', deviceIds: [] },
@@ -2555,6 +2564,7 @@
                 merchantName: '星巴克咖啡',
                 username: '李财务',
                 phone: '13800138022',
+                wechatOpenId: '',
                 accountEnabled: false,
                 permissions: ['ops.orders'],
                 devices: ['RCK384'],
@@ -2571,6 +2581,7 @@
                 merchantName: '瑞幸咖啡',
                 username: '张维修',
                 phone: '13800138023',
+                wechatOpenId: '',
                 accountEnabled: true,
                 permissions: ['ops.devices', 'ops.faults'],
                 devices: ['RCK410', 'RCK406'],
@@ -2599,6 +2610,9 @@
                     ...item,
                     accountEnabled: item.accountEnabled !== false,
                     permissions: normalizeStaffPermissions(item.permissions),
+                    wechatOpenId: window.CofeFaultNotifyChannels
+                        ? window.CofeFaultNotifyChannels.normalizeOpenId(item.wechatOpenId)
+                        : String(item.wechatOpenId || '').trim(),
                     moduleDeviceScopes: normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices)
                 }));
                 shouldPersist = true;
@@ -2607,9 +2621,13 @@
                     const normalizedPermissions = normalizeStaffPermissions(item.permissions);
                     const normalizedAccountEnabled = item.accountEnabled !== false;
                     const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices);
+                    const normalizedWechatOpenId = window.CofeFaultNotifyChannels
+                        ? window.CofeFaultNotifyChannels.normalizeOpenId(item.wechatOpenId)
+                        : String(item.wechatOpenId || '').trim();
                     if (
                         JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
                         || normalizedAccountEnabled !== item.accountEnabled
+                        || normalizedWechatOpenId !== (item.wechatOpenId || '')
                         || JSON.stringify(normalizedModuleDeviceScopes) !== JSON.stringify(item.moduleDeviceScopes || {})
                     ) {
                         shouldPersist = true;
@@ -2618,6 +2636,7 @@
                         ...item,
                         accountEnabled: normalizedAccountEnabled,
                         permissions: normalizedPermissions,
+                        wechatOpenId: normalizedWechatOpenId,
                         moduleDeviceScopes: normalizedModuleDeviceScopes
                     };
                 });
@@ -3267,6 +3286,7 @@
                                 </div>
                                 <div class="manager-detail-stack">
                                     <div class="manager-meta">${manager.phone}</div>
+                                    ${manager.wechatOpenId ? '<div class="manager-meta"><span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:10px;font-size:11px;">📱 已绑公众号</span></div>' : ''}
                                     <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
                                     <div class="manager-device-summary">
                                         <span class="manager-device-label">可管理设备：</span>
@@ -3354,10 +3374,13 @@
                 return;
             }
 
-            staffManagersData[staffIndex] = {
+            const nextStaff = {
                 ...currentStaff,
                 accountEnabled: nextEnabled
             };
+            const gate = validateAndCommitStaffChange({ ...currentStaff }, nextStaff);
+            if (!gate.proceed) return;
+            staffManagersData[staffIndex] = nextStaff;
             localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
             renderManagers();
             updateStats();
@@ -3379,6 +3402,7 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
+            document.getElementById('staffWechatOpenId').value = '';
             currentModuleDeviceScopes = createDefaultModuleDeviceScopes();
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
@@ -3392,6 +3416,7 @@
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
+            document.getElementById('staffWechatOpenId').value = targetStaff.wechatOpenId || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
 
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
@@ -3626,10 +3651,71 @@
             }
         }
 
+        function validateAndCommitStaffChange(beforeStaff, afterStaff) {
+            if (!window.CofeFaultNotifyChannels) return { proceed: true };
+            let customers = [];
+            try {
+                const parsed = JSON.parse(localStorage.getItem('customersData') || '[]');
+                customers = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                customers = [];
+            }
+
+            const projected = staffManagersData.slice();
+            const targetId = String((beforeStaff || afterStaff || {}).id || '');
+            const index = projected.findIndex((item) => String(item.id) === targetId);
+            if (afterStaff) {
+                if (index >= 0) projected[index] = afterStaff;
+                else projected.push(afterStaff);
+            } else if (index >= 0) {
+                projected.splice(index, 1);
+            }
+
+            const impact = window.CofeFaultNotifyChannels.previewStaffChangeImpact(
+                beforeStaff,
+                afterStaff,
+                customers,
+                projected
+            );
+            if (!impact.length) return { proceed: true };
+
+            const names = impact.map((item) => item.merchantName).join('、');
+            const choice = window.prompt(
+                `此变更将使商户「${names}」的公众号推送失去全部可达接收人。请选择处理方式:\n\n` +
+                `1 = 保留员工变更,并自动取消该商户的「公众号推送」(推荐)\n` +
+                `2 = 暂不保存,先去人员管理给该商户补一位 OpenID 接收人\n` +
+                `3 = 取消本次操作\n\n` +
+                `请输入 1 / 2 / 3:`,
+                '1'
+            );
+
+            if (choice !== '1') {
+                return { proceed: false };
+            }
+
+            impact.forEach((item) => {
+                const customer = customers.find((entry) => String(entry.id) === String(item.merchantId));
+                if (!customer) return;
+                const channels = window.CofeFaultNotifyChannels.normalizeChannelList(customer.notifyChannels, customer.notifyEmail);
+                customer.notifyChannels = channels.filter((channel) => channel !== 'wechat');
+                window.CofeFaultNotifyChannels.appendReconcileLog(localStorage, {
+                    merchantId: customer.id,
+                    merchantName: customer.name,
+                    kind: 'manual',
+                    reason: 'staff-change-cascade'
+                });
+            });
+            localStorage.setItem('customersData', JSON.stringify(customers));
+            return { proceed: true };
+        }
+
         function saveStaff() {
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
+            const wechatOpenId = window.CofeFaultNotifyChannels
+                ? window.CofeFaultNotifyChannels.normalizeOpenId(document.getElementById('staffWechatOpenId').value)
+                : String(document.getElementById('staffWechatOpenId').value || '').trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
             const merchantName = getCurrentMerchantContext().merchantName || '';
@@ -3660,23 +3746,26 @@
                 merchantName,
                 username,
                 phone,
+                wechatOpenId,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
                 moduleDeviceScopes: normalizedModuleDeviceScopes
             };
 
             let nextStaffManagersData = staffManagersData.slice();
+            let nextStaff = null;
             if (editingStaffId) {
                 const staffIndex = staffManagersData.findIndex((item) => item.id === editingStaffId);
                 if (staffIndex === -1) {
                     showToast('未找到可编辑人员');
                     return;
                 }
-                nextStaffManagersData[staffIndex] = {
+                nextStaff = {
                     ...staffManagersData[staffIndex],
                     ...staffPayload,
                     devices: selectedDevices
                 };
+                nextStaffManagersData[staffIndex] = nextStaff;
             } else {
                 const newStaff = {
                     id: createStaffId(),
@@ -3684,8 +3773,15 @@
                     accountEnabled: true,
                     createdAt: new Date().toISOString().slice(0, 10)
                 };
+                nextStaff = newStaff;
                 nextStaffManagersData.unshift(newStaff);
             }
+
+            const beforeStaff = editingStaffId
+                ? staffManagersData.find((item) => item.id === editingStaffId)
+                : null;
+            const gate = validateAndCommitStaffChange(beforeStaff ? { ...beforeStaff } : null, nextStaff);
+            if (!gate.proceed) return;
 
             try {
                 localStorage.setItem('staffManagersData', JSON.stringify(nextStaffManagersData));

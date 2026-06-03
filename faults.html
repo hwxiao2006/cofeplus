@@ -1364,6 +1364,7 @@
     <div id="operationRecordPage" class="status-page-overlay"></div>
 
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/fault-notify-channels.js"></script>
     <script src="shared/fault-library.js"></script>
     <script>
 
@@ -2407,32 +2408,62 @@
             `;
         }
 
-        // 解析设备所属商户的故障通知邮箱
-        // 链路: fault.id → devicesData[device.id === fault.id].merchant ('mer001')
-        //       → customerId ('C001') → customersData[c.id === customerId].notifyEmail
-        function getFaultNotifyEmailForDevice(deviceId) {
+        function reconcileFaultNotifyChannelsOnLoad() {
             try {
-                const devices = JSON.parse(localStorage.getItem('devicesData') || '[]');
-                const device = devices.find(d => String(d?.id || '').trim() === String(deviceId || '').trim());
-                if (!device) return '';
-                const merchantKey = String(device.merchant || '').trim().toLowerCase();
-                const matched = merchantKey.match(/^mer(\d+)$/i);
-                if (!matched) return '';
-                const customerId = 'C' + String(matched[1]).padStart(3, '0');
+                if (!window.CofeFaultNotifyChannels) return;
                 const customers = JSON.parse(localStorage.getItem('customersData') || '[]');
-                const customer = customers.find(c => String(c?.id || '').trim() === customerId);
-                return String(customer?.notifyEmail || '').trim();
+                const staff = JSON.parse(localStorage.getItem('staffManagersData') || '[]');
+                const changes = window.CofeFaultNotifyChannels.reconcileNotifyChannels(customers, staff);
+                if (changes.length) {
+                    changes.forEach((change) => window.CofeFaultNotifyChannels.appendReconcileLog(localStorage, change));
+                    localStorage.setItem('customersData', JSON.stringify(customers));
+                }
             } catch (e) {
-                return '';
+                // 自愈失败不阻塞故障列表渲染
             }
         }
 
-        function renderFaultNotifyEmail(item) {
-            const email = getFaultNotifyEmailForDevice(item.id);
-            if (email) {
-                return `<span class="fault-notify-email" title="故障通知将发送至该邮箱">✉️ 推送至 ${escapeText(email)}</span>`;
+        // 解析设备所属商户的推送配置
+        // 链路: fault.id → devicesData[device.id === fault.id].merchant ('mer001')
+        //       → customerId ('C001') → customersData[c.id === customerId].notifyChannels
+        function getFaultNotifyConfigForDevice(deviceId) {
+            try {
+                const devices = JSON.parse(localStorage.getItem('devicesData') || '[]');
+                const device = devices.find(d => String(d?.id || '').trim() === String(deviceId || '').trim());
+                if (!device) return { channels: [], email: '' };
+                const merchantKey = String(device.merchant || '').trim().toLowerCase();
+                const matched = merchantKey.match(/^mer(\d+)$/i);
+                if (!matched) return { channels: [], email: '' };
+                const customerId = 'C' + String(matched[1]).padStart(3, '0');
+                const customers = JSON.parse(localStorage.getItem('customersData') || '[]');
+                const customer = customers.find(c => String(c?.id || '').trim() === customerId);
+                if (!customer) return { channels: [], email: '' };
+                const channels = window.CofeFaultNotifyChannels
+                    ? window.CofeFaultNotifyChannels.normalizeChannelList(customer.notifyChannels, customer.notifyEmail)
+                    : (customer.notifyEmail ? ['email'] : []);
+                return { channels, email: String(customer.notifyEmail || '').trim() };
+            } catch (e) {
+                return { channels: [], email: '' };
             }
-            return `<span class="fault-notify-email fault-notify-email-empty" title="该商户尚未配置故障通知邮箱">✉️ 未配置通知邮箱</span>`;
+        }
+
+        function getFaultNotifyEmailForDevice(deviceId) {
+            return getFaultNotifyConfigForDevice(deviceId).email;
+        }
+
+        function renderFaultNotifyEmail(item) {
+            const config = getFaultNotifyConfigForDevice(item.id);
+            if (!config.channels.length) {
+                return '<span class="fault-notify-email fault-notify-email-empty" title="该设备所属商户未配置故障推送渠道">🔕 未配置推送</span>';
+            }
+            const badges = [];
+            if (config.channels.includes('email')) {
+                badges.push(`<span class="fault-notify-email" title="推送至 ${escapeText(config.email)}">✉️ 邮箱推送</span>`);
+            }
+            if (config.channels.includes('wechat')) {
+                badges.push('<span class="fault-notify-email" title="公众号推送给该商户下故障接收员工">📱 公众号推送</span>');
+            }
+            return badges.join(' ');
         }
 
         function renderList() {
@@ -2498,6 +2529,7 @@
 
         currentStaffFaultAccess = resolveCurrentStaffFaultAccess();
         renderSidebarLoginProfile();
+        reconcileFaultNotifyChannelsOnLoad();
         initializeFaultDeviceFilter();
         renderSummary();
         renderList();

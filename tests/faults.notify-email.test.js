@@ -11,6 +11,7 @@ function test(name, fn) {
 
 test('faults.html 应有 getFaultNotifyEmailForDevice 函数', () => {
   assert.ok(/function\s+getFaultNotifyEmailForDevice\s*\(/.test(html));
+  assert.ok(/function\s+getFaultNotifyConfigForDevice\s*\(/.test(html));
 });
 
 test('faults.html 应有 renderFaultNotifyEmail 渲染函数', () => {
@@ -23,6 +24,8 @@ test('renderFaultNotifyEmail 应渲染"推送至" + 邮箱,无邮箱时显示"�
   const fn = html.slice(start, end > 0 ? end : start + 1500);
   assert.ok(/推送至/.test(fn), '应有"推送至"文案');
   assert.ok(/未配置/.test(fn), '应有"未配置"文案');
+  assert.ok(/邮箱推送/.test(fn), '应展示邮箱渠道徽章');
+  assert.ok(/公众号推送/.test(fn), '应展示公众号渠道徽章');
   assert.ok(/fault-notify-email/.test(fn), '应使用 fault-notify-email 类');
 });
 
@@ -41,12 +44,13 @@ test('CSS 应定义 fault-notify-email 样式', () => {
     '空状态应有灰色背景');
 });
 
-test('getFaultNotifyEmailForDevice 应通过 mer→C 编号转换查找 customer', () => {
-  const start = html.indexOf('function getFaultNotifyEmailForDevice(');
+test('getFaultNotifyConfigForDevice 应通过 mer→C 编号转换查找 customer', () => {
+  const start = html.indexOf('function getFaultNotifyConfigForDevice(');
   const end = html.indexOf('\n        function ', start + 30);
   const fn = html.slice(start, end > 0 ? end : start + 1500);
   assert.ok(/devicesData/.test(fn), '应读 devicesData');
   assert.ok(/customersData/.test(fn), '应读 customersData');
   assert.ok(/notifyEmail/.test(fn), '应取 notifyEmail');
+  assert.ok(/notifyChannels/.test(fn), '应读取 notifyChannels');
   assert.ok(/mer/.test(fn), '应处理 mer→C 转换');
 });

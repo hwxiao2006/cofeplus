@@ -578,6 +578,28 @@
             gap: 4px;
         }
 
+        .notify-channel-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #ecfeff;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .notify-channel-badge.wechat {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .notify-channel-badge.empty {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
         .customer-status {
             display: flex;
             align-items: center;
@@ -1114,6 +1136,11 @@
                     <span class="header-desc" id="pageDesc">管理商户信息和合作关系</span>
                 </div>
                 <div class="header-right" data-admin-only="customers">
+                    <button type="button" id="reconcileLogTrigger" class="btn" style="background:#fff;color:var(--text-secondary);border:1px solid var(--border);" onclick="openReconcileLogPanel()">
+                        <span>🔔</span>
+                        <span>推送配置变更记录</span>
+                        <span id="reconcileLogBadge" style="display:none;background:#ffa502;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;">0</span>
+                    </button>
                     <button class="btn btn-primary" onclick="openModal()">
                         <span>➕</span>
                         <span>新增客户</span>
@@ -1199,6 +1226,20 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">故障推送渠道</label>
+                    <div class="channel-checkbox-row" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                        <label style="display:flex;align-items:center;gap:6px;">
+                            <input type="checkbox" id="customerChannelEmail"> 邮箱推送
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;" id="customerChannelWechatWrap">
+                            <input type="checkbox" id="customerChannelWechat"> 公众号推送
+                        </label>
+                    </div>
+                    <div class="form-hint" id="customerChannelHint" style="font-size:12px;color:#6b7280;margin-top:6px;">
+                        接收人将自动从本商户旗下「拥有故障接收权限并登记了公众号 OpenID」的员工中聚合
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="form-label">故障通知邮箱</label>
                     <input type="email" class="form-input" id="customerNotifyEmail" placeholder="例如:ops@example.com">
                     <div class="form-hint" style="margin-top:6px;color:#9ca3af;font-size:12px;">
@@ -1224,6 +1265,7 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/fault-notify-channels.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1479,6 +1521,7 @@
                 customersData = [...defaultCustomers];
                 saveToStorage();
             }
+            normalizeAndReconcileCustomerNotifyChannels();
             applyRoleVisibility();
             const scope = (typeof CofeAdminStaffAccess !== 'undefined'
                 && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
@@ -1489,6 +1532,7 @@
                 renderCustomers();
                 updateStats();
             }
+            updateReconcileLogBadge();
         }
 
         function applyRoleVisibility() {
@@ -1540,6 +1584,9 @@
                 const muted = (v === '-') ? ' muted' : '';
                 return `<div class="merchant-row"><span class="k">${escapeHtml(label)}</span><span class="v${muted}" id="${key}">${escapeHtml(v)}</span></div>`;
             };
+            const htmlRow = (label, value, key) => {
+                return `<div class="merchant-row"><span class="k">${escapeHtml(label)}</span><span class="v" id="${key}">${value}</span></div>`;
+            };
 
             section.innerHTML = `
                 <div class="merchant-card">
@@ -1564,6 +1611,7 @@
                         ${row('联系人', merchant.contact, 'profileContactDisplay')}
                         ${row('联系电话', merchant.phone, 'profilePhoneDisplay')}
                         ${row('故障通知邮箱', merchant.notifyEmail || '未设置', 'profileNotifyEmailDisplay')}
+                        ${htmlRow('故障推送渠道', renderCustomerNotifyBadges(merchant), 'profileNotifyChannelsDisplay')}
                         ${row('商户地址', merchant.address, 'profileAddressDisplay')}
                         ${row('入驻时间', merchant.createTime, 'profileCreateTimeRow')}
                         ${row('备注', merchant.remark, 'profileRemarkDisplay')}
@@ -1601,12 +1649,130 @@
             document.getElementById('customerNotifyEmail').value = merchant.notifyEmail || '';
             document.getElementById('customerAddress').value = merchant.address || '';
             document.getElementById('customerRemark').value = merchant.remark || '';
+            syncCustomerNotifyForm(merchant);
             document.getElementById('customerModal').classList.add('active');
         }
 
         // 保存到 localStorage
         function saveToStorage() {
             localStorage.setItem('customersData', JSON.stringify(customersData));
+        }
+
+        function getFaultNotifyModule() {
+            return window.CofeFaultNotifyChannels || null;
+        }
+
+        function readStaffManagersForNotify() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem('staffManagersData') || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function normalizeAndReconcileCustomerNotifyChannels() {
+            const mod = getFaultNotifyModule();
+            if (!mod) return;
+            let mutated = false;
+            customersData.forEach((customer) => {
+                const before = JSON.stringify(customer.notifyChannels);
+                customer.notifyChannels = mod.normalizeChannelList(customer.notifyChannels, customer.notifyEmail);
+                if (JSON.stringify(customer.notifyChannels) !== before) {
+                    mutated = true;
+                }
+            });
+            const changes = mod.reconcileNotifyChannels(customersData, readStaffManagersForNotify());
+            changes.forEach((change) => mod.appendReconcileLog(localStorage, change));
+            if (mutated || changes.length) {
+                saveToStorage();
+            }
+        }
+
+        function renderCustomerNotifyBadges(customer) {
+            const mod = getFaultNotifyModule();
+            const channels = mod
+                ? mod.normalizeChannelList(customer.notifyChannels, customer.notifyEmail)
+                : (customer.notifyEmail ? ['email'] : []);
+            if (!channels.length) {
+                return '<span class="notify-channel-badge empty">🔕 未配置推送</span>';
+            }
+            const badges = [];
+            if (channels.includes('email')) {
+                badges.push(`<span class="notify-channel-badge">✉️ 邮箱推送 · ${escapeHtml(customer.notifyEmail || '')}</span>`);
+            }
+            if (channels.includes('wechat')) {
+                badges.push('<span class="notify-channel-badge wechat">📱 公众号推送</span>');
+            }
+            return badges.join(' ');
+        }
+
+        function syncCustomerNotifyForm(customer) {
+            const channelEmail = document.getElementById('customerChannelEmail');
+            const customerChannelWechat = document.getElementById('customerChannelWechat');
+            const emailInput = document.getElementById('customerNotifyEmail');
+            const wechatWrap = document.getElementById('customerChannelWechatWrap');
+            if (!channelEmail || !customerChannelWechat || !emailInput) return;
+
+            const mod = getFaultNotifyModule();
+            const channels = mod
+                ? mod.normalizeChannelList(customer ? customer.notifyChannels : undefined, customer ? customer.notifyEmail : '')
+                : (customer && customer.notifyEmail ? ['email'] : []);
+            channelEmail.checked = channels.includes('email');
+            customerChannelWechat.checked = channels.includes('wechat');
+
+            const syncEmailEnabled = () => {
+                emailInput.disabled = !channelEmail.checked;
+                emailInput.style.background = channelEmail.checked ? '' : '#f3f4f6';
+                emailInput.style.color = channelEmail.checked ? '' : '#6b7280';
+            };
+            syncEmailEnabled();
+            channelEmail.onchange = syncEmailEnabled;
+
+            const customerId = customer ? customer.id : null;
+            const reachable = customerId && mod ? mod.getReachableWechatReceivers(customerId, readStaffManagersForNotify()) : [];
+            const wechatDisabled = !customerId || reachable.length === 0;
+            customerChannelWechat.disabled = wechatDisabled && !customerChannelWechat.checked;
+            if (wechatWrap) {
+                if (wechatDisabled) {
+                    wechatWrap.title = customerId
+                        ? '该商户暂无登记了 OpenID 的故障接收员工。请先去「人员管理」配置,再回此处勾选'
+                        : '请先保存商户基础信息,再去「人员管理」为本商户添加员工后回此处勾选';
+                    wechatWrap.style.opacity = '0.55';
+                } else {
+                    wechatWrap.title = '';
+                    wechatWrap.style.opacity = '1';
+                }
+            }
+        }
+
+        function updateReconcileLogBadge() {
+            const mod = getFaultNotifyModule();
+            if (!mod) return;
+            const badge = document.getElementById('reconcileLogBadge');
+            if (!badge) return;
+            const log = mod.getReconcileLog(localStorage);
+            badge.textContent = String(log.length);
+            badge.style.display = log.length ? 'inline-block' : 'none';
+        }
+
+        function openReconcileLogPanel() {
+            const mod = getFaultNotifyModule();
+            if (!mod) return;
+            const log = mod.getReconcileLog(localStorage);
+            if (!log.length) {
+                alert('暂无自动调整记录');
+                return;
+            }
+            const lines = log.map((entry, index) => {
+                const when = entry.at ? new Date(entry.at).toLocaleString('zh-CN') : '-';
+                const kind = entry.kind === 'auto' ? '自动校对' : '运营确认';
+                return `${index + 1}. [${when}] ${entry.merchantName || entry.merchantId} · ${kind} · ${entry.reason}`;
+            }).join('\n');
+            if (confirm('最近的推送配置调整:\n\n' + lines + '\n\n点击确定清空记录,取消则保留')) {
+                mod.clearReconcileLog(localStorage);
+                updateReconcileLogBadge();
+            }
         }
 
         // 更新统计
@@ -1668,7 +1834,7 @@
                             <div class="customer-meta">
                                 <span>👤 ${customer.contact}</span>
                                 <span>📞 ${customer.phone}</span>
-                                ${customer.notifyEmail ? `<span>✉️ ${escapeHtml(customer.notifyEmail)}</span>` : '<span style="color:#9ca3af">✉️ 未设置故障邮箱</span>'}
+                                ${renderCustomerNotifyBadges(customer)}
                             </div>
                         </div>
                         <div class="customer-status ${customer.status === 'active' ? 'status-active' : 'status-inactive'}">
@@ -1699,6 +1865,7 @@
             document.getElementById('customerNotifyEmail').value = '';
             document.getElementById('customerAddress').value = '';
             document.getElementById('customerRemark').value = '';
+            syncCustomerNotifyForm(null);
             document.getElementById('customerModal').classList.add('active');
         }
 
@@ -1721,6 +1888,7 @@
             document.getElementById('customerNotifyEmail').value = customer.notifyEmail || '';
             document.getElementById('customerAddress').value = customer.address || '';
             document.getElementById('customerRemark').value = customer.remark || '';
+            syncCustomerNotifyForm(customer);
             document.getElementById('customerModal').classList.add('active');
         }
 
@@ -1749,9 +1917,33 @@
                 return;
             }
 
+            const checkedChannels = [];
+            if (document.getElementById('customerChannelEmail')?.checked) checkedChannels.push('email');
+            if (document.getElementById('customerChannelWechat')?.checked) checkedChannels.push('wechat');
+
             const isSuper = (typeof CofeAdminStaffAccess !== 'undefined'
                 && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
                 ? CofeAdminStaffAccess.isSuperAdmin() : false;
+            const existingCustomer = editingCustomerId
+                ? customersData.find(c => c.id === editingCustomerId)
+                : null;
+            const effectiveNameForValidation = editingCustomerId && existingCustomer && !isSuper
+                ? existingCustomer.name
+                : name;
+            if (window.CofeFaultNotifyChannels) {
+                const candidate = {
+                    id: editingCustomerId || 'NEW',
+                    name: effectiveNameForValidation,
+                    notifyEmail,
+                    notifyChannels: checkedChannels
+                };
+                const result = window.CofeFaultNotifyChannels.validateCustomerNotifyConfig(candidate, readStaffManagersForNotify());
+                if (!result.valid) {
+                    const message = result.errors.map((error) => '• ' + error.message).join('\n');
+                    alert('推送配置存在问题,无法保存:\n' + message);
+                    return;
+                }
+            }
 
             if (editingCustomerId) {
                 // 编辑
@@ -1762,7 +1954,7 @@
                     const effectiveName = isSuper ? name : previousName;
                     customersData[index] = {
                         ...customersData[index],
-                        name: effectiveName, contact, phone, notifyEmail, address, remark
+                        name: effectiveName, contact, phone, notifyEmail, notifyChannels: checkedChannels, address, remark
                     };
                     if (isSuper && previousName !== effectiveName
                         && typeof CofeAdminStaffAccess !== 'undefined'
@@ -1776,7 +1968,7 @@
                 const newId = 'C' + String(customersData.length + 1).padStart(3, '0');
                 customersData.push({
                     id: newId,
-                    name, contact, phone, notifyEmail, address, remark,
+                    name, contact, phone, notifyEmail, notifyChannels: checkedChannels, address, remark,
                     status: 'active',
                     createTime: new Date().toISOString().split('T')[0]
                 });
@@ -1794,6 +1986,7 @@
                 renderCustomers();
                 updateStats();
             }
+            updateReconcileLogBadge();
             closeModal();
         }
 
