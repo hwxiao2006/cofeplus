@@ -93,10 +93,9 @@
         }
 
         .detail-fault-sheet-option:hover {
-            color: #fff;
+            background: #ecfeff;
+            color: #0f766e;
             cursor: pointer;
-            font-size: 15px;
-            margin-top: 4px;
         }
 
         .detail-side-restart-split {

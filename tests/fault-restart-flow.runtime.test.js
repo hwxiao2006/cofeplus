@@ -126,3 +126,14 @@ test('R-18: faults.html 桌面端机构重启弹层应居中展示', () => {
   const body = html.slice(start, end);
   assert.ok(/panel\.classList\.toggle\('desktop-mode',\s*isDesktopInteractionMode\(\)\)/.test(body));
 });
+
+test('R-19: 共享重启菜单 hover 应保持文字可读且不改变布局', () => {
+  const source = read('shared/fault-restart-flow.js');
+  const match = source.match(/\.detail-fault-sheet-option:hover\s*\{([\s\S]*?)\}/);
+  assert.ok(match);
+  assert.ok(/background:\s*#ecfeff/.test(match[1]));
+  assert.ok(/color:\s*#0f766e/.test(match[1]));
+  assert.ok(!/color:\s*#fff/.test(match[1]));
+  assert.ok(!/font-size:/.test(match[1]));
+  assert.ok(!/margin-top:/.test(match[1]));
+});
