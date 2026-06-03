@@ -3984,8 +3984,8 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
@@ -4447,6 +4447,7 @@
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -5232,7 +5233,7 @@
             const runtimeDevices = loadRuntimeDevices();
             const runtimeProducts = loadRuntimeProducts();
             deviceContextMap = buildDeviceContextMap(runtimeDevices);
-            currentStaffOrderAccess = resolveCurrentStaffOrderAccess();
+            currentStaffOrderAccess = resolveCurrentStaffOrderAccess(runtimeDevices);
             ordersData = applyScopedOrdersData(
                 mergeOrdersPrdDemoOrders(loadOrdersData(runtimeDevices, runtimeProducts), runtimeDevices, runtimeProducts, ordersPrdDemoState),
                 currentStaffOrderAccess
@@ -5245,46 +5246,50 @@
             applyOrdersPrdDemoState();
         }
 
-        function resolveCurrentStaffOrderAccess() {
+        function resolveCurrentStaffOrderAccess(runtimeDevices = []) {
             const helper = window.CofeAdminStaffAccess;
-            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') {
+            if (!helper) {
+                return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
+            }
+
+            // 1) 超管：不过滤，能看全部订单
+            if (typeof helper.isSuperAdmin === 'function' && helper.isSuperAdmin()) {
+                return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
+            }
+
+            // 2) 商户：按 merchantId 过滤设备 → 订单
+            const merchantId = typeof helper.getMerchantScope === 'function' ? helper.getMerchantScope() : '';
+            if (!merchantId) {
                 return {
-                    isScoped: false,
+                    isScoped: true,
                     visibleDeviceIds: [],
-                    scopeMessage: ''
+                    scopeMessage: '当前账号未绑定商户，无法查看订单'
                 };
             }
 
-            const access = helper.resolveCurrentStaffAccess();
-            if (!access || !access.isScoped || !access.currentStaff) {
-                return {
-                    isScoped: false,
-                    visibleDeviceIds: [],
-                    scopeMessage: ''
-                };
-            }
-
-            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'orders')) {
-                return {
-                    ...access,
-                    visibleDeviceIds: [],
-                    scopeMessage: '当前账号暂未开通订单页面权限'
-                };
-            }
-
-            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
-                ? helper.getModuleVisibleDeviceIds(access.currentStaff, 'orders')
+            const allowedDeviceIds = typeof helper.getMerchantDeviceIds === 'function'
+                ? helper.getMerchantDeviceIds(merchantId, runtimeDevices)
                 : [];
-            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(allowedDeviceIds) ? allowedDeviceIds : [])
                 .map((deviceId) => String(deviceId || '').trim())
                 .filter(Boolean)));
 
+            let merchantName = '';
+            if (typeof helper.resolveCurrentStaffAccess === 'function') {
+                try {
+                    const access = helper.resolveCurrentStaffAccess();
+                    merchantName = String(access?.merchantName || '').trim();
+                } catch (e) { /* ignore */ }
+            }
+
             return {
-                ...access,
+                isScoped: true,
                 visibleDeviceIds: normalizedVisibleDeviceIds,
+                merchantId,
+                merchantName,
                 scopeMessage: normalizedVisibleDeviceIds.length
-                    ? `当前可查看订单设备：${normalizedVisibleDeviceIds.length} 台`
-                    : '你已拥有订单页面权限，但当前未分配可查看的设备，请联系管理员调整页面设备范围'
+                    ? `当前查看${merchantName || '本商户'}的订单 · 共 ${normalizedVisibleDeviceIds.length} 台设备`
+                    : '当前商户名下暂无可见设备的订单'
             };
         }
 

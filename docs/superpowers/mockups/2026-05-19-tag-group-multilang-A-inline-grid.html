@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>Mockup A — 分组名称多语言：右侧顶部内联网格</title>
+<style>
+:root{
+  --primary:#4ECDC4; --primary-light:#e8f8f7; --primary-dark:#3dbdb4;
+  --danger:#ff6b6b; --warning:#ffa502; --success:#2ed573;
+  --text-primary:#2d3436; --text-secondary:#636e72; --text-tertiary:#9ca3af; --text-muted:#b2bec3;
+  --bg-body:#f8f9fa; --bg-card:#ffffff; --border:#e9ecef;
+  --shadow-sm:0 2px 4px rgba(0,0,0,.04); --shadow:0 4px 12px rgba(0,0,0,.08); --shadow-lg:0 8px 24px rgba(0,0,0,.12);
+  --radius:12px; --radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg-body);min-height:100vh;font-size:14px;color:var(--text-primary);-webkit-font-smoothing:antialiased}
+.mockup-banner{background:linear-gradient(90deg,#fff7ed,#fef9c3);border-bottom:1px solid #fbbf24;padding:12px 20px;font-size:13px;color:#92400e;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mockup-banner strong{color:#78350f}
+.mockup-nav{display:flex;gap:8px}
+.mockup-nav a{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.7);color:#92400e;text-decoration:none;font-weight:600;border:1px solid #fcd34d}
+.mockup-nav a.current{background:#92400e;color:#fff}
+/* Drawer styles (copied from product-detail.html) */
+.tag-drawer-overlay{display:flex;position:fixed;inset:46px 0 0 0;background:rgba(0,0,0,.45);z-index:1;align-items:stretch;justify-content:flex-end}
+.tag-drawer{background:#fff;width:min(1160px,96vw);box-shadow:var(--shadow);height:calc(100vh - 46px);overflow:hidden;display:flex;flex-direction:row}
+.tag-drawer-side{width:260px;border-right:1px solid var(--border);background:#fafcfd;display:flex;flex-direction:column}
+.tag-drawer-side-header{padding:18px 16px 10px;border-bottom:1px solid var(--border);font-size:16px;font-weight:700;color:var(--text-primary)}
+.tag-tree{overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
+.tag-tree-item{text-align:left;border:1px solid transparent;background:transparent;border-radius:10px;padding:10px 12px;color:var(--text-secondary);cursor:pointer;font-size:14px;transition:all .2s}
+.tag-tree-item:hover{background:#f2f7f8;color:var(--text-primary)}
+.tag-tree-item.active{background:var(--primary-light);border-color:#bde9e6;color:var(--primary-dark);font-weight:600}
+.tag-tree-item .tag-tree-item-zh{display:block;font-size:14px}
+.tag-tree-item .tag-tree-item-en{display:block;font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400}
+.tag-tree-item.active .tag-tree-item-en{color:#3dbdb4}
+.tag-drawer-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.tag-drawer-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.tag-drawer-title{font-size:17px;font-weight:700;color:var(--text-primary)}
+.tag-drawer-body{padding:14px 20px 18px;overflow-y:auto;flex:1}
+.existing-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed var(--border)}
+.existing-tag-item{border:1px solid var(--border);background:#fff;color:var(--text-secondary);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;transition:all .2s;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.existing-tag-item:hover{border-color:var(--primary);color:var(--primary-dark);background:var(--primary-light)}
+.existing-tag-item.active{border-color:var(--primary);background:var(--primary);color:#fff;font-weight:600}
+.existing-tag-helper{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.tag-drawer-footer{padding:14px 20px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border)}
+.modal-close{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text-secondary);font-size:20px;line-height:1;cursor:pointer}
+.btn{padding:10px 24px;border-radius:6px;font-size:14px;cursor:pointer;transition:all .2s;border:1px solid transparent;font-weight:500}
+.btn-default{background:#fff;border-color:var(--border);color:var(--text-secondary)}
+.btn-primary{background:var(--primary);color:#fff}
+.form-input{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text-primary);background:#fff;outline:none;transition:all .2s}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.form-group{margin-bottom:0}
+/* Multilang sheet */
+.multilang-sheet{background:linear-gradient(180deg,#fbfdfd 0%,#f4f8f8 100%);border:1px solid #deeaeb;border-radius:18px;padding:18px;margin-bottom:18px}
+.multilang-sheet.is-group-name{background:linear-gradient(180deg,#fffbeb 0%,#fef3c7 100%);border-color:#fde68a}
+.multilang-sheet-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.multilang-sheet-title{font-size:13px;font-weight:700;color:var(--text-primary)}
+.multilang-sheet.is-group-name .multilang-sheet-title::before{content:'NEW ';color:#b45309;font-weight:800;margin-right:4px;font-size:10px;letter-spacing:0.04em;background:#fde68a;padding:2px 6px;border-radius:6px;vertical-align:1px}
+.multilang-sheet-hint{margin-top:4px;font-size:12px;line-height:1.5;color:var(--text-muted)}
+.multilang-sheet-summary{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(46,196,182,.12);color:#0f766e;font-size:12px;font-weight:600}
+.multilang-sheet.is-group-name .multilang-sheet-summary{background:rgba(245,158,11,.18);color:#92400e}
+.multilang-grid-scroll{overflow-x:auto;overflow-y:hidden;padding-bottom:4px}
+.multilang-grid-head,.multilang-grid-row{display:grid;grid-template-columns:148px repeat(var(--lang-count),minmax(220px,1fr));min-width:max-content}
+.multilang-grid-corner,.multilang-grid-label{position:sticky;left:0;z-index:2;background:#f3f7f7;border-right:1px solid #deeaeb}
+.multilang-sheet.is-group-name .multilang-grid-corner,.multilang-sheet.is-group-name .multilang-grid-label{background:#fef3c7}
+.multilang-grid-corner{display:flex;align-items:center;padding:14px 14px 12px;border-top-left-radius:14px;border-bottom:1px solid #deeaeb;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.multilang-grid-head-cell{padding:14px 14px 12px;border-bottom:1px solid #deeaeb;border-right:1px solid #e7efef;background:rgba(255,255,255,.92)}
+.multilang-grid-head-cell:last-child{border-top-right-radius:14px}
+.multilang-grid-head-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.multilang-grid-lang-name{font-size:13px;font-weight:700;color:var(--text-primary)}
+.multilang-grid-lang-code{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:24px;padding:0 8px;border-radius:999px;background:rgba(46,196,182,.14);color:#0f766e;font-size:11px;font-weight:700;text-transform:lowercase}
+.multilang-grid-meta{margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.multilang-status-chip{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1;background:#eef3f4;color:var(--text-secondary)}
+.multilang-status-chip.default{background:rgba(46,196,182,.16);color:#0f766e}
+.multilang-status-chip.empty{background:#fff1f2;color:#be123c}
+.multilang-status-chip.filled{background:rgba(46,196,182,.16);color:#0f766e}
+.multilang-grid-row:last-child .multilang-grid-label{border-bottom-left-radius:14px}
+.multilang-grid-label{padding:16px 14px;border-bottom:1px solid #deeaeb;font-size:13px;font-weight:700;color:var(--text-primary);display:flex;align-items:flex-start}
+.multilang-grid-cell{padding:14px;border-bottom:1px solid #deeaeb;border-right:1px solid #e7efef;background:rgba(255,255,255,.96)}
+.multilang-cell-label{display:none}
+.multilang-mobile-switch{display:none}
+.tag-default-wrap{margin-top:14px}
+.tag-extra-price-group{max-width:220px;margin-top:14px}
+.tag-extra-price-hint{margin-top:6px;font-size:12px;color:var(--text-muted)}
+.tag-default-check{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;color:var(--text-primary);font-size:14px;font-weight:500}
+.tag-default-check input{position:absolute;opacity:0;pointer-events:none}
+.tag-default-box{width:20px;height:20px;border-radius:6px;border:2px solid #cdd5df;background:#fff;display:inline-flex;align-items:center;justify-content:center}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px}
+.group-name-callout{position:absolute;left:280px;top:170px;background:#fef3c7;border:1px dashed #f59e0b;color:#92400e;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:var(--shadow-sm);pointer-events:none}
+.group-name-callout::before{content:'';position:absolute;left:-12px;top:50%;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:12px solid #f59e0b}
+</style>
+</head>
+<body>
+
+<div class="mockup-banner">
+  <div><strong>Mockup A — 右侧顶部内联网格</strong>　这是设计 mockup，仅用于布局对比，<u>不是生产代码</u>。</div>
+  <div class="mockup-nav">
+    <a href="2026-05-19-tag-group-multilang-A-inline-grid.html" class="current">A 内联网格</a>
+    <a href="2026-05-19-tag-group-multilang-B-pencil-modal.html">B 行内 ✏️ modal</a>
+    <a href="2026-05-19-tag-group-multilang-C-manage-button.html">C 统一管理弹窗</a>
+  </div>
+</div>
+
+<div class="group-name-callout">↓ 多出来的「分组名称」多语言网格</div>
+
+<div class="tag-drawer-overlay active">
+  <div class="tag-drawer">
+    <aside class="tag-drawer-side">
+      <div class="tag-drawer-side-header">标签类型</div>
+      <div class="tag-tree">
+        <button class="tag-tree-item active">
+          <span class="tag-tree-item-zh">咖啡豆</span>
+          <span class="tag-tree-item-en">Coffee Beans</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">温度</span>
+          <span class="tag-tree-item-en">Temperature</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">浓度</span>
+          <span class="tag-tree-item-en">Strength</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">糖浆</span>
+          <span class="tag-tree-item-en">Syrup</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">甜度</span>
+          <span class="tag-tree-item-en">Sweetness</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">杯型</span>
+          <span class="tag-tree-item-en">Cup Size</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">杯盖</span>
+          <span class="tag-tree-item-en">Lid</span>
+        </button>
+        <button class="tag-tree-item">
+          <span class="tag-tree-item-zh">拉花</span>
+          <span class="tag-tree-item-en">Latte Art</span>
+        </button>
+      </div>
+    </aside>
+    <section class="tag-drawer-main">
+      <div class="tag-drawer-header">
+        <div class="tag-drawer-title">咖啡豆标签配置</div>
+        <button class="modal-close">×</button>
+      </div>
+      <div class="tag-drawer-body">
+
+        <!-- NEW: 分组名称多语言网格（高亮黄色边框） -->
+        <div class="multilang-sheet is-group-name" style="--lang-count:2;">
+          <div class="multilang-sheet-header">
+            <div>
+              <div class="multilang-sheet-title">分组名称</div>
+              <div class="multilang-sheet-hint">该分组在客户菜单和商品详情页都会用到，请填写每种语言。</div>
+            </div>
+            <div class="multilang-sheet-summary">共 2 种语种</div>
+          </div>
+          <div class="multilang-grid-scroll">
+            <div class="multilang-grid-head" style="--lang-count:2;">
+              <div class="multilang-grid-corner">字段</div>
+              <div class="multilang-grid-head-cell">
+                <div class="multilang-grid-head-top">
+                  <div class="multilang-grid-lang-name">中文</div>
+                  <span class="multilang-grid-lang-code">zh</span>
+                </div>
+                <div class="multilang-grid-meta"><span class="multilang-status-chip default">默认语种</span></div>
+              </div>
+              <div class="multilang-grid-head-cell">
+                <div class="multilang-grid-head-top">
+                  <div class="multilang-grid-lang-name">English</div>
+                  <span class="multilang-grid-lang-code">en</span>
+                </div>
+                <div class="multilang-grid-meta"><span class="multilang-status-chip filled">已填写</span></div>
+              </div>
+            </div>
+            <div class="multilang-grid-row" style="--lang-count:2;">
+              <div class="multilang-grid-label">分组名称</div>
+              <div class="multilang-grid-cell">
+                <div class="form-group"><input type="text" class="form-input" value="咖啡豆" placeholder="请输入中文分组名" /></div>
+              </div>
+              <div class="multilang-grid-cell">
+                <div class="form-group"><input type="text" class="form-input" value="Coffee Beans" placeholder="请输入英文分组名" /></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 现有：标签内容 -->
+        <div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>
+        <div class="existing-tags">
+          <button class="existing-tag-item">金奖黑咖-浓香意式</button>
+          <button class="existing-tag-item active">精品咖啡-翡翠瑰夏</button>
+        </div>
+
+        <div class="multilang-sheet" style="--lang-count:2;">
+          <div class="multilang-sheet-header">
+            <div>
+              <div class="multilang-sheet-title">咖啡豆标签</div>
+              <div class="multilang-sheet-hint">桌面端可横向对照多语种标签，移动端按语种切换编辑。</div>
+            </div>
+            <div class="multilang-sheet-summary">共 2 种语种</div>
+          </div>
+          <div class="multilang-grid-scroll">
+            <div class="multilang-grid-head" style="--lang-count:2;">
+              <div class="multilang-grid-corner">字段</div>
+              <div class="multilang-grid-head-cell">
+                <div class="multilang-grid-head-top">
+                  <div class="multilang-grid-lang-name">中文</div>
+                  <span class="multilang-grid-lang-code">zh</span>
+                </div>
+                <div class="multilang-grid-meta"><span class="multilang-status-chip default">默认语种</span></div>
+              </div>
+              <div class="multilang-grid-head-cell">
+                <div class="multilang-grid-head-top">
+                  <div class="multilang-grid-lang-name">English</div>
+                  <span class="multilang-grid-lang-code">en</span>
+                </div>
+                <div class="multilang-grid-meta"><span class="multilang-status-chip filled">已填写</span></div>
+              </div>
+            </div>
+            <div class="multilang-grid-row" style="--lang-count:2;">
+              <div class="multilang-grid-label">标签内容</div>
+              <div class="multilang-grid-cell">
+                <div class="form-group"><input type="text" class="form-input" value="精品咖啡-翡翠瑰夏" /></div>
+              </div>
+              <div class="multilang-grid-cell">
+                <div class="form-group"><input type="text" class="form-input" value="Geisha Specialty" /></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group tag-extra-price-group">
+          <label class="form-label">附加价格</label>
+          <input type="number" class="form-input" value="0" />
+          <div class="tag-extra-price-hint">客户选择该标签时额外加收，默认 0</div>
+        </div>
+        <div class="tag-default-wrap">
+          <label class="tag-default-check">
+            <input type="checkbox" /><span class="tag-default-box"></span><span class="tag-default-text">客户购买时默认选中</span>
+          </label>
+        </div>
+      </div>
+      <div class="tag-drawer-footer">
+        <button class="btn btn-default">取消</button>
+        <button class="btn btn-primary">保存</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+</body>
+</html>

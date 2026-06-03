@@ -360,10 +360,18 @@ test('详情页应支持渲染当前商品的多分类归属并切换分类勾�
 test('详情页应将基本信息与配方配置拆分为分页签', () => {
   assert.ok(html.includes('id="productDetailTabBasicBtn"'));
   assert.ok(html.includes('id="productDetailTabRecipeBtn"'));
+  assert.ok(html.includes('id="productDetailTabTagsBtn"'));
   assert.ok(html.includes('id="productDetailBasicPanel"'));
   assert.ok(html.includes('id="productDetailRecipePanel"'));
+  assert.ok(html.includes('id="productDetailTagsPanel"'));
+  assert.ok(/role="tab"[^>]*id="productDetailTabBasicBtn"[^>]*aria-controls="productDetailBasicPanel"/.test(html));
+  assert.ok(/role="tab"[^>]*id="productDetailTabRecipeBtn"[^>]*aria-controls="productDetailRecipePanel"/.test(html));
+  assert.ok(/role="tab"[^>]*id="productDetailTabTagsBtn"[^>]*aria-controls="productDetailTagsPanel"/.test(html));
+  assert.ok(/id="productDetailRecipePanel"[^>]*role="tabpanel"[^>]*aria-labelledby="productDetailTabRecipeBtn"/.test(html));
   assert.ok(/function\s+switchProductDetailTab\s*\(/.test(html));
   assert.ok(/switchProductDetailTab\('basic'\)/.test(html));
+  assert.ok(/switchProductDetailTab\('recipe'\)/.test(html));
+  assert.ok(/switchProductDetailTab\('tags'\)/.test(html));
 });
 
 test('基本信息中的多语言商品信息应改为矩阵式桌面布局并带移动端语种切换', () => {
@@ -425,8 +433,11 @@ test('复制模式保存标签文案时应只更新当前复制商品，不弹�
   assert.ok(/function\s+saveTagConfigDrawer\s*\([\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?closeTagConfigDrawer\(\);[\s\S]*?showToast\('标签配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
 });
 
-test('复制模式保存配方时应只更新当前复制商品，不弹关联商品确认', () => {
-  assert.ok(/function\s+saveRecipeEditor\s*\([\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?setOptionRecipeLinkId\([\s\S]*?productData[\s\S]*?\);[\s\S]*?setOptionRecipe\([\s\S]*?productData[\s\S]*?\);[\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?closeRecipeEditor\(\);[\s\S]*?showToast\('配方配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
+test('保存配方时应遍历所有杯型变体并持久化', () => {
+  assert.ok(/function\s+saveRecipeEditor\s*\(/.test(html));
+  assert.ok(html.includes('persistRecipeChanges'));
+  assert.ok(html.includes('closeRecipeEditor'));
+  assert.ok(html.includes('配方已保存'));
 });
 
 test('复制模式导入或恢复配方时不应提示进入关联饮品确认', () => {
@@ -434,24 +445,108 @@ test('复制模式导入或恢复配方时不应提示进入关联饮品确认',
   assert.ok(/showToast\(isCopyWorkflowActive\(\)\s*\?\s*'基底咖啡配方已导入'\s*:\s*'基底咖啡配方已导入，正在进入关联饮品确认'\)/.test(html));
 });
 
-test('详情页应支持按选项修改配方，并可调整分组顺序和百分比', () => {
-  const editBtnCount = (html.match(/>修改配方</g) || []).length;
-  assert.strictEqual(editBtnCount, 1);
-  assert.ok(html.includes('id="openRecipeEditorBtn"'));
+test('详情页应将配方修改提升为顶层内联面板', () => {
+  assert.ok(!html.includes('id="openRecipeEditorBtn"'));
+  assert.ok(html.includes('id="recipeInlineBody"'));
+  assert.ok(html.includes('id="saveRecipeInlineBtn"'));
+  assert.ok(/function\s+renderInlineRecipe\s*\(/.test(html));
+  assert.ok(/function\s+renderRecipeEditorInline\s*\(/.test(html));
+  assert.ok(/function\s+saveRecipeInline\s*\(/.test(html));
+  assert.ok(/let\s+recipeEditorInitialState\s*=\s*null/.test(html));
+  assert.ok(/recipeEditorInitialState\s*=\s*cloneProductValue\(recipeEditorState\)/.test(html));
+  assert.ok(/saveRecipeEditor\(\{\s*keepInlineEditor:\s*true\s*\}\)/.test(html));
+  assert.ok(/renderInlineRecipe\(\)/.test(html));
+  assert.ok(html.includes('class="recipe-stepper-btn"'));
+  assert.ok(html.includes('onblur="onCupInput(this)"'));
+  assert.ok(/function\s+fillFormData\s*\([\s\S]*?if\s*\(currentProductDetailTab === 'recipe'\)\s*\{[\s\S]*?renderInlineRecipe\(\);[\s\S]*?\}/.test(html));
+});
+
+test('内联配方每个杯型卡片应支持撤销本卡片未保存修改', () => {
+  assert.ok(/function\s+resetRecipeInlineVariant\s*\(/.test(html));
+  assert.ok(html.includes('cup-card-reset-btn'));
+  assert.ok(html.includes('恢复修改前'));
+  assert.ok(/onclick="resetRecipeInlineVariant\(\$\{idx\}, event\)"/.test(html));
+  assert.ok(/recipeEditorState\.variants\[idx\]\.recipe\s*=\s*cloneProductValue\(initialVariant\.recipe\)/.test(html));
+  assert.ok(/showToast\('已恢复当前杯型到修改前'\)/.test(html));
+});
+
+test('配方数值输入框点击或聚焦时应自动选中当前数值', () => {
+  assert.ok(/function\s+selectCupInputValue\s*\(/.test(html));
+  assert.ok(!html.includes('type="number" class="cup-edit-input"'));
+  assert.ok(html.includes('type="text" class="cup-edit-input" inputmode="numeric"'));
+  assert.ok(html.includes('onfocus="selectCupInputValue(this)"'));
+  assert.ok(html.includes('onclick="selectCupInputValue(this, event)"'));
+  assert.ok(/event\.stopPropagation\(\)/.test(html));
+  assert.ok(/input\.select\(\)/.test(html));
+});
+
+test('内联配方应按成分单位和固定步长调整剂量', () => {
+  assert.ok(/const\s+RECIPE_COMPONENT_RULES\s*=/.test(html));
+  assert.ok(/baseCoffeeLiquid:\s*\{[\s\S]*?unit:\s*'ml'[\s\S]*?step:\s*5[\s\S]*?editable:\s*false/.test(html));
+  assert.ok(/milk:\s*\{[\s\S]*?continuous:\s*true/.test(html));
+  assert.ok(/water:\s*\{[\s\S]*?continuous:\s*true/.test(html));
+  assert.ok(/ice:\s*\{[\s\S]*?unit:\s*'g'/.test(html));
+  assert.ok(/powders:\s*\{[\s\S]*?unit:\s*'g'/.test(html));
+  assert.ok(/decorToppings:\s*\{[\s\S]*?unit:\s*'g'/.test(html));
+  assert.ok(/function\s+getRecipeComponentRule\s*\(/.test(html));
+  assert.ok(/function\s+adjustRecipeComponentDose\s*\(/.test(html));
+  assert.ok(/normalizeRecipeComponentValue\(value,\s*rule\)/.test(html));
+  assert.ok(html.includes('recipe-stepper-btn'));
+  assert.ok(html.includes('recipe-component-unit'));
+  assert.ok(html.includes('data-step="${rule.step}"'));
+  assert.ok(html.includes('onpointerdown="startRecipeComponentHold'));
+  assert.ok(html.includes('onpointerup="stopRecipeComponentHold()'));
+  assert.ok(html.includes('onblur="onCupInput(this)"'));
+});
+
+test('基底咖啡液剂量应只读，不允许通过步进或输入修改', () => {
+  assert.ok(html.includes('cup-component-control locked'));
+  assert.ok(html.includes('recipe-component-readonly'));
+  assert.ok(/if\s*\(rule\.editable === false\)\s*return;/.test(html));
+  assert.ok(!/baseCoffeeLiquid[\s\S]{0,260}recipe-stepper-btn/.test(html));
+});
+
+test('配方容量汇总应只统计 ml 单位成分', () => {
+  assert.ok(/function\s+getRecipeVolumeTotal\s*\(/.test(html));
+  assert.ok(/getRecipeComponentRule\(c\.groupKey\)\.unit === 'ml'/.test(html));
+  assert.ok(html.includes('容量总量'));
+  assert.ok(html.includes('其他成分'));
+});
+
+test('详情页应将选项配置独立到顶层分页签并移除隐藏副本', () => {
+  assert.ok(html.includes('id="productDetailTagsPanel"'));
+  assert.ok(html.includes('id="tagOptionsGrid"'));
+  assert.ok(!html.includes('id="recipeHiddenOptions"'));
+  ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'].forEach(specKey => {
+    assert.ok(html.includes(`data-spec-key="${specKey}"`));
+  });
+  assert.ok(html.includes('openTagConfigDrawerBtn'));
+});
+
+test('详情页仍保留配方分组排序和关联饮品确认能力', () => {
   assert.ok(/function\s+openRecipeEditorForActiveSpec\s*\(/.test(html));
   assert.ok(html.includes('id="recipeEditorModal"'));
   assert.ok(html.includes('id="recipeImpactModal"'));
+  assert.ok(html.includes('id="recipeImpactDiffBody"'));
   assert.ok(/function\s+openRecipeEditor\s*\(/.test(html));
   assert.ok(/function\s+openRecipeImpactModal\s*\(/.test(html));
   assert.ok(/function\s+confirmRecipeImpactApply\s*\(/.test(html));
+  assert.ok(/function\s+prepareRecipeImpactState\s*\(/.test(html));
+  assert.ok(/function\s+getRecipeVariantDiffs\s*\(/.test(html));
+  assert.ok(/forceSync:\s*true/.test(html));
+  assert.ok(/强制同步/.test(html));
+  assert.ok(/修改前/.test(html));
+  assert.ok(/修改后/.test(html));
+  assert.ok(/差值/.test(html));
+  assert.ok(/recipeImpactState\.variants\.forEach/.test(html));
+  assert.ok(!/toggleRecipeImpactLink\('\$\{item\.id\}'/.test(html));
   assert.ok(/function\s+moveRecipeGroup\s*\(/.test(html));
   assert.ok(/function\s+adjustRecipeGroupPercent\s*\(/.test(html));
-  assert.ok(html.includes('-10%'));
-  assert.ok(html.includes('+10%'));
+  assert.ok(html.includes('recipe-group-slider'));
+  assert.ok(html.includes('recipe-group-input'));
   assert.ok(!/>\s*上移\s*<\/button>/.test(html));
   assert.ok(!/>\s*下移\s*<\/button>/.test(html));
   assert.ok(!/function\s+updateRecipeGroupNames\s*\(/.test(html));
-  assert.ok(!html.includes('recipe-group-input'));
   assert.ok(html.includes('基底咖啡液'));
   assert.ok(html.includes('浓缩粉名称'));
   assert.ok(html.includes('装饰颗粒名称'));
@@ -497,12 +592,13 @@ test('影响商品列表不应包含当前商品', () => {
   assert.ok(/当前商品会直接更新/.test(html));
 });
 
-test('关联饮品确认应默认全选，勾选表示关联更新', () => {
-  assert.ok(html.includes('全选关联'));
-  assert.ok(html.includes('清空关联'));
-  assert.ok(/selectedIds:\s*new Set\(affectedEntries\.map\(item => item\.id\)\)/.test(html));
-  assert.ok(/if\s*\(!selectedIds\.has\(item\.id\)\)/.test(html));
-  assert.ok(/不勾选则不关联/.test(html));
+test('关联饮品确认应只做强制同步确认，不再提供勾选选择', () => {
+  assert.ok(html.includes('确认并强制同步'));
+  assert.ok(html.includes('强制同步 0 个关联商品'));
+  assert.ok(/function\s+confirmRecipeImpactApply\s*\(/.test(html));
+  assert.ok(/确认后会强制同步所有关联商品/.test(html));
+  assert.ok(!/全选关联/.test(html));
+  assert.ok(!/清空关联/.test(html));
 });
 
 test('保存商品应持久化 recipe 关联字段', () => {

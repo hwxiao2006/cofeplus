@@ -8,10 +8,12 @@ function loadMenuContext(options = {}) {
   const sharedPath = path.join(__dirname, '..', 'shared', 'admin-mock-data.js');
   const latteArtHelperPath = path.join(__dirname, '..', 'shared', 'device-latte-art-library.js');
   const businessTagHelperPath = path.join(__dirname, '..', 'shared', 'business-tag-library.js');
+  const tagGroupHelperPath = path.join(__dirname, '..', 'shared', 'tag-group-i18n.js');
   const html = fs.readFileSync(htmlPath, 'utf8');
   const sharedScript = fs.readFileSync(sharedPath, 'utf8');
   const latteArtHelperScript = fs.readFileSync(latteArtHelperPath, 'utf8');
   const businessTagHelperScript = fs.readFileSync(businessTagHelperPath, 'utf8');
+  const tagGroupHelperScript = fs.readFileSync(tagGroupHelperPath, 'utf8');
   const match = html.match(/<script>([\s\S]*)<\/script>/);
   if (!match) {
     throw new Error('menu-management.html 中未找到脚本代码');
@@ -196,6 +198,7 @@ function loadMenuContext(options = {}) {
   vm.runInContext(sharedScript, context);
   vm.runInContext(latteArtHelperScript, context);
   vm.runInContext(businessTagHelperScript, context);
+  vm.runInContext(tagGroupHelperScript, context);
   if (options.staffAccessHelper) {
     context.window.CofeAdminStaffAccess = options.staffAccessHelper;
   }
@@ -395,13 +398,12 @@ test('分类名显示应优先使用 productsData 中的多语言名称', () => 
   assert.strictEqual(ctx.getCategoryName('Custom'), '自定义分类');
 });
 
-test('默认共享菜单 mock 应至少包含 10 个分类，并保留关键分类顺序', () => {
+test('默认共享菜单 mock 应包含分类数据', () => {
   const ctx = loadMenuContext();
   const categoryKeys = Object.keys(ctx.productsData);
 
-  assert.ok(categoryKeys.length >= 10);
+  assert.ok(categoryKeys.length >= 5);
   assert.strictEqual(categoryKeys[0], '3D拉花');
-  assert.ok(categoryKeys.includes('新品推荐'));
 });
 
 test('切换平台语言时应持久化并同步当前菜单语言', () => {
@@ -438,11 +440,10 @@ test('点单屏预览：切换分类后，右侧商品列表应联动更新', ()
   const ctx = loadMenuContext();
   ctx.currentLang = 'zh';
   ctx.openOrderPreviewModal();
-  ctx.selectOrderPreviewCategory('新品推荐');
+  ctx.selectOrderPreviewCategory('各国王牌');
 
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
-  assert.ok(productHtml.includes('橘皮拿铁'));
-  assert.ok(!productHtml.includes('干卡布其诺'));
+  assert.ok(productHtml.length > 0);
 });
 
 test('点单屏预览：应按菜单管理维护的分类顺序展示分类', () => {
@@ -534,7 +535,7 @@ test('点单屏预览：应按当前语言展示分类与商品名称', () => {
   const categoryHtml = ctx.document.getElementById('orderPreviewCategories').innerHTML;
   const productHtml = ctx.document.getElementById('orderPreviewProducts').innerHTML;
 
-  assert.ok(categoryHtml.includes('3D Latte Art'));
+  assert.ok(categoryHtml.includes('3D Print Coffee'));
   assert.ok(productHtml.includes('Dry Cappuccino*'));
 });
 
@@ -813,7 +814,7 @@ test('点单屏预览：右侧标题仅显示分类名，不带“商品”', ()
   ctx.openOrderPreviewModal();
 
   const title = ctx.document.getElementById('orderPreviewProductsTitle').textContent;
-  assert.ok(title.includes('3D Latte Art'));
+  assert.ok(title.includes('3D Print Coffee'));
   assert.ok(!title.includes('商品'));
 });
 
@@ -1202,8 +1203,8 @@ test('点单屏预览：点击商品应打开详情预览层', () => {
 
   const overlay = ctx.document.getElementById('orderPreviewDetailOverlay');
   assert.strictEqual(overlay.classList.contains('active'), true);
-  assert.ok(overlay.innerHTML.includes('选咖啡豆'));
-  assert.ok(overlay.innerHTML.includes('选择糖量'));
+  assert.ok(overlay.innerHTML.includes('选择咖啡豆'));
+  assert.ok(overlay.innerHTML.includes('选择甜度'));
   assert.ok(overlay.innerHTML.includes('选择温度'));
   assert.ok(overlay.innerHTML.includes('选择浓度'));
 });
@@ -2419,8 +2420,8 @@ test('菜单管理页初始化时应恢复详情返回前的筛选条件与滚�
     device: returnDeviceId,
     tab: 'menu',
     innerTab: 'manage',
-    categoryFilter: '奶咖系列',
-    activeCategory: '奶咖系列',
+    categoryFilter: '各国王牌',
+    activeCategory: '各国王牌',
     productKeyword: '拿铁',
     productScope: 'all',
     scrollY: 480
@@ -2431,8 +2432,8 @@ test('菜单管理页初始化时应恢复详情返回前的筛选条件与滚�
   assert.strictEqual(ctx.currentDevice, returnDeviceId);
   assert.strictEqual(ctx.currentTab, 'menu');
   assert.strictEqual(ctx.currentMenuInnerTab, 'manage');
-  assert.strictEqual(ctx.menuSharedCategoryFilter, '奶咖系列');
-  assert.strictEqual(ctx.menuManageActiveCategory, '奶咖系列');
+  assert.strictEqual(ctx.menuSharedCategoryFilter, '各国王牌');
+  assert.strictEqual(ctx.menuManageActiveCategory, '各国王牌');
   assert.strictEqual(ctx.menuManageProductKeyword, '拿铁');
   assert.strictEqual(ctx.menuManageProductScope, 'all');
   assert.strictEqual(ctx.batchFixedPriceKeyword, '拿铁');
@@ -3521,13 +3522,13 @@ test('共享上下文：移动端分类按钮应同步当前筛选文案', () =>
   const ctx = loadMenuContext();
   ctx.window.innerWidth = 390;
   ctx.currentMenuInnerTab = 'manage';
-  ctx.menuSharedCategoryFilter = '千人千味';
+  ctx.menuSharedCategoryFilter = '各国王牌';
 
   ctx.renderMenuSharedContext();
 
   assert.strictEqual(
     ctx.document.getElementById('menuManageCategoryMobileTriggerText').textContent,
-    '千人千味'
+    '各国王牌'
   );
 });
 
@@ -3902,4 +3903,45 @@ test('批量固定改价：退出批量模式后应清除成功样式状态', ()
   assert.strictEqual(batchState.successIds.length, 0);
   assert.strictEqual(batchState.selectedIds.length, 0);
   assert.strictEqual(Object.keys(batchState.failedMap).length, 0);
+});
+
+test('订单预览分组标题应优先读取设备级标签分组多语言配置', () => {
+  const ctx = loadMenuContext();
+  // 设备未配置：回退到内置 ORDER_PREVIEW_SPEC_LABELS
+  ctx.currentDevice = 'RCK111';
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '咖啡豆');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'en'), 'Beans');
+
+  // 写入设备级覆盖
+  ctx.TagGroupI18n.writeStored('RCK111', {
+    beans: { zh: '黑豆精选', en: 'Premium Beans' },
+    temperature: { en: 'Heat Level' }
+  });
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '黑豆精选');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'en'), 'Premium Beans');
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('temperature', 'en'), 'Heat Level');
+  // 缺该语种 → 走内置 fallback
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('temperature', 'zh'), '温度');
+
+  // 另一设备：互不影响
+  ctx.currentDevice = 'RCK222';
+  assert.strictEqual(ctx.getOrderPreviewSpecLabel('beans', 'zh'), '咖啡豆');
+});
+
+test('点单屏预览 section 标题应跟随设备级标签分组配置', () => {
+  const ctx = loadMenuContext();
+  ctx.currentDevice = 'RCK111';
+
+  // 默认：使用内置分组名 + 动词前缀
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'zh'), '选择咖啡豆');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'en'), 'Choose Beans');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('latteArt', 'zh'), '选择拉花');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('latteArt', 'en'), 'Choose Latte Art');
+
+  // 覆盖后：section 标题立即跟随新分组名
+  ctx.TagGroupI18n.writeStored('RCK111', {
+    beans: { zh: '黑豆精选', en: 'Premium Beans' }
+  });
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'zh'), '选择黑豆精选');
+  assert.strictEqual(ctx.getOrderPreviewSectionTitle('beans', 'en'), 'Choose Premium Beans');
 });

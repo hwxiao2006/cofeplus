@@ -312,3 +312,82 @@ test('人员管理页：应支持按页面配置设备范围，并将范围限�
   assert.ok(/请点击“选择设备”，或改为“全部可管理设备”/.test(staffHtml));
   assert.ok(/moduleDeviceScopes:\s*normalizedModuleDeviceScopes/.test(staffHtml));
 });
+
+test('人员管理页：角色切换应采用「待确认 + 撤销」两步交互，不再立即覆盖权限', () => {
+  // 新的 HTML 结构：当前角色条 + 待确认对比条 + 卡片
+  assert.ok(/id="roleCurrentBanner"/.test(staffHtml), '应有当前角色条容器');
+  assert.ok(/id="roleCurrentName"/.test(staffHtml), '应有当前角色名节点');
+  assert.ok(/id="roleCurrentUndoBtn"[\s\S]*?hidden/.test(staffHtml), '撤销按钮默认必须 hidden');
+  assert.ok(/id="roleSwitchPreview"[\s\S]*?hidden/.test(staffHtml), '待确认对比条默认必须 hidden');
+  assert.ok(/onclick="confirmRoleSwitch\(\)"/.test(staffHtml), '应提供确认切换按钮');
+  assert.ok(/onclick="cancelRoleSwitch\(\)"/.test(staffHtml), '应提供取消切换按钮');
+  assert.ok(/onclick="undoRoleSwitch\(\)"/.test(staffHtml), '应提供撤销切换按钮');
+
+  // 旧 API 必须不存在
+  assert.ok(!/id="roleSummaryBar"/.test(staffHtml), '旧的 roleSummaryBar 必须被删除');
+  assert.ok(!/onclick="resetRoleSelection\(\)"/.test(staffHtml), '旧的 resetRoleSelection 入口必须被删除');
+  assert.ok(!/onclick="selectRole\(/.test(staffHtml), '点击卡片不应再调用旧的 selectRole');
+  assert.ok(!/\bisRoleFirstSelection\b/.test(staffHtml), '旧的 isRoleFirstSelection 标志应被移除');
+  assert.ok(!/\bselectedRoleId\b/.test(staffHtml), '统一改用 committedRoleId/pendingRoleId');
+
+  // 新的状态机变量
+  assert.ok(/let\s+committedRoleId\s*=\s*'custom'/.test(staffHtml), '应声明 committedRoleId');
+  assert.ok(/let\s+pendingRoleId\s*=\s*null/.test(staffHtml), '应声明 pendingRoleId');
+  assert.ok(/let\s+lastCommitSnapshot\s*=\s*null/.test(staffHtml), '应声明 lastCommitSnapshot');
+
+  // 新函数齐备
+  assert.ok(/function\s+requestRoleSwitch\s*\(/.test(staffHtml), '应有 requestRoleSwitch');
+  assert.ok(/function\s+confirmRoleSwitch\s*\(/.test(staffHtml), '应有 confirmRoleSwitch');
+  assert.ok(/function\s+cancelRoleSwitch\s*\(/.test(staffHtml), '应有 cancelRoleSwitch');
+  assert.ok(/function\s+undoRoleSwitch\s*\(/.test(staffHtml), '应有 undoRoleSwitch');
+  assert.ok(/function\s+snapshotCurrentRoleState\s*\(/.test(staffHtml), '应有 snapshotCurrentRoleState');
+  assert.ok(/function\s+restoreFromSnapshot\s*\(/.test(staffHtml), '应有 restoreFromSnapshot');
+  assert.ok(/function\s+renderRoleCurrentBanner\s*\(/.test(staffHtml), '应有 renderRoleCurrentBanner');
+  assert.ok(/function\s+renderRoleSwitchPreview\s*\(/.test(staffHtml), '应有 renderRoleSwitchPreview');
+  assert.ok(/function\s+invalidateRoleSnapshotOnManualEdit\s*\(/.test(staffHtml), '应有 invalidateRoleSnapshotOnManualEdit');
+});
+
+test('人员管理页：回填员工时绝不触发切换 UI（lastCommitSnapshot 必须显式置 null）', () => {
+  const fillFnMatch = staffHtml.match(/function\s+fillStaffForm\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  assert.ok(fillFnMatch, '应能定位到 fillStaffForm');
+  const fillFn = fillFnMatch[0];
+  assert.ok(/committedRoleId\s*=\s*staffRole\.id\s*\|\|\s*'custom'/.test(fillFn), 'fillStaffForm 应从 staff.role.id 还原 committedRoleId');
+  assert.ok(/pendingRoleId\s*=\s*null/.test(fillFn), 'fillStaffForm 应显式置 pendingRoleId = null');
+  assert.ok(/lastCommitSnapshot\s*=\s*null/.test(fillFn), 'fillStaffForm 必须显式置 lastCommitSnapshot = null，避免撤销按钮残留');
+
+  const resetFnMatch = staffHtml.match(/function\s+resetStaffForm\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  assert.ok(resetFnMatch, '应能定位到 resetStaffForm');
+  const resetFn = resetFnMatch[0];
+  assert.ok(/lastCommitSnapshot\s*=\s*null/.test(resetFn), 'resetStaffForm 必须显式置 lastCommitSnapshot = null');
+  assert.ok(/pendingRoleId\s*=\s*null/.test(resetFn), 'resetStaffForm 必须显式置 pendingRoleId = null');
+});
+
+test('人员管理页：lastCommitSnapshot 必须仅在 confirmRoleSwitch 中被赋值（铁律）', () => {
+  // 找出所有 "lastCommitSnapshot =" 的赋值位置
+  const assignments = [...staffHtml.matchAll(/lastCommitSnapshot\s*=\s*([^;\n]+)/g)];
+  assert.ok(assignments.length > 0, '应至少有一次 lastCommitSnapshot 赋值');
+
+  // 找到 confirmRoleSwitch 函数体范围
+  const confirmFnMatch = staffHtml.match(/function\s+confirmRoleSwitch\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  assert.ok(confirmFnMatch, '应能定位 confirmRoleSwitch');
+  const confirmBody = confirmFnMatch[0];
+  assert.ok(/lastCommitSnapshot\s*=\s*snapshotCurrentRoleState\(\)/.test(confirmBody),
+    'confirmRoleSwitch 内应有 lastCommitSnapshot = snapshotCurrentRoleState() 这一行');
+
+  // 除 confirmRoleSwitch 外，其他对 lastCommitSnapshot 的赋值只允许置 null
+  assignments.forEach((m) => {
+    const value = m[1].trim();
+    const isInsideConfirm = confirmBody.includes(m[0]);
+    if (!isInsideConfirm) {
+      assert.ok(value === 'null', `lastCommitSnapshot 仅允许在 confirmRoleSwitch 内非 null 赋值，违规：${m[0]}`);
+    }
+  });
+
+  // 手动改权限的两个 handler 必须调用 invalidateRoleSnapshotOnManualEdit
+  const parentFn = staffHtml.match(/function\s+handlePermissionParentChange\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  const childFn = staffHtml.match(/function\s+handlePermissionChildChange\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  assert.ok(parentFn && /invalidateRoleSnapshotOnManualEdit\(\)/.test(parentFn[0]),
+    'handlePermissionParentChange 必须调用 invalidateRoleSnapshotOnManualEdit');
+  assert.ok(childFn && /invalidateRoleSnapshotOnManualEdit\(\)/.test(childFn[0]),
+    'handlePermissionChildChange 必须调用 invalidateRoleSnapshotOnManualEdit');
+});

@@ -5648,8 +5648,8 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
@@ -6440,8 +6440,10 @@
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
     <script src="shared/device-latte-art-library.js"></script>
     <script src="shared/business-tag-library.js"></script>
+    <script src="shared/tag-group-i18n.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -6615,6 +6617,10 @@
                 // ignore localStorage write failures
             }
             renderAdminSidebarTranslations();
+            // 类目 / 商品名也按 admin lang 重新渲染（有就用 en，没有兜回 zh）
+            if (typeof renderMenu === 'function') {
+                try { renderMenu(); } catch (e) { /* keep going */ }
+            }
         }
 
 
@@ -10177,14 +10183,36 @@
         }
 
         function getOrderPreviewOptionDesc(product, specKey, key, lang) {
+            const productDesc = product?.tagDescI18n?.[specKey]?.[key];
+            if (productDesc && typeof productDesc === 'object') {
+                const text = productDesc[lang] || productDesc.zh || productDesc.en || '';
+                if (text) return text;
+            }
             const libraryItem = getPreviewOptionLibraryItem(specKey, key);
             if (!libraryItem || !libraryItem.desc) return '';
             return libraryItem.desc[lang] || libraryItem.desc.zh || libraryItem.desc.en || '';
         }
 
         function getOrderPreviewSpecLabel(specKey, lang) {
+            if (typeof TagGroupI18n !== 'undefined' && TagGroupI18n) {
+                const stored = TagGroupI18n.readStored(currentDevice);
+                const storedGroup = stored && stored[specKey];
+                if (storedGroup && storedGroup[lang]) return storedGroup[lang];
+            }
             const pack = ORDER_PREVIEW_SPEC_LABELS[specKey] || {};
             return pack[lang] || pack.zh || specKey;
+        }
+
+        const ORDER_PREVIEW_SECTION_VERB = {
+            zh: '选择',
+            en: 'Choose'
+        };
+
+        function getOrderPreviewSectionTitle(specKey, lang) {
+            const name = getOrderPreviewSpecLabel(specKey, lang);
+            const verb = ORDER_PREVIEW_SECTION_VERB[lang];
+            if (!verb) return name;
+            return lang === 'en' ? `${verb} ${name}` : `${verb}${name}`;
         }
 
         function getOrderPreviewRecipeGroupLabel(groupKey, lang) {
@@ -10406,7 +10434,7 @@
 
             return `
                 <section class="order-preview-detail-section">
-                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy('chooseBeans', lang))}</div>
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle('beans', lang))}</div>
                     <div class="order-preview-detail-bean-grid">
                         ${options.map(item => `
                             <button type="button" class="order-preview-detail-bean-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('beans','${encodeURIComponent(item.key)}')">
@@ -10430,7 +10458,7 @@
             const priceInfo = getProductPriceInfo(product);
             return `
                 <section class="order-preview-detail-section">
-                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewCopy(titleKey, lang))}</div>
+                    <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle(specKey, lang))}</div>
                     <div class="order-preview-detail-option-row">
                         ${options.map(item => `
                             <button type="button" class="order-preview-detail-option-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('${specKey}','${encodeURIComponent(item.key)}')">
@@ -11995,8 +12023,21 @@
             return getMenuManageCategoryKeys();
         }
 
+        // 后台管理视图（菜单管理本身的 UI）按 adminSidebarLang 取名，
+        // 兜底链：admin lang → 设备点单语言 currentLang → zh → en → fallback。
+        // 与点单屏预览的 previewLang 互不影响。
+        function getMenuAdminViewLang() {
+            try { return localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY) === 'en' ? 'en' : 'zh'; }
+            catch (e) { return 'zh'; }
+        }
+
         function getMenuManageProductName(product = {}) {
-            return product.names?.[currentLang] || product.names?.zh || product.names?.en || `商品 ${product.id || '-'}`;
+            const adminLang = getMenuAdminViewLang();
+            return product.names?.[adminLang]
+                || product.names?.[currentLang]
+                || product.names?.zh
+                || product.names?.en
+                || `商品 ${product.id || '-'}`;
         }
 
         function getMenuManageCurrentCategoryItems() {
@@ -12357,7 +12398,7 @@
                         <div class="product-card-header">
                             <div class="product-name">${escapePreviewText(productName)}</div>
                         </div>
-                        <div class="product-desc">${escapePreviewText(getProductDescription(product, currentLang))}</div>
+                        <div class="product-desc">${escapePreviewText(getProductDescription(product, getMenuAdminViewLang()) || getProductDescription(product, currentLang))}</div>
                         <div class="product-footer">
                             <div class="product-meta">
                                 ${renderProductPriceHtml(product)}
@@ -12541,6 +12582,13 @@
         }
 
         function getCategoryName(key) {
+            // 后台管理 UI 里的类目名按 admin lang 取，回落到设备点单语言。
+            const adminLang = getMenuAdminViewLang();
+            const adminName = getCategoryNameByLang(key, adminLang);
+            // getCategoryNameByLang 的兜底已经会回到 zh/en/key，所以只要 admin lang
+            // 拿到的不是 key 本身（=> 命中过某个 lang 字段），就返回。
+            // 否则继续按 currentLang 再试一次（兼容设备只有 zh 名的旧数据）。
+            if (adminName && adminName !== key) return adminName;
             return getCategoryNameByLang(key, currentLang);
         }
 
