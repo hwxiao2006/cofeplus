@@ -114,3 +114,15 @@ test('R-17: faults.html 机构重启按钮 onclick 已切换为 openFaultRestart
   assert.ok(/handleRemoteAction\('设备开门'\)/.test(body));
   assert.ok(!/handleRemoteAction\('机构重启'\)/.test(body));
 });
+
+test('R-18: faults.html 桌面端机构重启弹层应居中展示', () => {
+  const html = read('faults.html');
+  assert.ok(/#faultRestartFlowSheet\.desktop-mode\.active\s*\{[\s\S]*display:\s*flex/.test(html));
+  assert.ok(/#faultRestartFlowSheet\.desktop-mode\.active\s*\{[\s\S]*align-items:\s*center/.test(html));
+  assert.ok(/#faultRestartFlowSheet\.desktop-mode\.active\s*\{[\s\S]*justify-content:\s*center/.test(html));
+
+  const start = html.indexOf('function openFaultRestartFlow');
+  const end = html.indexOf('\n        function openRemoteActions', start);
+  const body = html.slice(start, end);
+  assert.ok(/panel\.classList\.toggle\('desktop-mode',\s*isDesktopInteractionMode\(\)\)/.test(body));
+});

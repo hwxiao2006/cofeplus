@@ -795,6 +795,17 @@
             background: rgba(15, 23, 42, 0.4);
         }
 
+        #faultRestartFlowSheet.desktop-mode.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        #faultRestartFlowSheet.desktop-mode .detail-fault-sheet-dialog {
+            width: min(460px, calc(100vw - 48px));
+        }
+
         .fault-desktop-dialog {
             position: absolute;
             left: 50%;
@@ -2199,6 +2210,7 @@
             if (!window.CofeFaultRestartFlow) return;
             const panel = document.getElementById('faultRestartFlowSheet');
             if (!panel) return;
+            panel.classList.toggle('desktop-mode', isDesktopInteractionMode());
             const ctx = {
                 deviceId,
                 panel,
