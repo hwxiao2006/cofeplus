@@ -100,7 +100,7 @@ test('toggleDetailRestartPopover 应切换 data-open 与 aria-expanded', () => {
   assert.strictEqual(caret.getAttribute('aria-expanded'), 'false');
 });
 
-test('openDetailRestartPart 应调用 handleDetailRemoteAction 并关闭 popover', () => {
+test('openDetailRestartPart 应调用 openDetailQuickRestart 并关闭 popover', () => {
   const { sandbox, calls, popover, caret } = buildSandbox();
   loadRestartSplitFunctions(sandbox);
   popover.attrs['data-open'] = 'true';
@@ -109,8 +109,7 @@ test('openDetailRestartPart 应调用 handleDetailRemoteAction 并关闭 popover
 
   sandbox.openDetailRestartPart('DEV-1', '重启点单屏（左）');
 
-  assert.strictEqual(sandbox.activeFaultActionDeviceId, 'DEV-1');
-  assert.deepStrictEqual(calls[0], ['handleDetailRemoteAction', '重启点单屏（左）']);
+  assert.deepStrictEqual(calls[0], ['openDetailQuickRestart', 'DEV-1', '重启点单屏（左）']);
   assert.strictEqual(popover.getAttribute('data-open'), 'false');
   assert.strictEqual(caret.getAttribute('aria-expanded'), 'false');
 });

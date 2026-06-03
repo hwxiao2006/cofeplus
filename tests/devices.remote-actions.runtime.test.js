@@ -5,6 +5,7 @@ const vm = require('vm');
 
 const devicesPath = path.join(__dirname, '..', 'devices.html');
 const devicesHtml = fs.readFileSync(devicesPath, 'utf8');
+const restartFlowSource = fs.readFileSync(path.join(__dirname, '..', 'shared', 'fault-restart-flow.js'), 'utf8');
 const REMOTE_VOLUME_STORAGE_KEY = 'deviceRemoteVolumeSettings';
 
 function test(name, fn) {
@@ -90,6 +91,8 @@ function buildSandbox(storageSeed) {
     Date,
     JSON,
     Number,
+    window: {},
+    globalThis: {},
     DETAIL_REMOTE_VOLUME_STORAGE_KEY: REMOTE_VOLUME_STORAGE_KEY,
     activeFaultActionDeviceId: '',
     currentDetailDeviceId: '',
@@ -108,6 +111,7 @@ function buildSandbox(storageSeed) {
     }
   };
   vm.createContext(sandbox);
+  vm.runInContext(restartFlowSource, sandbox);
   [
     'escapeHtml',
     'renderDetailRemoteActionPanel',
@@ -149,7 +153,7 @@ test('运行时：快捷重启更多项应进入二级重启面板', () => {
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.strictEqual(panel.classList.contains('active'), true);
   assert.ok(panel.innerHTML.includes('机构重启'));
-  assert.ok(!panel.innerHTML.includes('重启系统'));
+  assert.ok(panel.innerHTML.includes('重启系统'));
   assert.ok(panel.innerHTML.includes('重启点单屏（左）'));
   assert.ok(panel.innerHTML.includes('重启点单屏（右）'));
   assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
@@ -180,7 +184,7 @@ test('运行时：快速重启应直达确认页并保持确认后执行', () =>
   assert.ok(panel.innerHTML.includes('确认软件重启'));
   assert.strictEqual(sandbox.__operationRecords.length, 0);
 
-  sandbox.handleDetailRemoteAction('确认软件重启');
+  sandbox.window.CofeFaultRestartFlow.dispatch('确认软件重启');
 
   assert.strictEqual(panel.classList.contains('active'), false);
   assert.strictEqual(sandbox.__operationRecords.length, 1);
@@ -195,7 +199,7 @@ test('运行时：更多重启项应打开完整机构重启菜单', () => {
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.strictEqual(panel.classList.contains('active'), true);
   assert.ok(panel.innerHTML.includes('机构重启 · RCK088'));
-  assert.ok(!panel.innerHTML.includes('重启系统'));
+  assert.ok(panel.innerHTML.includes('重启系统'));
   assert.ok(panel.innerHTML.includes('重启点单屏（左）'));
   assert.ok(panel.innerHTML.includes('重启点单屏（右）'));
   assert.ok(panel.innerHTML.includes('重启六轴机械臂（注意安全，谨慎使用）'));
@@ -308,7 +312,7 @@ test('运行时：快捷系统重启确认后才应执行远程指令', () => {
   assert.ok(!panel.innerHTML.includes('确认执行'));
   assert.strictEqual(sandbox.__operationRecords.length, 0);
 
-  sandbox.handleDetailRemoteAction('确认软件重启');
+  sandbox.window.CofeFaultRestartFlow.dispatch('确认软件重启');
 
   assert.strictEqual(panel.classList.contains('active'), false);
   assert.strictEqual(sandbox.__operationRecords.length, 1);
@@ -320,8 +324,8 @@ test('运行时：无法远程处理应进入机器按钮位置指导页', () =>
   const sandbox = buildSandbox();
 
   sandbox.openDetailRestartOptions('RCK088');
-  sandbox.handleDetailRemoteAction('重启点单屏（右）');
-  sandbox.handleDetailRemoteAction('无法远程处理？查看机器按钮位置');
+  sandbox.window.CofeFaultRestartFlow.dispatch('重启点单屏（右）');
+  sandbox.window.CofeFaultRestartFlow.dispatch('无法远程处理？查看机器按钮位置');
 
   const panel = sandbox.document.getElementById('detailRemoteActionSheet');
   assert.ok(panel.innerHTML.includes('机器按钮位置 · 重启点单屏（右）'));
@@ -330,7 +334,7 @@ test('运行时：无法远程处理应进入机器按钮位置指导页', () =>
   assert.ok(panel.innerHTML.includes('我知道了'));
   assert.strictEqual(sandbox.__operationRecords.length, 0);
 
-  sandbox.handleDetailRemoteAction('我知道了');
+  sandbox.window.CofeFaultRestartFlow.dispatch('我知道了');
 
   assert.strictEqual(panel.classList.contains('active'), false);
   assert.strictEqual(sandbox.__operationRecords.length, 0);

@@ -19,6 +19,9 @@
             --border: #e5e7eb;
             --border-light: #f3f4f6;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --success: #10b981;
+            --danger: #ef4444;
             --radius: 12px;
             --radius-sm: 8px;
         }
@@ -715,6 +718,31 @@
             background: #0f988a;
         }
 
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+
         .fault-sheet-overlay {
             display: none;
             position: fixed;
@@ -1358,6 +1386,7 @@
     </div>
 
     <div id="remoteActionSheet" class="fault-sheet-overlay"></div>
+    <div id="faultRestartFlowSheet" class="fault-sheet-overlay"></div>
     <div id="editStatusSheet" class="fault-sheet-overlay"></div>
     <div id="statusRecordPage" class="status-page-overlay"></div>
     <div id="abnormalRecordPage" class="status-page-overlay"></div>
@@ -1365,6 +1394,7 @@
 
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/fault-notify-channels.js"></script>
+    <script src="shared/fault-restart-flow.js"></script>
     <script src="shared/fault-library.js"></script>
     <script>
 
@@ -2127,6 +2157,62 @@
                 .replace(/'/g, '&#39;');
         }
 
+        function showToast(message, type = 'success') {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function appendFaultOperationRecord(deviceId, action, result, note) {
+            const key = 'faultOpRecords_' + deviceId;
+            let records;
+            try {
+                records = JSON.parse(localStorage.getItem(key) || '[]');
+            } catch (e) {
+                records = [];
+            }
+            if (!Array.isArray(records)) records = [];
+            const now = new Date();
+            const pad = (value) => String(value).padStart(2, '0');
+            const time = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            const profile = (window.CofeAdminStaffAccess && typeof window.CofeAdminStaffAccess.readSidebarLoginProfile === 'function')
+                ? window.CofeAdminStaffAccess.readSidebarLoginProfile(localStorage)
+                : null;
+            const operator = (profile && profile.name) || '运营';
+            records.unshift({ time, operator, action, result: result || '成功', note: note || '' });
+            if (records.length > 50) records.length = 50;
+            localStorage.setItem(key, JSON.stringify(records));
+        }
+
+        function openFaultRestartFlow() {
+            closeRemoteActions();
+            const deviceId = activeFaultDeviceId;
+            if (!deviceId || !canAccessFaultDevice(deviceId)) return;
+            if (!window.CofeFaultRestartFlow) return;
+            const panel = document.getElementById('faultRestartFlowSheet');
+            if (!panel) return;
+            const ctx = {
+                deviceId,
+                panel,
+                mode: 'sub',
+                pendingAction: '',
+                onCommit(did, actionName) {
+                    appendFaultOperationRecord(did, actionName, '成功', `${did} 已执行${actionName}`);
+                    showToast(`已向设备 ${did} 下发指令：${actionName}`);
+                },
+                onCancel() {}
+            };
+            window.CofeFaultRestartFlow.open(ctx);
+            panel.classList.add('active');
+        }
+
         function openRemoteActions(deviceId) {
             if (!canAccessFaultDevice(deviceId)) return;
             activeFaultDeviceId = deviceId;
@@ -2139,7 +2225,7 @@
                     <div class="fault-sheet-backdrop" onclick="closeRemoteActions()"></div>
                     <div class="fault-desktop-dialog">
                         <div class="fault-desktop-title">远程操作 · ${escapeText(deviceId)}</div>
-                        <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
+                        <button type="button" class="fault-desktop-option" onclick="openFaultRestartFlow()">机构重启</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
                         <button type="button" class="fault-desktop-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
@@ -2148,7 +2234,7 @@
                 : `
                     <div class="fault-sheet-backdrop" onclick="closeRemoteActions()"></div>
                     <div class="fault-sheet-panel">
-                        <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('机构重启')">机构重启</button>
+                        <button type="button" class="fault-sheet-option" onclick="openFaultRestartFlow()">机构重启</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备开门')">设备开门</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('设备停售')">设备停售</button>
                         <button type="button" class="fault-sheet-option" onclick="handleRemoteAction('音量调节')">音量调节</button>
@@ -2229,6 +2315,13 @@
         }
 
         function getOperationRecords(deviceId) {
+            try {
+                const raw = localStorage.getItem('faultOpRecords_' + deviceId);
+                const records = raw ? JSON.parse(raw) : [];
+                if (Array.isArray(records) && records.length) return records;
+            } catch (e) {
+                // 回落到 mock 记录
+            }
             return [
                 {
                     time: '2026-03-04 10:25:17',
@@ -2527,6 +2620,7 @@
             `;
         }
 
+        if (window.CofeFaultRestartFlow) window.CofeFaultRestartFlow.injectStyles();
         currentStaffFaultAccess = resolveCurrentStaffFaultAccess();
         renderSidebarLoginProfile();
         reconcileFaultNotifyChannelsOnLoad();
