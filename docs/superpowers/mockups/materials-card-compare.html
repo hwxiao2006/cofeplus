@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物料卡片样式比较</title>
+    <style>
+        :root {
+            --bg: #f3f6fb;
+            --card: #ffffff;
+            --border: #dbe5ef;
+            --ink: #122033;
+            --subtle: #607086;
+            --primary: #4ecdc4;
+            --primary-soft: #e8f8f7;
+            --danger: #ef4444;
+            --danger-soft: #ffe8eb;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(78, 205, 196, 0.12), transparent 28%),
+                linear-gradient(180deg, #f7fbff 0%, #eef3f9 100%);
+            color: var(--ink);
+        }
+
+        .page {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            line-height: 1.05;
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--subtle);
+            font-size: 14px;
+        }
+
+        .tips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .tip {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(219, 229, 239, 0.9);
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--subtle);
+            backdrop-filter: blur(10px);
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.78);
+            border: 1px solid rgba(219, 229, 239, 0.95);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .panel-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .panel h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+
+        .panel p {
+            margin: 0;
+            color: var(--subtle);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            min-height: 198px;
+        }
+
+        .card-a {
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+        }
+
+        .card-b {
+            border-radius: 20px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+        }
+
+        .card-c {
+            border-radius: 22px;
+            padding: 14px;
+            background: linear-gradient(180deg, #fff 0%, #f8fbfe 100%);
+            box-shadow: inset 0 0 0 1px rgba(78, 205, 196, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .title-row, .footer-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 26px;
+            padding: 0 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .danger { background: var(--danger-soft); color: var(--danger); }
+        .healthy { background: var(--primary-soft); color: #13847b; }
+
+        .code {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #415267;
+            font-weight: 600;
+        }
+
+        .value-block {
+            margin-top: 16px;
+        }
+
+        .value-label {
+            font-size: 12px;
+            color: var(--subtle);
+            font-weight: 600;
+        }
+
+        .value {
+            display: flex;
+            align-items: end;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .value strong {
+            font-size: 44px;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+        }
+
+        .value span {
+            font-size: 16px;
+            color: var(--subtle);
+            font-weight: 700;
+        }
+
+        .bar {
+            position: relative;
+            height: 10px;
+            border-radius: 999px;
+            background: #ebf0f5;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .fill {
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 14%;
+            background: linear-gradient(90deg, #ff9f1c 0%, #ffd166 100%);
+            border-radius: 999px;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--subtle);
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            border-radius: 999px;
+            min-height: 34px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .btn.primary {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: #14847b;
+        }
+
+        .btn.arrow {
+            width: 34px;
+            min-width: 34px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .card-b-top {
+            padding: 14px 14px 10px;
+            background: linear-gradient(135deg, #fff 0%, #fbfdff 60%, #f1f9f8 100%);
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .card-b-main {
+            padding: 14px;
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .code-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 10px;
+            border-radius: 12px;
+            background: #f6f9fc;
+            color: #4a5a6b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .code-inline::before {
+            content: "编号";
+            font-size: 11px;
+            color: #7a8a9b;
+            font-weight: 600;
+        }
+
+        .split-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .meta-card {
+            border: 1px solid #ebf0f5;
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: #fbfdff;
+        }
+
+        .meta-card strong {
+            display: block;
+            font-size: 12px;
+            color: var(--subtle);
+            margin-bottom: 6px;
+        }
+
+        .meta-card span {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .meta-card.warn span { color: #b45309; }
+        .meta-card.danger span { color: var(--danger); }
+
+        @media (max-width: 1120px) {
+            .compare-grid { grid-template-columns: 1fr; }
+            .hero { flex-direction: column; align-items: flex-start; }
+            .tips { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="hero">
+            <div>
+                <h1>物料卡片样式比较</h1>
+                <p>只比较卡片视觉层，不改分类、动作和数据逻辑。</p>
+            </div>
+            <div class="tips">
+                <span class="tip">A 更后台密度</span>
+                <span class="tip">B 更强信息层级</span>
+                <span class="tip">C 更精致卡片感</span>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <span class="panel-tag">A</span>
+                    </div>
+                    <div>
+                        <h2>后台紧凑版</h2>
+                        <p>保持当前密度，强化数字和操作区，对运营后台最直接。</p>
+                    </div>
+                </div>
+                <article class="card card-a">
+                    <div class="title-row">
+                        <h3 class="title">椰蓉丝-4</h3>
+                        <span class="pill danger">告急</span>
+                    </div>
+                    <div class="code">编号 76150500</div>
+                    <div class="value-block">
+                        <div class="value-label">剩余量</div>
+                        <div class="value">
+                            <strong>0</strong>
+                            <span>g</span>
+                        </div>
+                    </div>
+                    <div class="bar"><span class="fill"></span></div>
+                    <div class="meta">
+                        <span>预警 50 g</span>
+                        <span>告警 10 g</span>
+                    </div>
+                    <div class="footer-row" style="margin-top:18px;">
+                        <span style="font-size:13px;color:#607086;font-weight:700;">使用中</span>
+                        <div class="actions" style="margin-top:0;">
+                            <button class="btn primary">发货</button>
+                            <button class="btn">补充</button>
+                            <button class="btn arrow">→</button>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <span class="panel-tag">B</span>
+                    </div>
+                    <div>
+                        <h2>信息分层版</h2>
+                        <p>把编号和阈值信息拆开，视觉更稳，读数也更清楚。</p>
+                    </div>
+                </div>
+                <article class="card card-b">
+                    <div class="card-b-top">
+                        <div class="title-row">
+                            <h3 class="title">椰蓉丝-4</h3>
+                            <span class="pill danger">告急</span>
+                        </div>
+                        <span class="code-inline">76150500</span>
+                    </div>
+                    <div class="card-b-main">
+                        <div class="value-block" style="margin-top:0;">
+                            <div class="value-label">剩余量</div>
+                            <div class="value">
+                                <strong>0</strong>
+                                <span>g</span>
+                            </div>
+                        </div>
+                        <div class="bar"><span class="fill"></span></div>
+                        <div class="split-meta">
+                            <div class="meta-card warn">
+                                <strong>预警值</strong>
+                                <span>50 g</span>
+                            </div>
+                            <div class="meta-card danger">
+                                <strong>告警值</strong>
+                                <span>10 g</span>
+                            </div>
+                        </div>
+                        <div class="footer-row" style="margin-top:18px;">
+                            <span style="font-size:13px;color:#607086;font-weight:700;">使用中</span>
+                            <div class="actions" style="margin-top:0;">
+                                <button class="btn primary">发货</button>
+                                <button class="btn">补充</button>
+                                <button class="btn arrow">→</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <span class="panel-tag">C</span>
+                    </div>
+                    <div>
+                        <h2>精致轻面板版</h2>
+                        <p>保留后台效率，但整体更像成品界面，观感会更顺。</p>
+                    </div>
+                </div>
+                <article class="card card-c">
+                    <div class="stack">
+                        <div class="title-row">
+                            <h3 class="title">椰蓉丝-4</h3>
+                            <span class="pill danger">告急</span>
+                        </div>
+                        <div class="code">编号 76150500</div>
+                    </div>
+                    <div class="value-block">
+                        <div class="value-label">剩余量</div>
+                        <div class="value">
+                            <strong>0</strong>
+                            <span>g</span>
+                        </div>
+                    </div>
+                    <div class="bar"><span class="fill"></span></div>
+                    <div class="meta">
+                        <span>预警 50 g</span>
+                        <span>告警 10 g</span>
+                    </div>
+                    <div class="footer-row" style="margin-top:18px;">
+                        <span style="font-size:13px;color:#607086;font-weight:700;">使用中</span>
+                        <div class="actions" style="margin-top:0;">
+                            <button class="btn primary">发货</button>
+                            <button class="btn">补充</button>
+                            <button class="btn arrow">→</button>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
