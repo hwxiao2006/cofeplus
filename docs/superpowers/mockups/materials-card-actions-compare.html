@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物料卡片按钮比较</title>
+    <style>
+        :root {
+            --bg: #eff4f9;
+            --panel: rgba(255,255,255,0.8);
+            --card: #fff;
+            --border: #d9e3ed;
+            --ink: #142033;
+            --muted: #66758a;
+            --primary: #4ecdc4;
+            --primary-dark: #14847b;
+            --primary-soft: #e8f8f7;
+            --line: #ebf0f5;
+            --danger-soft: #fff0f1;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(78,205,196,0.12), transparent 30%),
+                linear-gradient(180deg, #f8fbff 0%, #eef3f8 100%);
+            color: var(--ink);
+        }
+
+        .page {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            line-height: 1.04;
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .tips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .tip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(217,227,237,0.92);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid rgba(217,227,237,0.95);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-head {
+            display: flex;
+            gap: 14px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .panel h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+
+        .panel p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .card {
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 14px;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 20px;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: var(--danger-soft);
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .code {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #46586d;
+            font-weight: 700;
+        }
+
+        .value {
+            display: flex;
+            align-items: end;
+            gap: 6px;
+            margin-top: 16px;
+        }
+
+        .value strong {
+            font-size: 42px;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+        }
+
+        .value span {
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .bar {
+            margin-top: 14px;
+            height: 10px;
+            border-radius: 999px;
+            background: #ebf0f5;
+            overflow: hidden;
+        }
+
+        .fill {
+            width: 15%;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #ff9f1c 0%, #ffd166 100%);
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 18px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .btn {
+            min-height: 38px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn.primary {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+        }
+
+        .style-a .btn {
+            border-radius: 999px;
+        }
+
+        .style-b .btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .style-b .btn::before {
+            font-size: 14px;
+        }
+
+        .style-b .btn.primary::before { content: "📦"; }
+        .style-b .btn.secondary::before { content: "✏️"; }
+
+        .style-c .actions {
+            gap: 10px;
+        }
+
+        .style-c .btn {
+            min-height: 40px;
+            border-radius: 12px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+        }
+
+        .mobile-preview {
+            margin-top: 18px;
+            border-top: 1px dashed var(--border);
+            padding-top: 14px;
+        }
+
+        .mobile-label {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .mobile-shell {
+            width: 290px;
+            max-width: 100%;
+            margin: 0 auto;
+            background: #f7fafc;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 10px;
+        }
+
+        .mobile-card .actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (max-width: 1120px) {
+            .grid { grid-template-columns: 1fr; }
+            .hero { flex-direction: column; align-items: flex-start; }
+            .tips { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="hero">
+            <div>
+                <h1>物料卡片按钮比较</h1>
+                <p>已按你的方向预设：去掉箭头、去掉“使用中”、保留两个同级按钮，并兼顾桌面和移动端。</p>
+            </div>
+            <div class="tips">
+                <span class="tip">A 更轻量</span>
+                <span class="tip">B 更强调动作</span>
+                <span class="tip">C 更方正后台</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <section class="panel">
+                <div class="panel-head">
+                    <span class="tag">A</span>
+                    <div>
+                        <h2>胶囊轻量版</h2>
+                        <p>和当前风格最接近，只是把按钮做成两枚等权胶囊，风险最小。</p>
+                    </div>
+                </div>
+                <div class="card style-a">
+                    <div class="title-row">
+                        <h3 class="title">椰蓉丝-4</h3>
+                        <span class="pill">告急</span>
+                    </div>
+                    <div class="code">编号 76150500</div>
+                    <div class="value"><strong>0</strong><span>g</span></div>
+                    <div class="bar"><div class="fill"></div></div>
+                    <div class="meta"><span>预警 50 g</span><span>告警 10 g</span></div>
+                    <div class="footer">
+                        <div class="actions">
+                            <button class="btn primary">发货</button>
+                            <button class="btn secondary">补充</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-preview">
+                    <div class="mobile-label">移动端预览</div>
+                    <div class="mobile-shell">
+                        <div class="card style-a mobile-card">
+                            <div class="actions">
+                                <button class="btn primary">发货</button>
+                                <button class="btn secondary">补充</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <span class="tag">B</span>
+                    <div>
+                        <h2>图标强调版</h2>
+                        <p>按钮更像明确操作入口，移动端也更容易点，识别度最高。</p>
+                    </div>
+                </div>
+                <div class="card style-b">
+                    <div class="title-row">
+                        <h3 class="title">椰蓉丝-4</h3>
+                        <span class="pill">告急</span>
+                    </div>
+                    <div class="code">编号 76150500</div>
+                    <div class="value"><strong>0</strong><span>g</span></div>
+                    <div class="bar"><div class="fill"></div></div>
+                    <div class="meta"><span>预警 50 g</span><span>告警 10 g</span></div>
+                    <div class="footer">
+                        <div class="actions">
+                            <button class="btn primary">发货</button>
+                            <button class="btn secondary">补充</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-preview">
+                    <div class="mobile-label">移动端预览</div>
+                    <div class="mobile-shell">
+                        <div class="card style-b mobile-card">
+                            <div class="actions">
+                                <button class="btn primary">发货</button>
+                                <button class="btn secondary">补充</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <span class="tag">C</span>
+                    <div>
+                        <h2>方角后台版</h2>
+                        <p>按钮更稳更规整，适合后台系统，桌面和手机都比较利落。</p>
+                    </div>
+                </div>
+                <div class="card style-c">
+                    <div class="title-row">
+                        <h3 class="title">椰蓉丝-4</h3>
+                        <span class="pill">告急</span>
+                    </div>
+                    <div class="code">编号 76150500</div>
+                    <div class="value"><strong>0</strong><span>g</span></div>
+                    <div class="bar"><div class="fill"></div></div>
+                    <div class="meta"><span>预警 50 g</span><span>告警 10 g</span></div>
+                    <div class="footer">
+                        <div class="actions">
+                            <button class="btn primary">发货</button>
+                            <button class="btn secondary">补充</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-preview">
+                    <div class="mobile-label">移动端预览</div>
+                    <div class="mobile-shell">
+                        <div class="card style-c mobile-card">
+                            <div class="actions">
+                                <button class="btn primary">发货</button>
+                                <button class="btn secondary">补充</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
