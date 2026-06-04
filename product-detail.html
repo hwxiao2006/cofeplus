@@ -155,6 +155,26 @@
             color: rgba(219, 234, 254, 0.46);
             margin: 0 6px;
         }
+
+        .sidebar-logout-btn {
+            flex: 0 0 auto;
+            height: 20px;
+            padding: 0 8px;
+            border: 1px solid rgba(219, 234, 254, 0.18);
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.22);
+            color: rgba(241, 245, 249, 0.76);
+            font-size: 10px;
+            line-height: 18px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .sidebar-logout-btn:hover {
+            border-color: rgba(248, 113, 113, 0.38);
+            background: rgba(127, 29, 29, 0.24);
+            color: #fecaca;
+        }
         .sidebar-admin-lang {
             display: inline-flex;
             align-items: center;
@@ -1208,7 +1228,9 @@
             font-weight: 700;
             color: var(--text-primary);
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
+            gap: 6px;
         }
 
         .multilang-grid-cell {
@@ -1242,6 +1264,14 @@
         .multilang-sheet .form-textarea {
             min-height: 72px;
             resize: vertical;
+        }
+
+        .multilang-row-sub-label {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         .option-card {
@@ -1448,6 +1478,21 @@
             font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .multilang-sheet.is-group-name {
+            background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #fde68a;
+        }
+
+        .multilang-sheet.is-group-name .multilang-sheet-summary {
+            background: rgba(245, 158, 11, 0.18);
+            color: #92400e;
+        }
+
+        .multilang-sheet.is-group-name .multilang-grid-corner,
+        .multilang-sheet.is-group-name .multilang-grid-label {
+            background: #fef3c7;
         }
 
         .tag-tree {
@@ -1845,6 +1890,777 @@
             color: var(--text-muted);
         }
 
+        .recipe-group-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            cursor: pointer;
+        }
+        .recipe-group-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: #0ba699;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .recipe-group-slider::-moz-range-thumb {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: #0ba699;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .recipe-group-input {
+            width: 52px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px;
+            outline: none;
+            background: #f8fafc;
+        }
+        .recipe-group-input:focus {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.15);
+        }
+
+        /* ============================================================ */
+        /* 配方主编辑器布局（方案 B） */
+        /* ============================================================ */
+        .recipe-config-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .recipe-config-subtitle {
+            margin-top: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .recipe-theoretical-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 0 0 18px;
+            padding: 10px 14px;
+            border: 1px solid #f1c97b;
+            background: #fff8e6;
+            border-radius: 10px;
+            color: #8a5a18;
+            font-size: 12.5px;
+            line-height: 1.55;
+        }
+        .recipe-theoretical-notice-icon {
+            flex-shrink: 0;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        @media (max-width: 768px) {
+            .recipe-theoretical-notice {
+                font-size: 12px;
+                padding: 9px 12px;
+            }
+        }
+        .recipe-main-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+            gap: 22px;
+            align-items: start;
+        }
+        .recipe-fetch-layout {
+            grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+        }
+        .recipe-main-editor,
+        .recipe-side-block {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #fff;
+        }
+        .recipe-main-editor { padding: 22px; }
+        .recipe-side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .recipe-side-block { padding: 16px; }
+        .recipe-side-title {
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .recipe-selection-copy {
+            margin: -4px 0 14px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .recipe-required-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .recipe-required-group {
+            border: 1px solid #dce8f1;
+            border-radius: 12px;
+            background: #fbfdff;
+            padding: 14px;
+        }
+        .recipe-required-group-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .recipe-required-mark {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .recipe-option-chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .recipe-option-chip {
+            border: 1px solid #d5e2eb;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text-secondary);
+            min-height: 34px;
+            padding: 0 13px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .recipe-option-chip.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark, #0f766e);
+        }
+        .recipe-fetch-button {
+            width: 100%;
+            margin-top: 16px;
+            min-height: 44px;
+        }
+        .recipe-fetch-button:disabled {
+            background: #dbe5ec;
+            color: #8a9aa8;
+            cursor: not-allowed;
+        }
+        .recipe-selection-status {
+            margin-top: 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 10px 12px;
+        }
+        .recipe-fetch-empty {
+            min-height: 430px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            background: #fbfdff;
+            padding: 28px;
+        }
+        .recipe-fetch-empty-title {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .recipe-fetch-empty-copy {
+            max-width: 480px;
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .recipe-fetch-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            border: 1px solid #bde9e6;
+            border-radius: 12px;
+            background: #eafaf8;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+        .recipe-fetch-summary-title {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .recipe-fetch-summary-meta {
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .recipe-fetch-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .recipe-fetch-save-note {
+            margin-top: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .recipe-editor-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+        .recipe-editor-title {
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .recipe-editor-note {
+            margin-top: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .recipe-segment-bar {
+            height: 42px;
+            display: flex;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #e9eef1;
+            margin: 12px 0;
+        }
+        .recipe-segment {
+            min-width: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .recipe-segment.espresso { background: #8b6231; }
+        .recipe-segment.milk { background: #d8ba91; }
+        .recipe-segment.foam { background: #e7d3ad; }
+        .recipe-segment.hotWater { background: #45c8c3; }
+        .recipe-segment.syrup { background: #c8945f; }
+        .recipe-segment.ice { background: #73c4e8; }
+        .recipe-capacity-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin: 12px 0 16px;
+        }
+        .recipe-capacity-row.recipe-capacity-row-two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .recipe-capacity-row.recipe-capacity-row-single {
+            grid-template-columns: 1fr;
+        }
+        .recipe-revert-btn[disabled] {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .recipe-revert-btn:not([disabled]):hover {
+            border-color: var(--primary);
+            color: var(--primary-dark, #0f766e);
+        }
+        .recipe-cup-combo {
+            margin: -2px 0 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #f4faff;
+            border: 1px solid #cfe3f4;
+            color: #0f172a;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .recipe-cup-combo .label {
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-right: 6px;
+        }
+        .recipe-cup-combo .value {
+            color: var(--primary-dark, #0f766e);
+            font-weight: 800;
+            font-size: 15px;
+        }
+        .recipe-cup-combo.is-empty .value {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .recipe-capacity-card {
+            border: 1px solid #dce8f1;
+            border-radius: 12px;
+            background: #f9fbfd;
+            padding: 12px;
+        }
+        .recipe-capacity-card.recipe-capacity-standard {
+            border-color: rgba(69, 200, 195, 0.72);
+            background: #effefd;
+            box-shadow: inset 0 0 0 1px rgba(69, 200, 195, 0.18);
+        }
+        .recipe-capacity-card.recipe-capacity-warning {
+            border-color: #f3d3a8;
+            background: #fff8eb;
+        }
+        .recipe-capacity-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .recipe-capacity-standard .recipe-capacity-label { color: var(--primary-dark, #0f766e); }
+        .recipe-capacity-value {
+            margin-top: 5px;
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .recipe-capacity-standard .recipe-capacity-value { font-size: 28px; }
+        .recipe-readonly-ingredient,
+        .recipe-ingredient-editor {
+            border: 1px solid #dce8f1;
+            border-radius: 12px;
+            background: #fcfdfe;
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+        .recipe-readonly-ingredient { color: var(--text-secondary); }
+        .recipe-ingredient-editor {
+            display: grid;
+            grid-template-columns: 1fr minmax(220px, 320px);
+            gap: 14px;
+            align-items: center;
+        }
+        .recipe-ingredient-name {
+            color: #b48a48;
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .recipe-ingredient-name.hotWater { color: #0f9b96; }
+        .recipe-ingredient-name.milk,
+        .recipe-ingredient-name.foam { color: #b48a48; }
+        .recipe-ingredient-name.syrup { color: #b07238; }
+        .recipe-ingredient-name.ice { color: #2389b3; }
+        .recipe-ingredient-hint {
+            margin-top: 6px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .recipe-stepper {
+            display: grid;
+            grid-template-columns: 36px 1fr 36px;
+            gap: 8px;
+            align-items: center;
+        }
+        .recipe-stepper-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #cbd7e3;
+            border-radius: 9px;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .recipe-stepper-btn:hover { border-color: #45c8c3; color: #0f9b96; }
+        .recipe-value-field {
+            height: 36px;
+            display: grid;
+            grid-template-columns: 1fr 32px;
+            align-items: center;
+            border: 1px solid #dbe4ec;
+            border-radius: 9px;
+            background: #fff;
+            padding: 0 10px;
+        }
+        .recipe-value-field input {
+            width: 100%;
+            border: 0;
+            outline: none;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 800;
+            background: transparent;
+        }
+        .recipe-value-unit {
+            color: var(--text-muted);
+            font-weight: 800;
+            font-size: 12px;
+            text-align: right;
+        }
+        .recipe-cup-switcher {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .recipe-cup-switch-item {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .recipe-cup-switch-item.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .recipe-cup-switch-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .recipe-cup-status {
+            flex-shrink: 0;
+            border-radius: 999px;
+            background: #d5f7f4;
+            color: #0f766e;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .recipe-cup-status.neutral {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+        .recipe-cup-switch-meta {
+            margin-top: 7px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .recipe-change-empty {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .recipe-compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .recipe-compare-card {
+            border: 1px solid #dce8f1;
+            border-radius: 10px;
+            background: #f9fbfd;
+            padding: 10px;
+        }
+        .recipe-compare-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .recipe-compare-value {
+            margin-top: 5px;
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .recipe-change-list-wrap {
+            position: relative;
+            margin-top: 10px;
+        }
+        .recipe-change-list-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .recipe-change-list-head .label {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .recipe-change-list-head .count {
+            color: var(--primary-dark, #0f766e);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .recipe-change-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px 8px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding: 2px; /* 给 focus 描边留缓冲，避免被裁切 */
+            scrollbar-width: thin;
+        }
+        .recipe-change-list::-webkit-scrollbar { width: 6px; }
+        .recipe-change-list::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.18);
+            border-radius: 999px;
+        }
+        .recipe-change-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            background: #f7fafc;
+            padding: 7px 10px;
+            color: var(--text-secondary);
+            font-size: 12.5px;
+            font-weight: 700;
+            min-width: 0;
+        }
+        .recipe-change-item > span {
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .recipe-change-item strong {
+            color: #0f766e;
+            font-weight: 800;
+            flex-shrink: 0;
+            font-size: 12.5px;
+        }
+        @media (max-width: 768px) {
+            .recipe-change-list {
+                grid-template-columns: 1fr;
+                max-height: 180px;
+            }
+        }
+        .recipe-sticky-save-bar {
+            position: sticky;
+            bottom: 16px;
+            z-index: 10;
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+            padding: 14px 16px;
+        }
+        .recipe-save-summary {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        @media (max-width: 920px) {
+            .recipe-main-layout { grid-template-columns: 1fr; }
+            .recipe-capacity-row,
+            .recipe-ingredient-editor { grid-template-columns: 1fr; }
+            .recipe-sticky-save-bar { align-items: stretch; flex-direction: column; }
+            .recipe-editor-title { font-size: 20px; }
+        }
+
+        .cup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+        .cup-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cup-card:hover { border-color: #c8d8dc; }
+        .cup-card.active {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.12);
+            cursor: default;
+        }
+        .cup-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .cup-card-name {
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cup-card-title .dot {
+            flex: 0 0 auto;
+            width: 8px; height: 8px; border-radius: 50%; background: var(--primary);
+        }
+        .cup-card:not(.active) .cup-card-title .dot { background: var(--border); }
+        .cup-card-reset-btn {
+            flex: 0 0 auto;
+            border: 1px solid rgba(148, 163, 184, 0.38);
+            background: #fff;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cup-card-reset-btn:hover {
+            border-color: rgba(11, 166, 153, 0.42);
+            color: #0b8f85;
+            background: rgba(11, 166, 153, 0.06);
+        }
+        .cup-fill-track {
+            width: 100%; background: #edf1f2; border-radius: 8px;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .cup-fill-content {
+            display: flex; border-radius: 7px; overflow: hidden;
+            transition: width 0.3s ease;
+        }
+        .cup-fill-seg {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; min-width: 0;
+            padding: 0 3px; transition: flex 0.3s ease; white-space: nowrap;
+        }
+        .cup-fill-seg span { color: rgba(255,255,255,0.9); }
+        .cup-fill-detail {
+            display: flex; gap: 12px; margin-top: 4px; font-size: 11px;
+        }
+        .cup-fill-detail .item { display: flex; align-items: center; gap: 4px; }
+        .cup-fill-detail .dot { width: 8px; height: 8px; border-radius: 2px; }
+        .cup-fill-detail .label { color: var(--text-muted); }
+        .cup-fill-detail .val { color: var(--text-primary); font-weight: 700; }
+        .cup-fill-detail .overflow { color: #ef4444; font-weight: 700; }
+        .cup-param-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+        .cup-param-tag {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 12px; font-weight: 700; padding: 3px 8px;
+            border-radius: 6px; border: 1px solid var(--border);
+        }
+        .cup-component-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .cup-component-control {
+            display: grid;
+            grid-template-columns: minmax(62px, 0.8fr) auto minmax(82px, 1fr) auto;
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 10px;
+            background: #fbfdfe;
+        }
+        .cup-component-control.locked {
+            grid-template-columns: minmax(62px, 0.8fr) minmax(82px, 1fr);
+            background: #f8fafc;
+        }
+        .recipe-component-name {
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .recipe-stepper-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid rgba(148, 163, 184, 0.42);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .recipe-stepper-btn:hover {
+            border-color: rgba(11, 166, 153, 0.46);
+            color: #0b8f85;
+            background: rgba(11, 166, 153, 0.06);
+        }
+        .recipe-component-value {
+            display: grid;
+            grid-template-columns: minmax(48px, 1fr) auto;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            padding: 2px 6px;
+        }
+        .recipe-component-unit {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .recipe-component-readonly {
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 900;
+            text-align: right;
+        }
+        .recipe-component-step {
+            grid-column: 1 / -1;
+            color: var(--text-muted);
+            font-size: 11px;
+            line-height: 1.35;
+        }
+        .cup-edit-row {
+            display: grid; grid-template-columns: 48px 1fr 60px; gap: 8px;
+            align-items: center; margin-bottom: 4px;
+        }
+        .cup-edit-label { font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .cup-edit-slider {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 5px; border-radius: 3px;
+            background: #e2e8f0; outline: none; cursor: pointer;
+        }
+        .cup-edit-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+            background: #0ba699; cursor: pointer; border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .cup-edit-input {
+            width: 100%; text-align: center; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 12px; font-weight: 700; padding: 2px 4px;
+            outline: none; background: #f8fafc;
+        }
+        .cup-edit-input:focus {
+            border-color: #0ba699;
+            box-shadow: 0 0 0 2px rgba(11,166,153,0.12);
+        }
         .recipe-group-percent {
             min-width: 54px;
             text-align: center;
@@ -2070,6 +2886,45 @@
             color: var(--text-muted);
         }
 
+        .recipe-impact-diff-block {
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .recipe-impact-diff-title {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .recipe-impact-diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .recipe-impact-diff-table th,
+        .recipe-impact-diff-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            text-align: left;
+        }
+
+        .recipe-impact-diff-table th {
+            color: var(--text-muted);
+            background: #fbfdfe;
+            font-weight: 800;
+        }
+
+        .recipe-impact-diff-delta.positive { color: #059669; font-weight: 800; }
+        .recipe-impact-diff-delta.negative { color: #dc2626; font-weight: 800; }
+
         .recipe-impact-footer {
             padding: 14px 20px 18px;
             border-top: 1px solid var(--border);
@@ -2209,7 +3064,7 @@
             .product-detail-tabs {
                 width: 100%;
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
             .product-detail-tab-btn {
@@ -2511,6 +3366,12 @@
             .recipe-group-controls {
                 width: 100%;
                 justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .recipe-group-slider {
+                width: 100%;
             }
         }
 
@@ -2573,15 +3434,16 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
                 </div>
                 <div class="sidebar-login">
-                    <div class="sidebar-login-name" id="sidebarLoginName">-</div>
-                    <div class="sidebar-login-phone" id="sidebarLoginPhone">-</div>
+                    <div class="sidebar-login-name" id="sidebarLoginName">运营管理员</div>
+                    <div class="sidebar-login-phone" id="sidebarLoginPhone">13800138000</div>
+                    <button type="button" class="sidebar-logout-btn" id="sidebarLogoutButton" onclick="handleSidebarLogout()" aria-label="退出登录" title="退出登录">退出</button>
                 </div>
             </div>
             
@@ -2616,9 +3478,9 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item">
+                    <a href="customers.html" class="nav-item" data-nav="customers">
                         <span class="nav-icon">🏢</span>
-                        <span>客户管理</span>
+                        <span class="nav-label">我的商户</span>
                     </a>
                     <a href="locations.html" class="nav-item">
                         <span class="nav-icon">📍</span>
@@ -2653,17 +3515,17 @@
             <div class="content">
                 <div class="product-copy-flow-steps" id="productCopyFlowSteps">
                     <div class="product-copy-step-btn active" id="productCopyStepBasic">2 基本信息</div>
-                    <div class="product-copy-step-btn" id="productCopyStepRecipe">3 配方配置</div>
-                    <div class="product-copy-step-btn" id="productCopyStepConfirm">4 确认复制</div>
+                    <div class="product-copy-step-btn" id="productCopyStepConfirm">3 确认复制</div>
                 </div>
                 <div class="copy-flow-summary" id="copyFlowSummary"></div>
 
                 <div class="product-detail-tabs" role="tablist" aria-label="商品详情分组">
-                    <button type="button" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" onclick="switchProductDetailTab('basic')">基本信息</button>
-                    <button type="button" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" onclick="switchProductDetailTab('recipe')">配方配置</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn active" id="productDetailTabBasicBtn" aria-selected="true" aria-controls="productDetailBasicPanel" onclick="switchProductDetailTab('basic')">基本信息</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn" id="productDetailTabRecipeBtn" aria-selected="false" aria-controls="productDetailRecipePanel" onclick="switchProductDetailTab('recipe')">🧪 配方配置</button>
+                    <button type="button" role="tab" class="product-detail-tab-btn" id="productDetailTabTagsBtn" aria-selected="false" aria-controls="productDetailTagsPanel" onclick="switchProductDetailTab('tags')">⚙️ 选项配置</button>
                 </div>
 
-                <section class="product-detail-tab-panel active" id="productDetailBasicPanel">
+                <section class="product-detail-tab-panel active" id="productDetailBasicPanel" role="tabpanel" aria-labelledby="productDetailTabBasicBtn">
                     <div class="form-card">
                         <h2 class="form-section-title">基本信息</h2>
 
@@ -2730,87 +3592,123 @@
                     </div>
                 </section>
 
-                <section class="product-detail-tab-panel" id="productDetailRecipePanel">
-                    <div class="option-toolbar">
-                        <div class="option-toolbar-title">配方配置</div>
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn btn-default" id="openRecipeEditorBtn" onclick="openRecipeEditorForActiveSpec()">修改配方</button>
-                            <button class="btn btn-default" onclick="openTagConfigDrawer('beans')">标签配置</button>
+                <section class="product-detail-tab-panel" id="productDetailTagsPanel" role="tabpanel" aria-labelledby="productDetailTabTagsBtn">
+                    <div class="form-card" style="margin-bottom:16px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                            <h2 class="form-section-title" style="margin-bottom:0;">选项配置</h2>
+                            <button class="btn btn-default" id="openTagConfigDrawerBtn" onclick="openTagConfigDrawer('beans')">编辑多语言文案</button>
                         </div>
-                    </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="tagOptionsGrid" data-admin-i18n-ignore="true">
+                            <div class="option-card active-spec" data-spec-key="beans">
+                                <div class="option-title">BEAN / 咖啡豆</div>
+                                <div class="option-list" id="beanOptions">
+                                    <div class="option-item" data-value="精品咖啡-翡翠瑰夏">精品咖啡-翡翠瑰夏</div>
+                                    <div class="option-item selected" data-value="金奖黑咖-浓香意式">金奖黑咖-浓香意式</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card active-spec" data-spec-key="beans">
-                        <div class="option-title">BEAN / 咖啡豆</div>
-                        <div class="option-list" id="beanOptions">
-                            <div class="option-item" data-value="精品咖啡-翡翠瑰夏">精品咖啡-翡翠瑰夏</div>
-                            <div class="option-item selected" data-value="金奖黑咖-浓香意式">金奖黑咖-浓香意式</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="temperature">
+                                <div class="option-title">TEMPERATURE / 温度</div>
+                                <div class="option-list" id="tempOptions">
+                                    <div class="option-item selected" data-value="热">热</div>
+                                    <div class="option-item" data-value="标准冰">标准冰</div>
+                                    <div class="option-item" data-value="少冰">少冰</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="temperature">
-                        <div class="option-title">TEMPERATURE / 温度</div>
-                        <div class="option-list" id="tempOptions">
-                            <div class="option-item selected" data-value="热">热</div>
-                            <div class="option-item" data-value="冰">冰</div>
-                            <div class="option-item" data-value="常温">常温</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="strength">
+                                <div class="option-title">PROFILE / 浓度</div>
+                                <div class="option-list" id="profileOptions">
+                                    <div class="option-item selected" data-value="标准">标准</div>
+                                    <div class="option-item" data-value="加1份浓缩">加1份浓缩</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="strength">
-                        <div class="option-title">PROFILE / 浓度</div>
-                        <div class="option-list" id="profileOptions">
-                            <div class="option-item selected" data-value="标准">标准</div>
-                            <div class="option-item" data-value="加1份浓缩">加1份浓缩</div>
-                            <div class="option-item" data-value="加2份浓缩">加2份浓缩</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="syrup">
+                                <div class="option-title">SYRUP / 糖浆</div>
+                                <div class="option-list" id="syrupOptions">
+                                    <div class="option-item selected" data-value="蔗糖糖浆">蔗糖糖浆</div>
+                                    <div class="option-item" data-value="香草糖浆">香草糖浆</div>
+                                    <div class="option-item" data-value="榛果糖浆">榛果糖浆</div>
+                                    <div class="option-item" data-value="焦糖海盐糖浆">焦糖海盐糖浆</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="syrup">
-                        <div class="option-title">SYRUP / 糖浆</div>
-                        <div class="option-list" id="syrupOptions">
-                            <div class="option-item selected" data-value="甘蔗冰糖糖浆">甘蔗冰糖糖浆</div>
-                            <div class="option-item" data-value="香草风味糖浆">香草风味糖浆</div>
-                            <div class="option-item" data-value="榛果风味糖浆">榛果风味糖浆</div>
-                            <div class="option-item" data-value="无糖浆">无糖浆</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="sweetness">
+                                <div class="option-title">SWEETNESS / 甜度</div>
+                                <div class="option-list" id="sweetnessOptions">
+                                    <div class="option-item selected" data-value="无糖">无糖</div>
+                                    <div class="option-item" data-value="少糖">少糖</div>
+                                    <div class="option-item" data-value="标准糖">标准糖</div>
+                                    <div class="option-item" data-value="多糖">多糖</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="sweetness">
-                        <div class="option-title">SWEETNESS / 甜度</div>
-                        <div class="option-list" id="sweetnessOptions">
-                            <div class="option-item selected" data-value="无糖">无糖</div>
-                            <div class="option-item" data-value="少糖">少糖</div>
-                            <div class="option-item" data-value="标准糖">标准糖</div>
-                            <div class="option-item" data-value="多糖">多糖</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="cupsize">
+                                <div class="option-title">CUPSIZE / 杯型</div>
+                                <div class="option-list" id="cupsizeOptions">
+                                    <div class="option-item selected" data-value="355ml">355ml</div>
+                                    <div class="option-item" data-value="473ml">473ml</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="cupsize">
-                        <div class="option-title">CUPSIZE / 杯型</div>
-                        <div class="option-list" id="cupsizeOptions">
-                            <div class="option-item selected" data-value="355ml">355ml</div>
-                            <div class="option-item" data-value="473ml">473ml</div>
-                            <div class="option-item" data-value="592ml">592ml</div>
-                        </div>
-                    </div>
+                            <div class="option-card" data-spec-key="lid">
+                                <div class="option-title">LID / 杯盖</div>
+                                <div class="option-list" id="lidOptions">
+                                    <div class="option-item selected" data-value="倡导环保 不使用杯盖">倡导环保 不使用杯盖</div>
+                                    <div class="option-item" data-value="需要杯盖">需要杯盖</div>
+                                </div>
+                            </div>
 
-                    <div class="option-card" data-spec-key="lid">
-                        <div class="option-title">LID / 杯盖</div>
-                        <div class="option-list" id="lidOptions">
-                            <div class="option-item selected" data-value="倡导环保 不使用杯盖">倡导环保 不使用杯盖</div>
-                            <div class="option-item" data-value="需要杯盖">需要杯盖</div>
-                        </div>
-                    </div>
-
-                    <div class="option-card" data-spec-key="latteArt">
-                        <div class="option-title">LATTE-ART / 拉花</div>
-                        <div class="option-list" id="latteArtOptions">
-                            <div class="option-item selected" data-value="无">无</div>
-                            <div class="option-item" data-value="随机拉花">随机拉花</div>
-                            <div class="option-item" data-value="上传图片">上传图片</div>
+                            <div class="option-card" data-spec-key="latteArt">
+                                <div class="option-title">LATTE-ART / 拉花</div>
+                                <div class="option-list" id="latteArtOptions">
+                                    <div class="option-item selected" data-value="无">无</div>
+                                    <div class="option-item" data-value="随机拉花">随机拉花</div>
+                                    <div class="option-item" data-value="上传图片">上传图片</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
+
+                <section class="product-detail-tab-panel" id="productDetailRecipePanel" role="tabpanel" aria-labelledby="productDetailTabRecipeBtn">
+                    <div class="recipe-config-head">
+                        <div>
+                            <div class="option-toolbar-title">配方配置</div>
+                            <div class="recipe-config-subtitle">先选择客户下单时的咖啡豆、温度、浓度，获取配方后再调整该组合的成分。</div>
+                        </div>
+                    </div>
+
+                    <div class="recipe-theoretical-notice" role="note">
+                        <span class="recipe-theoretical-notice-icon" aria-hidden="true">💡</span>
+                        <span>修改配方后显示的容量为理论计算值。若与实际出杯量存在偏差，请检查水路、奶路及糖路是否存在堵塞情况。</span>
+                    </div>
+
+                    <div class="recipe-main-layout recipe-fetch-layout">
+                        <section class="recipe-main-editor recipe-fetch-editor" id="recipeMainEditor">
+                            <div class="recipe-fetch-empty" id="recipeFetchEmpty">
+                                <div class="recipe-fetch-empty-title">等待获取配方</div>
+                                <div class="recipe-fetch-empty-copy">请选择右侧咖啡豆、温度、浓度后点击“获取配方”，左侧会展示该选项组合对应的配方成分。</div>
+                            </div>
+                        </section>
+                        <aside class="recipe-side-panel recipe-selection-panel" id="recipeSelectionPanel">
+                            <div class="recipe-side-block">
+                                <div class="recipe-side-title">选择需要修改的配方选项</div>
+                                <div class="recipe-cup-combo" id="recipeCupComboHeader"></div>
+                                <div class="recipe-selection-copy">仅用于获取配方，不会改动“选项配置”里的分组和文案。</div>
+                                <div class="recipe-required-options" id="recipeRequiredOptionGroups"></div>
+                                <button class="btn btn-primary recipe-fetch-button" id="recipeFetchButton" type="button" onclick="fetchRecipeForSelectedOptions()">获取配方</button>
+                                <div class="recipe-selection-status" id="recipeSelectionStatus">请选择咖啡豆、温度、浓度后获取配方。</div>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <!-- 保留旧 inline body 容器，让 renderInlineRecipe() 的兜底渲染依然可用 -->
+                    <div id="recipeInlineBody" style="display:none"></div>
+                </section>
+
+                <!-- recipeHiddenOptions removed: option cards now live in #productDetailTagsPanel. -->
 
                 <section class="product-detail-tab-panel" id="productDetailConfirmPanel">
                     <div class="copy-confirm-block" id="copyConfirmImageSection">
@@ -2896,7 +3794,6 @@
                     <button class="btn btn-default" id="copyWorkflowBackBtn" type="button" onclick="handleCopyWorkflowBack()">上一步</button>
                     <div class="copy-workflow-actions-right">
                         <button class="btn btn-default" id="copyWorkflowEditBasicBtn" type="button" onclick="goToCopyWorkflowStep('basic')">编辑基本信息</button>
-                        <button class="btn btn-default" id="copyWorkflowEditRecipeBtn" type="button" onclick="goToCopyWorkflowStep('recipe')">编辑配方配置</button>
                         <button class="btn btn-primary" id="copyWorkflowPrimaryBtn" type="button" onclick="handleCopyWorkflowPrimaryAction()">下一步</button>
                     </div>
                 </div>
@@ -2981,21 +3878,19 @@
             <div class="recipe-impact-header">
                 <div>
                     <div class="recipe-impact-title">影响商品确认</div>
-                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">勾选的商品将关联更新</div>
+                    <div class="recipe-impact-subtitle" id="recipeImpactSubtitle">确认后会强制同步所有关联商品</div>
                 </div>
                 <button class="modal-close" type="button" onclick="closeRecipeImpactModal()">×</button>
             </div>
             <div class="recipe-impact-toolbar">
-                <div class="left">
-                    <button type="button" class="recipe-control-btn" onclick="selectAllRecipeImpactLinks()">全选关联</button>
-                    <button type="button" class="recipe-control-btn" onclick="clearRecipeImpactLinks()">清空关联</button>
-                </div>
-                <div class="right" id="recipeImpactSummary">关联 0 个，不关联 0 个</div>
+                <div class="left" id="recipeImpactActions" style="display:none;"></div>
+                <div class="right" id="recipeImpactSummary">强制同步 0 个关联商品</div>
             </div>
+            <div class="recipe-impact-body" id="recipeImpactDiffBody"></div>
             <div class="recipe-impact-body" id="recipeImpactBody"></div>
             <div class="recipe-impact-footer">
                 <button class="btn btn-default" type="button" onclick="closeRecipeImpactModal()">取消</button>
-                <button class="btn btn-primary" type="button" onclick="confirmRecipeImpactApply()">确认保存</button>
+                <button class="btn btn-primary" type="button" onclick="confirmRecipeImpactApply()">确认并强制同步</button>
             </div>
         </div>
     </div>
@@ -3074,11 +3969,16 @@
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
+    <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
+    <script src="shared/tag-group-i18n.js"></script>
     <script>
 
         const BusinessTags = window.CofeBusinessTags || (typeof globalThis !== 'undefined' ? globalThis.CofeBusinessTags : null);
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const LOGIN_PAGE_URL = 'login-paper.html';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
             phone: '13800138000'
@@ -3247,6 +4147,15 @@
                 // ignore localStorage write failures
             }
             renderAdminSidebarTranslations();
+            // 选项面板按 admin lang 重新渲染：tag 选项 chip 和 group title 都来自商品自己的 i18n 数据。
+            if (typeof refreshOptionTitles === 'function') {
+                try { refreshOptionTitles(); } catch (e) { /* keep going */ }
+            }
+            if (typeof refreshOptionListLabels === 'function' && Array.isArray(tagConfigs)) {
+                tagConfigs.forEach(cfg => {
+                    try { refreshOptionListLabels(cfg.specKey); } catch (e) { /* keep going */ }
+                });
+            }
         }
 
 
@@ -3276,6 +4185,16 @@
             }
             fitSidebarLoginInline();
             renderAdminSidebarTranslations();
+        }
+
+        function handleSidebarLogout() {
+            try {
+                localStorage.removeItem(LOGIN_SESSION_KEY);
+                localStorage.removeItem(SIDEBAR_LOGIN_PROFILE_KEY);
+            } catch (e) {
+                // ignore localStorage cleanup failures
+            }
+            window.location.href = LOGIN_PAGE_URL;
         }
 
         function fitSidebarLoginInline() {
@@ -3323,12 +4242,14 @@
         let copyWorkflowState = null;
         let activeRecipeSpecKey = 'beans';
         let recipeEditorState = null;
+        let recipeEditorInitialState = null;
         let recipeGroupDraggedKey = '';
         let recipeGroupDraggedElement = null;
         let recipeGroupDropPlaceholder = null;
         let recipeGroupTouchDragState = null;
         let recipeGroupTouchListenersBound = false;
         let recipeImpactState = null;
+        let recipeSelectionState = null;
         let tagSyncState = null;
         let drawerActiveSpecKey = 'beans';
         let drawerSelectedTagKey = '';
@@ -3354,6 +4275,7 @@
             { key: 'baseCoffeeLiquid', title: '基底咖啡液', multi: false, defaultNames: ['基底咖啡液'] },
             { key: 'syrup', title: '糖浆', multi: false, defaultNames: ['糖浆'] },
             { key: 'milk', title: '奶量', multi: false, defaultNames: ['牛奶'] },
+            { key: 'foam', title: '奶泡', multi: false, defaultNames: ['奶泡'] },
             { key: 'water', title: '水量', multi: false, defaultNames: ['水'] },
             { key: 'ice', title: '冰量', multi: false, defaultNames: ['冰'] },
             { key: 'powders', title: '浓缩粉名称', multi: true, defaultNames: [] },
@@ -3361,6 +4283,31 @@
             { key: 'decorToppings', title: '装饰颗粒名称', multi: true, defaultNames: [] }
         ];
         const RECIPE_GROUP_KEYS = RECIPE_GROUP_CONFIGS.map(item => item.key);
+        const RECIPE_REQUIRED_OPTION_KEYS = ['beans', 'temperature', 'strength'];
+        const RECIPE_COMBINATION_SPEC_KEY = 'optionCombination';
+        const RECIPE_COMP_CONFIGS = [
+            { key: 'E', groupKey: 'baseCoffeeLiquid', label: '浓缩', color: '#7a5c2e', light: '#f5f0e1' },
+            { key: 'M', groupKey: 'milk',             label: '奶',   color: '#d4b896', light: '#fdf8f0' },
+            { key: 'F', groupKey: 'foam',             label: '奶泡', color: '#e0d4b0', light: '#fefcf4' },
+            { key: 'W', groupKey: 'water',            label: '热水', color: '#5bbfb5', light: '#effaf8' },
+            { key: 'I', groupKey: 'ice',              label: '冰',   color: '#7cc4db', light: '#f0f8fb' },
+            { key: 'S', groupKey: 'syrup',            label: '糖浆', color: '#c49a6c', light: '#fdf6ee' },
+            { key: 'P', groupKey: 'powders',          label: '粉',   color: '#a08060', light: '#f8f4ee' },
+            { key: 'G', groupKey: 'decorToppings',    label: '颗粒', color: '#8aaa6c', light: '#f4f8ee' }
+        ];
+        const RECIPE_COMPONENT_RULES = {
+            baseCoffeeLiquid: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false, editable: false },
+            milk: { unit: 'ml', step: 5, min: 0, max: 500, continuous: true },
+            foam: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false, editable: false },
+            water: { unit: 'ml', step: 5, min: 0, max: 500, continuous: true },
+            ice: { unit: 'g', step: 10, min: 0, max: 500, continuous: false },
+            syrup: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
+            powders: { unit: 'g', step: 1, min: 0, max: 200, continuous: false },
+            concentrates: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
+            decorToppings: { unit: 'g', step: 1, min: 0, max: 200, continuous: false }
+        };
+        let recipeComponentHoldTimer = null;
+        let recipeComponentHoldInterval = null;
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
         let selectedBusinessTagIds = [];
         let productBusinessTagDraft = null;
@@ -3831,17 +4778,101 @@
             return i18n[lang] || i18n.zh || tagKey;
         }
 
+        function ensureTagDescI18n(specKey, targetProduct = productData) {
+            if (!targetProduct || typeof targetProduct !== 'object') return;
+            if (!targetProduct.tagDescI18n || typeof targetProduct.tagDescI18n !== 'object') {
+                targetProduct.tagDescI18n = {};
+            }
+            if (specKey && (!targetProduct.tagDescI18n[specKey] || typeof targetProduct.tagDescI18n[specKey] !== 'object')) {
+                targetProduct.tagDescI18n[specKey] = {};
+            }
+        }
+
+        function getTagDesc(specKey, tagKey, lang, targetProduct = productData) {
+            const entry = targetProduct?.tagDescI18n?.[specKey]?.[tagKey];
+            if (!entry || typeof entry !== 'object') return '';
+            return entry[lang] || entry.zh || entry.en || '';
+        }
+
+        function getDrawerTagDesc(specKey, tagKey, lang) {
+            return getTagDesc(specKey, tagKey, lang, productData);
+        }
+
+        function cloneTagDescs(specKey, tagKey, targetProduct = productData) {
+            const out = {};
+            const entry = targetProduct?.tagDescI18n?.[specKey]?.[tagKey] || {};
+            const langs = getDeviceLangs();
+            const seen = new Set();
+            const collect = (lang) => {
+                if (seen.has(lang)) return;
+                seen.add(lang);
+                const raw = entry[lang];
+                if (raw === undefined || raw === null) return;
+                const text = String(raw).trim();
+                if (text) out[lang] = text;
+            };
+            langs.forEach(collect);
+            ['zh', 'en'].forEach(collect);
+            return out;
+        }
+
+        function hasTagDescChanged(previousDescs, nextDescs) {
+            const previous = previousDescs || {};
+            const next = nextDescs || {};
+            const keys = new Set([...Object.keys(previous), ...Object.keys(next)]);
+            for (const key of keys) {
+                const before = String(previous[key] || '').trim();
+                const after = String(next[key] || '').trim();
+                if (before !== after) return true;
+            }
+            return false;
+        }
+
+        function setTagDescsForProduct(targetProduct, specKey, tagKey, nextDescs) {
+            if (!targetProduct || typeof targetProduct !== 'object' || !specKey || !tagKey) return;
+            ensureTagDescI18n(specKey, targetProduct);
+            const spec = targetProduct.tagDescI18n[specKey];
+            const cleaned = {};
+            Object.entries(nextDescs || {}).forEach(([lang, value]) => {
+                const text = String(value == null ? '' : value).trim();
+                if (text) cleaned[lang] = text;
+            });
+            if (Object.keys(cleaned).length) {
+                spec[tagKey] = cleaned;
+            } else {
+                delete spec[tagKey];
+            }
+            if (!Object.keys(spec).length) {
+                delete targetProduct.tagDescI18n[specKey];
+            }
+        }
+
+        // 选项 chip 的显示语言优先跟随 admin sidebar，让运营端切到 EN 之后
+        // 看到的是"商品本身的 en 字段"或"中文兜底"——而不是 i18n 字典硬翻的假英文。
+        function getProductOptionDisplayLang() {
+            try { return localStorage.getItem(ADMIN_SIDEBAR_LANG_KEY) === 'en' ? 'en' : 'zh'; }
+            catch (e) { return 'zh'; }
+        }
+
         function refreshOptionListLabels(specKey) {
             const cfg = getTagConfigBySpec(specKey);
             if (!cfg) return;
             const list = document.getElementById(cfg.listId);
             if (!list) return;
 
+            const displayLang = getProductOptionDisplayLang();
             list.querySelectorAll('.option-item').forEach(item => {
                 if (!item.dataset.tagKey) item.dataset.tagKey = item.dataset.value;
                 const key = item.dataset.tagKey;
                 item.dataset.value = key;
-                item.textContent = getTagLabel(specKey, key, currentLang);
+                // 兜底：admin lang → currentLang → zh → key 本身。
+                // 注意：这里**只**读商品自己的 productData.tagI18n，
+                // 不会触发 i18n 字典翻译，所以英文模式下没有英文数据时会诚实显示中文。
+                const i18n = productData?.tagI18n?.[specKey]?.[key] || {};
+                item.textContent = i18n[displayLang]
+                    || i18n[currentLang]
+                    || i18n.zh
+                    || key;
             });
         }
 
@@ -3908,17 +4939,22 @@
         function switchProductDetailTab(tabKey) {
             const nextTab = tabKey === 'recipe'
                 ? 'recipe'
+                : tabKey === 'tags'
+                ? 'tags'
                 : (isCopyWorkflowActive() && tabKey === 'confirm' ? 'confirm' : 'basic');
             currentProductDetailTab = nextTab;
 
             const isBasic = nextTab === 'basic';
             const isRecipe = nextTab === 'recipe';
+            const isTags = nextTab === 'tags';
             const isConfirm = nextTab === 'confirm';
             const basicBtn = document.getElementById('productDetailTabBasicBtn');
             const recipeBtn = document.getElementById('productDetailTabRecipeBtn');
+            const tagsBtn = document.getElementById('productDetailTabTagsBtn');
             const confirmBtn = document.getElementById('productCopyStepConfirm');
             const basicPanel = document.getElementById('productDetailBasicPanel');
             const recipePanel = document.getElementById('productDetailRecipePanel');
+            const tagsPanel = document.getElementById('productDetailTagsPanel');
             const confirmPanel = document.getElementById('productDetailConfirmPanel');
 
             if (basicBtn) {
@@ -3929,6 +4965,10 @@
                 recipeBtn.classList.toggle('active', isRecipe);
                 recipeBtn.setAttribute('aria-selected', isRecipe ? 'true' : 'false');
             }
+            if (tagsBtn) {
+                tagsBtn.classList.toggle('active', isTags);
+                tagsBtn.setAttribute('aria-selected', isTags ? 'true' : 'false');
+            }
             if (confirmBtn) {
                 confirmBtn.classList.toggle('active', isConfirm);
             }
@@ -3938,25 +4978,28 @@
             if (recipePanel) {
                 recipePanel.classList.toggle('active', isRecipe);
             }
+            if (tagsPanel) {
+                tagsPanel.classList.toggle('active', isTags);
+            }
             if (confirmPanel) {
                 confirmPanel.classList.toggle('active', isConfirm);
             }
 
             if (isCopyWorkflowActive()) {
+                // 复制流程现在只剩 基本信息 → 确认复制 两步，配方编辑不再走复制流程。
                 const copyBasicBtn = document.getElementById('productCopyStepBasic');
-                const copyRecipeBtn = document.getElementById('productCopyStepRecipe');
                 if (copyBasicBtn) {
                     copyBasicBtn.classList.toggle('active', isBasic);
                     copyBasicBtn.classList.toggle('done', !isBasic);
-                }
-                if (copyRecipeBtn) {
-                    copyRecipeBtn.classList.toggle('active', isRecipe);
-                    copyRecipeBtn.classList.toggle('done', isConfirm);
                 }
                 if (isConfirm) {
                     renderCopyConfirmPanel();
                 }
                 updateCopyWorkflowActions();
+            }
+
+            if (isRecipe) {
+                renderInlineRecipe();
             }
         }
 
@@ -3984,14 +5027,14 @@
             if (!active) return;
 
             const isBasic = currentProductDetailTab === 'basic';
-            const isRecipe = currentProductDetailTab === 'recipe';
             const isConfirm = currentProductDetailTab === 'confirm';
 
             if (backBtn) backBtn.style.visibility = isBasic ? 'hidden' : 'visible';
             if (editBasicBtn) editBasicBtn.style.display = isConfirm ? 'inline-flex' : 'none';
-            if (editRecipeBtn) editRecipeBtn.style.display = isConfirm ? 'inline-flex' : 'none';
+            // 复制流程不再包含「编辑配方配置」入口，按钮始终隐藏（即便 DOM 已被移除也兜底处理）
+            if (editRecipeBtn) editRecipeBtn.style.display = 'none';
             if (primaryBtn) {
-                primaryBtn.textContent = isBasic ? '下一步：配方配置' : (isRecipe ? '下一步：确认复制' : '确认复制');
+                primaryBtn.textContent = isBasic ? '下一步：确认复制' : '确认复制';
             }
         }
 
@@ -4100,12 +5143,9 @@
 
         function handleCopyWorkflowBack() {
             if (!isCopyWorkflowActive()) return;
-            if (currentProductDetailTab === 'recipe') {
-                goToCopyWorkflowStep('basic');
-                return;
-            }
+            // 复制流程现只剩 basic → confirm 两步：从 confirm 返回直接回到 basic。
             if (currentProductDetailTab === 'confirm') {
-                goToCopyWorkflowStep('recipe');
+                goToCopyWorkflowStep('basic');
             }
         }
 
@@ -4116,10 +5156,6 @@
             }
 
             if (currentProductDetailTab === 'basic') {
-                goToCopyWorkflowStep('recipe');
-                return;
-            }
-            if (currentProductDetailTab === 'recipe') {
                 goToCopyWorkflowStep('confirm');
                 return;
             }
@@ -4128,6 +5164,61 @@
 
         function getRecipeGroupConfig(groupKey) {
             return RECIPE_GROUP_CONFIGS.find(item => item.key === groupKey) || null;
+        }
+
+        function getRecipeComponentRule(groupKey) {
+            return RECIPE_COMPONENT_RULES[groupKey] || { unit: 'ml', step: 1, min: 0, max: 500, continuous: false };
+        }
+
+        // 只读成分的提示文案：不同成分原因不同（浓缩 = 配方文件、奶泡 = 设备打奶量），
+        // 不在这一页修改时给出对应解释。
+        const RECIPE_READONLY_HINTS = {
+            baseCoffeeLiquid: '基底咖啡数值由配方文件维护，不可在此修改。',
+            foam: '奶泡数值由设备出奶口出料控制，不可在此修改。'
+        };
+        function getRecipeReadonlyHint(groupKey) {
+            return RECIPE_READONLY_HINTS[groupKey] || '该成分数值由配方文件维护，不可在此修改。';
+        }
+
+        function normalizeRecipeComponentValue(value, rule) {
+            const activeRule = rule || getRecipeComponentRule('');
+            const step = Number(activeRule.step) > 0 ? Number(activeRule.step) : 1;
+            const min = Number.isFinite(Number(activeRule.min)) ? Number(activeRule.min) : 0;
+            const max = Number.isFinite(Number(activeRule.max)) ? Number(activeRule.max) : 500;
+            const parsed = Number(value);
+            const bounded = Math.max(min, Math.min(max, Number.isFinite(parsed) ? parsed : min));
+            return Math.round(bounded / step) * step;
+        }
+
+        function formatRecipeComponentDose(value, groupKey) {
+            const rule = getRecipeComponentRule(groupKey);
+            return `${normalizeRecipeComponentValue(value, rule)}${rule.unit}`;
+        }
+
+        // 计入容量总量的成分：所有 ml 单位 + 冰（按 mock 约定 1g = 1ml 折算）。
+        // 颗粒 / 粉 之类的装饰类不计入容量。
+        const RECIPE_VOLUME_ADDITIONAL_GROUPS = new Set(['ice']);
+
+        function isRecipeVolumeContributing(groupKey) {
+            const rule = getRecipeComponentRule(groupKey);
+            if (rule.unit === 'ml') return true;
+            return RECIPE_VOLUME_ADDITIONAL_GROUPS.has(groupKey);
+        }
+
+        function getRecipeVolumeTotal(recipe) {
+            if (!recipe || !recipe.groups) return 0;
+            return RECIPE_COMP_CONFIGS
+                .filter(c => isRecipeVolumeContributing(c.groupKey))
+                .reduce((sum, c) => sum + (Number(recipe.groups[c.groupKey]?.ml) || 0), 0);
+        }
+
+        function getRecipeNonVolumeSummary(recipe) {
+            if (!recipe || !recipe.groups) return '';
+            return RECIPE_COMP_CONFIGS
+                .filter(c => getRecipeComponentRule(c.groupKey).unit !== 'ml')
+                .filter(c => (Number(recipe.groups[c.groupKey]?.ml) || 0) > 0)
+                .map(c => `${c.label} ${formatRecipeComponentDose(recipe.groups[c.groupKey].ml, c.groupKey)}`)
+                .join(' · ');
         }
 
         function normalizeRecipePercent(value) {
@@ -4151,7 +5242,8 @@
                     : [...cfg.defaultNames];
                 groups[cfg.key] = {
                     names,
-                    percent: 100
+                    percent: 100,
+                    ml: 0
                 };
             });
 
@@ -4181,7 +5273,8 @@
                 const names = namesRaw.map(item => String(item || '').trim()).filter(Boolean);
                 groups[cfg.key] = {
                     names: cfg.multi ? names : (names.length ? [names[0]] : []),
-                    percent: normalizeRecipePercent(sourceGroup?.percent ?? defaultGroup.percent)
+                    percent: normalizeRecipePercent(sourceGroup?.percent ?? defaultGroup.percent),
+                    ml: Number(sourceGroup?.ml ?? defaultGroup.ml) || 0
                 };
             });
 
@@ -4679,7 +5772,18 @@
 
             const beforeLabel = getTagCompareLabel(tagSyncState.previousLabels, tagSyncState.tagKey);
             const afterLabel = getTagCompareLabel(tagSyncState.nextLabels, tagSyncState.tagKey);
-            subtitle.textContent = `${tagSyncState.specTitle}："${beforeLabel}" 已改为 "${afterLabel}"，勾选后将同步到以下商品`;
+            const labelRenamed = tagSyncState.labelChanged && beforeLabel !== afterLabel;
+            const parts = [];
+            if (labelRenamed) {
+                parts.push(`"${beforeLabel}" 已改为 "${afterLabel}"`);
+            }
+            if (tagSyncState.descChanged) {
+                parts.push(labelRenamed ? '描述同时更新' : `"${afterLabel}" 的描述已更新`);
+            }
+            if (!parts.length) {
+                parts.push(`"${afterLabel}" 配置已更新`);
+            }
+            subtitle.textContent = `${tagSyncState.specTitle}：${parts.join('，')}，勾选后将同步到以下商品`;
 
             const total = tagSyncState.affectedEntries.length;
             const selected = tagSyncState.selectedIds.size;
@@ -4714,12 +5818,14 @@
 
             if (productData) {
                 setTagLabelsForProduct(productData, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                setTagDescsForProduct(productData, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextDescs);
                 changedProducts.push(productData);
             }
 
             selectedEntries.forEach(item => {
                 if (!item.product) return;
                 setTagLabelsForProduct(item.product, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextLabels);
+                setTagDescsForProduct(item.product, tagSyncState.specKey, tagSyncState.tagKey, tagSyncState.nextDescs);
                 changedProducts.push(item.product);
             });
 
@@ -4731,6 +5837,75 @@
 
         function buildUniqueRecipeLinkId(specKey, tagKey, productId) {
             return `${specKey}:${tagKey}:keep:${productId}:${Date.now()}`;
+        }
+
+        function getRecipeVariantDiffs(beforeRecipe, afterRecipe) {
+            const diffs = [];
+            RECIPE_COMP_CONFIGS.forEach(config => {
+                const rule = getRecipeComponentRule(config.groupKey);
+                const before = normalizeRecipeComponentValue(beforeRecipe?.groups?.[config.groupKey]?.ml || 0, rule);
+                const after = normalizeRecipeComponentValue(afterRecipe?.groups?.[config.groupKey]?.ml || 0, rule);
+                if (before === after) return;
+                diffs.push({
+                    groupKey: config.groupKey,
+                    label: config.label,
+                    unit: rule.unit,
+                    before,
+                    after,
+                    delta: after - before
+                });
+            });
+            return diffs;
+        }
+
+        function formatRecipeDiffDelta(diff) {
+            const sign = diff.delta > 0 ? '+' : '';
+            return `${sign}${diff.delta}${diff.unit}`;
+        }
+
+        function prepareRecipeImpactState() {
+            if (!recipeEditorState || !productData) return null;
+            const variants = [];
+            const affectedByKey = new Map();
+
+            recipeEditorState.variants.forEach((variant, idx) => {
+                const initialVariant = recipeEditorInitialState?.variants?.[idx];
+                const specKey = variant.specKey || 'cupsize';
+                const beforeRecipe = initialVariant?.recipe || getOptionRecipe(specKey, variant.tagKey, variant.label);
+                const afterRecipe = variant.recipe;
+                const diffs = getRecipeVariantDiffs(beforeRecipe, afterRecipe);
+                if (!diffs.length) return;
+
+                const linkId = getOptionRecipeLinkId(specKey, variant.tagKey, productData);
+                const affectedEntries = getRecipeImpactEntries(specKey, variant.tagKey, linkId);
+                variants.push({
+                    specKey,
+                    tagKey: variant.tagKey,
+                    tagLabel: variant.label,
+                    linkId,
+                    // 同时保存修改前 / 修改后两份独立的配方快照，渲染时按它们重算 diffs，
+                    // 这样即使中途有 state 漂移，对比表也不会为空。
+                    beforeRecipe: cloneProductValue(beforeRecipe),
+                    recipe: cloneProductValue(afterRecipe),
+                    diffs,
+                    affectedEntries
+                });
+
+                affectedEntries.forEach(item => {
+                    const key = `${item.id}:${variant.tagKey}`;
+                    affectedByKey.set(key, {
+                        ...item,
+                        variantLabel: variant.label,
+                        diffs
+                    });
+                });
+            });
+
+            return {
+                forceSync: true,
+                variants,
+                affectedEntries: Array.from(affectedByKey.values()).sort((a, b) => a.id - b.id)
+            };
         }
 
         function openRecipeImpactModal() {
@@ -4770,16 +5945,53 @@
         function renderRecipeImpactModal() {
             if (!recipeImpactState) return;
             const subtitle = document.getElementById('recipeImpactSubtitle');
+            const diffBody = document.getElementById('recipeImpactDiffBody');
             const body = document.getElementById('recipeImpactBody');
             const summary = document.getElementById('recipeImpactSummary');
-            if (!subtitle || !body || !summary) return;
+            const actions = document.getElementById('recipeImpactActions');
+            if (!subtitle || !diffBody || !body || !summary) return;
 
             const total = recipeImpactState.affectedEntries.length;
-            const linked = recipeImpactState.selectedIds.size;
-            const unlinked = Math.max(0, total - linked);
+            if (actions) actions.style.display = 'none';
 
-            subtitle.textContent = `当前商品会直接更新。以下为关联商品：勾选后将同步新配方，不勾选则不关联`;
-            summary.textContent = `关联 ${linked} 个，不关联 ${unlinked} 个`;
+            subtitle.textContent = `当前商品会直接更新。确认后会强制同步所有关联商品，不再单独选择是否同步`;
+            summary.textContent = `强制同步 ${total} 个关联商品`;
+
+            diffBody.innerHTML = recipeImpactState.variants.map(variant => {
+                // 渲染策略：优先用 prepare 阶段缓存的 diffs；若发现为空再用 before/after 快照重算兜底；
+                // 都拿不到时给一段友好提示，避免空表格。
+                let diffs = Array.isArray(variant.diffs) ? variant.diffs.slice() : [];
+                if (!diffs.length && variant.beforeRecipe && variant.recipe) {
+                    try { diffs = getRecipeVariantDiffs(variant.beforeRecipe, variant.recipe); }
+                    catch (e) { /* keep empty */ }
+                }
+                const rowsHtml = diffs.length
+                    ? diffs.map(diff => `
+                        <tr>
+                            <td>${escAttr(diff.label)}</td>
+                            <td>${diff.before}${diff.unit}</td>
+                            <td>${diff.after}${diff.unit}</td>
+                            <td class="recipe-impact-diff-delta ${diff.delta >= 0 ? 'positive' : 'negative'}">${formatRecipeDiffDelta(diff)}</td>
+                        </tr>
+                    `).join('')
+                    : `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:14px;">未检测到具体成分差异，但已有 ${recipeImpactState.affectedEntries.length} 个商品将跟随此次保存同步</td></tr>`;
+                return `
+                    <div class="recipe-impact-diff-block">
+                        <div class="recipe-impact-diff-title">${escAttr(variant.tagLabel)} · 修改前后数值对比</div>
+                        <table class="recipe-impact-diff-table">
+                            <thead>
+                                <tr>
+                                    <th>成分</th>
+                                    <th>修改前</th>
+                                    <th>修改后</th>
+                                    <th>差值</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                `;
+            }).join('');
 
             if (!total) {
                 body.innerHTML = '<div class="recipe-impact-empty">没有关联商品受影响，确认后仅更新当前商品</div>';
@@ -4787,17 +5999,16 @@
             }
 
             body.innerHTML = recipeImpactState.affectedEntries.map(item => {
-                const checked = recipeImpactState.selectedIds.has(item.id);
                 return `
-                    <label class="recipe-impact-item">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleRecipeImpactLink('${item.id}', this.checked)">
+                    <div class="recipe-impact-item">
                         <div class="recipe-impact-item-body">
                             <div class="recipe-impact-item-name">
                                 ${escAttr(item.name)}
+                                <span class="recipe-impact-item-tag">${escAttr(item.variantLabel)}</span>
                             </div>
-                            <div class="recipe-impact-item-meta">ID: ${item.id} · 分类: ${escAttr(item.categoryName)}</div>
+                            <div class="recipe-impact-item-meta">ID: ${item.id} · 分类: ${escAttr(item.categoryName)} · 将强制同步</div>
                         </div>
-                    </label>
+                    </div>
                 `;
             }).join('');
         }
@@ -4826,70 +6037,79 @@
 
         function confirmRecipeImpactApply() {
             if (!recipeImpactState) return;
-            const total = recipeImpactState.affectedEntries.length;
-            const linked = recipeImpactState.selectedIds.size;
-            const updatedCount = Math.max(0, linked);
-            const selectedIds = recipeImpactState.selectedIds;
+            const updatedIds = new Set(recipeImpactState.affectedEntries.map(item => item.id));
             const changedProducts = [];
             const currentProductId = Number(productData?.id);
 
             if (productData && Number.isFinite(currentProductId)) {
-                setOptionRecipeLinkId(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.linkId,
-                    productData
-                );
-                setOptionRecipe(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.recipe,
-                    recipeImpactState.tagLabel,
-                    productData
-                );
+                recipeImpactState.variants.forEach(variant => {
+                    setOptionRecipeLinkId(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.linkId,
+                        productData
+                    );
+                    setOptionRecipe(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.recipe,
+                        variant.tagLabel,
+                        productData
+                    );
+                });
                 changedProducts.push(productData);
             }
 
-            recipeImpactState.affectedEntries.forEach(item => {
-                const product = item.product;
-                if (!product) return;
-                if (!selectedIds.has(item.id)) {
-                    const isolatedLinkId = buildUniqueRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, item.id);
-                    setOptionRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, isolatedLinkId, product);
-                    changedProducts.push(product);
-                    return;
-                }
-                setOptionRecipeLinkId(recipeImpactState.specKey, recipeImpactState.tagKey, recipeImpactState.linkId, product);
-                setOptionRecipe(
-                    recipeImpactState.specKey,
-                    recipeImpactState.tagKey,
-                    recipeImpactState.recipe,
-                    item.tagLabel,
-                    product
-                );
-                changedProducts.push(product);
+            const changedProductMap = new Map();
+            recipeImpactState.variants.forEach(variant => {
+                variant.affectedEntries.forEach(item => {
+                    const product = item.product;
+                    if (!product) return;
+                    setOptionRecipeLinkId(variant.specKey, variant.tagKey, variant.linkId, product);
+                    setOptionRecipe(
+                        variant.specKey,
+                        variant.tagKey,
+                        variant.recipe,
+                        item.tagLabel || variant.tagLabel,
+                        product
+                    );
+                    changedProductMap.set(item.id, product);
+                });
             });
+            changedProductMap.forEach(product => changedProducts.push(product));
 
             persistRecipeChanges(changedProducts);
+            if (recipeEditorState) {
+                recipeEditorInitialState = cloneProductValue(recipeEditorState);
+            }
             closeRecipeImpactModal();
-            closeRecipeEditor();
-            showToast(`配方已保存，已更新当前商品 + ${updatedCount} 个关联商品`);
+            if (currentProductDetailTab === 'recipe') {
+                renderRecipeMainEditorAll();
+            } else {
+                closeRecipeEditor();
+            }
+            showToast(`配方已保存，已强制同步 ${updatedIds.size} 个关联商品`);
         }
 
         function openRecipeEditor(specKey) {
             if (!productData) return;
-            const optionInfo = getSelectedOptionInfo(specKey);
-            if (!optionInfo) {
-                showToast('请先在该分组选择一个选项', 'error');
+
+            const variants = getCupVariants();
+            if (!variants.length) {
+                showToast('未找到杯型配置', 'error');
                 return;
             }
 
             recipeEditorState = {
-                specKey: optionInfo.specKey,
-                tagKey: optionInfo.tagKey,
-                tagLabel: optionInfo.tagLabel,
-                recipe: getOptionRecipe(optionInfo.specKey, optionInfo.tagKey, optionInfo.tagLabel)
+                variants: variants.map(v => ({
+                    label: v.label,
+                    capacity: v.capacity,
+                    tagKey: v.tagKey,
+                    recipe: getOptionRecipe('cupsize', v.tagKey, v.label)
+                })),
+                activeIndex: 0
             };
+            recipeEditorInitialState = cloneProductValue(recipeEditorState);
 
             renderRecipeEditor();
             document.getElementById('recipeEditorModal').classList.add('active');
@@ -4900,60 +6120,241 @@
             if (modal) modal.classList.remove('active');
             resetRecipeGroupDragState();
             recipeEditorState = null;
+            recipeEditorInitialState = null;
         }
 
         function renderRecipeEditor() {
             if (!recipeEditorState) return;
+
+            // 新主编辑器（方案 B）—— 让任何 recipe modal 操作完都能刷新主编辑器视图
+            try { renderRecipeMainEditorAll(); } catch (e) { /* keep going */ }
+
+            const inlineBody = document.getElementById('recipeInlineBody');
+            if (inlineBody) {
+                try { renderRecipeEditorInline(); } catch (e) { /* keep going */ }
+            }
+
             const body = document.getElementById('recipeEditorBody');
             const subtitle = document.getElementById('recipeEditorSubtitle');
             if (!body || !subtitle) return;
 
-            const cfg = getTagConfigBySpec(recipeEditorState.specKey);
-            const specTitle = cfg ? cfg.title : recipeEditorState.specKey;
-            subtitle.textContent = `${specTitle} · ${recipeEditorState.tagLabel}`;
+            subtitle.textContent = productData.names?.[currentLang] || productData.names?.zh || '';
 
-            body.innerHTML = recipeEditorState.recipe.groupOrder.map((groupKey) => {
-                const groupCfg = getRecipeGroupConfig(groupKey);
-                if (!groupCfg) return '';
-                const groupData = recipeEditorState.recipe.groups[groupKey] || { names: [], percent: 100 };
-                const recipeNames = formatRecipeGroupNames(groupData.names, groupCfg.multi);
+            const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
+                const isActive = idx === recipeEditorState.activeIndex;
+                const recipe = variant.recipe;
+                const total = getRecipeVolumeTotal(recipe);
+                const nonVolumeSummary = getRecipeNonVolumeSummary(recipe);
+                const overflow = total > variant.capacity;
+                const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
+
+                const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => getRecipeComponentRule(c.groupKey).unit === 'ml')
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + formatRecipeComponentDose(ml, c.groupKey) : ''}</span></div>`;
+                    }).join('');
+
+                const paramTags = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${formatRecipeComponentDose(ml, c.groupKey)}</span>`;
+                    }).join('');
+
+                const editRows = isActive ? RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                    const ml = recipe.groups[c.groupKey].ml;
+                    const rule = getRecipeComponentRule(c.groupKey);
+                    if (rule.editable === false) {
+                        return `
+                            <div class="cup-component-control locked">
+                                <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                                <span class="recipe-component-readonly">${formatRecipeComponentDose(ml, c.groupKey)}</span>
+                                <span class="recipe-component-step">基底咖啡数值由配方文件维护，不可在此修改</span>
+                            </div>
+                        `;
+                    }
+                    const holdHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', -1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', -1, event)"`;
+                    const plusHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', 1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', 1, event)"`;
+                    return `
+                        <div class="cup-component-control">
+                            <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                            <button type="button" class="recipe-stepper-btn" ${holdHandlers} aria-label="${c.label}减少${rule.step}${rule.unit}">-</button>
+                            <span class="recipe-component-value">
+                                <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
+                                       value="${normalizeRecipeComponentValue(ml, rule)}" data-comp="${c.groupKey}" data-idx="${idx}" data-step="${rule.step}" data-unit="${rule.unit}"
+                                       onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
+                                       onblur="onCupInput(this)" onchange="onCupInput(this)">
+                                <span class="recipe-component-unit">${rule.unit}</span>
+                            </span>
+                            <button type="button" class="recipe-stepper-btn" ${plusHandlers} aria-label="${c.label}增加${rule.step}${rule.unit}">+</button>
+                            <span class="recipe-component-step">每次 ${rule.step}${rule.unit}${rule.continuous ? '，可按住连续调整' : ''}</span>
+                        </div>
+                    `;
+                }).join('') : '';
 
                 return `
-                    <div class="recipe-group-card" data-group-key="${groupKey}" draggable="true">
-                        <div class="recipe-group-top">
-                            <div class="recipe-group-heading">
-                                <button type="button" class="recipe-group-drag-handle" aria-label="拖拽排序">⠿</button>
-                                <div class="recipe-group-title">${groupCfg.title}</div>
-                            </div>
-                            <div class="recipe-group-controls">
-                                <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', -10)">-10%</button>
-                                <span class="recipe-group-percent">${normalizeRecipePercent(groupData.percent)}%</span>
-                                <button type="button" class="recipe-control-btn" onclick="adjustRecipeGroupPercent('${groupKey}', 10)">+10%</button>
-                            </div>
+                    <div class="cup-card ${isActive ? 'active' : ''}" onclick="setActiveCup(${idx})">
+                        <div class="cup-card-title">
+                            <span class="dot"></span>
+                            ${variant.label}
                         </div>
-                        <div class="recipe-group-field">
-                            <label class="recipe-group-field-label">${groupCfg.multi ? '原料名称（多个）' : '原料名称'}</label>
-                            <div class="recipe-group-value">${escAttr(recipeNames)}</div>
-                            <div class="recipe-group-hint">名称在当前选项里只读展示，如需改名称请走标签配置。</div>
+                        <div class="cup-fill-track" style="height:28px;">
+                            <div class="cup-fill-content" style="width:${pct}%;">${fillSegs}</div>
                         </div>
+                        <div class="cup-fill-detail">
+                            <span class="item">
+                                <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
+                                <span class="label">容量总量</span>
+                                <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
+                            </span>
+                            <span class="item">
+                                <span class="dot" style="background:#e2e8f0;"></span>
+                                <span class="label">标准杯量</span>
+                                <span class="val">${variant.capacity}ml</span>
+                            </span>
+                            ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
+                        </div>
+                        <div class="cup-param-tags">${paramTags}</div>
+                        ${nonVolumeSummary ? `<div class="cup-fill-detail"><span class="item"><span class="label">其他成分</span><span class="val">${nonVolumeSummary}</span></span></div>` : ''}
+                        ${editRows ? `<div class="cup-component-grid">${editRows}</div>` : ''}
                     </div>
                 `;
             }).join('');
 
-            if (typeof body.querySelectorAll === 'function') {
-                const cards = body.querySelectorAll('.recipe-group-card[data-group-key]');
-                cards.forEach(card => {
-                    card.addEventListener('dragstart', startRecipeGroupDrag);
-                    card.addEventListener('dragover', handleRecipeGroupDragOver);
-                    card.addEventListener('dragend', endRecipeGroupDrag);
-                });
+            body.innerHTML = `<div class="cup-grid">${cardsHtml}</div>`;
+        }
 
-                ensureRecipeGroupTouchListeners();
-                const handles = body.querySelectorAll('.recipe-group-drag-handle');
-                handles.forEach(handle => {
-                    handle.addEventListener('touchstart', startRecipeGroupTouchDrag, { passive: false });
+        function getCupVariants() {
+            if (!productData) return [];
+            const tempCfg = getTagConfigBySpec('temperature');
+            const cupCfg = getTagConfigBySpec('cupsize');
+            if (!tempCfg || !cupCfg) return [];
+            const tempContainer = document.getElementById(tempCfg.listId);
+            const cupContainer = document.getElementById(cupCfg.listId);
+            if (!tempContainer || !cupContainer) return [];
+
+            const tempItems = tempContainer.querySelectorAll('.option-item');
+            const cupItems = cupContainer.querySelectorAll('.option-item');
+            const variants = [];
+
+            const cupList = Array.from(cupItems).map(item => ({
+                key: item.dataset.tagKey || item.dataset.value,
+                value: item.dataset.value,
+                capacity: parseInt(item.dataset.value) || 325
+            }));
+
+            tempItems.forEach(tempItem => {
+                const tempKey = tempItem.dataset.tagKey || tempItem.dataset.value;
+                const tempLabel = tempItem.dataset.value || tempKey;
+                const isHot = tempKey === '热';
+
+                const cup = isHot ? cupList[0] : (cupList[1] || cupList[0]);
+                if (!cup) return;
+
+                variants.push({
+                    label: tempLabel + ' 约' + cup.capacity + 'ML',
+                    capacity: cup.capacity,
+                    tagKey: tempKey
                 });
+            });
+            return variants;
+        }
+
+        function setActiveCup(idx) {
+            if (!recipeEditorState) return;
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditor();
+        }
+
+        function onCupSlider(el) {
+            const comp = el.dataset.comp;
+            const idx = Number(el.dataset.idx);
+            const rule = getRecipeComponentRule(comp);
+            if (rule.editable === false) return;
+            const val = normalizeRecipeComponentValue(el.value, rule);
+            const variant = recipeEditorState.variants[idx];
+            if (variant && variant.recipe.groups[comp]) {
+                variant.recipe.groups[comp].ml = val;
             }
+            renderRecipeEditor();
+        }
+
+        function onCupInput(el) {
+            const comp = el.dataset.comp;
+            const idx = Number(el.dataset.idx);
+            const rule = getRecipeComponentRule(comp);
+            if (rule.editable === false) return;
+            const val = normalizeRecipeComponentValue(el.value, rule);
+            el.value = val;
+            const variant = recipeEditorState.variants[idx];
+            if (variant && variant.recipe.groups[comp]) {
+                variant.recipe.groups[comp].ml = val;
+            }
+            renderRecipeEditor();
+        }
+
+        function adjustRecipeComponentDose(idx, groupKey, direction, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!recipeEditorState) return;
+            const variant = recipeEditorState.variants?.[idx];
+            const group = variant?.recipe?.groups?.[groupKey];
+            if (!group) return;
+            const rule = getRecipeComponentRule(groupKey);
+            if (rule.editable === false) return;
+            const delta = (Number(direction) >= 0 ? 1 : -1) * rule.step;
+            group.ml = normalizeRecipeComponentValue((Number(group.ml) || 0) + delta, rule);
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditor();
+        }
+
+        function stopRecipeComponentHold() {
+            if (recipeComponentHoldTimer) {
+                clearTimeout(recipeComponentHoldTimer);
+                recipeComponentHoldTimer = null;
+            }
+            if (recipeComponentHoldInterval) {
+                clearInterval(recipeComponentHoldInterval);
+                recipeComponentHoldInterval = null;
+            }
+        }
+
+        function startRecipeComponentHold(idx, groupKey, direction, event) {
+            if (event && typeof event.preventDefault === 'function') {
+                event.preventDefault();
+            }
+            adjustRecipeComponentDose(idx, groupKey, direction, event);
+            const rule = getRecipeComponentRule(groupKey);
+            if (!rule.continuous) return;
+            stopRecipeComponentHold();
+            recipeComponentHoldTimer = setTimeout(() => {
+                recipeComponentHoldInterval = setInterval(() => {
+                    adjustRecipeComponentDose(idx, groupKey, direction, event);
+                }, 90);
+            }, 260);
+        }
+
+        function selectCupInputValue(input, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!input || typeof input.select !== 'function') return;
+            setTimeout(() => {
+                try {
+                    input.select();
+                } catch (e) {
+                    // Older browsers may not allow selecting number inputs.
+                }
+            }, 0);
         }
 
         function createRecipeGroupDropPlaceholder(height = 72) {
@@ -5161,56 +6562,54 @@
             renderRecipeEditor();
         }
 
-        function saveRecipeEditor() {
-            if (!recipeEditorState || !productData) return;
-            const linkId = getOptionRecipeLinkId(
-                recipeEditorState.specKey,
-                recipeEditorState.tagKey,
-                productData
-            );
+        function adjustRecipeGroupSlider(groupKey, value) {
+            if (!recipeEditorState) return;
+            const group = recipeEditorState.recipe.groups[groupKey];
+            if (!group) return;
+            group.percent = normalizeRecipePercent(Number(value));
+            renderRecipeEditor();
+        }
 
-            if (isCopyWorkflowActive()) {
-                setOptionRecipeLinkId(
-                    recipeEditorState.specKey,
-                    recipeEditorState.tagKey,
-                    linkId,
-                    productData
-                );
-                setOptionRecipe(
-                    recipeEditorState.specKey,
-                    recipeEditorState.tagKey,
-                    recipeEditorState.recipe,
-                    recipeEditorState.tagLabel,
-                    productData
-                );
-                persistRecipeChanges(productData ? [productData] : []);
-                closeRecipeEditor();
-                showToast('配方配置已更新');
+        function adjustRecipeGroupInput(groupKey, value) {
+            if (!recipeEditorState) return;
+            const group = recipeEditorState.recipe.groups[groupKey];
+            if (!group) return;
+            const num = Number(value);
+            if (!Number.isFinite(num)) return;
+            group.percent = normalizeRecipePercent(num);
+            renderRecipeEditor();
+        }
+
+        function saveRecipeEditor(options = {}) {
+            if (!recipeEditorState || !productData) {
+                showToast('请先获取配方', 'error');
+                return;
+            }
+            const keepInlineEditor = Boolean(options.keepInlineEditor);
+
+            const nextImpactState = prepareRecipeImpactState();
+            if (!nextImpactState || !nextImpactState.variants.length) {
+                showToast('配方未发生变化');
                 return;
             }
 
-            const affectedEntries = getRecipeImpactEntries(
-                recipeEditorState.specKey,
-                recipeEditorState.tagKey,
-                linkId
-            );
-
             recipeImpactState = {
-                specKey: recipeEditorState.specKey,
-                tagKey: recipeEditorState.tagKey,
-                specTitle: getTagConfigBySpec(recipeEditorState.specKey)?.title || recipeEditorState.specKey,
-                tagLabel: recipeEditorState.tagLabel,
-                linkId,
-                recipe: normalizeRecipeData(recipeEditorState.recipe, recipeEditorState.tagLabel),
-                affectedEntries,
-                selectedIds: new Set(affectedEntries.map(item => item.id))
+                ...nextImpactState,
+                keepInlineEditor
             };
-
             openRecipeImpactModal();
+        }
+
+        function saveRecipeInline() {
+            saveRecipeEditor({ keepInlineEditor: true });
         }
 
         function escAttr(v) {
             return String(v || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function escInlineJsString(v) {
+            return escAttr(JSON.stringify(String(v || '')));
         }
 
         function normalizeCategoryOptionEntry(entry) {
@@ -5228,8 +6627,11 @@
             }
 
             if (!Object.keys(names).length) {
+                // 兜底：只写中文槽位；不要把中文 key 塞进 en，
+                // 否则会在 EN 模式下让英文字段误显示成中文。
+                // 英文渲染时会按 names.en → names.zh → key 的顺序兜底，
+                // 自然回到中文，但 en 数据本身保持空。
                 names.zh = key;
-                names.en = key;
             }
 
             return { key, names };
@@ -5787,7 +7189,7 @@
                     const afterLabel = afterDefault ? getTagLabel(cfg.specKey, afterDefault, lang) : '';
                     if (beforeLabel !== afterLabel) {
                         rows.push({
-                            field: `${cfg.title}默认项`,
+                            field: `${getTagGroupLabel(cfg.specKey, lang)}默认项`,
                             before: beforeLabel,
                             after: afterLabel
                         });
@@ -5800,7 +7202,7 @@
                 const beforeKey = sourceProduct.defaultOptions?.[cfg.specKey] || '';
                 const afterKey = updatedProduct.defaultOptions?.[cfg.specKey] || '';
                 return {
-                    field: `${cfg.title}默认`,
+                    field: `${getTagGroupLabel(cfg.specKey, currentLang)}默认`,
                     before: beforeKey ? getTagLabel(cfg.specKey, beforeKey, currentLang) : '',
                     after: afterKey ? getTagLabel(cfg.specKey, afterKey, currentLang) : ''
                 };
@@ -5817,7 +7219,7 @@
                     const after = Number(updatedProduct.tagExtraPrices?.[cfg.specKey]?.[tagKey] || 0);
                     if (before !== after) {
                         recipeExtraPriceRows.push({
-                            field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey}`,
+                            field: `${getTagGroupLabel(cfg.specKey, currentLang)} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey}`,
                             before,
                             after
                         });
@@ -5839,7 +7241,7 @@
                         const after = Number(afterRecipe.groups?.[groupCfg.key]?.percent || 100);
                         if (before !== after) {
                             recipePercentRows.push({
-                                field: `${cfg.title} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey} · ${groupCfg.title}`,
+                                field: `${getTagGroupLabel(cfg.specKey, currentLang)} · ${getTagLabel(cfg.specKey, tagKey, currentLang) || tagKey} · ${groupCfg.title}`,
                                 before: `${before}%`,
                                 after: `${after}%`
                             });
@@ -6246,8 +7648,11 @@
             const categoryJson = params.get('category');
             const productId = Number(params.get('id'));
             currentDevice = params.get('device') || 'RCK111';
-            if (detailTab === 'recipe') {
+            if (detailTab === 'recipe' || params.get('tab') === 'recipe') {
                 switchProductDetailTab('recipe');
+            }
+            if (detailTab === 'tags') {
+                switchProductDetailTab('tags');
             }
 
             if (payloadKey) {
@@ -6396,6 +7801,11 @@
                             if (drawerActiveSpecKey === meta.specKey) {
                                 drawerSelectedTagKey = e.target.dataset.tagKey;
                             }
+                            // 温度 / 杯型变化时，配方面板的「当前杯型」头部需要同步刷新
+                            if ((meta.specKey === 'temperature' || meta.specKey === 'cupsize')
+                                && typeof renderRecipeCupComboHeader === 'function') {
+                                try { renderRecipeCupComboHeader(); } catch (err) { /* keep going */ }
+                            }
                         }
                     }
                 });
@@ -6408,6 +7818,7 @@
             });
 
             setActiveRecipeSpec(activeRecipeSpecKey);
+            refreshOptionTitles();
 
             const recipeModal = document.getElementById('recipeEditorModal');
             if (recipeModal) {
@@ -6539,18 +7950,64 @@
             });
         }
 
+        function ensureMockRecipes() {
+            if (!productData) return;
+            if (productData.optionRecipes && Object.keys(productData.optionRecipes).length > 0) {
+                const cupRecipes = productData.optionRecipes['cupsize'] || {};
+                const hasMl = Object.values(cupRecipes).some(r => {
+                    if (!r || !r.groups) return false;
+                    return Object.values(r.groups).some(g => (g.ml || 0) > 0);
+                });
+                if (hasMl) return;
+            }
+
+            const groupOrder = ['baseCoffeeLiquid', 'syrup', 'milk', 'foam', 'water', 'ice', 'powders', 'concentrates', 'decorToppings'];
+            const makeRecipe = (mlOverrides) => {
+                const groups = {};
+                groupOrder.forEach(key => {
+                    groups[key] = { names: [], percent: 100, ml: mlOverrides[key] || 0 };
+                });
+                return { groupOrder, groups };
+            };
+
+            const seed = (productData.id || 1) - 1;
+            const presets = [
+                { baseCoffeeLiquid: 80, syrup: 25, milk: 180, foam: 20, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 60, syrup: 0, milk: 200, foam: 35, water: 25, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 90, syrup: 30, milk: 150, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 70, syrup: 0, milk: 0, foam: 0, water: 200, ice: 120, powders: 0, concentrates: 0, decorToppings: 0 },
+                { baseCoffeeLiquid: 0, syrup: 0, milk: 280, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+            ];
+            const preset = presets[seed % presets.length];
+
+            productData.optionRecipes = productData.optionRecipes || {};
+            productData.optionRecipeLinks = productData.optionRecipeLinks || {};
+            productData.optionRecipes['cupsize'] = {
+                '热': makeRecipe({ ...preset, water: preset.water || 30, ice: 0 }),
+                '标准冰': makeRecipe({ ...preset, water: preset.water || 60, ice: preset.ice || 100, foam: 0 }),
+                '少冰': makeRecipe({ ...preset, water: preset.water || 60, ice: 70, foam: 0 })
+            };
+            productData.optionRecipeLinks['cupsize'] = {
+                '热': 'cupsize:热:' + productData.id,
+                '标准冰': 'cupsize:标准冰:' + productData.id,
+                '少冰': 'cupsize:少冰:' + productData.id
+            };
+        }
+
+        let inlineRecipeState = null;
+
         function fillFormData() {
             renderProductCategorySelector();
-            
+
             // 图片
             document.getElementById('productImage').value = productData.image || '';
             updateImagePreview();
-            
+
             // 价格
             document.getElementById('productPrice').value = productData.price || '';
             document.getElementById('productOriginalPrice').value = productData.originalPrice || '';
             updatePricePreview();
-            
+
             document.getElementById('onSaleSwitch').checked = productData.onSale !== false;
             updateOnSaleLabel();
             resetProductBusinessTagDraftState();
@@ -6571,6 +8028,951 @@
                 }
                 sortOptionListByPreferred(meta.listId, preferred || '');
             });
+
+            if (currentProductDetailTab === 'recipe') {
+                renderInlineRecipe();
+            }
+        }
+
+        // ============================================================
+        // 配方主编辑器（方案 B）—— 纯函数 helper
+        // 这些 helper 不依赖 DOM，可以在 vm 沙箱里单独测试。
+        // ============================================================
+
+        function cloneRecipeCupConfig(value) {
+            return JSON.parse(JSON.stringify(value == null ? null : value));
+        }
+
+        function normalizeRecipeAmount(value) {
+            const amount = Math.round(Number(value));
+            if (!Number.isFinite(amount) || amount < 0) return 0;
+            return amount;
+        }
+
+        function getRecipeIngredientOriginalValue(cup, ingredientKey) {
+            const originals = Array.isArray(cup && cup.originalIngredients) ? cup.originalIngredients : [];
+            const original = originals.find((item) => String(item.key) === String(ingredientKey));
+            return normalizeRecipeAmount(original && original.value);
+        }
+
+        function calculateRecipeCupCapacity(cup) {
+            const ingredients = Array.isArray(cup && cup.ingredients) ? cup.ingredients : [];
+            return ingredients.reduce((total, ingredient) => {
+                if (String(ingredient && ingredient.unit || '').toLowerCase() !== 'ml') return total;
+                return total + normalizeRecipeAmount(ingredient && ingredient.value);
+            }, 0);
+        }
+
+        function getRecipeCupMismatch(cup) {
+            return calculateRecipeCupCapacity(cup) - normalizeRecipeAmount(cup && cup.standardCapacityMl);
+        }
+
+        function isRecipeCupChanged(cup) {
+            const ingredients = Array.isArray(cup && cup.ingredients) ? cup.ingredients : [];
+            return ingredients.some((ingredient) => {
+                const key = String(ingredient && ingredient.key || '');
+                if (!key) return false;
+                return normalizeRecipeAmount(ingredient && ingredient.value) !== getRecipeIngredientOriginalValue(cup, key);
+            });
+        }
+
+        function getRecipeChangedCups(cups) {
+            return (Array.isArray(cups) ? cups : []).filter((cup) => isRecipeCupChanged(cup));
+        }
+
+        function buildRecipeSaveBarMessage(cups) {
+            const changedCups = getRecipeChangedCups(cups);
+            if (!changedCups.length) return '暂无配方修改。';
+            const mismatchedCups = changedCups.filter((cup) => getRecipeCupMismatch(cup) !== 0);
+            if (!mismatchedCups.length) {
+                return `已修改 ${changedCups.length} 个杯型。所有已修改杯型容量符合标准杯量。`;
+            }
+            if (mismatchedCups.length === 1) {
+                const cup = mismatchedCups[0];
+                const mismatch = getRecipeCupMismatch(cup);
+                const direction = mismatch > 0 ? '高于' : '低于';
+                return `已修改 ${changedCups.length} 个杯型。${cup.label} 容量${direction}标准杯量 ${Math.abs(mismatch)}ml。`;
+            }
+            return `已修改 ${changedCups.length} 个杯型。${mismatchedCups.length} 个杯型容量与标准杯量不一致。`;
+        }
+
+        function restoreRecipeCupValues(cups, cupKey) {
+            const nextCups = cloneRecipeCupConfig(cups) || [];
+            const cup = nextCups.find((item) => String(item.key) === String(cupKey));
+            if (!cup) return nextCups;
+            cup.ingredients = (Array.isArray(cup.ingredients) ? cup.ingredients : []).map((ingredient) => ({
+                ...ingredient,
+                value: getRecipeIngredientOriginalValue(cup, ingredient.key)
+            }));
+            return nextCups;
+        }
+
+        // ============================================================
+        // 配方主编辑器（方案 B）—— 与 recipeEditorState 的桥接 + 渲染
+        // ============================================================
+
+        let activeRecipeCupKey = '';
+
+        function getRecipeGroupMeta(groupKey) {
+            const comp = (typeof RECIPE_COMP_CONFIGS !== 'undefined' && Array.isArray(RECIPE_COMP_CONFIGS))
+                ? RECIPE_COMP_CONFIGS.find((item) => item.groupKey === groupKey) : null;
+            const rule = (typeof RECIPE_COMPONENT_RULES !== 'undefined' && RECIPE_COMPONENT_RULES[groupKey])
+                ? RECIPE_COMPONENT_RULES[groupKey] : null;
+            return {
+                label: comp ? comp.label : groupKey,
+                unit: rule ? rule.unit : 'ml',
+                step: rule ? rule.step : 5,
+                editable: rule ? rule.editable !== false : true
+            };
+        }
+
+        function buildRecipeCupConfigsFromState() {
+            if (!recipeEditorState || !Array.isArray(recipeEditorState.variants)) return [];
+            const initialVariants = (recipeEditorInitialState && Array.isArray(recipeEditorInitialState.variants))
+                ? recipeEditorInitialState.variants : [];
+            return recipeEditorState.variants.map((variant, idx) => {
+                const recipe = variant && variant.recipe ? variant.recipe : { groupOrder: [], groups: {} };
+                const groupOrder = Array.isArray(recipe.groupOrder) ? recipe.groupOrder : Object.keys(recipe.groups || {});
+                const initialGroups = initialVariants[idx] && initialVariants[idx].recipe && initialVariants[idx].recipe.groups
+                    ? initialVariants[idx].recipe.groups : {};
+
+                const ingredients = [];
+                const originalIngredients = [];
+                const otherIngredients = [];
+                groupOrder.forEach((groupKey) => {
+                    const group = recipe.groups && recipe.groups[groupKey];
+                    if (!group) return;
+                    const meta = getRecipeGroupMeta(groupKey);
+                    const value = normalizeRecipeAmount(group.ml);
+                    const originalValue = normalizeRecipeAmount(initialGroups[groupKey] && initialGroups[groupKey].ml);
+                    const ingredient = {
+                        key: groupKey,
+                        label: meta.label,
+                        value,
+                        unit: meta.unit,
+                        editable: meta.editable,
+                        step: meta.step
+                    };
+                    ingredients.push(ingredient);
+                    originalIngredients.push({ key: groupKey, value: originalValue });
+                    if (meta.unit !== 'ml') {
+                        otherIngredients.push({ key: groupKey, label: meta.label, value, unit: meta.unit });
+                    }
+                });
+
+                return {
+                    key: `${variant.tagKey || 'cup'}_${idx}`,
+                    variantIndex: idx,
+                    label: variant.label || '杯型',
+                    standardCapacityMl: normalizeRecipeAmount(variant.capacity),
+                    ingredients,
+                    originalIngredients,
+                    otherIngredients
+                };
+            });
+        }
+
+        function getRecipeCupConfigs() {
+            return buildRecipeCupConfigsFromState();
+        }
+
+        function getActiveRecipeCup() {
+            const cups = getRecipeCupConfigs();
+            if (!cups.length) return null;
+            return cups.find((cup) => String(cup.key) === String(activeRecipeCupKey)) || cups[0];
+        }
+
+        function getRecipeRequiredOptionKeys() {
+            return RECIPE_REQUIRED_OPTION_KEYS.filter((specKey) => Boolean(getTagConfigBySpec(specKey)));
+        }
+
+        function getRecipeOptionCandidates(specKey) {
+            return getTagKeys(specKey).map((tagKey) => ({
+                specKey,
+                tagKey,
+                label: getTagLabel(specKey, tagKey, currentLang)
+            }));
+        }
+
+        function getInitialRecipeSelection(specKey) {
+            const selected = getCurrentSelectedTagKey(specKey);
+            const candidates = getRecipeOptionCandidates(specKey);
+            if (selected && candidates.some((item) => item.tagKey === selected)) return selected;
+            return candidates[0]?.tagKey || '';
+        }
+
+        function initializeRecipeSelectionState(force = false) {
+            if (recipeSelectionState && !force) return;
+            const selections = {};
+            getRecipeRequiredOptionKeys().forEach((specKey) => {
+                selections[specKey] = getInitialRecipeSelection(specKey);
+            });
+            recipeSelectionState = {
+                selections,
+                fetchedKey: '',
+                fetchedLabel: '',
+                status: 'idle'
+            };
+        }
+
+        function getRecipeCombinationFromSelection() {
+            initializeRecipeSelectionState();
+            const optionInfos = getRecipeRequiredOptionKeys().map((specKey) => {
+                const tagKey = recipeSelectionState?.selections?.[specKey] || '';
+                if (!tagKey) return null;
+                return {
+                    specKey,
+                    tagKey,
+                    tagLabel: getTagLabel(specKey, tagKey, currentLang)
+                };
+            });
+            if (optionInfos.some((item) => !item)) return null;
+
+            return {
+                specKey: RECIPE_COMBINATION_SPEC_KEY,
+                tagKey: optionInfos.map((item) => `${item.specKey}=${encodeURIComponent(item.tagKey)}`).join('&'),
+                tagLabel: optionInfos.map((item) => item.tagLabel).join(' / '),
+                optionInfos
+            };
+        }
+
+        function getStoredRecipeForCombination(combo) {
+            if (!combo || !productData || typeof productData !== 'object') return null;
+            const bySpec = productData.optionRecipes?.[combo.specKey];
+            if (!bySpec || typeof bySpec !== 'object') return null;
+            return bySpec[combo.tagKey] || null;
+        }
+
+        function buildDefaultRecipeForCombination(combo) {
+            const recipe = getDefaultRecipeData(combo?.tagLabel || '');
+            const infoBySpec = {};
+            (combo?.optionInfos || []).forEach((item) => {
+                infoBySpec[item.specKey] = item;
+            });
+            const temperature = String(infoBySpec.temperature?.tagKey || infoBySpec.temperature?.tagLabel || '');
+            const strength = String(infoBySpec.strength?.tagKey || infoBySpec.strength?.tagLabel || '');
+            const beanLabel = infoBySpec.beans?.tagLabel || combo?.tagLabel || '基底咖啡液';
+
+            Object.values(recipe.groups).forEach((group) => {
+                group.ml = 0;
+            });
+            recipe.groups.baseCoffeeLiquid.names = [beanLabel];
+            recipe.groups.baseCoffeeLiquid.ml = strength.includes('加2') ? 180 : (strength.includes('加1') ? 130 : 80);
+            recipe.groups.milk.names = ['牛奶'];
+            recipe.groups.milk.ml = 180;
+            recipe.groups.syrup.names = ['糖浆'];
+            recipe.groups.syrup.ml = 25;
+
+            if (temperature.includes('冰')) {
+                recipe.groups.water.names = ['热水'];
+                recipe.groups.water.ml = 60;
+                recipe.groups.ice.names = ['冰'];
+                recipe.groups.ice.ml = temperature.includes('少冰') ? 70 : 100;
+            } else {
+                recipe.groups.foam.names = ['奶泡'];
+                recipe.groups.foam.ml = 20;
+                recipe.groups.water.names = ['热水'];
+                recipe.groups.water.ml = 30;
+            }
+
+            return recipe;
+        }
+
+        function getRecipeForCombination(combo) {
+            const stored = getStoredRecipeForCombination(combo);
+            return stored
+                ? normalizeRecipeData(stored, combo.tagLabel)
+                : normalizeRecipeData(buildDefaultRecipeForCombination(combo), combo.tagLabel);
+        }
+
+        // 列出商品当前支持的所有「热杯 / 冰杯 + 容量」组合，
+        // 利用现有 getCupVariants()（温度 × 杯型交叉，热取第一个杯型、冰取第二个）。
+        // 同种类 + 同容量去重，结果形如 `热杯 · 355ml / 冰杯 · 473ml`。
+        function formatRecipeCupCombo() {
+            const variants = typeof getCupVariants === 'function' ? getCupVariants() : [];
+            if (!Array.isArray(variants) || !variants.length) return '';
+            const seen = new Set();
+            const parts = [];
+            variants.forEach((variant) => {
+                if (!variant) return;
+                const tempSource = String(variant.tagKey || variant.label || '');
+                const isIce = /冰|ice/i.test(tempSource);
+                const isHot = /热|hot/i.test(tempSource);
+                const kind = isHot ? '热杯' : (isIce ? '冰杯' : (variant.tagKey || variant.label || ''));
+                const cap = variant.capacity ? `${variant.capacity}ml` : '';
+                const key = `${kind}::${cap}`;
+                if (!kind || seen.has(key)) return;
+                seen.add(key);
+                parts.push(cap ? `${kind} · ${cap}` : kind);
+            });
+            return parts.join(' / ');
+        }
+
+        function renderRecipeCupComboHeader() {
+            const root = document.getElementById('recipeCupComboHeader');
+            if (!root) return;
+            const text = formatRecipeCupCombo();
+            if (!text) {
+                root.className = 'recipe-cup-combo is-empty';
+                root.innerHTML = `<span class="label">当前杯型</span><span class="value">请先在「选项配置」配置温度和杯型</span>`;
+                return;
+            }
+            root.className = 'recipe-cup-combo';
+            root.innerHTML = `<span class="label">当前杯型</span><span class="value">${escAttr(text)}</span>`;
+        }
+
+        function renderRecipeRequiredOptionGroups() {
+            initializeRecipeSelectionState();
+            renderRecipeCupComboHeader();
+            const root = document.getElementById('recipeRequiredOptionGroups');
+            if (!root) return;
+            root.innerHTML = getRecipeRequiredOptionKeys().map((specKey) => {
+                const cfg = getTagConfigBySpec(specKey);
+                const selected = recipeSelectionState?.selections?.[specKey] || '';
+                const chips = getRecipeOptionCandidates(specKey).map((option) => `
+                    <button
+                        type="button"
+                        class="recipe-option-chip ${option.tagKey === selected ? 'active' : ''}"
+                        data-recipe-spec-key="${escAttr(specKey)}"
+                        data-recipe-tag-key="${escAttr(option.tagKey)}"
+                        onclick="selectRecipeRequiredOption(${escInlineJsString(specKey)}, ${escInlineJsString(option.tagKey)})"
+                    >${escAttr(option.label)}</button>
+                `).join('');
+                return `
+                    <div class="recipe-required-group" data-recipe-required-key="${escAttr(specKey)}">
+                        <div class="recipe-required-group-head">
+                            <span>${escAttr(cfg?.title || specKey)}</span>
+                            <span class="recipe-required-mark">必选</span>
+                        </div>
+                        <div class="recipe-option-chip-list">${chips || '<span class="recipe-change-empty">暂无选项</span>'}</div>
+                    </div>
+                `;
+            }).join('');
+            renderRecipeSelectionStatus();
+        }
+
+        function renderRecipeSelectionStatus() {
+            const status = document.getElementById('recipeSelectionStatus');
+            const fetchButton = document.getElementById('recipeFetchButton');
+            if (!status && !fetchButton) return;
+            const combo = getRecipeCombinationFromSelection();
+            if (fetchButton) fetchButton.disabled = !combo;
+            if (!status) return;
+            if (!combo) {
+                status.textContent = '请选择咖啡豆、温度、浓度后获取配方。';
+                return;
+            }
+            if (recipeSelectionState?.status === 'fetched' && recipeSelectionState.fetchedKey === combo.tagKey) {
+                status.textContent = `已获取：${combo.tagLabel}`;
+                return;
+            }
+            if (recipeSelectionState?.status === 'stale') {
+                status.textContent = `选项已变更，请重新获取配方：${combo.tagLabel}`;
+                return;
+            }
+            status.textContent = `当前选择：${combo.tagLabel}`;
+        }
+
+        function selectRecipeRequiredOption(specKey, tagKey) {
+            initializeRecipeSelectionState();
+            if (!RECIPE_REQUIRED_OPTION_KEYS.includes(specKey) || !tagKey) return;
+            recipeSelectionState.selections[specKey] = tagKey;
+            const combo = getRecipeCombinationFromSelection();
+            if (recipeSelectionState.fetchedKey && combo && recipeSelectionState.fetchedKey !== combo.tagKey) {
+                recipeSelectionState.status = 'stale';
+                recipeEditorState = null;
+                recipeEditorInitialState = null;
+            } else if (!recipeSelectionState.fetchedKey) {
+                recipeSelectionState.status = 'idle';
+            }
+            renderRecipeMainEditorAll();
+        }
+
+        function fetchRecipeForSelectedOptions() {
+            initializeRecipeSelectionState();
+            const combo = getRecipeCombinationFromSelection();
+            if (!combo) {
+                showToast('请先选择咖啡豆、温度、浓度', 'error');
+                return;
+            }
+            const recipe = getRecipeForCombination(combo);
+            recipeEditorState = {
+                variants: [{
+                    specKey: combo.specKey,
+                    tagKey: combo.tagKey,
+                    label: combo.tagLabel,
+                    recipe
+                }],
+                activeIndex: 0
+            };
+            recipeEditorInitialState = cloneProductValue(recipeEditorState);
+            recipeSelectionState.fetchedKey = combo.tagKey;
+            recipeSelectionState.fetchedLabel = combo.tagLabel;
+            recipeSelectionState.status = 'fetched';
+            renderRecipeMainEditorAll();
+            showToast('配方已获取');
+        }
+
+        function getFetchedRecipeVariant() {
+            if (!recipeEditorState || !Array.isArray(recipeEditorState.variants)) return null;
+            return recipeEditorState.variants[0] || null;
+        }
+
+        function getFetchedRecipeChanged() {
+            const variant = getFetchedRecipeVariant();
+            const initial = recipeEditorInitialState?.variants?.[0];
+            if (!variant || !initial) return false;
+            return getRecipeVariantDiffs(initial.recipe, variant.recipe).length > 0;
+        }
+
+        function renderFetchedRecipeCompareHtml() {
+            const variant = getFetchedRecipeVariant();
+            const initial = recipeEditorInitialState?.variants?.[0];
+            if (!variant || !initial) return '';
+            const beforeRecipe = initial.recipe || {};
+            const afterRecipe = variant.recipe || {};
+            const diffs = getRecipeVariantDiffs(beforeRecipe, afterRecipe);
+            if (!diffs.length) {
+                return `
+                    <div class="recipe-side-block" style="margin-top:14px;">
+                        <div class="recipe-side-title">修改前后对比</div>
+                        <div class="recipe-change-empty">当前配方暂无修改。</div>
+                    </div>
+                `;
+            }
+            const beforeTotal = getRecipeVolumeTotal(beforeRecipe);
+            const afterTotal = getRecipeVolumeTotal(afterRecipe);
+            // 顶部两张容量卡片已经表达了「总量 X → Y」，列表里不再重复"容量总量"行，避免页面被无限拉长。
+            return `
+                <div class="recipe-side-block" style="margin-top:14px;">
+                    <div class="recipe-side-title">修改前后对比</div>
+                    <div class="recipe-compare-grid">
+                        <div class="recipe-compare-card">
+                            <div class="recipe-compare-label">修改前</div>
+                            <div class="recipe-compare-value">${beforeTotal}ml</div>
+                        </div>
+                        <div class="recipe-compare-card">
+                            <div class="recipe-compare-label">修改后</div>
+                            <div class="recipe-compare-value">${afterTotal}ml</div>
+                        </div>
+                    </div>
+                    <div class="recipe-change-list-wrap">
+                        <div class="recipe-change-list-head">
+                            <span class="label">成分变动</span>
+                            <span class="count">共 ${diffs.length} 项</span>
+                        </div>
+                        <div class="recipe-change-list">
+                            ${diffs.map((diff) => `
+                                <div class="recipe-change-item" title="${escAttr(diff.label)} ${diff.before}${diff.unit} → ${diff.after}${diff.unit}">
+                                    <span>${escAttr(diff.label)}</span>
+                                    <strong>${diff.before}${diff.unit} → ${diff.after}${diff.unit}</strong>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFetchedRecipeEditor() {
+            const editor = document.getElementById('recipeMainEditor');
+            if (!editor) return;
+            const variant = getFetchedRecipeVariant();
+            const combo = getRecipeCombinationFromSelection();
+            if (!variant || recipeSelectionState?.status !== 'fetched') {
+                editor.innerHTML = `
+                    <div class="recipe-fetch-empty" id="recipeFetchEmpty">
+                        <div>
+                            <div class="recipe-fetch-empty-title">等待获取配方</div>
+                            <div class="recipe-fetch-empty-copy">请选择右侧咖啡豆、温度、浓度后点击“获取配方”，左侧会展示该选项组合对应的配方成分。</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const recipe = variant.recipe || getDefaultRecipeData(variant.label);
+            const total = getRecipeVolumeTotal(recipe);
+            const rows = RECIPE_COMP_CONFIGS
+                .filter((cfg) => (Number(recipe.groups?.[cfg.groupKey]?.ml) || 0) > 0)
+                .map((cfg) => renderFetchedRecipeIngredient(variant, cfg))
+                .join('');
+            const isChanged = getFetchedRecipeChanged();
+            editor.innerHTML = `
+                <div class="recipe-fetch-summary">
+                    <div>
+                        <div class="recipe-fetch-summary-title">已获取配方</div>
+                        <div class="recipe-fetch-summary-meta">${escAttr(combo?.tagLabel || variant.label)}</div>
+                    </div>
+                    <div class="recipe-fetch-actions">
+                        <button
+                            class="btn btn-default recipe-revert-btn"
+                            id="recipeRevertBtn"
+                            type="button"
+                            ${isChanged ? '' : 'disabled'}
+                            title="${isChanged ? '撤销本次未保存的调整，恢复到上一次「获取配方」或「保存配方」时的数值' : '当前没有未保存修改'}"
+                            onclick="revertFetchedRecipeChanges()">↩ 恢复修改前</button>
+                        <button class="btn btn-primary" id="saveRecipeInlineBtn" type="button" onclick="saveRecipeInline()">保存配方</button>
+                    </div>
+                </div>
+                ${renderRecipeSegmentBar({
+                    ingredients: RECIPE_COMP_CONFIGS.map((cfg) => {
+                        const rule = getRecipeComponentRule(cfg.groupKey);
+                        return {
+                            key: cfg.groupKey,
+                            label: cfg.label,
+                            value: Number(recipe.groups?.[cfg.groupKey]?.ml) || 0,
+                            unit: rule.unit
+                        };
+                    })
+                })}
+                <div class="recipe-capacity-row recipe-capacity-row-single">
+                    <div class="recipe-capacity-card recipe-capacity-standard">
+                        <div class="recipe-capacity-label">容量总量${isChanged ? ' · 有未保存修改' : ''}</div>
+                        <div class="recipe-capacity-value">${total}ml</div>
+                    </div>
+                </div>
+                ${renderFetchedRecipeCompareHtml()}
+                ${rows || '<div class="recipe-change-empty">当前配方暂无成分。</div>'}
+                <div class="recipe-fetch-save-note">保存后只更新当前选项组合对应的配方。</div>
+            `;
+        }
+
+        // 把当前 fetched 配方回退到「获取配方」/「保存配方」时缓存的基线。
+        // 仅作用于当前选项组合，不会改动其他商品或选项。
+        function revertFetchedRecipeChanges() {
+            const variant = getFetchedRecipeVariant();
+            const initial = recipeEditorInitialState?.variants?.[0];
+            if (!variant || !initial?.recipe) {
+                showToast('暂无可恢复的修改', 'error');
+                return;
+            }
+            if (!getFetchedRecipeChanged()) {
+                showToast('当前没有未保存修改');
+                return;
+            }
+            variant.recipe = cloneProductValue(initial.recipe);
+            renderRecipeMainEditorAll();
+            showToast('已恢复到上次保存前');
+        }
+
+        function renderFetchedRecipeIngredient(variant, cfg) {
+            const recipe = variant.recipe;
+            const group = recipe.groups?.[cfg.groupKey];
+            const value = Number(group?.ml) || 0;
+            const rule = getRecipeComponentRule(cfg.groupKey);
+            const segmentClass = getRecipeSegmentClass(cfg.groupKey);
+            if (rule.editable === false) {
+                const readonlyHint = getRecipeReadonlyHint(cfg.groupKey);
+                return `
+                    <div class="recipe-readonly-ingredient">
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(cfg.label)} ${formatRecipeComponentDose(value, cfg.groupKey)}</div>
+                        <div class="recipe-ingredient-hint">${readonlyHint}</div>
+                    </div>
+                `;
+            }
+            return `
+                <div class="recipe-ingredient-editor">
+                    <div>
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(cfg.label)}</div>
+                        <div class="recipe-ingredient-hint">每次 ${rule.step}${rule.unit}</div>
+                    </div>
+                    <div class="recipe-stepper">
+                        <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedRecipeIngredient('${cfg.groupKey}', -${rule.step})">−</button>
+                        <label class="recipe-value-field">
+                            <input value="${normalizeRecipeComponentValue(value, rule)}" inputmode="numeric" onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)" onchange="setFetchedRecipeIngredientValue('${cfg.groupKey}', this.value)" onblur="setFetchedRecipeIngredientValue('${cfg.groupKey}', this.value)" />
+                            <span class="recipe-value-unit">${rule.unit}</span>
+                        </label>
+                        <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedRecipeIngredient('${cfg.groupKey}', ${rule.step})">+</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setFetchedRecipeIngredientValue(groupKey, value) {
+            const variant = getFetchedRecipeVariant();
+            if (!variant || !variant.recipe?.groups?.[groupKey]) return;
+            const rule = getRecipeComponentRule(groupKey);
+            if (rule.editable === false) return;
+            variant.recipe.groups[groupKey].ml = normalizeRecipeComponentValue(value, rule);
+            renderRecipeMainEditorAll();
+        }
+
+        function adjustFetchedRecipeIngredient(groupKey, delta) {
+            const variant = getFetchedRecipeVariant();
+            if (!variant || !variant.recipe?.groups?.[groupKey]) return;
+            const current = Number(variant.recipe.groups[groupKey].ml) || 0;
+            setFetchedRecipeIngredientValue(groupKey, current + Number(delta || 0));
+        }
+
+        function applyRecipeIngredientToState(cupKey, ingredientKey, nextValue) {
+            const cups = getRecipeCupConfigs();
+            const cup = cups.find((item) => String(item.key) === String(cupKey));
+            if (!cup || !recipeEditorState) return;
+            const variant = recipeEditorState.variants[cup.variantIndex];
+            const group = variant && variant.recipe && variant.recipe.groups && variant.recipe.groups[ingredientKey];
+            if (!group) return;
+            const meta = getRecipeGroupMeta(ingredientKey);
+            if (!meta.editable) return;
+            group.ml = normalizeRecipeAmount(nextValue);
+        }
+
+        function restoreActiveRecipeCupToOriginal() {
+            const cup = getActiveRecipeCup();
+            if (!cup || !recipeEditorInitialState) return;
+            const initial = recipeEditorInitialState.variants[cup.variantIndex];
+            const variant = recipeEditorState && recipeEditorState.variants[cup.variantIndex];
+            if (!initial || !variant) return;
+            variant.recipe = cloneRecipeCupConfig(initial.recipe);
+        }
+
+        function getRecipeSegmentClass(ingredientKey) {
+            const key = String(ingredientKey || '');
+            if (key === 'baseCoffeeLiquid' || key === 'espresso') return 'espresso';
+            if (key === 'milk') return 'milk';
+            if (key === 'foam') return 'foam';
+            if (key === 'water' || key === 'hotWater') return 'hotWater';
+            if (key === 'syrup') return 'syrup';
+            if (key === 'ice') return 'ice';
+            return 'milk';
+        }
+
+        function renderRecipeSegmentBar(cup) {
+            const ingredients = Array.isArray(cup && cup.ingredients) ? cup.ingredients : [];
+            // 容量分段条：ml 单位 + 冰（mock 1g=1ml 折算）都参与，标签仍按各自原单位展示。
+            const volumeIngredients = ingredients.filter((item) => {
+                if (normalizeRecipeAmount(item.value) <= 0) return false;
+                const unit = String(item.unit).toLowerCase();
+                if (unit === 'ml') return true;
+                return item.key === 'ice' || item.groupKey === 'ice';
+            });
+            const total = Math.max(1, volumeIngredients.reduce((sum, item) => sum + normalizeRecipeAmount(item.value), 0));
+            return `
+                <div class="recipe-segment-bar">
+                    ${volumeIngredients.map((ingredient) => {
+                        const value = normalizeRecipeAmount(ingredient.value);
+                        const width = Math.max(8, Math.round((value / total) * 100));
+                        return `<div class="recipe-segment ${getRecipeSegmentClass(ingredient.key)}" style="width:${width}%">${escAttr(ingredient.label)} ${value}${ingredient.unit}</div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderRecipeCapacitySummary(cup) {
+            const current = calculateRecipeCupCapacity(cup);
+            const standard = normalizeRecipeAmount(cup && cup.standardCapacityMl);
+            const mismatch = current - standard;
+            const warningClass = mismatch === 0 ? '' : 'recipe-capacity-warning';
+            const sign = mismatch > 0 ? '+' : '';
+            return `
+                <div class="recipe-capacity-row">
+                    <div class="recipe-capacity-card recipe-capacity-standard">
+                        <div class="recipe-capacity-label">标准杯量</div>
+                        <div class="recipe-capacity-value">${standard}ml</div>
+                    </div>
+                    <div class="recipe-capacity-card">
+                        <div class="recipe-capacity-label">当前容量</div>
+                        <div class="recipe-capacity-value">${current}ml</div>
+                    </div>
+                    <div class="recipe-capacity-card ${warningClass}">
+                        <div class="recipe-capacity-label">容量偏差</div>
+                        <div class="recipe-capacity-value">${sign}${mismatch}ml</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecipeIngredientEditor(cup, ingredient) {
+            const segmentClass = getRecipeSegmentClass(ingredient.key);
+            if (!ingredient.editable) {
+                return `
+                    <div class="recipe-readonly-ingredient">
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(ingredient.label)} ${normalizeRecipeAmount(ingredient.value)}${ingredient.unit}</div>
+                        <div class="recipe-ingredient-hint">基底咖啡数值由配方文件维护，不可在此修改。</div>
+                    </div>
+                `;
+            }
+            const value = normalizeRecipeAmount(ingredient.value);
+            const step = normalizeRecipeAmount(ingredient.step) || 5;
+            return `
+                <div class="recipe-ingredient-editor">
+                    <div>
+                        <div class="recipe-ingredient-name ${segmentClass}">${escAttr(ingredient.label)}</div>
+                        <div class="recipe-ingredient-hint">每次 ${step}${ingredient.unit}</div>
+                    </div>
+                    <div class="recipe-stepper">
+                        <button class="recipe-stepper-btn" type="button" onclick="adjustRecipeIngredient('${cup.key}', '${ingredient.key}', -${step})">−</button>
+                        <label class="recipe-value-field">
+                            <input value="${value}" inputmode="numeric" onchange="setRecipeIngredientValue('${cup.key}', '${ingredient.key}', this.value)" onblur="setRecipeIngredientValue('${cup.key}', '${ingredient.key}', this.value)" />
+                            <span class="recipe-value-unit">${ingredient.unit}</span>
+                        </label>
+                        <button class="recipe-stepper-btn" type="button" onclick="adjustRecipeIngredient('${cup.key}', '${ingredient.key}', ${step})">+</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecipeMainEditor() {
+            const editor = document.getElementById('recipeMainEditor');
+            if (!editor) return;
+            const cup = getActiveRecipeCup();
+            if (!cup) {
+                editor.innerHTML = '<div class="recipe-change-empty" style="padding:32px; text-align:center;">暂无杯型配置，请先在基本信息中设置选项。</div>';
+                return;
+            }
+            editor.innerHTML = `
+                <div class="recipe-editor-head">
+                    <div>
+                        <div class="recipe-editor-title">${escAttr(cup.label)}</div>
+                        <div class="recipe-editor-note">当前正在编辑${escAttr(cup.label)}成分，浓缩由配方文件维护。</div>
+                    </div>
+                    <button class="btn btn-default" type="button" onclick="restoreActiveRecipeCup()">恢复当前杯型修改前</button>
+                </div>
+                ${renderRecipeSegmentBar(cup)}
+                ${renderRecipeCapacitySummary(cup)}
+                ${(Array.isArray(cup.ingredients) ? cup.ingredients : []).map((ingredient) => renderRecipeIngredientEditor(cup, ingredient)).join('')}
+            `;
+        }
+
+        function formatRecipeCupMeta(cup) {
+            const standard = normalizeRecipeAmount(cup && cup.standardCapacityMl);
+            const current = calculateRecipeCupCapacity(cup);
+            const otherText = (Array.isArray(cup && cup.otherIngredients) ? cup.otherIngredients : [])
+                .map((item) => `${item.label} ${normalizeRecipeAmount(item.value)}${item.unit}`)
+                .join(' / ');
+            const mismatch = current - standard;
+            const mismatchText = mismatch === 0 ? '符合标准' : `${mismatch > 0 ? '多' : '少'} ${Math.abs(mismatch)}ml`;
+            return `标准 ${standard}ml / 当前 ${current}ml / ${otherText || mismatchText}`;
+        }
+
+        function renderRecipeCupSwitcher() {
+            const switcher = document.getElementById('recipeCupSwitcher');
+            if (!switcher) return;
+            const cups = getRecipeCupConfigs();
+            if (!cups.length) {
+                switcher.innerHTML = '<div class="recipe-change-empty">暂无可切换杯型</div>';
+                return;
+            }
+            switcher.innerHTML = cups.map((cup) => {
+                const active = String(cup.key) === String(activeRecipeCupKey);
+                const changed = isRecipeCupChanged(cup);
+                return `
+                    <button class="recipe-cup-switch-item ${active ? 'active' : ''}" type="button" onclick="switchRecipeCup('${cup.key}')">
+                        <div class="recipe-cup-switch-head">
+                            <span>${escAttr(cup.label)}</span>
+                            <span class="recipe-cup-status ${changed ? '' : 'neutral'}">${changed ? '已修改' : '未修改'}</span>
+                        </div>
+                        <div class="recipe-cup-switch-meta">${escAttr(formatRecipeCupMeta(cup))}</div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderRecipeChangeComparePanel() {
+            const panel = document.getElementById('recipeChangeComparePanel');
+            if (!panel) return;
+            const cup = getActiveRecipeCup();
+            if (!cup) {
+                panel.innerHTML = '<div class="recipe-change-empty">暂无杯型可对比</div>';
+                return;
+            }
+            const changedIngredients = (Array.isArray(cup.ingredients) ? cup.ingredients : []).filter((ingredient) => {
+                return normalizeRecipeAmount(ingredient.value) !== getRecipeIngredientOriginalValue(cup, ingredient.key);
+            });
+            if (!changedIngredients.length) {
+                panel.innerHTML = '<div class="recipe-change-empty">当前杯型暂无修改</div>';
+                return;
+            }
+            const originalCapacity = (Array.isArray(cup.originalIngredients) ? cup.originalIngredients : []).reduce((sum, ingredient) => {
+                const current = (Array.isArray(cup.ingredients) ? cup.ingredients : []).find((item) => String(item.key) === String(ingredient.key));
+                if (String(current && current.unit || '').toLowerCase() !== 'ml') return sum;
+                return sum + normalizeRecipeAmount(ingredient.value);
+            }, 0);
+            const currentCapacity = calculateRecipeCupCapacity(cup);
+
+            panel.innerHTML = `
+                <div class="recipe-compare-grid">
+                    <div class="recipe-compare-card">
+                        <div class="recipe-compare-label">修改前</div>
+                        <div class="recipe-compare-value">${originalCapacity}ml</div>
+                    </div>
+                    <div class="recipe-compare-card">
+                        <div class="recipe-compare-label">修改后</div>
+                        <div class="recipe-compare-value">${currentCapacity}ml</div>
+                    </div>
+                </div>
+                <div class="recipe-change-list">
+                    ${changedIngredients.map((ingredient) => `
+                        <div class="recipe-change-item">
+                            <span>${escAttr(ingredient.label)}</span>
+                            <strong>${getRecipeIngredientOriginalValue(cup, ingredient.key)}${ingredient.unit} → ${normalizeRecipeAmount(ingredient.value)}${ingredient.unit}</strong>
+                        </div>
+                    `).join('')}
+                    <div class="recipe-change-item">
+                        <span>容量总量</span>
+                        <strong>${originalCapacity}ml → ${currentCapacity}ml</strong>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecipeSaveBar() {
+            const summary = document.getElementById('recipeSaveSummary');
+            if (!summary) return;
+            summary.textContent = buildRecipeSaveBarMessage(getRecipeCupConfigs());
+        }
+
+        function renderRecipeMainEditorAll() {
+            initializeRecipeSelectionState();
+            renderRecipeRequiredOptionGroups();
+            renderFetchedRecipeEditor();
+        }
+
+        function switchRecipeCup(cupKey) {
+            const cups = getRecipeCupConfigs();
+            if (!cups.some((cup) => String(cup.key) === String(cupKey))) return;
+            activeRecipeCupKey = String(cupKey);
+            renderRecipeMainEditorAll();
+        }
+
+        function adjustRecipeIngredient(cupKey, ingredientKey, delta) {
+            const cups = getRecipeCupConfigs();
+            const cup = cups.find((item) => String(item.key) === String(cupKey));
+            if (!cup) return;
+            const ingredient = (cup.ingredients || []).find((item) => String(item.key) === String(ingredientKey));
+            if (!ingredient || !ingredient.editable) return;
+            const next = normalizeRecipeAmount(ingredient.value) + Number(delta || 0);
+            applyRecipeIngredientToState(cupKey, ingredientKey, next);
+            renderRecipeMainEditorAll();
+        }
+
+        function setRecipeIngredientValue(cupKey, ingredientKey, value) {
+            applyRecipeIngredientToState(cupKey, ingredientKey, value);
+            renderRecipeMainEditorAll();
+        }
+
+        function restoreActiveRecipeCup() {
+            restoreActiveRecipeCupToOriginal();
+            renderRecipeMainEditorAll();
+        }
+
+        function renderInlineRecipe() {
+            if (!productData) return;
+            const body = document.getElementById('recipeInlineBody');
+            if (!body) return;
+
+            ensureMockRecipes();
+            renderRecipeMainEditorAll();
+        }
+
+        function resetRecipeInlineVariant(idx, event) {
+            if (event && typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+            if (!recipeEditorState || !recipeEditorInitialState) return;
+            const initialVariant = recipeEditorInitialState.variants?.[idx];
+            if (!initialVariant || !recipeEditorState.variants?.[idx]) return;
+            recipeEditorState.variants[idx].recipe = cloneProductValue(initialVariant.recipe);
+            recipeEditorState.activeIndex = idx;
+            renderRecipeEditorInline();
+            showToast('已恢复当前杯型到修改前');
+        }
+
+        function renderRecipeEditorInline() {
+            if (!recipeEditorState) return;
+            const body = document.getElementById('recipeInlineBody');
+            if (!body) return;
+
+            const cardsHtml = recipeEditorState.variants.map((variant, idx) => {
+                const isActive = idx === recipeEditorState.activeIndex;
+                const recipe = variant.recipe;
+                const total = getRecipeVolumeTotal(recipe);
+                const nonVolumeSummary = getRecipeNonVolumeSummary(recipe);
+                const overflow = total > variant.capacity;
+                const pct = variant.capacity > 0 ? Math.min(100, Math.round((total / variant.capacity) * 100)) : 0;
+
+                const fillSegs = RECIPE_COMP_CONFIGS
+                    .filter(c => getRecipeComponentRule(c.groupKey).unit === 'ml')
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<div class="cup-fill-seg" style="flex:${ml}; background:${c.color};"><span>${ml >= 25 ? c.label + ' ' + formatRecipeComponentDose(ml, c.groupKey) : ''}</span></div>`;
+                    }).join('');
+
+                const paramTags = RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                        const ml = recipe.groups[c.groupKey].ml;
+                        return `<span class="cup-param-tag" style="border-color:${c.light}; background:${c.light};"><span style="color:${c.color}; font-weight:800;">${c.label}</span> ${formatRecipeComponentDose(ml, c.groupKey)}</span>`;
+                    }).join('');
+
+                const editRows = isActive ? RECIPE_COMP_CONFIGS
+                    .filter(c => (recipe.groups[c.groupKey]?.ml || 0) > 0)
+                    .map(c => {
+                    const ml = recipe.groups[c.groupKey].ml;
+                    const rule = getRecipeComponentRule(c.groupKey);
+                    if (rule.editable === false) {
+                        return `
+                            <div class="cup-component-control locked">
+                                <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                                <span class="recipe-component-readonly">${formatRecipeComponentDose(ml, c.groupKey)}</span>
+                                <span class="recipe-component-step">基底咖啡数值由配方文件维护，不可在此修改</span>
+                            </div>
+                        `;
+                    }
+                    const holdHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', -1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', -1, event)"`;
+                    const plusHandlers = rule.continuous
+                        ? `onpointerdown="startRecipeComponentHold(${idx}, '${c.groupKey}', 1, event)" onpointerup="stopRecipeComponentHold()" onpointerleave="stopRecipeComponentHold()" onpointercancel="stopRecipeComponentHold()"`
+                        : `onclick="adjustRecipeComponentDose(${idx}, '${c.groupKey}', 1, event)"`;
+                    return `
+                        <div class="cup-component-control">
+                            <span class="recipe-component-name" style="color:${c.color};">${c.label}</span>
+                            <button type="button" class="recipe-stepper-btn" ${holdHandlers} aria-label="${c.label}减少${rule.step}${rule.unit}">-</button>
+                            <span class="recipe-component-value">
+                                <input type="text" class="cup-edit-input" inputmode="numeric" pattern="[0-9]*"
+                                       value="${normalizeRecipeComponentValue(ml, rule)}" data-comp="${c.groupKey}" data-idx="${idx}" data-step="${rule.step}" data-unit="${rule.unit}"
+                                       onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)"
+                                       onblur="onCupInput(this)" onchange="onCupInput(this)">
+                                <span class="recipe-component-unit">${rule.unit}</span>
+                            </span>
+                            <button type="button" class="recipe-stepper-btn" ${plusHandlers} aria-label="${c.label}增加${rule.step}${rule.unit}">+</button>
+                            <span class="recipe-component-step">每次 ${rule.step}${rule.unit}${rule.continuous ? '，可按住连续调整' : ''}</span>
+                        </div>
+                    `;
+                }).join('') : '';
+
+                return `
+                    <div class="cup-card ${isActive ? 'active' : ''}" onclick="setActiveCup(${idx})">
+                        <div class="cup-card-title">
+                            <span class="cup-card-name"><span class="dot"></span>${variant.label}</span>
+                            <button type="button" class="cup-card-reset-btn" onclick="resetRecipeInlineVariant(${idx}, event)">恢复修改前</button>
+                        </div>
+                        <div class="cup-fill-track" style="height:28px;">
+                            <div class="cup-fill-content" style="width:${pct}%;">${fillSegs}</div>
+                        </div>
+                        <div class="cup-fill-detail">
+                            <span class="item">
+                                <span class="dot" style="background:${overflow ? '#ef4444' : 'var(--primary)'};"></span>
+                                <span class="label">容量总量</span>
+                                <span class="val ${overflow ? 'overflow' : ''}">${total}ml</span>
+                            </span>
+                            <span class="item">
+                                <span class="dot" style="background:#e2e8f0;"></span>
+                                <span class="label">标准杯量</span>
+                                <span class="val">${variant.capacity}ml</span>
+                            </span>
+                            ${overflow ? '<span class="item"><span class="overflow">超出 ' + (total - variant.capacity) + 'ml</span></span>' : ''}
+                        </div>
+                        <div class="cup-param-tags">${paramTags}</div>
+                        ${nonVolumeSummary ? `<div class="cup-fill-detail"><span class="item"><span class="label">其他成分</span><span class="val">${nonVolumeSummary}</span></span></div>` : ''}
+                        ${editRows ? `<div class="cup-component-grid">${editRows}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            body.innerHTML = `<div class="cup-grid">${cardsHtml}</div>`;
         }
 
         function updateImagePreview() {
@@ -6648,9 +9050,82 @@
             const tree = document.getElementById('tagTree');
             tree.innerHTML = tagConfigs.map(cfg => `
                 <button class="tag-tree-item ${cfg.specKey === drawerActiveSpecKey ? 'active' : ''}" onclick="switchDrawerTag('${cfg.specKey}')">
-                    ${cfg.title}
+                    ${escAttr(getTagGroupLabel(cfg.specKey, currentLang))}
                 </button>
             `).join('');
+        }
+
+        function getTagGroupLabel(specKey, lang = currentLang) {
+            if (typeof TagGroupI18n === 'undefined' || !TagGroupI18n) {
+                const cfg = getTagConfigBySpec(specKey);
+                return cfg ? cfg.title : specKey;
+            }
+            const resolved = TagGroupI18n.getGroupLabel(currentDevice, specKey, lang);
+            if (resolved) return resolved;
+            const cfg = getTagConfigBySpec(specKey);
+            return cfg ? cfg.title : specKey;
+        }
+
+        function refreshOptionTitles() {
+            // 分组标题也按 admin lang 优先取，没有再回落到 device primary lang。
+            // 因为 #tagOptionsGrid 标了 data-admin-i18n-ignore，i18n 字典不会再插一脚，
+            // 显示的就是商品/设备数据里的真实 group label。
+            const langs = (typeof getDeviceLangs === 'function' ? getDeviceLangs() : []) || [];
+            const adminLang = getProductOptionDisplayLang();
+            const primaryLang = langs[0] || currentLang || 'zh';
+            tagConfigs.forEach(cfg => {
+                const list = document.getElementById(cfg.listId);
+                if (!list) return;
+                const card = list.closest('.option-card');
+                if (!card) return;
+                const titleEl = card.querySelector('.option-title');
+                if (!titleEl) return;
+                titleEl.textContent = getTagGroupLabel(cfg.specKey, adminLang)
+                    || getTagGroupLabel(cfg.specKey, primaryLang)
+                    || cfg.title
+                    || cfg.specKey;
+            });
+        }
+
+        function persistDrawerCurrentGroupName() {
+            if (typeof TagGroupI18n === 'undefined' || !TagGroupI18n) return false;
+            const cfg = getTagConfigBySpec(drawerActiveSpecKey);
+            if (!cfg) return false;
+            const langs = getDeviceLangs();
+            const editor = document.getElementById('tagDrawerEditor');
+            if (!editor) return false;
+            const stored = TagGroupI18n.readStored(currentDevice);
+            const next = { ...stored };
+            const groupMap = { ...(next[cfg.specKey] || {}) };
+            let changed = false;
+            langs.forEach(lang => {
+                const input = editor.querySelector(`.drawer-group-name-lang-${lang}`);
+                if (!input) return;
+                const value = (input.value || '').trim();
+                const before = groupMap[lang] || '';
+                if (value) {
+                    if (groupMap[lang] !== value) changed = true;
+                    groupMap[lang] = value;
+                } else if (before) {
+                    delete groupMap[lang];
+                    changed = true;
+                }
+            });
+            if (!changed) return false;
+            if (Object.keys(groupMap).length) next[cfg.specKey] = groupMap;
+            else delete next[cfg.specKey];
+            TagGroupI18n.writeStored(currentDevice, next);
+            return true;
+        }
+
+        function applyDrawerGroupNameUpdates() {
+            renderTagTree();
+            refreshOptionTitles();
+            const titleEl = document.getElementById('tagDrawerTitle');
+            const cfg = getTagConfigBySpec(drawerActiveSpecKey);
+            if (titleEl && cfg) {
+                titleEl.textContent = `${getTagGroupLabel(cfg.specKey, currentLang)}标签配置`;
+            }
         }
 
         function renderDrawerEditor() {
@@ -6658,7 +9133,7 @@
             if (!cfg) return;
             const langs = getDeviceLangs();
             const container = document.getElementById('tagDrawerEditor');
-            document.getElementById('tagDrawerTitle').textContent = `${cfg.title}标签配置`;
+            document.getElementById('tagDrawerTitle').textContent = `${getTagGroupLabel(cfg.specKey, currentLang)}标签配置`;
             ensureTagI18n(cfg.specKey);
             refreshOptionListLabels(cfg.specKey);
 
@@ -6669,7 +9144,43 @@
             const currentDefault = getDefaultOption(cfg.specKey);
             drawerActiveLang = ensureActiveMultilangLang(drawerActiveLang, langs, currentLang || langs[0]);
 
-            let html = `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
+            let html = '';
+            html += buildMultilangGridMarkup({
+                editorKey: 'tag-drawer-group-name',
+                title: '分组名称',
+                hint: '该分组在客户菜单和商品详情页都会用到，请填写每种语言。仅作用于当前设备。',
+                summary: `共 ${langs.length} 种语种`,
+                langs,
+                activeLang: drawerActiveLang,
+                setActiveHandler: 'setDrawerActiveLang',
+                getStatus(lang) {
+                    const state = getMultilangCompletionState([
+                        getTagGroupLabel(cfg.specKey, lang)
+                    ]);
+                    return state === 'filled'
+                        ? { label: lang === langs[0] ? '默认语种' : '已填写', tone: lang === langs[0] ? 'default' : 'filled' }
+                        : { label: '待补充', tone: 'empty' };
+                },
+                rows: [
+                    {
+                        label: '分组名称',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <input type="text" class="form-input drawer-group-name-lang-${lang}" value="${escAttr(getTagGroupLabel(cfg.specKey, lang))}" placeholder="请输入${getLangName(lang)}分组名">
+                                </div>
+                            `;
+                        }
+                    }
+                ]
+            });
+            // give the group-name sheet its accent class
+            html = html.replace(
+                '<div class="multilang-sheet" data-editor-key="tag-drawer-group-name"',
+                '<div class="multilang-sheet is-group-name" data-editor-key="tag-drawer-group-name"'
+            );
+
+            html += `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
             html += `<div class="existing-tags">`;
             html += tagKeys.map(tagKey => `
                 <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" onclick="selectDrawerTag('${tagKey}')">
@@ -6680,7 +9191,7 @@
 
             html += buildMultilangGridMarkup({
                 editorKey: 'tag-drawer',
-                title: `${cfg.title}标签`,
+                title: `${getTagGroupLabel(cfg.specKey, currentLang)}标签`,
                 hint: '桌面端可横向对照多语种标签，移动端按语种切换编辑。',
                 summary: `共 ${langs.length} 种语种`,
                 langs,
@@ -6700,7 +9211,17 @@
                         renderInput(lang) {
                             return `
                                 <div class="form-group">
-                                    <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${cfg.title}标签">
+                                    <input type="text" class="form-input drawer-tag-lang-${lang}" value="${escAttr(getTagLabel(cfg.specKey, drawerSelectedTagKey, lang))}" placeholder="请输入${getLangName(lang)}${getTagGroupLabel(cfg.specKey, lang)}标签">
+                                </div>
+                            `;
+                        }
+                    },
+                    {
+                        label: '描述<div class="multilang-row-sub-label">仅本商品有效 · 保存时可同步到其它商品 · 仅咖啡豆区在点单屏展示</div>',
+                        renderInput(lang) {
+                            return `
+                                <div class="form-group">
+                                    <textarea class="form-textarea drawer-tag-desc-lang-${lang}" rows="2" placeholder="请输入${getLangName(lang)}描述（选填）">${escAttr(getDrawerTagDesc(cfg.specKey, drawerSelectedTagKey, lang))}</textarea>
                                 </div>
                             `;
                         }
@@ -6741,6 +9262,18 @@
                 else delete productData.tagI18n[cfg.specKey][drawerSelectedTagKey][lang];
             });
 
+            const descMap = {};
+            let hasDescInput = false;
+            langs.forEach(lang => {
+                const descEl = document.querySelector('.drawer-tag-desc-lang-' + lang);
+                if (!descEl) return;
+                hasDescInput = true;
+                descMap[lang] = (descEl.value || '').trim();
+            });
+            if (hasDescInput) {
+                setTagDescsForProduct(productData, cfg.specKey, drawerSelectedTagKey, descMap);
+            }
+
             const extraPriceInput = document.getElementById('drawerTagExtraPrice');
             const extraPriceValue = extraPriceInput ? extraPriceInput.value : 0;
             setTagExtraPrice(cfg.specKey, drawerSelectedTagKey, extraPriceValue);
@@ -6762,12 +9295,14 @@
 
         function selectDrawerTag(tagKey) {
             persistDrawerCurrentTag();
+            persistDrawerCurrentGroupName();
             drawerSelectedTagKey = tagKey;
             renderDrawerEditor();
         }
 
         function switchDrawerTag(specKey) {
             persistDrawerCurrentTag();
+            if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             drawerActiveSpecKey = specKey;
             drawerSelectedTagKey = getCurrentSelectedTagKey(specKey) || getTagKeys(specKey)[0] || '';
             renderTagTree();
@@ -6790,7 +9325,9 @@
             const cfg = getTagConfigBySpec(drawerActiveSpecKey);
             const tagKey = drawerSelectedTagKey;
             const previousLabels = (cfg && tagKey) ? cloneTagLabels(cfg.specKey, tagKey, productData) : {};
+            const previousDescs = (cfg && tagKey) ? cloneTagDescs(cfg.specKey, tagKey, productData) : {};
             persistDrawerCurrentTag();
+            if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             if (!cfg || !tagKey) {
                 closeTagConfigDrawer();
                 showToast('标签配置已更新');
@@ -6798,6 +9335,7 @@
             }
 
             const nextLabels = cloneTagLabels(cfg.specKey, tagKey, productData);
+            const nextDescs = cloneTagDescs(cfg.specKey, tagKey, productData);
             persistRecipeChanges(productData ? [productData] : []);
 
             if (isCopyWorkflowActive()) {
@@ -6806,7 +9344,9 @@
                 return;
             }
 
-            if (!hasTagLabelChanged(previousLabels, nextLabels)) {
+            const labelChanged = hasTagLabelChanged(previousLabels, nextLabels);
+            const descChanged = hasTagDescChanged(previousDescs, nextDescs);
+            if (!labelChanged && !descChanged) {
                 closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
@@ -6822,9 +9362,13 @@
             tagSyncState = {
                 specKey: cfg.specKey,
                 tagKey,
-                specTitle: cfg.title,
+                specTitle: getTagGroupLabel(cfg.specKey, currentLang),
                 previousLabels,
                 nextLabels,
+                previousDescs,
+                nextDescs,
+                labelChanged,
+                descChanged,
                 affectedEntries,
                 selectedIds: new Set()
             };
@@ -7060,6 +9604,10 @@
         }
 
         window.onload = initPage;
+        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
+            CofeAdminStaffAccess.applyNavLabelsByRole();
+        }
+    
     </script>
 </body>
 </html>
