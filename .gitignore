@@ -17,3 +17,12 @@
 .claude/
 .superpowers/
 .gstack/
+.playwright-mcp/
+
+# local deploy artifacts
+prd-site/
+.tmp-wrangler-home/
+.tmp-npm-cache/
+.tmp-home/
+.tmp-gstack/
+test-results/
