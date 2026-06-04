@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>配方配置选项驱动预览</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --panel: #ffffff;
+    --line: #dfe7ef;
+    --text: #263238;
+    --muted: #7b8a97;
+    --primary: #45c8c3;
+    --primary-soft: #e9fbfa;
+    --warn: #fff6e6;
+    --warn-line: #f2cf8f;
+    --brown: #986b34;
+    --milk: #d9bd92;
+    --foam: #f1e5cf;
+    --water: #45c8c3;
+    --syrup: #c8945f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .page { padding: 32px 44px 42px; }
+  .title { margin: 0 0 18px; font-size: 24px; font-weight: 900; }
+  .workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) 430px;
+    gap: 24px;
+    align-items: start;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: 0 2px 4px rgba(31, 45, 61, 0.02);
+  }
+  .main {
+    min-height: 760px;
+    padding: 24px;
+  }
+  .empty-state {
+    min-height: 712px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    border: 1px dashed #cbd7e3;
+    border-radius: 18px;
+    background: #fbfdff;
+  }
+  .empty-icon { font-size: 42px; margin-bottom: 12px; }
+  .empty-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+  .empty-copy { color: var(--muted); font-size: 17px; line-height: 1.7; max-width: 520px; }
+  .editor-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .editor-title { font-size: 30px; font-weight: 900; margin-bottom: 6px; }
+  .editor-subtitle { color: var(--muted); font-size: 16px; font-weight: 700; }
+  .ghost-btn {
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid #cbd7e3;
+    border-radius: 9px;
+    background: #fff;
+    color: #5f6e77;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .bar {
+    display: flex;
+    height: 44px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin: 18px 0;
+    background: #eef3f5;
+  }
+  .seg {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 900;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  .espresso { background: var(--brown); }
+  .milk { background: var(--milk); }
+  .foam { background: var(--foam); color: #b89a62; }
+  .seg.water { background: var(--water); }
+  .syrup { background: var(--syrup); }
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .summary-cell {
+    min-height: 82px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fbfdff;
+  }
+  .summary-cell.featured {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .summary-cell.warning {
+    border-color: var(--warn-line);
+    background: var(--warn);
+  }
+  .summary-label { color: #7d8c98; font-size: 13px; font-weight: 900; }
+  .summary-value { margin-top: 3px; font-size: 26px; font-weight: 900; }
+  .ingredient-row, .readonly-row {
+    min-height: 86px;
+    margin-top: 12px;
+    padding: 16px 14px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: #fbfdff;
+  }
+  .ingredient-name { font-size: 18px; font-weight: 900; color: #d0aa79; }
+  .ingredient-name.water { color: var(--water); }
+  .hint { margin-top: 6px; color: #a2b0bd; font-size: 14px; font-weight: 700; }
+  .stepper { display: flex; align-items: center; gap: 12px; }
+  .step {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #cbd7e3;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 24px;
+    font-weight: 900;
+  }
+  .value {
+    width: 210px;
+    height: 44px;
+    border: 1px solid #d8e2ec;
+    border-radius: 11px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 900;
+  }
+  .value span { color: #9dadba; font-size: 15px; }
+  .side { padding: 24px; }
+  .side-title { margin: 0 0 14px; font-size: 24px; font-weight: 900; }
+  .side-copy { margin: -4px 0 18px; color: var(--muted); font-size: 15px; line-height: 1.6; font-weight: 700; }
+  .option-group {
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fbfdff;
+    margin-top: 14px;
+  }
+  .group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .group-title { font-size: 18px; font-weight: 900; }
+  .required { color: #0f9b92; font-size: 12px; font-weight: 900; }
+  .options { display: flex; flex-wrap: wrap; gap: 10px; }
+  .option {
+    min-height: 40px;
+    padding: 8px 13px;
+    border: 1px solid #d9e3eb;
+    border-radius: 999px;
+    background: #fff;
+    color: #4f5f6b;
+    font-weight: 800;
+  }
+  .option.active {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: #0b8f88;
+    box-shadow: inset 0 0 0 1px rgba(69, 200, 195, 0.22);
+  }
+  .fetch-btn {
+    width: 100%;
+    height: 56px;
+    margin-top: 18px;
+    border: 0;
+    border-radius: 12px;
+    background: #45c8c3;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 900;
+  }
+  .fetch-btn.disabled {
+    background: #dbe5ec;
+    color: #95a4b2;
+  }
+  .status-box {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 13px;
+    background: var(--primary-soft);
+    color: #0b766f;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .selection-summary {
+    margin-top: 20px;
+    padding: 16px;
+    border: 1px solid var(--primary);
+    border-radius: 15px;
+    background: var(--primary-soft);
+    color: #0b766f;
+    font-weight: 800;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="title">配方配置 · 先选客户选项后获取配方</h1>
+  <section class="workbench before">
+    <article class="card main">
+      <div class="empty-state">
+        <div>
+          <div class="empty-icon">☕</div>
+          <div class="empty-title">等待获取配方</div>
+          <div class="empty-copy">请先在右侧选择咖啡豆、温度、浓度。点击“获取配方”后，左侧才展示该选项组合对应的配方成分。</div>
+        </div>
+      </div>
+    </article>
+    <aside class="card side">
+      <h2 class="side-title">客户选项</h2>
+      <p class="side-copy">配方由客户选择的选项组合决定。所有必选分组完成后才能获取配方。</p>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">咖啡豆</div><div class="required">必选</div></div>
+        <div class="options">
+          <div class="option active">埃塞浅烘</div>
+          <div class="option">巴西中烘</div>
+          <div class="option">拼配深烘</div>
+        </div>
+      </div>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">温度</div><div class="required">必选</div></div>
+        <div class="options">
+          <div class="option active">热</div>
+          <div class="option">标准冰</div>
+          <div class="option">少冰</div>
+        </div>
+      </div>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">浓度</div><div class="required">必选</div></div>
+        <div class="options">
+          <div class="option">淡</div>
+          <div class="option active">标准</div>
+          <div class="option">浓</div>
+        </div>
+      </div>
+      <button class="fetch-btn">获取配方</button>
+      <div class="status-box">当前选择：埃塞浅烘 / 热 / 标准</div>
+    </aside>
+  </section>
+  <section class="workbench after" style="margin-top: 42px;">
+    <article class="card main">
+      <div class="editor-head">
+        <div>
+          <div class="editor-title">配方已获取</div>
+          <div class="editor-subtitle">埃塞浅烘 / 热 / 标准浓度，对应配方已获取。</div>
+        </div>
+        <button class="ghost-btn">恢复修改前</button>
+      </div>
+      <div class="bar">
+        <div class="seg espresso" style="width:24%;">浓缩 80ml</div>
+        <div class="seg milk" style="width:54%;">奶 180ml</div>
+        <div class="seg foam" style="width:6%;">奶泡</div>
+        <div class="seg water" style="width:9%;">热水 30</div>
+        <div class="seg syrup" style="width:7%;">糖浆 25</div>
+      </div>
+      <div class="summary-strip">
+        <div class="summary-cell featured"><div class="summary-label">标准容量</div><div class="summary-value">355ml</div></div>
+        <div class="summary-cell"><div class="summary-label">当前容量</div><div class="summary-value">335ml</div></div>
+        <div class="summary-cell warning"><div class="summary-label">容量偏差</div><div class="summary-value">-20ml</div></div>
+      </div>
+      <div class="readonly-row">
+        <div><div class="ingredient-name">浓缩 80ml</div><div class="hint">基底咖啡数值由所选咖啡豆与浓度决定，不可在此修改。</div></div>
+      </div>
+      <div class="ingredient-row">
+        <div><div class="ingredient-name">奶</div><div class="hint">每次 5ml，可按住连续调整</div></div>
+        <div class="stepper"><button class="step">-</button><div class="value">180 <span>ml</span></div><button class="step">+</button></div>
+      </div>
+      <div class="ingredient-row">
+        <div><div class="ingredient-name">奶泡</div><div class="hint">每次 5ml</div></div>
+        <div class="stepper"><button class="step">-</button><div class="value">20 <span>ml</span></div><button class="step">+</button></div>
+      </div>
+      <div class="ingredient-row">
+        <div><div class="ingredient-name water">热水</div><div class="hint">每次 5ml，可按住连续调整</div></div>
+        <div class="stepper"><button class="step">-</button><div class="value">30 <span>ml</span></div><button class="step">+</button></div>
+      </div>
+    </article>
+    <aside class="card side">
+      <h2 class="side-title">客户选项</h2>
+      <p class="side-copy">修改任一选项后，需要重新点击“获取配方”，左侧成分才会刷新。</p>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">咖啡豆</div><div class="required">必选</div></div>
+        <div class="options"><div class="option active">埃塞浅烘</div><div class="option">巴西中烘</div><div class="option">拼配深烘</div></div>
+      </div>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">温度</div><div class="required">必选</div></div>
+        <div class="options"><div class="option active">热</div><div class="option">标准冰</div><div class="option">少冰</div></div>
+      </div>
+      <div class="option-group">
+        <div class="group-head"><div class="group-title">浓度</div><div class="required">必选</div></div>
+        <div class="options"><div class="option">淡</div><div class="option active">标准</div><div class="option">浓</div></div>
+      </div>
+      <button class="fetch-btn">重新获取配方</button>
+      <div class="selection-summary">当前获取组合<br>埃塞浅烘 / 热 / 标准浓度<br>改选任一选项后需要重新获取配方。</div>
+    </aside>
+  </section>
+</main>
+</body>
+</html>

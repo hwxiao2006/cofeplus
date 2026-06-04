@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>产品需求文档：设备管理（按当前页面）</title>
+<style>
+  :root {
+    --bg: #edf2f7;
+    --page: #ffffff;
+    --text: #162033;
+    --muted: #667085;
+    --line: #d7e2ee;
+    --accent: #109c93;
+    --accent-soft: rgba(16, 156, 147, 0.12);
+    --shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #f7fbff 0%, var(--bg) 58%, #e7edf5 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.68;
+  }
+  a { color: inherit; }
+  code {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: #eef3f8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.92em;
+  }
+  .page { max-width: 1260px; margin: 28px auto 56px; padding: 0 20px; }
+  .doc-shell { background: var(--page); border: 1px solid rgba(215, 226, 238, 0.9); border-radius: 28px; box-shadow: var(--shadow); overflow: hidden; }
+  .hero { padding: 42px 48px 28px; background: linear-gradient(135deg, #ffffff 0%, #f4fbfb 46%, #eef6fb 100%); border-bottom: 1px solid var(--line); }
+  .hero-kicker { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: var(--accent-soft); color: #0a6d67; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  h1 { margin: 16px 0 10px; font-size: 38px; line-height: 1.18; }
+  .hero-meta { margin: 0; color: var(--muted); font-size: 15px; }
+  .hero-note { margin-top: 18px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(248, 251, 253, 0.9); color: #344054; font-size: 14px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px 48px 0; }
+  .toc-item { display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: #ffffff; text-decoration: none; color: #475467; font-size: 13px; font-weight: 600; }
+  .toc-item.flow { background: #f5fbfb; color: #0f766e; }
+  .content { padding: 8px 48px 48px; }
+  .doc-section { margin-top: 36px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .doc-subsection { margin-top: 24px; }
+  .card { padding: 24px; border: 1px solid rgba(16, 156, 147, 0.16); border-radius: 24px; background: linear-gradient(180deg, rgba(16, 156, 147, 0.04) 0%, rgba(255, 255, 255, 0.98) 26%); }
+  h2 { margin: 0 0 16px; font-size: 26px; }
+  h3 { margin: 0 0 14px; font-size: 21px; }
+  h4 { margin: 0 0 12px; font-size: 17px; }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0 16px 22px; padding: 0; }
+  li { margin: 7px 0; }
+  strong { color: #101828; }
+  .subfeature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 18px; }
+  .subfeature-card { padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: #ffffff; }
+  .subfeature-card .doc-image { margin-bottom: 0; }
+  .doc-image { margin: 14px 0 8px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: #ffffff; box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06); }
+  .doc-image img { display: block; width: 100%; height: auto; background: #fff; }
+  .doc-image figcaption { padding: 12px 14px 14px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); background: #fbfdff; }
+  .table-wrap { overflow-x: auto; margin: 14px 0 8px; border: 1px solid var(--line); border-radius: 20px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; min-width: 760px; }
+  th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; font-size: 14px; }
+  thead th { background: #f8fbfd; color: #101828; font-weight: 700; }
+  tbody tr:last-child td { border-bottom: 0; }
+  @media (max-width: 900px) {
+    .page { padding: 0 12px; }
+    .hero { padding: 28px 20px 20px; }
+    .toc { padding: 16px 20px 0; }
+    .content { padding: 8px 20px 28px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 19px; }
+    .card { padding: 18px; border-radius: 20px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="doc-shell">
+      <header class="hero">
+        <div class="hero-kicker">Standalone HTML PRD</div>
+        <h1>产品需求文档：设备管理（按当前页面）</h1>
+        <p class="hero-meta">补齐了“功能截图 + 功能描述”以及“添加设备”用例的设备管理预览版文档。</p>
+        <div class="hero-note"><strong>说明：</strong> 当前文件与 Markdown 版 PRD 保持同一口径，重点描述当前已上线能力、每项功能的截图说明，以及当前版本限制。</div>
+      </header>
+
+      <nav class="toc">
+        <a href="#section-overview" class="toc-item">1. 介绍 / 概述</a>
+        <a href="#section-goals" class="toc-item">2. 目标</a>
+        <a href="#section-features" class="toc-item">3. 功能模块与截图</a>
+        <a href="#section-flows" class="toc-item">4. 用户流程 / 用户故事</a>
+        <a href="#section-fr" class="toc-item">5. 功能需求</a>
+        <a href="#section-rules" class="toc-item">6. 关键规则矩阵</a>
+        <a href="#section-limits" class="toc-item">7. 当前版本限制</a>
+        <a href="#section-success" class="toc-item">8. 成功标准</a>
+        <a href="#f-004" class="toc-item flow">添加设备</a>
+        <a href="#uf-002" class="toc-item flow">UF-002</a>
+        <a href="#uf-011" class="toc-item flow">UF-011</a>
+      </nav>
+
+      <div class="content">
+        <section class="doc-section" id="section-overview">
+          <h2>1. 介绍 / 概述</h2>
+          <p>设备管理是 COFE+ 后台当前用于查看设备概览、定位目标设备、维护入场信息、查看技术状态并发起基础设备操作的统一入口。</p>
+          <p>当前页面覆盖以下能力：</p>
+          <ul>
+            <li>顶部统计卡、搜索、状态筛选、点位分类筛选</li>
+            <li>桌面端表格列表与移动端状态卡片列表</li>
+            <li>设备详情宽弹层、左侧三块首屏信息与右侧操作 / 详细信息入口</li>
+            <li>入场信息查看 / 编辑、点位图片预览、点位变更记录</li>
+            <li>广告屏左右屏素材查看 / 编辑</li>
+            <li>温度报警设置、状态记录、状态编辑、远程操作、物料页跳转</li>
+            <li>按当前员工设备范围裁剪设备数据</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="section-goals">
+          <h2>2. 目标</h2>
+          <ul>
+            <li>让用户进入页面后先看到设备总量、运行中、故障、停用四项核心概览。</li>
+            <li>让用户通过设备编号、点位名称、状态和点位分类快速定位目标设备。</li>
+            <li>让桌面端与移动端都能在统一信息口径下完成浏览、查看详情和列表级动作。</li>
+            <li>让设备详情首屏形成“概览、状态、运营摘要”的快速判断区，并把入场、广告屏、技术状态和记录摘要沉淀到右侧二级入口。</li>
+            <li>让设备录入、入场维护和设备详情之间形成一条完整的操作链路。</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="section-features">
+          <h2>3. 功能模块与截图</h2>
+
+          <section class="doc-subsection card" id="f-001">
+            <h3>F-001：设备总览</h3>
+            <p>进入设备管理页后，用户先看到设备总数、运行中、故障、停用 4 张统计卡，以及顶部的主筛选栏。这一层承担“先看全局健康度，再决定是否继续筛选”的作用。</p>
+            <ul>
+              <li>统计卡按当前可见设备范围实时计算。</li>
+              <li>右上角提供 <code>+ 设备录入</code> 入口。</li>
+              <li>空状态下统计与列表会一起收口到权限 / 范围提示。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf001-overview-data.png" alt="F-001 设备总览">
+              <figcaption>F-001 设备总览</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-002">
+            <h3>F-002：搜索与筛选</h3>
+            <p>用户可以通过搜索框、状态筛选和点位分类筛选快速定位目标设备；搜索同时覆盖设备编号、点位名称和点位编码。</p>
+            <ul>
+              <li>支持 <code>全部状态 / 运行中 / 故障</code>。</li>
+              <li>虽然列表中会出现 <code>停用</code> 和 <code>未入场</code> 口径，但当前状态下拉不支持对这两类做单独筛选。</li>
+              <li>支持 <code>全部点位 / 展会点位 / 运营点位</code>。</li>
+              <li>条件变化后即时刷新列表，无需手动提交。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf002-filter.png" alt="F-002 搜索与筛选">
+              <figcaption>F-002 搜索与筛选</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-003">
+            <h3>F-003：设备列表</h3>
+            <p>设备列表是页面的主工作区。桌面端使用表格承载高密度信息，移动端使用状态卡片保证可读性和可操作性。</p>
+            <ul>
+              <li>桌面端列出 <code>设备编号 / 商户 / 点位 / 状态 / 停卖 / 最近心跳 / 操作</code>。</li>
+              <li>移动端卡片展示 <code>商户 / 点位 / 停卖 / 状态 / 最近心跳</code>。</li>
+              <li>列表级动作固定为 <code>查看</code> 与 <code>停卖 / 恢复</code>。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf003-list-mobile.png" alt="F-003 设备列表">
+              <figcaption>F-003 设备列表</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-004">
+            <h3>F-004：添加设备（设备录入）</h3>
+            <p>点击 <code>+ 设备录入</code> 后进入最新设备入场页，完成新设备入场配置。当前最新版不是旧的简化录入表单，而是按当前登录商户自动限定设备、点位和员工范围，并在入场阶段一并完成支付方式、广告屏和点位照片配置。</p>
+            <ul>
+              <li>设备、点位、员工都按当前登录商户范围过滤，不再在页面上单独选择所属客户。</li>
+              <li>基本信息区包含 <code>选择设备</code>、<code>点位名称</code>，并支持 <code>+ 新增点位</code> 快速创建并自动选中。</li>
+              <li>页面拆成左右双栏：左侧负责设备、运维、定位和其他设置；右侧负责支付方式、广告屏设置、点位照片与提交动作。</li>
+              <li>提交后会保存入场信息，并同步更新设备商户、点位、入场状态、停卖状态和心跳初始状态。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf011-device-entry-latest.svg" alt="F-004 添加设备（最新分支结构预览）">
+              <figcaption>F-004 添加设备（最新分支结构预览）</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-005">
+            <h3>F-005：设备详情摘要</h3>
+            <p>设备详情弹层是设备管理的核心查看面。最新版本采用“状态首屏 + 操作优先”的信息层级，首屏只保留设备概览、设备状态和运营摘要，让用户先判断这台设备是谁、在哪里、是否正常，再通过右侧入口进入二级信息。</p>
+            <ul>
+              <li>详情为 <code>左主内容 + 右侧操作区</code> 布局。</li>
+              <li>左侧首屏只显示 <code>设备概览</code>、<code>设备状态</code>、<code>运营摘要</code> 三张卡片。</li>
+              <li><code>设备概览</code> 当前展示 <code>设备编号 / 点位 / 设备类别</code>，不再展示 <code>部署类型</code>。</li>
+              <li><code>运营摘要</code> 汇总当前点位、支付方式、节能模式、网络信号、最近点位变更和记录摘要。</li>
+              <li>右侧分为 <code>设备操作</code> 和 <code>详细信息</code> 两组；详细信息包含 <code>入场详情 / 广告屏信息 / 技术状态 / 记录摘要</code>。</li>
+              <li>从 <code>记录摘要</code> 继续点击 <code>查看状态记录</code> 时会先关闭摘要浮层，避免浮层层级错乱。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf004-detail-summary-latest.png" alt="F-005 设备详情摘要">
+              <figcaption>F-005 设备详情摘要</figcaption>
+            </figure>
+            <div class="subfeature-card" id="f-005-a">
+              <h4>F-005-A：技术状态</h4>
+              <p>技术状态用于承载当前设备的实时技术指标、软件版本和关键机构运行状态，帮助运维在不离开当前设备上下文的情况下快速判断机器是否正常，以及问题更偏向硬件还是软件。</p>
+              <ul>
+                <li>不再占用设备详情左侧首屏，用户从右侧 <code>详细信息 &gt; 技术状态</code> 打开。</li>
+                <li>技术状态在二级浮层中以独立详情区展示，并默认展开。</li>
+                <li>展开后按双列信息区展示 <code>冰箱温度</code>、<code>制作仓温度</code>、<code>豆仓温度</code>、<code>豆仓湿度</code>、<code>更新时间</code>、<code>上位机软件</code>、<code>点单屏软件</code>、<code>点单屏系统</code>、<code>点单屏内核</code>、<code>广告屏版本</code>、<code>固件版本</code> 等只读字段。</li>
+                <li>底部单独展示 <code>机构状态</code> 标签组，当前口径会展示咖啡机、机械臂、落杯器、制冰机、前道浆、压盖器、出杯口和混水水路等机构状态。</li>
+                <li>当前只支持查看，不支持在技术状态区域内直接修改任何参数。</li>
+              </ul>
+              <figure class="doc-image">
+                <img src="../screenshots/device-prd/uf017-technical-status-expanded.png" alt="F-005-A 技术状态（展开态独立截图）">
+                <figcaption>F-005-A 技术状态（展开态独立截图）</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="doc-subsection card" id="f-006">
+            <h3>F-006：入场信息</h3>
+            <p>入场信息承载设备落位和基础配置，是详情里最重要的业务信息块之一。用户从右侧 <code>详细信息 &gt; 入场详情</code> 进入，查看基础字段、补充字段、点位图片和点位变更记录，并通过底部按钮进入编辑。</p>
+            <ul>
+              <li>不再默认占用详情左侧首屏，信息在二级浮层中以单一详情区块展示，并默认展开。</li>
+              <li>支持查看点位图片并点击预览。</li>
+              <li>点位变更记录默认以折叠摘要卡片展示，摘要显示时间、操作人、变更项数量、变更字段和主要变化。</li>
+              <li>支持编辑后直接刷新到当前设备详情。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf005-entry-info-panel.png" alt="F-006 入场信息">
+              <figcaption>F-006 入场信息</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-007">
+            <h3>F-007：广告屏信息</h3>
+            <p>广告屏信息按左右物理屏拆开管理，避免素材传错位置。左侧菜单与右侧排队号背景分别展示、分别维护。</p>
+            <ul>
+              <li>不再默认占用详情左侧首屏，用户从右侧 <code>详细信息 &gt; 广告屏信息</code> 打开。</li>
+              <li>左侧支持图片和 H.264 视频。</li>
+              <li>右侧仅支持图片。</li>
+              <li>详情中按左右拼接方式预览。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf006-ad-screen.png" alt="F-007 广告屏信息">
+              <figcaption>F-007 广告屏信息</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-008">
+            <h3>F-008：温度报警设置</h3>
+            <p>温度报警设置通过独立弹层打开，按温区展示参数卡片，并允许逐区修改阈值。</p>
+            <ul>
+              <li>当前固定展示 5 个温区。</li>
+              <li>每个温区都可点击 <code>修改</code>。</li>
+              <li>保存后刷新当前弹层内容。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf007-temperature-alarm.png" alt="F-008 温度报警设置">
+              <figcaption>F-008 温度报警设置</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-009">
+            <h3>F-009：状态记录</h3>
+            <p>状态记录用于追溯设备最近的异常和运维处理，不承担远程操作总日志的展示职责。</p>
+            <ul>
+              <li>可从右侧 <code>设备操作 &gt; 状态记录</code> 直接打开完整状态记录弹层。</li>
+              <li>也可从右侧 <code>详细信息 &gt; 记录摘要</code> 查看异常 / 运维条数，再点击 <code>查看状态记录</code> 进入完整弹层。</li>
+              <li>从记录摘要进入完整弹层时，系统会关闭摘要浮层，保证完整状态记录位于最上层。</li>
+              <li>弹层固定为 <code>异常记录</code> 与 <code>运维记录</code> 双标签。</li>
+              <li>异常记录较少时，预览环境应保持列表展示稳定。</li>
+              <li>运维记录会自动带出运维人员和联系电话。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf008-status-record-layer-fixed.png" alt="F-009 状态记录">
+              <figcaption>F-009 状态记录</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-010">
+            <h3>F-010：编辑状态</h3>
+            <p>用户可以从右侧操作区直接修改设备状态，快速把系统状态同步到线下真实状态。</p>
+            <ul>
+              <li>当前支持 <code>正常 / 故障 / 缺料</code>。</li>
+              <li>保存后刷新列表、统计和设备详情。</li>
+              <li>改为故障时会同步生成异常记录。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf009-remote-actions.png" alt="F-010 编辑状态">
+              <figcaption>F-010 编辑状态</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="f-011">
+            <h3>F-011：远程操作</h3>
+            <p>远程操作通过弹层发起，当前一级菜单固定包含 <code>机构重启</code>、<code>设备开门</code>、<code>设备停售</code>、<code>音量调节</code> 4 个动作。其中只有 <code>机构重启</code> 需要进入二级确认流，其余动作都属于一级直达动作。</p>
+            <ul>
+              <li>一级入口以动作清单形式展示。</li>
+              <li><code>机构重启</code> 进入二级子菜单，再进入确认页。</li>
+              <li><code>设备开门</code>、<code>设备停售</code>、<code>音量调节</code> 当前点击后直接执行，并形成操作记录。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf009-remote-actions-latest.svg" alt="F-011 远程操作菜单">
+              <figcaption>F-011 远程操作菜单</figcaption>
+            </figure>
+            <div class="subfeature-grid">
+              <article class="subfeature-card">
+                <h4>F-011-A：机构重启</h4>
+                <p>用于对设备系统、左右点单屏和六轴机械臂发起重启，是当前远程操作里唯一需要二次确认的高风险动作。</p>
+                <ul>
+                  <li>点击 <code>机构重启</code> 后进入二级子菜单。</li>
+                  <li>二级动作固定包含 <code>重启系统</code>、<code>重启点单屏（左）</code>、<code>重启点单屏（右）</code>、<code>重启六轴机械臂（注意安全，谨慎使用）</code>。</li>
+                  <li>选择具体动作后进入确认页，点击 <code>确认执行</code> 才真正下发指令。</li>
+                </ul>
+                <figure class="doc-image">
+                  <img src="../screenshots/device-prd/uf010-restart-flow.png" alt="F-011-A 机构重启">
+                  <figcaption>F-011-A 机构重启</figcaption>
+                </figure>
+              </article>
+              <article class="subfeature-card">
+                <h4>F-011-B：设备开门</h4>
+                <p>用于直接向设备下发开门指令，便于现场补料、巡检或运维处理。</p>
+                <ul>
+                  <li>当前作为一级直达动作，入口位于远程操作菜单中。</li>
+                  <li>点击后直接关闭弹层，并提示 <code>已向设备 {设备编号} 下发指令：设备开门</code>。</li>
+                  <li>当前没有单独的二级确认页或参数配置页。</li>
+                </ul>
+                <figure class="doc-image">
+                  <img src="../screenshots/device-prd/uf009-remote-actions-latest.svg" alt="F-011-B 设备开门">
+                  <figcaption>F-011-B 设备开门（共用一级菜单截图）</figcaption>
+                </figure>
+              </article>
+              <article class="subfeature-card">
+                <h4>F-011-C：设备停售</h4>
+                <p>用于向设备下发停售指令，作为远程操作的一类设备控制动作。</p>
+                <ul>
+                  <li>当前作为一级直达动作，无二级参数页。</li>
+                  <li>点击后记录远程动作并提示成功。</li>
+                  <li>当前页面不会因为这个动作立即改写列表里的 <code>停卖</code> 展示，列表停卖状态仍由设备数据本身决定。</li>
+                </ul>
+                <figure class="doc-image">
+                  <img src="../screenshots/device-prd/uf009-remote-actions-latest.svg" alt="F-011-C 设备停售">
+                  <figcaption>F-011-C 设备停售（共用一级菜单截图）</figcaption>
+                </figure>
+              </article>
+              <article class="subfeature-card">
+                <h4>F-011-D：音量调节</h4>
+                <p>用于向设备下发音量调整类指令，是当前远程操作菜单中的直达入口之一。</p>
+                <ul>
+                  <li>当前作为一级直达动作展示在远程操作菜单中。</li>
+                  <li>点击后直接下发指令并关闭弹层。</li>
+                  <li>当前页面尚未实现 <code>设备音量 / 点单屏音量</code> 的二级拆分配置。</li>
+                </ul>
+                <figure class="doc-image">
+                  <img src="../screenshots/device-prd/uf009-remote-actions-latest.svg" alt="F-011-D 音量调节">
+                  <figcaption>F-011-D 音量调节（共用一级菜单截图）</figcaption>
+                </figure>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section class="doc-section" id="section-flows">
+          <h2>4. 用户流程 / 用户故事</h2>
+
+          <section class="doc-subsection card" id="uf-001">
+            <h3>UF-001：进入设备管理并查看设备总览</h3>
+            <p><strong>描述：</strong> 作为运营人员，我希望进入设备管理页后先看到当前可见设备的整体状态，这样我能快速判断当前设备池是否稳定。</p>
+            <ol>
+              <li>用户进入 <code>设备管理</code> 页面。</li>
+              <li>页面加载当前可见设备数据。</li>
+              <li>顶部展示统计卡、筛选栏和设备列表。</li>
+              <li>用户继续搜索、筛选或进入详情。</li>
+            </ol>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf001-overview-data.png" alt="UF-001 设备管理总览">
+              <figcaption>UF-001 设备管理总览</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-002">
+            <h3>UF-002：添加设备并提交入场信息</h3>
+            <p><strong>描述：</strong> 作为运营人员，我希望从设备管理页进入最新设备入场页，并在当前商户范围内完成设备、点位、员工、支付方式、广告屏和点位照片配置，这样新设备才能按最新流程正式纳入设备管理范围。</p>
+            <ol>
+              <li>用户在设备管理页点击 <code>+ 设备录入</code>。</li>
+              <li>系统跳转到 <code>设备入场</code> 页面。</li>
+              <li>系统按当前登录商户范围加载可入场设备、可选点位和可选员工。</li>
+              <li>用户选择设备、点位和运维人员；如无合适点位，可先 <code>+ 新增点位</code> 并自动选中。</li>
+              <li>用户补充 GPS、经纬度、点位地址、节能模式、设备日期、网络信号、维护时段和备注。</li>
+              <li>用户选择至少一种支付方式，并按需上传广告屏素材和点位照片。</li>
+              <li>用户点击 <code>提交入场</code> 完成录入并返回设备管理。</li>
+            </ol>
+            <ul>
+              <li>录入页按当前登录商户范围过滤 <code>设备</code>、<code>点位</code> 和 <code>员工</code>，不再单独提供“所属客户”选择框。</li>
+              <li>快速新增点位时，系统自动绑定当前商户，并支持填写点位名称、编码、分类、状态、负责人、联系电话、详细地址和备注。</li>
+              <li>提交成功后，系统保存入场信息，同时更新设备所属商户、点位和入场状态。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf011-device-entry-latest.svg" alt="UF-002 添加设备并提交入场信息（最新分支结构预览）">
+              <figcaption>UF-002 添加设备并提交入场信息（最新分支结构预览）</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-003">
+            <h3>UF-003：通过搜索与筛选快速定位设备</h3>
+            <p><strong>描述：</strong> 作为运营或运维人员，我希望通过设备编号、点位和状态快速缩小范围，这样我能尽快找到目标设备。</p>
+            <ul>
+              <li>搜索需同时匹配 <code>设备编号</code>、<code>点位名称</code> 和原始点位编码。</li>
+              <li>状态筛选当前仅包含 <code>全部状态</code>、<code>运行中</code>、<code>故障</code>。</li>
+              <li>当前不提供 <code>停用</code> 或 <code>未入场</code> 的单独筛选项；这两种口径只能在列表展示中查看，不能通过状态筛选直接过滤。</li>
+              <li>点位筛选当前仅包含 <code>全部点位</code>、<code>展会点位</code>、<code>运营点位</code>。</li>
+              <li>筛选项变化后即时生效，不需要额外点击应用按钮。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf002-filter.png" alt="UF-003 搜索与筛选">
+              <figcaption>UF-003 搜索与筛选</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-004">
+            <h3>UF-004：在桌面表格和移动卡片中浏览设备</h3>
+            <p><strong>描述：</strong> 作为后台使用者，我希望在桌面端和移动端都能快速浏览设备，并直接进行列表级操作。</p>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf003-list-mobile.png" alt="UF-004 桌面表格与移动卡片">
+              <figcaption>UF-004 桌面表格与移动卡片</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-005">
+            <h3>UF-005：打开设备详情并查看首屏摘要</h3>
+            <p><strong>描述：</strong> 作为运维人员，我希望打开设备详情后先看到设备身份、当前状态和运营摘要，再决定是做远程操作、查看记录，还是进入入场 / 广告屏 / 技术详情。</p>
+            <ol>
+              <li>用户点击列表中的 <code>查看</code> 或 <code>查看详情</code>。</li>
+              <li>系统打开设备详情弹层。</li>
+              <li>用户先浏览设备概览、设备状态和运营摘要。</li>
+              <li>用户根据右侧入口查看入场详情、广告屏信息、技术状态或记录摘要。</li>
+              <li>用户在右侧设备操作区发起后续动作。</li>
+            </ol>
+            <ul>
+              <li>详情使用独立弹层，桌面端为超宽布局，移动端回退为单列卡片布局。</li>
+              <li>详情整体为 <code>左侧主内容 + 右侧设备操作区</code> 结构。</li>
+              <li><code>设备概览</code> 至少展示 <code>设备编号</code>、<code>点位</code>、<code>设备类别</code>；当前不再展示 <code>部署类型</code>。</li>
+              <li><code>设备状态</code> 至少展示 <code>设备状态</code>、<code>停卖状态</code>、<code>最近心跳</code>、<code>入场状态</code>、<code>当前异常摘要</code>。</li>
+              <li><code>运营摘要</code> 至少展示 <code>当前点位</code>、<code>支付方式</code>、<code>节能模式</code>、<code>网络信号</code>、<code>最近变更</code>、<code>记录摘要</code>。</li>
+              <li>右侧 <code>设备操作</code> 区固定包含 <code>远程操作</code>、<code>温度报警设置</code>、<code>状态记录</code>、<code>编辑状态</code>、<code>物料页面</code>。</li>
+              <li>右侧 <code>详细信息</code> 区固定包含 <code>入场详情</code>、<code>广告屏信息</code>、<code>技术状态</code>、<code>记录摘要</code>。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf004-detail-summary-latest.png" alt="UF-005 设备详情摘要">
+              <figcaption>UF-005 设备详情摘要</figcaption>
+            </figure>
+            <div class="subfeature-card" id="uf-005-a">
+              <h4>UF-005-A：展开并查看技术状态</h4>
+              <p><strong>描述：</strong> 作为运维人员，我希望在设备详情里展开技术状态，查看温度、湿度、版本和机构状态，这样我可以先判断故障更偏向现场硬件问题还是软件 / 配置问题。</p>
+              <ol>
+                <li>用户打开某台设备的详情弹层。</li>
+                <li>用户在右侧 <code>详细信息</code> 区点击 <code>技术状态</code>。</li>
+                <li>系统打开技术状态二级浮层，并默认展开详情内容。</li>
+                <li>系统展示当前设备的温度、湿度、软件版本和机构状态标签。</li>
+                <li>用户根据读到的技术信息，决定继续查看记录、修改状态或发起远程操作。</li>
+              </ol>
+              <ul>
+                <li><code>技术状态</code> 必须从右侧 <code>详细信息</code> 入口打开，不再默认占用左侧首屏。</li>
+                <li>展开后至少展示 <code>冰箱温度</code>、<code>制作仓温度</code>、<code>豆仓温度</code>、<code>豆仓湿度</code>、<code>更新时间</code>、<code>上位机软件</code>、<code>点单屏软件</code>、<code>点单屏系统</code>、<code>点单屏内核</code>、<code>广告屏版本</code>、<code>固件版本</code>。</li>
+                <li>技术状态底部必须提供 <code>机构状态</code> 标签区，并展示多个机构的当前状态标签。</li>
+                <li>当前技术状态区为只读展示，不提供参数编辑和保存动作。</li>
+                <li>当部分版本字段暂无数据时，页面允许显示为 <code>-</code>，但结构不能消失。</li>
+              </ul>
+              <figure class="doc-image">
+                <img src="../screenshots/device-prd/uf017-technical-status-expanded.png" alt="UF-005-A 技术状态（展开态独立截图）">
+                <figcaption>UF-005-A 技术状态（展开态独立截图）</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section class="doc-subsection card" id="uf-006">
+            <h3>UF-006：查看并编辑入场信息</h3>
+            <p><strong>描述：</strong> 作为运营人员，我希望在设备详情里查看并编辑入场信息、补充字段、点位图片和点位变更记录，这样我可以确认设备的线下落位和基础配置。</p>
+            <ol>
+              <li>用户在右侧 <code>详细信息</code> 区点击 <code>入场详情</code>。</li>
+              <li>系统打开入场详情二级浮层，展示基础信息、补充信息、点位图片和点位变更记录。</li>
+              <li>用户点击详情底部 <code>编辑入场信息</code>。</li>
+              <li>用户在编辑弹层中修改字段、上传图片并保存。</li>
+            </ol>
+            <ul>
+              <li>入场信息以单一折叠区块展示，不再拆成“核心信息 / 全部信息”两个入口。</li>
+              <li>入场信息通过右侧 <code>详细信息 &gt; 入场详情</code> 打开，不再默认占用左侧首屏。</li>
+              <li>基础信息至少展示 <code>入场时间</code>、<code>点位名称</code>、<code>点位地址</code>、<code>支付方式</code>、<code>节能模式</code>。</li>
+              <li>补充信息至少覆盖 <code>运维人员</code>、<code>运维电话</code>、<code>GPS定位</code>、<code>经纬度</code>、<code>网络信号</code>、<code>设备开始日期</code>、<code>设备结束日期</code>、<code>第五代终端</code>、<code>订单并行制作</code>、<code>维护时段</code>、<code>备注</code>。</li>
+              <li>当节能模式为 <code>开启</code> 时，详情和编辑弹层都展示节能开始 / 结束时间。</li>
+              <li>点位图片支持点击预览，并支持左右切换。</li>
+              <li>点位变更记录默认使用折叠摘要卡片展示，摘要至少包含时间、操作人、变更项数量、变更字段和主要变化。</li>
+              <li>展开某条点位变更记录后，必须能看到对应字段的 <code>变更前</code> 和 <code>变更后</code>。</li>
+              <li>编辑入场信息保存后更新当前设备详情，并即时刷新展示。</li>
+              <li>当设备缺少入场信息时，预览环境应提供稳定的空态或示例内容，避免详情完全空白。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf005-entry-info-panel.png" alt="UF-006 入场信息">
+              <figcaption>UF-006 入场信息</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-007">
+            <h3>UF-007：查看并维护广告屏信息</h3>
+            <p><strong>描述：</strong> 作为运营人员，我希望按照设备的左右物理屏分别查看和维护广告屏素材。</p>
+            <ol>
+              <li>用户在右侧 <code>详细信息</code> 区点击 <code>广告屏信息</code>。</li>
+              <li>页面按左右固定区域展示广告屏预览。</li>
+              <li>用户在入场信息编辑弹层中上传或替换广告屏素材。</li>
+              <li>用户保存后返回详情查看左右屏最新状态。</li>
+            </ol>
+            <ul>
+              <li>广告屏信息通过右侧 <code>详细信息 &gt; 广告屏信息</code> 打开，并以 <code>左侧菜单</code> 和 <code>右侧排队号背景</code> 两组固定区域展示。</li>
+              <li>左侧菜单支持 <code>jpg/png</code> 图片和 <code>mp4(H.264)</code> 视频。</li>
+              <li>右侧排队号背景当前只支持 <code>jpg/png</code> 图片。</li>
+              <li>右侧上传视频时必须阻止保存。</li>
+              <li>详情页广告屏区按左右拼接方式展示，贴近真实设备物理屏。</li>
+              <li>系统兼容历史广告素材数据，旧设备也能正常展示左侧菜单素材。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf006-ad-screen.png" alt="UF-007 广告屏信息">
+              <figcaption>UF-007 广告屏信息</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-008">
+            <h3>UF-008：查看并修改温度报警设置</h3>
+            <p><strong>描述：</strong> 作为运维人员，我希望在当前设备上下文中查看各温区参数，并逐项修改报警阈值。</p>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf007-temperature-alarm.png" alt="UF-008 温度报警设置">
+              <figcaption>UF-008 温度报警设置</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-009">
+            <h3>UF-009：查看异常记录与运维记录</h3>
+            <p><strong>描述：</strong> 作为运维人员，我希望在设备详情里追溯异常和运维处理信息。</p>
+            <ol>
+              <li>用户可以直接点击右侧 <code>设备操作 &gt; 状态记录</code>。</li>
+              <li>用户也可以点击右侧 <code>详细信息 &gt; 记录摘要</code>，先查看异常记录数和运维记录数。</li>
+              <li>用户在记录摘要中点击 <code>查看状态记录</code>。</li>
+              <li>系统关闭记录摘要浮层，打开完整状态记录弹层，默认停留在 <code>异常记录</code> 标签。</li>
+              <li>用户切换到 <code>运维记录</code> 标签查看补料 / 清洁等记录。</li>
+            </ol>
+            <ul>
+              <li><code>记录摘要</code> 通过右侧 <code>详细信息</code> 入口打开，只展示异常数量、运维数量和查看入口。</li>
+              <li>从 <code>记录摘要</code> 点击 <code>查看状态记录</code> 时，旧摘要浮层必须关闭，完整状态记录弹层必须位于最上层。</li>
+              <li>状态记录弹层固定为 <code>异常记录</code> 与 <code>运维记录</code> 双标签结构。</li>
+              <li>异常记录为空或不足 3 条时，预览环境应保证列表展示稳定。</li>
+              <li>运维记录应覆盖清洁、补料等常见类型，并兼容历史记录格式。</li>
+              <li>当前版本状态记录弹层只展示 <code>异常记录</code> 和 <code>运维记录</code>，不会单独展示远程操作日志。</li>
+            </ul>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf008-status-record-layer-fixed.png" alt="UF-009 状态记录">
+              <figcaption>UF-009 状态记录</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-010">
+            <h3>UF-010：编辑设备状态</h3>
+            <p><strong>描述：</strong> 作为运维人员，我希望直接在设备详情中更新设备状态。</p>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf009-remote-actions.png" alt="UF-010 编辑状态">
+              <figcaption>UF-010 编辑状态</figcaption>
+            </figure>
+          </section>
+
+          <section class="doc-subsection card" id="uf-011">
+            <h3>UF-011：发起远程操作</h3>
+            <p><strong>描述：</strong> 作为运维人员，我希望在设备详情中发起远程操作，并在必要时进行二次确认。</p>
+            <figure class="doc-image">
+              <img src="../screenshots/device-prd/uf010-restart-flow.png" alt="UF-011 远程操作">
+              <figcaption>UF-011 远程操作</figcaption>
+            </figure>
+          </section>
+        </section>
+
+        <section class="doc-section" id="section-fr">
+          <h2>5. 功能需求</h2>
+          <ul>
+            <li>FR-1：设备管理页必须展示 4 张统计卡：<code>设备总数</code>、<code>运行中</code>、<code>故障</code>、<code>停用</code>。</li>
+            <li>FR-2：设备管理页必须提供 <code>+ 设备录入</code> 入口，并统一跳转至设备录入页面。</li>
+            <li>FR-3：页面必须支持按 <code>设备编号</code>、<code>点位名称</code>、原始点位编码搜索设备。</li>
+            <li>FR-4：页面必须支持按 <code>全部状态 / 运行中 / 故障</code> 筛选，当前不支持 <code>停用 / 未入场</code> 的单独筛选。</li>
+            <li>FR-5：页面必须支持按 <code>全部点位 / 展会点位 / 运营点位</code> 筛选。</li>
+            <li>FR-6：搜索与筛选必须即时生效，不依赖手动提交。</li>
+            <li>FR-7：桌面端设备列表必须展示 <code>商户</code> 字段。</li>
+            <li>FR-8：移动端卡片必须展示 <code>商户</code>、<code>点位</code>、<code>停卖</code>、<code>状态</code>、<code>最近心跳</code>。</li>
+            <li>FR-9：列表分页当前固定为每页 <code>15</code> 条。</li>
+            <li>FR-10：列表级动作必须支持 <code>查看</code> 与 <code>停卖 / 恢复</code>。</li>
+            <li>FR-11：设备详情必须采用 <code>左主内容 + 右侧操作区</code> 布局。</li>
+            <li>FR-12：设备概览必须展示 <code>设备编号</code>、<code>点位</code>、<code>设备类别</code>，当前不再展示 <code>部署类型</code>。</li>
+            <li>FR-13：设备状态卡必须展示 <code>设备状态</code>、<code>停卖状态</code>、<code>最近心跳</code>、<code>入场状态</code>、<code>当前异常摘要</code>。</li>
+            <li>FR-14：设备详情左侧首屏必须只保留 <code>设备概览</code>、<code>设备状态</code>、<code>运营摘要</code> 三类信息。</li>
+            <li>FR-15：右侧 <code>设备操作</code> 必须包含 <code>远程操作</code>、<code>温度报警设置</code>、<code>状态记录</code>、<code>编辑状态</code>、<code>物料页面</code>。</li>
+            <li>FR-16：右侧 <code>详细信息</code> 必须包含 <code>入场详情</code>、<code>广告屏信息</code>、<code>技术状态</code>、<code>记录摘要</code>。</li>
+            <li>FR-17：技术状态必须通过右侧 <code>详细信息 &gt; 技术状态</code> 打开，并展示温度、湿度、版本和机构状态。</li>
+            <li>FR-18：入场信息必须通过右侧 <code>详细信息 &gt; 入场详情</code> 打开，并支持点位图片预览和点位变更记录查看。</li>
+            <li>FR-19：点位变更记录必须默认使用折叠摘要卡片，展开后展示变更前 / 变更后。</li>
+            <li>FR-20：入场编辑保存后必须更新当前设备详情。</li>
+            <li>FR-21：广告屏信息必须按 <code>左侧菜单</code> 与 <code>右侧排队号背景</code> 两个固定槽位展示。</li>
+            <li>FR-22：左侧菜单必须支持 <code>jpg/png/mp4(H.264)</code>；右侧排队号背景必须只支持 <code>jpg/png</code>。</li>
+            <li>FR-23：广告屏编辑必须兼容历史广告素材数据。</li>
+            <li>FR-24：温度报警设置必须是独立弹层，并支持 5 个固定温区逐项编辑。</li>
+            <li>FR-25：状态记录弹层必须提供 <code>异常记录</code> 与 <code>运维记录</code> 双标签。</li>
+            <li>FR-26：从 <code>记录摘要</code> 点击 <code>查看状态记录</code> 时，必须先关闭摘要浮层，避免弹层顺序错乱。</li>
+            <li>FR-27：异常记录不足时，预览环境必须保持展示稳定。</li>
+            <li>FR-28：运维记录必须支持联系人自动补全。</li>
+            <li>FR-29：状态编辑必须支持 <code>正常</code>、<code>故障</code>、<code>缺料</code> 三个选项。</li>
+            <li>FR-30：当状态改为 <code>故障</code> 时，系统必须同步新增异常记录。</li>
+            <li>FR-31：远程操作一级菜单当前必须包含 <code>机构重启</code>、<code>设备开门</code>、<code>设备停售</code>、<code>音量调节</code>。</li>
+            <li>FR-32：<code>机构重启</code> 必须先进入二级菜单，再进入确认执行页。</li>
+            <li>FR-33：远程操作执行后必须保留操作记录并展示成功提示。</li>
+            <li>FR-34：页面必须支持按当前员工设备范围裁剪统计、列表与空状态。</li>
+            <li>FR-35：当当前账号无设备页权限或无分配设备时，页面必须返回明确空状态提示。</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="section-rules">
+          <h2>6. 关键规则矩阵</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>场景</th>
+                  <th>当前规则</th>
+                  <th>系统结果</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>列表状态展示</td>
+                  <td>设备状态为故障</td>
+                  <td>列表状态显示 <code>故障</code></td>
+                </tr>
+                <tr>
+                  <td>列表状态展示</td>
+                  <td>设备未故障但销售状态为停用</td>
+                  <td>列表状态显示 <code>停用</code></td>
+                </tr>
+                <tr>
+                  <td>点位展示</td>
+                  <td>未入场或无点位</td>
+                  <td>列表显示 <code>未入场</code>，详情概览显示 <code>未分配点位</code></td>
+                </tr>
+                <tr>
+                  <td>员工设备范围</td>
+                  <td>无设备页权限</td>
+                  <td>空状态显示 <code>当前账号暂未开通设备页面权限</code></td>
+                </tr>
+                <tr>
+                  <td>员工设备范围</td>
+                  <td>有页面权限但未分配设备</td>
+                  <td>空状态显示 <code>你已拥有设备页面权限，但当前未分配可查看的设备，请联系管理员调整页面设备范围</code></td>
+                </tr>
+                <tr>
+                  <td>广告屏上传</td>
+                  <td>右侧上传视频</td>
+                  <td>阻止保存，并提示右侧仅支持 <code>jpg/png</code></td>
+                </tr>
+                <tr>
+                  <td>广告屏上传</td>
+                  <td>左侧上传非 <code>H.264</code> 的 mp4</td>
+                  <td>阻止保存，并提示编码不支持</td>
+                </tr>
+                <tr>
+                  <td>广告屏上传</td>
+                  <td>素材分辨率与推荐值不符</td>
+                  <td>给出警告，但不强制拦截</td>
+                </tr>
+                <tr>
+                  <td>温度报警保存</td>
+                  <td>编辑单个温区并保存</td>
+                  <td>只更新当前设备的温度报警配置，并刷新当前弹层</td>
+                </tr>
+                <tr>
+                  <td>设备详情首屏</td>
+                  <td>打开设备详情</td>
+                  <td>左侧只展示 <code>设备概览 / 设备状态 / 运营摘要</code>，重信息通过右侧二级入口打开</td>
+                </tr>
+                <tr>
+                  <td>详细信息入口</td>
+                  <td>点击 <code>入场详情 / 广告屏信息 / 技术状态 / 记录摘要</code></td>
+                  <td>打开二级浮层，并默认展开对应详情内容</td>
+                </tr>
+                <tr>
+                  <td>点位变更记录</td>
+                  <td>多条历史点位变更</td>
+                  <td>默认显示折叠摘要卡片，点击单条后展示完整变更前 / 变更后</td>
+                </tr>
+                <tr>
+                  <td>记录摘要跳转</td>
+                  <td>在记录摘要中点击 <code>查看状态记录</code></td>
+                  <td>先关闭记录摘要浮层，再打开完整状态记录弹层</td>
+                </tr>
+                <tr>
+                  <td>状态编辑</td>
+                  <td>改为 <code>故障</code></td>
+                  <td>刷新摘要，并追加异常记录</td>
+                </tr>
+                <tr>
+                  <td>状态编辑</td>
+                  <td>改为 <code>缺料</code></td>
+                  <td>详情状态口径变为 <code>缺料</code>，列表主状态仍按运行 / 停用规则展示</td>
+                </tr>
+                <tr>
+                  <td>远程操作</td>
+                  <td>一级直达动作</td>
+                  <td>立即执行、关闭弹层并提示成功</td>
+                </tr>
+                <tr>
+                  <td>远程操作</td>
+                  <td><code>机构重启</code> 二级动作</td>
+                  <td>先进入确认页，再执行</td>
+                </tr>
+                <tr>
+                  <td>远程操作记录</td>
+                  <td>已产生远程操作记录</td>
+                  <td>当前不会在状态记录弹层中单独展示</td>
+                </tr>
+                <tr>
+                  <td>入场信息</td>
+                  <td>原始数据缺失</td>
+                  <td>展示稳定空态或示例内容，保证详情样式稳定</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc-section" id="section-limits">
+          <h2>7. 当前版本限制</h2>
+          <ul>
+            <li>当前状态筛选只支持 <code>全部状态 / 运行中 / 故障</code>，不支持单独筛选 <code>停用</code> 或 <code>未入场</code>。</li>
+            <li>当前远程操作虽然会保留操作记录，但状态记录弹层只展示 <code>异常记录</code> 和 <code>运维记录</code>，没有单独的远程操作标签。</li>
+            <li>设备详情左侧不再默认展示完整入场、广告屏、技术状态和状态记录内容；这些信息需要通过右侧 <code>详细信息</code> 入口打开。</li>
+            <li><code>设备开门</code>、<code>设备停售</code>、<code>音量调节</code> 当前都是统一直达动作，没有进一步参数配置流程。</li>
+            <li>当前页面未实现“机器按钮位置指引”与“设备音量 / 点单屏音量分开调节”的二级交互。</li>
+            <li>页面会按员工设备范围裁剪数据，但不会在有数据时额外展示范围 banner，只在空状态时展示权限 / 范围提示。</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="section-success">
+          <h2>8. 成功标准</h2>
+          <ul>
+            <li>用户能在进入页面后 3 步内完成“看概览 -&gt; 定位设备 -&gt; 进入详情”。</li>
+            <li>设备详情首屏能在一屏内完成“设备是谁、在哪里、是否正常、下一步做什么”的判断。</li>
+            <li>设备详情中的入场信息、广告屏、技术状态、状态记录、温度报警和状态编辑都能在当前设备上下文内完成闭环。</li>
+            <li>远程操作 4 个动作都在文档中有对应截图和当前行为描述，不再只保留一个总入口说明。</li>
+            <li>列表、统计、筛选和空状态都遵守员工设备范围，不出现越权浏览。</li>
+            <li>当前页面的已实现动作与当前限制都被清晰记录，便于后续继续迭代而不混淆未来态与现状。</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

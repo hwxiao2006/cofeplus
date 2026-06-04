@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配方配置交互预览</title>
+    <style>
+        :root {
+            --primary: #45c8c3;
+            --primary-dark: #18aaa4;
+            --primary-soft: #e9fbfa;
+            --bg: #f5f7f9;
+            --panel: #ffffff;
+            --line: #dfe7ef;
+            --line-strong: #cbd7e3;
+            --text: #263238;
+            --muted: #91a2b0;
+            --brown: #8b6231;
+            --milk: #d8ba91;
+            --cream: #f4eadb;
+            --water: #4fc7c0;
+            --ice: #73c4e8;
+            --syrup: #c8945f;
+            --shadow: 0 10px 28px rgba(31, 45, 61, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .page {
+            padding: 28px 44px 46px;
+        }
+
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .tabs {
+            display: inline-flex;
+            gap: 14px;
+            padding: 10px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid rgba(211, 221, 230, 0.88);
+            box-shadow: var(--shadow);
+        }
+
+        .tab {
+            height: 62px;
+            min-width: 156px;
+            border: 0;
+            border-radius: 13px;
+            background: transparent;
+            color: #5f6e77;
+            font-size: 25px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            color: #fff;
+            background: linear-gradient(180deg, #45c9d2 0%, #2abfd0 100%);
+            box-shadow: 0 12px 24px rgba(42, 191, 208, 0.25);
+        }
+
+        .save-btn {
+            width: 172px;
+            height: 68px;
+            border: 0;
+            border-radius: 9px;
+            background: #4bc9c3;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .variant-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 4px 0 28px;
+        }
+
+        .variant-btn {
+            height: 42px;
+            padding: 0 18px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fff;
+            color: #5b6a73;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .variant-btn.active {
+            border-color: rgba(69, 200, 195, 0.65);
+            background: var(--primary-soft);
+            color: #0d8d87;
+        }
+
+        .section-title {
+            margin: 0 0 18px;
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .cup-card {
+            min-height: 715px;
+            border: 1px solid var(--line);
+            border-radius: 19px;
+            background: #fff;
+            padding: 23px 24px;
+            box-shadow: 0 1px 3px rgba(31, 45, 61, 0.03);
+        }
+
+        .cup-card.active {
+            border: 2px solid var(--primary);
+            box-shadow: 0 12px 26px rgba(69, 200, 195, 0.13);
+        }
+
+        .cup-card.compact {
+            min-height: 0;
+            padding: 18px;
+        }
+
+        .cup-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .cup-title {
+            display: inline-flex;
+            align-items: center;
+            min-width: 0;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .cup-title-block {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .standard-badge {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            width: fit-content;
+            min-height: 36px;
+            padding: 6px 12px;
+            border-radius: 11px;
+            border: 1px solid #cfe2ee;
+            background: #f6fbff;
+            color: #61717b;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .standard-badge strong {
+            color: #14212b;
+            font-size: 23px;
+            line-height: 1;
+        }
+
+        .dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #e8eef4;
+            flex: 0 0 auto;
+        }
+
+        .active .dot {
+            background: var(--primary);
+        }
+
+        .pill-btn {
+            height: 38px;
+            padding: 0 12px;
+            border: 1px solid var(--line-strong);
+            border-radius: 9px;
+            background: #fff;
+            color: #61717b;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .pill-btn:disabled {
+            color: #b4c1cb;
+            background: #f8fafc;
+            cursor: default;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 28px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: #0b8f88;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .status.neutral {
+            background: #f1f5f9;
+            color: #7b8a95;
+        }
+
+        .bar {
+            height: 44px;
+            display: flex;
+            overflow: hidden;
+            border-radius: 11px;
+            background: #e9eef1;
+            margin: 12px 0 14px;
+        }
+
+        .seg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 54px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .seg.espresso { background: var(--brown); }
+        .seg.milk { background: var(--milk); }
+        .seg.foam { background: #e7d3ad; }
+        .seg.water { background: var(--water); }
+        .seg.ice { background: var(--ice); }
+        .seg.syrup { background: var(--syrup); }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            color: var(--muted);
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .meta-row strong {
+            color: #263238;
+            font-size: 20px;
+        }
+
+        .legend-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 4px;
+            background: var(--primary);
+            display: inline-block;
+        }
+
+        .legend-dot.gray {
+            background: #dbe4ec;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 18px;
+        }
+
+        .chip {
+            display: inline-flex;
+            height: 40px;
+            align-items: center;
+            padding: 0 14px;
+            border-radius: 9px;
+            background: var(--cream);
+            color: #8d632f;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .chip.water {
+            background: #e9fbfa;
+            color: #18aaa4;
+        }
+
+        .chip.ice {
+            background: #eef7fc;
+            color: #55add4;
+        }
+
+        .chip.muted {
+            background: #f2f5f8;
+            color: #8d9aa5;
+        }
+
+        .diff-box {
+            border: 1px solid #dce8f1;
+            border-radius: 13px;
+            background: #f9fbfd;
+            padding: 14px 16px;
+            margin: 18px 0 12px;
+        }
+
+        .diff-box strong {
+            font-size: 20px;
+        }
+
+        .diff-box span {
+            display: block;
+            margin-top: 8px;
+            color: #8ea0ae;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .ingredient-row {
+            min-height: 110px;
+            border: 1px solid #dce8f1;
+            border-radius: 13px;
+            background: #fcfdfe;
+            padding: 17px 14px;
+            display: grid;
+            grid-template-columns: 1fr 372px;
+            align-items: start;
+            gap: 18px;
+            margin-top: 13px;
+        }
+
+        .ingredient-name {
+            color: #d1b68d;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .ingredient-name.water {
+            color: var(--primary);
+        }
+
+        .ingredient-hint {
+            margin-top: 22px;
+            color: #b4c1cb;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .stepper {
+            display: grid;
+            grid-template-columns: 44px 1fr 44px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .step {
+            width: 44px;
+            height: 44px;
+            border: 1px solid #cbd7e3;
+            border-radius: 11px;
+            background: #fff;
+            font-size: 27px;
+            line-height: 1;
+            font-weight: 900;
+            color: #263238;
+            cursor: pointer;
+        }
+
+        .value-input {
+            height: 44px;
+            display: grid;
+            grid-template-columns: 1fr 38px;
+            align-items: center;
+            border: 1px solid #dbe4ec;
+            border-radius: 12px;
+            padding: 0 12px;
+            background: #fff;
+        }
+
+        .value-input input {
+            width: 100%;
+            border: 1px solid #e5ebf1;
+            border-radius: 9px;
+            height: 31px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            background: #fdfefe;
+        }
+
+        .unit {
+            color: #b2c0ca;
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .workbench {
+            display: grid;
+            grid-template-columns: minmax(640px, 1fr) 430px;
+            gap: 24px;
+        }
+
+        .main-editor,
+        .side-panel {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 1px 3px rgba(31, 45, 61, 0.03);
+        }
+
+        .main-editor {
+            padding: 24px;
+        }
+
+        .side-panel {
+            padding: 18px;
+        }
+
+        .editor-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .editor-title {
+            font-size: 30px;
+            line-height: 1.2;
+            font-weight: 950;
+        }
+
+        .editor-subtitle {
+            margin-top: 8px;
+            color: #8495a2;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .summary-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .summary-cell.featured {
+            border-color: rgba(69, 200, 195, 0.72);
+            background: #effefd;
+            box-shadow: inset 0 0 0 1px rgba(69, 200, 195, 0.18);
+        }
+
+        .summary-cell.featured .summary-label {
+            color: #0b8f88;
+        }
+
+        .summary-cell.featured .summary-value {
+            color: #14212b;
+            font-size: 29px;
+        }
+
+        .summary-cell {
+            border: 1px solid #dce8f1;
+            border-radius: 13px;
+            padding: 13px;
+            background: #f9fbfd;
+        }
+
+        .summary-label {
+            color: #8ea0ae;
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .summary-value {
+            margin-top: 5px;
+            font-size: 22px;
+            font-weight: 950;
+        }
+
+        .warning {
+            border: 1px solid #f3d3a8;
+            background: #fff8eb;
+            color: #986113;
+        }
+
+        .change-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .change-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-radius: 11px;
+            background: #f7fafc;
+            padding: 12px 13px;
+            font-size: 15px;
+            font-weight: 850;
+        }
+
+        .change-item b {
+            color: #0b8f88;
+        }
+
+        .side-title {
+            font-size: 18px;
+            font-weight: 950;
+            margin: 4px 0 12px;
+        }
+
+        .mini-cups {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .mini-cup {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 13px;
+            background: #fff;
+        }
+
+        .mini-cup.active {
+            border-color: var(--primary);
+            background: #f2fffd;
+        }
+
+        .mini-cup-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px;
+            font-weight: 950;
+        }
+
+        .mini-cup-meta {
+            margin-top: 8px;
+            color: #8ea0ae;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .compare-card {
+            border: 1px solid #dce8f1;
+            border-radius: 14px;
+            background: #fbfcfd;
+            padding: 14px;
+            margin-top: 12px;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .compare-col {
+            border-radius: 11px;
+            background: #fff;
+            border: 1px solid #e5ebf1;
+            padding: 12px;
+        }
+
+        .compare-label {
+            color: #8ea0ae;
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .compare-value {
+            margin-top: 5px;
+            font-size: 22px;
+            font-weight: 950;
+        }
+
+        .table-shell {
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 1px 3px rgba(31, 45, 61, 0.03);
+        }
+
+        .recipe-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .recipe-table th,
+        .recipe-table td {
+            border-bottom: 1px solid #e6edf3;
+            border-right: 1px solid #e6edf3;
+            padding: 16px;
+            vertical-align: middle;
+        }
+
+        .recipe-table th {
+            text-align: left;
+            background: #fbfcfd;
+            font-size: 16px;
+            font-weight: 950;
+        }
+
+        .recipe-table th.cup-th {
+            min-width: 250px;
+        }
+
+        .table-cup-title {
+            font-size: 20px;
+            font-weight: 950;
+        }
+
+        .table-cup-meta {
+            margin-top: 8px;
+            color: #8ea0ae;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .table-capacity-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .table-capacity-pill {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+            padding: 5px 8px;
+            border-radius: 9px;
+            background: #eef6fb;
+            color: #61717b;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .table-capacity-pill.standard {
+            background: var(--primary-soft);
+            color: #0b8f88;
+        }
+
+        .table-capacity-pill strong {
+            color: #14212b;
+            font-size: 17px;
+        }
+
+        .ingredient-th {
+            width: 190px;
+        }
+
+        .table-ingredient {
+            font-size: 19px;
+            font-weight: 950;
+        }
+
+        .cell-editor {
+            height: 46px;
+            display: grid;
+            grid-template-columns: 40px 1fr 32px;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #dce8f1;
+            border-radius: 12px;
+            padding: 0 8px;
+            background: #fff;
+        }
+
+        .cell-editor.changed {
+            border-color: rgba(69, 200, 195, 0.75);
+            background: #f2fffd;
+        }
+
+        .small-step {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #cbd7e3;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 18px;
+            font-weight: 950;
+        }
+
+        .cell-value {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 950;
+        }
+
+        .footer-bar {
+            position: sticky;
+            bottom: 0;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 14px 34px rgba(31, 45, 61, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-text {
+            color: #61717b;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .footer-text strong {
+            color: #0b8f88;
+        }
+
+        @media (max-width: 1180px) {
+            .cards-grid,
+            .workbench {
+                grid-template-columns: 1fr;
+            }
+
+            .cup-card {
+                min-height: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <div class="top-row">
+            <div class="tabs">
+                <button class="tab">基本信息</button>
+                <button class="tab active">🧪 配方配置</button>
+                <button class="tab">⚙️ 选项配置</button>
+            </div>
+            <button class="save-btn">保存配方</button>
+        </div>
+
+        <div class="variant-switch" aria-label="方案切换">
+            <button class="variant-btn active" data-target="variant-a">方案 A：强化卡片</button>
+            <button class="variant-btn" data-target="variant-b">方案 B：主编辑 + 对比</button>
+            <button class="variant-btn" data-target="variant-c">方案 C：表格批量</button>
+        </div>
+
+        <section id="variant-a" class="screen active">
+            <h1 class="section-title">配方配置 · 直接调整各杯型成分</h1>
+            <div class="cards-grid">
+                <article class="cup-card active">
+                    <div class="cup-head">
+                        <div class="cup-title-block">
+                            <div class="cup-title"><span class="dot"></span>热 约355ML</div>
+                            <div class="standard-badge">标准杯型容量 <strong>355ml</strong></div>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="status">已修改</span>
+                            <button class="pill-btn">恢复修改前</button>
+                        </div>
+                    </div>
+                    <div class="bar">
+                        <div class="seg espresso" style="width:24%;">浓缩 80ml</div>
+                        <div class="seg milk" style="width:54%;">奶 180ml</div>
+                        <div class="seg foam" style="width:6%;">奶泡</div>
+                        <div class="seg water" style="width:9%;">热水 30</div>
+                        <div class="seg syrup" style="width:7%;">糖浆 25</div>
+                    </div>
+                    <div class="meta-row">
+                        <span class="legend-dot gray"></span> 标准杯量 <strong>355ml</strong>
+                        <span class="legend-dot"></span> 当前容量 <strong>335ml</strong>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">浓缩 80ml</span>
+                        <span class="chip">奶 180ml</span>
+                        <span class="chip">奶泡 20ml</span>
+                        <span class="chip water">热水 30ml</span>
+                        <span class="chip">糖浆 25ml</span>
+                    </div>
+                    <div class="diff-box">
+                        <strong>容量少 20ml</strong>
+                        <span>当前总量低于标准杯量，保存前建议确认是否为预期。</span>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name">奶</div>
+                            <div class="ingredient-hint">每次 5ml，可按住连续调整</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="180"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name">奶泡</div>
+                            <div class="ingredient-hint">每次 5ml</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="20"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name water">热水</div>
+                            <div class="ingredient-hint">每次 5ml，可按住连续调整</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="30"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name">糖浆</div>
+                            <div class="ingredient-hint">每次 5ml</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="25"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="cup-card">
+                    <div class="cup-head">
+                        <div class="cup-title-block">
+                            <div class="cup-title"><span class="dot"></span>标准冰 约473ML</div>
+                            <div class="standard-badge">标准杯型容量 <strong>473ml</strong></div>
+                        </div>
+                        <button class="pill-btn" disabled>无修改</button>
+                    </div>
+                    <div class="bar">
+                        <div class="seg espresso" style="width:23%;">浓缩 80ml</div>
+                        <div class="seg milk" style="width:52%;">奶 180ml</div>
+                        <div class="seg water" style="width:18%;">热水 60</div>
+                        <div class="seg syrup" style="width:7%;">糖浆 25</div>
+                    </div>
+                    <div class="meta-row">
+                        <span class="legend-dot gray"></span> 标准杯量 <strong>473ml</strong>
+                        <span class="legend-dot"></span> 当前容量 <strong>345ml</strong>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">浓缩 80ml</span>
+                        <span class="chip">奶 180ml</span>
+                        <span class="chip water">热水 60ml</span>
+                        <span class="chip ice">冰 100g</span>
+                        <span class="chip">糖浆 25ml</span>
+                    </div>
+                    <div class="chip muted">其他成分 冰 100g</div>
+                    <div style="height:408px;"></div>
+                    <button class="pill-btn" style="width:100%; height:48px;">展开编辑</button>
+                </article>
+
+                <article class="cup-card">
+                    <div class="cup-head">
+                        <div class="cup-title-block">
+                            <div class="cup-title"><span class="dot"></span>少冰 约473ML</div>
+                            <div class="standard-badge">标准杯型容量 <strong>473ml</strong></div>
+                        </div>
+                        <button class="pill-btn" disabled>无修改</button>
+                    </div>
+                    <div class="bar">
+                        <div class="seg espresso" style="width:23%;">浓缩 80ml</div>
+                        <div class="seg milk" style="width:52%;">奶 180ml</div>
+                        <div class="seg water" style="width:18%;">热水 60</div>
+                        <div class="seg syrup" style="width:7%;">糖浆 25</div>
+                    </div>
+                    <div class="meta-row">
+                        <span class="legend-dot gray"></span> 标准杯量 <strong>473ml</strong>
+                        <span class="legend-dot"></span> 当前容量 <strong>345ml</strong>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">浓缩 80ml</span>
+                        <span class="chip">奶 180ml</span>
+                        <span class="chip water">热水 60ml</span>
+                        <span class="chip ice">冰 70g</span>
+                        <span class="chip">糖浆 25ml</span>
+                    </div>
+                    <div class="chip muted">其他成分 冰 70g</div>
+                    <div style="height:408px;"></div>
+                    <button class="pill-btn" style="width:100%; height:48px;">展开编辑</button>
+                </article>
+            </div>
+        </section>
+
+        <section id="variant-b" class="screen">
+            <h1 class="section-title">配方配置 · 主编辑区</h1>
+            <div class="workbench">
+                <article class="main-editor">
+                    <div class="editor-head">
+                        <div>
+                            <div class="editor-title">热 约355ML</div>
+                            <div class="editor-subtitle">当前正在编辑热杯型成分，浓缩由配方文件维护。</div>
+                        </div>
+                        <button class="pill-btn">恢复热杯型修改前</button>
+                    </div>
+                    <div class="bar">
+                        <div class="seg espresso" style="width:24%;">浓缩 80ml</div>
+                        <div class="seg milk" style="width:54%;">奶 180ml</div>
+                        <div class="seg foam" style="width:6%;">奶泡</div>
+                        <div class="seg water" style="width:9%;">热水 30</div>
+                        <div class="seg syrup" style="width:7%;">糖浆 25</div>
+                    </div>
+                    <div class="summary-strip">
+                        <div class="summary-cell featured">
+                            <div class="summary-label">标准杯量</div>
+                            <div class="summary-value">355ml</div>
+                        </div>
+                        <div class="summary-cell">
+                            <div class="summary-label">当前容量</div>
+                            <div class="summary-value">335ml</div>
+                        </div>
+                        <div class="summary-cell warning">
+                            <div class="summary-label">容量偏差</div>
+                            <div class="summary-value">-20ml</div>
+                        </div>
+                    </div>
+                    <div class="diff-box">
+                        <strong>浓缩 80ml</strong>
+                        <span>基底咖啡数值由配方文件维护，不可在此修改。</span>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name">奶</div>
+                            <div class="ingredient-hint">每次 5ml，可按住连续调整</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="180"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name">奶泡</div>
+                            <div class="ingredient-hint">每次 5ml</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="20"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                    <div class="ingredient-row">
+                        <div>
+                            <div class="ingredient-name water">热水</div>
+                            <div class="ingredient-hint">每次 5ml，可按住连续调整</div>
+                        </div>
+                        <div class="stepper">
+                            <button class="step">-</button>
+                            <div class="value-input"><input value="30"><span class="unit">ml</span></div>
+                            <button class="step">+</button>
+                        </div>
+                    </div>
+                </article>
+
+                <aside class="side-panel">
+                    <div class="side-title">杯型切换</div>
+                    <div class="mini-cups">
+                        <div class="mini-cup active">
+                            <div class="mini-cup-head"><span>热 约355ML</span><span class="status">已修改</span></div>
+                            <div class="mini-cup-meta">容量 335ml · 少 20ml</div>
+                        </div>
+                        <div class="mini-cup">
+                            <div class="mini-cup-head"><span>标准冰 约473ML</span><span class="status neutral">未修改</span></div>
+                            <div class="mini-cup-meta">容量 345ml · 冰 100g</div>
+                        </div>
+                        <div class="mini-cup">
+                            <div class="mini-cup-head"><span>少冰 约473ML</span><span class="status neutral">未修改</span></div>
+                            <div class="mini-cup-meta">容量 345ml · 冰 70g</div>
+                        </div>
+                    </div>
+
+                    <div class="side-title">修改前后对比</div>
+                    <div class="compare-card">
+                        <div class="compare-grid">
+                            <div class="compare-col">
+                                <div class="compare-label">修改前</div>
+                                <div class="compare-value">355ml</div>
+                            </div>
+                            <div class="compare-col">
+                                <div class="compare-label">修改后</div>
+                                <div class="compare-value">335ml</div>
+                            </div>
+                        </div>
+                        <div class="change-list">
+                            <div class="change-item"><span>热水</span><b>60ml → 30ml</b></div>
+                            <div class="change-item"><span>容量总量</span><b>355ml → 335ml</b></div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            <div class="footer-bar">
+                <div class="footer-text">已修改 <strong>1</strong> 个杯型。热杯型容量低于标准杯量 <strong>20ml</strong>。</div>
+                <button class="save-btn">保存配方</button>
+            </div>
+        </section>
+
+        <section id="variant-c" class="screen">
+            <h1 class="section-title">配方配置 · 表格批量调整</h1>
+            <div class="table-shell">
+                <table class="recipe-table">
+                    <thead>
+                        <tr>
+                            <th class="ingredient-th">成分</th>
+                            <th class="cup-th">
+                                <div class="table-cup-title">热 约355ML <span class="status">已修改</span></div>
+                                <div class="table-capacity-row">
+                                    <span class="table-capacity-pill standard">标准 <strong>355ml</strong></span>
+                                    <span class="table-capacity-pill">当前 <strong>335ml</strong></span>
+                                    <span class="table-capacity-pill">少 20ml</span>
+                                </div>
+                            </th>
+                            <th class="cup-th">
+                                <div class="table-cup-title">标准冰 约473ML</div>
+                                <div class="table-capacity-row">
+                                    <span class="table-capacity-pill standard">标准 <strong>473ml</strong></span>
+                                    <span class="table-capacity-pill">当前 <strong>345ml</strong></span>
+                                    <span class="table-capacity-pill">冰 100g</span>
+                                </div>
+                            </th>
+                            <th class="cup-th">
+                                <div class="table-cup-title">少冰 约473ML</div>
+                                <div class="table-capacity-row">
+                                    <span class="table-capacity-pill standard">标准 <strong>473ml</strong></span>
+                                    <span class="table-capacity-pill">当前 <strong>345ml</strong></span>
+                                    <span class="table-capacity-pill">冰 70g</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="table-ingredient">浓缩</div></td>
+                            <td><div class="cell-editor"><button class="small-step" disabled>-</button><div class="cell-value">80</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step" disabled>-</button><div class="cell-value">80</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step" disabled>-</button><div class="cell-value">80</div><span class="unit">ml</span></div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="table-ingredient">奶</div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">180</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">180</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">180</div><span class="unit">ml</span></div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="table-ingredient">奶泡</div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">20</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">0</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">0</div><span class="unit">ml</span></div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="table-ingredient">热水</div></td>
+                            <td><div class="cell-editor changed"><button class="small-step">-</button><div class="cell-value">30</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">60</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">60</div><span class="unit">ml</span></div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="table-ingredient">糖浆</div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">25</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">25</div><span class="unit">ml</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">25</div><span class="unit">ml</span></div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="table-ingredient">冰</div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">0</div><span class="unit">g</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">100</div><span class="unit">g</span></div></td>
+                            <td><div class="cell-editor"><button class="small-step">-</button><div class="cell-value">70</div><span class="unit">g</span></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="footer-bar">
+                <div class="footer-text">已修改 <strong>热杯型</strong> 的热水数值。表格适合一次检查多个杯型。</div>
+                <button class="save-btn">保存配方</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const buttons = document.querySelectorAll('.variant-btn');
+        const screens = document.querySelectorAll('.screen');
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.target;
+                buttons.forEach((item) => item.classList.toggle('active', item === button));
+                screens.forEach((screen) => screen.classList.toggle('active', screen.id === targetId));
+            });
+        });
+    </script>
+</body>
+</html>

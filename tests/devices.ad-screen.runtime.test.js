@@ -81,6 +81,8 @@ function buildSandbox() {
     Math,
     currentDetailDeviceId: '',
     devicesData: [],
+    SIDEBAR_LOGIN_PROFILE_KEY: 'sidebarLoginProfile',
+    LOGIN_SESSION_KEY: 'cofeLoginSession',
     entryEditImageDraft: {
       adScreen: {
         leftMenu: null,
@@ -131,6 +133,11 @@ function buildSandbox() {
     'serializeEntryAdScreenDraft',
     'collectDetailPreviewImages',
     'toDateTimeStorageValue',
+    'getLocationsData',
+    'getEntryEditSelectedLocationMeta',
+    'getCurrentLoginOperatorInfo',
+    'buildLocationChangeRecord',
+    'appendLocationChangeRecord',
     'saveEntryInfoEdit'
   ].forEach((functionName) => {
     vm.runInContext(extractFunctionSource(devicesHtml, functionName), sandbox);
@@ -283,6 +290,25 @@ test('运行时：saveEntryInfoEdit 应写入 adScreen 并移除 displayImageUrl
     },
     location: ['location.png']
   };
+  sandbox.document.getElementById('editLocationCode').options = [
+    { value: '', dataset: {}, textContent: '请选择点位' },
+    { value: 'L1', dataset: { name: '旧点位', address: '上海市静安区旧地址 1 号' }, textContent: '旧点位（L1）' }
+  ];
+  sandbox.document.getElementById('editLocationCode').selectedIndex = 1;
+  sandbox.document.getElementById('editLocationCode').value = 'L1';
+  sandbox.localStorage.setItem('locationsData', JSON.stringify([
+    {
+      id: 'L001',
+      code: 'L1',
+      name: '旧点位',
+      address: '上海市静安区旧地址 1 号',
+      longitude: '121.4700',
+      latitude: '31.2300',
+      customerId: 'C001',
+      customerName: '星巴克咖啡'
+    }
+  ]));
+  sandbox.document.getElementById('editLocationAddress').value = '上海市静安区旧地址 1 号';
 
   sandbox.saveEntryInfoEdit();
 

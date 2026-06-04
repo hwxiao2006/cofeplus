@@ -2136,6 +2136,45 @@ test('按钮归属：新增分类按钮应只保留在菜单管理工作区，�
   assert.ok(managePanelMatch[0].includes('openCategoryModal()'), '菜单管理工作区缺少新增分类按钮');
 });
 
+test('按钮归属：刷新点单屏按钮应放在菜单管理工作区工具栏', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const managePanelMatch = html.match(/<div id="menuManagePanel"[\s\S]*?<div id="menuBatchPanel"/);
+  const settingsPanelMatch = html.match(/<div id="menuSettingsPanel"[\s\S]*?<div class="business-tag-manager-drawer"/);
+  assert.ok(managePanelMatch, '未找到菜单管理面板');
+  assert.ok(settingsPanelMatch, '未找到基本设置面板');
+  assert.ok(managePanelMatch[0].includes('刷新点单屏'), '菜单管理工作区缺少刷新点单屏按钮');
+  assert.ok(managePanelMatch[0].includes('refreshOrderScreenCache()'), '刷新点单屏按钮未绑定刷新函数');
+  assert.ok(!settingsPanelMatch[0].includes('refreshOrderScreenCache()'), '基本设置不应放置刷新点单屏按钮');
+});
+
+test('菜单管理工作区：刷新点单屏应写入当前设备和商户维度刷新指令', () => {
+  const ctx = loadMenuContext();
+  ctx.localStorage.setItem('cofeLoginSession', JSON.stringify({ merchantId: 'C002', merchantName: '瑞幸咖啡' }));
+  ctx.currentDevice = 'RCK386';
+  ctx.productsData = {
+    经典咖啡: {
+      items: [
+        { id: 1, names: { zh: '拿铁' }, onSale: true },
+        { id: 2, names: { zh: '美式' }, onSale: false }
+      ]
+    }
+  };
+
+  assert.strictEqual(typeof ctx.refreshOrderScreenCache, 'function');
+  ctx.refreshOrderScreenCache();
+
+  const command = JSON.parse(ctx.localStorage.getItem('orderScreenRefreshCommand') || '{}');
+  assert.strictEqual(command.type, 'refresh-order-screen-cache');
+  assert.strictEqual(command.source, 'menu-management');
+  assert.strictEqual(command.deviceId, 'RCK386');
+  assert.strictEqual(command.merchantId, 'C002');
+  assert.strictEqual(command.merchantName, '瑞幸咖啡');
+  assert.strictEqual(command.productCount, 2);
+  assert.ok(command.revision);
+  assert.ok(command.createdAt);
+  assert.strictEqual(ctx.document.getElementById('orderScreenRefreshStatus').textContent.includes('RCK386'), true);
+});
+
 test('移动端商品管理页不应重复显示顶部导航标题和内容区大标题', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
   assert.ok(/class="mobile-header-title"/.test(html), '移动端顶部缺少独立标题节点');

@@ -79,13 +79,14 @@ test('节能模式关闭时应隐藏节能时间行', () => {
   assert.ok(/if\s*\(group\.id\s*===\s*'energyModeGroup'\)\s*\{\s*toggleEnergyTimeRowsVisibility\(\)/.test(html));
 });
 
-test('点击获取当前位置应自动填充经纬度与地址', () => {
-  assert.ok(/function\s+requestCurrentLocation\s*\(/.test(html));
-  assert.ok(/navigator\.geolocation\.getCurrentPosition/.test(html));
-  assert.ok(/function\s+resolveAddressByCoordinates\s*\(/.test(html));
-  assert.ok(/api\.bigdatacloud\.net\/data\/reverse-geocode-client/.test(html));
-  assert.ok(/document\.getElementById\('locationAddressInput'\)\.value\s*=/.test(html));
-  assert.ok(/document\.getElementById\('gpsActionDisplay'\)\.addEventListener\('click',\s*requestCurrentLocation\)/.test(html));
+test('设备入场页 GIS 信息应从所选点位带出而非手动定位', () => {
+  assert.ok(/点位坐标/.test(html));
+  assert.ok(/data-longitude/.test(html));
+  assert.ok(/data-latitude/.test(html));
+  assert.ok(/data-gps-action/.test(html));
+  assert.ok(/setCoordinateDisplay\('longitudeDisplay',\s*longitude\)/.test(html));
+  assert.ok(/setCoordinateDisplay\('latitudeDisplay',\s*latitude\)/.test(html));
+  assert.ok(!/addEventListener\('click',\s*requestCurrentLocation\)/.test(html));
 });
 
 test('设备开始日期应默认填充当天日期', () => {
