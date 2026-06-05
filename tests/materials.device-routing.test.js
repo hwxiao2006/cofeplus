@@ -32,6 +32,24 @@ function extractFunctionSource(source, functionName) {
   throw new Error(`函数 ${functionName} 解析失败`);
 }
 
+function extractConstObjectSource(source, constName) {
+  const signature = `const ${constName} =`;
+  const start = source.indexOf(signature);
+  if (start === -1) {
+    throw new Error(`未找到常量 ${constName}`);
+  }
+  const braceStart = source.indexOf('{', start);
+  let depth = 0;
+  for (let index = braceStart; index < source.length; index += 1) {
+    if (source[index] === '{') depth += 1;
+    if (source[index] === '}') depth -= 1;
+    if (depth === 0) {
+      return source.slice(start, source.indexOf(';', index) + 1);
+    }
+  }
+  throw new Error(`常量 ${constName} 解析失败`);
+}
+
 function createStorageMock(initialEntries = {}) {
   const store = new Map(
     Object.entries(initialEntries).map(([key, value]) => [key, String(value)])
@@ -77,6 +95,43 @@ test('物料页：员工物料设备范围应限制可切换设备', () => {
   assert.ok(/function\s+filterMaterialDeviceOptionsByStaffScope\s*\(/.test(html));
   assert.ok(/getModuleVisibleDeviceIds\([^)]*'materials'/.test(html));
   assert.ok(/filterMaterialDeviceOptionsByStaffScope\(options\)/.test(html));
+});
+
+test('物料页：登录会话常量不应重复声明', () => {
+  const matches = html.match(/const\s+LOGIN_SESSION_KEY\s*=/g) || [];
+  assert.strictEqual(matches.length, 1);
+});
+
+test('物料页：超管会话不应被兜底切到默认商户', () => {
+  const localStorage = createStorageMock({
+    cofeLoginSession: JSON.stringify({
+      account: 'ops',
+      merchantId: '',
+      merchantName: '',
+      role: 'super_admin'
+    }),
+    sidebarLoginProfile: JSON.stringify({
+      name: '平台运营',
+      phone: 'ops',
+      account: 'ops',
+      merchantId: '',
+      merchantName: '',
+      role: 'super_admin'
+    })
+  });
+  const sandbox = { localStorage };
+  vm.createContext(sandbox);
+  vm.runInContext(`
+    const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+    const LOGIN_SESSION_KEY = 'cofeLoginSession';
+    ${extractConstObjectSource(html, 'DEFAULT_SIDEBAR_LOGIN_PROFILE')}
+    ${extractFunctionSource(html, 'getSidebarLoginProfile')}
+    ${extractFunctionSource(html, 'getCurrentMerchantContext')}
+  `, sandbox);
+
+  const context = sandbox.getCurrentMerchantContext();
+  assert.strictEqual(context.merchantId, '');
+  assert.strictEqual(context.merchantName, '');
 });
 
 test('物料页：设备标题应同步展示点位信息', () => {

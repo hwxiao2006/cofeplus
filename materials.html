@@ -1940,8 +1940,6 @@
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/admin-page-i18n.js"></script>
     <script>
-        const LOGIN_SESSION_KEY = 'cofeLoginSession';
-        const LOGIN_PAGE_URL = 'login-paper.html';
         const LANE_NAME_OVERRIDE_STORAGE_KEY = 'materialsLaneNameOverrides';
         const LANE_MATERIAL_OVERRIDE_STORAGE_KEY = 'materialsLaneMaterialOverrides';
         const LANE_GROUP_ORDER = [
@@ -2168,6 +2166,13 @@
             try {
                 const session = JSON.parse(localStorage.getItem(LOGIN_SESSION_KEY) || '{}');
                 const profile = JSON.parse(localStorage.getItem(SIDEBAR_LOGIN_PROFILE_KEY) || '{}');
+                const role = String(session.role || profile.role || '').trim();
+                if (role === 'super_admin') {
+                    return {
+                        merchantId: '',
+                        merchantName: ''
+                    };
+                }
                 return {
                     merchantId: String(session.merchantId || profile.merchantId || fallbackProfile.merchantId || 'C001'),
                     merchantName: String(session.merchantName || profile.merchantName || fallbackProfile.merchantName || '星巴克咖啡')
