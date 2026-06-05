@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>商户资料页 · 三种设计方向对比</title>
+<style>
+  :root {
+    --primary: #4ecdc4;
+    --primary-dark: #3dbdb4;
+    --primary-light: #e8f8f7;
+    --teal-50: #f0fdfa;
+    --teal-100: #ccfbf1;
+    --teal-700: #0f766e;
+    --bg: #f5f7fa;
+    --card: #fff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-2: #6b7280;
+    --text-3: #9ca3af;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; padding: 32px; }
+
+  .container { max-width: 1240px; margin: 0 auto; }
+  h1.page-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .sub { color: var(--text-2); font-size: 13px; margin-bottom: 24px; line-height: 1.6; }
+
+  .label-tag {
+    display: inline-block; padding: 4px 10px; border-radius: 999px;
+    background: var(--teal-100); color: var(--teal-700);
+    font-size: 12px; font-weight: 700; margin-bottom: 12px;
+  }
+  .design-section { margin-bottom: 56px; }
+  .design-meta {
+    display: grid; grid-template-columns: 1fr auto; align-items: center;
+    margin-bottom: 14px;
+  }
+  .design-name { font-size: 17px; font-weight: 600; }
+  .design-pros {
+    color: var(--text-2); font-size: 12.5px; text-align: right;
+  }
+
+  /* ============================================================
+     A · 仪表盘风格 (推荐)
+  ============================================================ */
+  .a-hero {
+    background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+    color: #fff; border-radius: 16px 16px 0 0;
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 84px 1fr auto;
+    gap: 22px;
+    align-items: center;
+  }
+  .a-logo {
+    width: 84px; height: 84px;
+    background: rgba(255,255,255,0.18);
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 700; color: #fff;
+  }
+  .a-id-row { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+  .a-id-pill {
+    background: rgba(255,255,255,0.22); padding: 2px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .a-status-pill {
+    background: rgba(34,197,94,0.36); padding: 2px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .a-name { font-size: 26px; font-weight: 700; line-height: 1.2; }
+  .a-tagline { color: rgba(255,255,255,0.78); font-size: 13px; margin-top: 4px; }
+  .a-edit-btn {
+    background: #fff; color: #0f766e;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; border: 0; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .a-edit-btn:hover { background: #f0fdfa; }
+
+  .a-stats {
+    background: #fff; padding: 20px 32px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .a-stat-cell .num {
+    font-size: 24px; font-weight: 700; color: var(--text); line-height: 1;
+  }
+  .a-stat-cell .lbl {
+    font-size: 12px; color: var(--text-2); margin-top: 6px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .a-body {
+    background: #fff; border-radius: 0 0 16px 16px;
+    padding: 24px 32px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border); border-top: 0;
+  }
+  .a-section-title {
+    font-size: 13px; font-weight: 700; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin: 18px 0 12px; padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .a-section-title:first-child { margin-top: 0; }
+  .a-fields {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px 32px;
+  }
+  .a-field {
+    display: grid; grid-template-columns: 90px 1fr; padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: baseline;
+  }
+  .a-field .k { color: var(--text-2); font-size: 13px; }
+  .a-field .v { color: var(--text); font-weight: 500; font-size: 14px; }
+
+  /* ============================================================
+     B · 经典档案卡 (form-like, 适合编辑场景)
+  ============================================================ */
+  .b-card {
+    background: #fff; border-radius: 14px;
+    padding: 0; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+  .b-head {
+    background: linear-gradient(180deg, #f0fdfa 0%, #fff 100%);
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: 64px 1fr auto; gap: 18px;
+    align-items: center;
+  }
+  .b-monogram {
+    width: 64px; height: 64px; border-radius: 14px;
+    background: linear-gradient(135deg, #14b8a6, #0f766e);
+    color: #fff; font-size: 28px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .b-title-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .b-title { font-size: 20px; font-weight: 700; }
+  .b-id { color: var(--text-3); font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+  .b-state {
+    background: #dcfce7; color: #166534; padding: 2px 10px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 600;
+  }
+  .b-meta { color: var(--text-2); font-size: 13px; margin-top: 6px; }
+  .b-edit {
+    background: var(--primary); color: #fff;
+    padding: 9px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+    border: 0; cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .b-edit:hover { background: var(--primary-dark); }
+
+  .b-body { padding: 8px 28px 24px; }
+  .b-row {
+    display: grid; grid-template-columns: 120px 1fr;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .b-row:last-child { border-bottom: 0; }
+  .b-row .k { color: var(--text-2); font-size: 13px; }
+  .b-row .v { color: var(--text); font-size: 14.5px; font-weight: 500; }
+  .b-row .v.muted { color: var(--text-3); font-style: italic; }
+
+  /* ============================================================
+     C · 极简档案 (空气感, info-density 最低)
+  ============================================================ */
+  .c-card {
+    background: #fff; border-radius: 18px;
+    padding: 56px 64px; text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+    max-width: 720px; margin: 0 auto;
+  }
+  .c-mono {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: linear-gradient(135deg, #14b8a6, #0f766e);
+    color: #fff; font-size: 42px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(15, 118, 110, 0.25);
+  }
+  .c-name { font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .c-id-line {
+    font-size: 13px; color: var(--text-3); letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .c-state-row {
+    display: flex; justify-content: center; gap: 8px; margin-bottom: 36px;
+  }
+  .c-state-pill {
+    padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .c-state-pill.active { background: #dcfce7; color: #166534; }
+  .c-state-pill.tag { background: #fff7ed; color: #c2410c; }
+
+  .c-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px;
+    text-align: left; max-width: 520px; margin: 0 auto;
+  }
+  .c-cell { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+  .c-cell .lbl { font-size: 11.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .c-cell .val { font-size: 15px; color: var(--text); font-weight: 500; }
+
+  .c-footer { margin-top: 36px; }
+  .c-edit-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--teal-700); font-size: 14px; font-weight: 600;
+    cursor: pointer; padding: 10px 24px;
+    border-radius: 999px;
+    border: 1.5px solid var(--teal-700);
+    background: transparent;
+  }
+  .c-edit-link:hover { background: var(--teal-50); }
+
+  /* compare bar */
+  .compare-bar {
+    background: #1f2937; color: #fff; border-radius: 12px;
+    padding: 18px 24px; margin: 40px 0 24px;
+    display: flex; gap: 24px; align-items: center;
+    font-size: 13.5px;
+  }
+  .compare-bar b { color: #fbbf24; }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .a-hero { grid-template-columns: 64px 1fr; }
+    .a-edit-btn { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }
+    .a-stats { grid-template-columns: repeat(2, 1fr); }
+    .a-fields { grid-template-columns: 1fr; }
+    .b-head { grid-template-columns: 1fr; text-align: left; }
+    .b-edit { justify-self: start; }
+    .b-row { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
+    .c-card { padding: 32px 24px; }
+    .c-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1 class="page-title">商户资料页 · 重新设计</h1>
+  <p class="sub">现状问题:编辑按钮被挤压成单字竖排、信息无结构、空白浪费严重。下面三个方向用相同数据,看哪个对味。</p>
+
+  <!-- ============= 方向 A · 仪表盘风格 (推荐) ============= -->
+  <div class="design-section">
+    <div class="design-meta">
+      <div>
+        <span class="label-tag">推荐</span>
+        <div class="design-name">A · 仪表盘风格 — Hero 头 + 统计 + 分组字段</div>
+      </div>
+      <div class="design-pros">商户身份强 / 一眼看到经营规模 / 分组结构清晰</div>
+    </div>
+
+    <div>
+      <div class="a-hero">
+        <div class="a-logo">星</div>
+        <div>
+          <div class="a-id-row">
+            <span class="a-id-pill">C001</span>
+            <span class="a-status-pill">● 合作中</span>
+          </div>
+          <div class="a-name">星巴克咖啡</div>
+          <div class="a-tagline">直营模式 · 自 2024-01-15 加入</div>
+        </div>
+        <button class="a-edit-btn">✏️ 编辑商户资料</button>
+      </div>
+      <div class="a-stats">
+        <div class="a-stat-cell">
+          <div class="num">2</div>
+          <div class="lbl">📍 点位</div>
+        </div>
+        <div class="a-stat-cell">
+          <div class="num">8</div>
+          <div class="lbl">⚙️ 在线设备</div>
+        </div>
+        <div class="a-stat-cell">
+          <div class="num">2</div>
+          <div class="lbl">👥 员工</div>
+        </div>
+        <div class="a-stat-cell">
+          <div class="num">运行中</div>
+          <div class="lbl">📊 状态</div>
+        </div>
+      </div>
+      <div class="a-body">
+        <div class="a-section-title">基础信息</div>
+        <div class="a-fields">
+          <div class="a-field"><span class="k">商户名称</span><span class="v">星巴克咖啡</span></div>
+          <div class="a-field"><span class="k">商户编号</span><span class="v">C001</span></div>
+          <div class="a-field"><span class="k">合作模式</span><span class="v">直营</span></div>
+          <div class="a-field"><span class="k">入驻时间</span><span class="v">2024-01-15</span></div>
+        </div>
+
+        <div class="a-section-title">联系方式</div>
+        <div class="a-fields">
+          <div class="a-field"><span class="k">联系人</span><span class="v">张经理</span></div>
+          <div class="a-field"><span class="k">联系电话</span><span class="v">138-0013-8001</span></div>
+          <div class="a-field"><span class="k">商户地址</span><span class="v">上海市浦东新区</span></div>
+        </div>
+
+        <div class="a-section-title">备注</div>
+        <div class="a-fields" style="grid-template-columns:1fr">
+          <div class="a-field" style="grid-template-columns:90px 1fr">
+            <span class="k">备注</span>
+            <span class="v">重点客户</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= 方向 B · 经典档案卡 ============= -->
+  <div class="design-section">
+    <div class="design-meta">
+      <div>
+        <div class="design-name">B · 经典档案卡 — Form 表单感</div>
+      </div>
+      <div class="design-pros">最贴近现有 UI / 编辑/查看一致 / 结构最简单</div>
+    </div>
+
+    <div class="b-card">
+      <div class="b-head">
+        <div class="b-monogram">星</div>
+        <div>
+          <div class="b-title-row">
+            <span class="b-title">星巴克咖啡</span>
+            <span class="b-id">编号 · C001</span>
+            <span class="b-state">● 合作中</span>
+          </div>
+          <div class="b-meta">直营 · 2024-01-15 入驻 · 重点客户</div>
+        </div>
+        <button class="b-edit">✏️ 编辑资料</button>
+      </div>
+      <div class="b-body">
+        <div class="b-row"><span class="k">商户名称</span><span class="v">星巴克咖啡</span></div>
+        <div class="b-row"><span class="k">商户编号</span><span class="v">C001</span></div>
+        <div class="b-row"><span class="k">合作模式</span><span class="v">直营</span></div>
+        <div class="b-row"><span class="k">联系人</span><span class="v">张经理</span></div>
+        <div class="b-row"><span class="k">联系电话</span><span class="v">138-0013-8001</span></div>
+        <div class="b-row"><span class="k">商户地址</span><span class="v">上海市浦东新区</span></div>
+        <div class="b-row"><span class="k">入驻时间</span><span class="v">2024-01-15</span></div>
+        <div class="b-row"><span class="k">备注</span><span class="v">重点客户</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============= 方向 C · 极简档案 ============= -->
+  <div class="design-section">
+    <div class="design-meta">
+      <div>
+        <div class="design-name">C · 极简档案 — 空气感单列</div>
+      </div>
+      <div class="design-pros">最干净 / 商户身份感最强 / 信息密度最低</div>
+    </div>
+
+    <div class="c-card">
+      <div class="c-mono">星</div>
+      <div class="c-name">星巴克咖啡</div>
+      <div class="c-id-line">C001</div>
+      <div class="c-state-row">
+        <span class="c-state-pill active">● 合作中</span>
+        <span class="c-state-pill tag">⭐ 重点客户</span>
+      </div>
+      <div class="c-grid">
+        <div class="c-cell"><div class="lbl">合作模式</div><div class="val">直营</div></div>
+        <div class="c-cell"><div class="lbl">入驻时间</div><div class="val">2024-01-15</div></div>
+        <div class="c-cell"><div class="lbl">联系人</div><div class="val">张经理</div></div>
+        <div class="c-cell"><div class="lbl">联系电话</div><div class="val">138-0013-8001</div></div>
+        <div class="c-cell" style="grid-column:1/-1"><div class="lbl">商户地址</div><div class="val">上海市浦东新区</div></div>
+      </div>
+      <div class="c-footer">
+        <button class="c-edit-link">✏️ 编辑商户资料</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-bar">
+    <span>选哪个?告诉我 <b>A</b>(仪表盘) / <b>B</b>(档案卡) / <b>C</b>(极简),我直接落地到 customers.html。</span>
+  </div>
+
+</div>
+</body>
+</html>

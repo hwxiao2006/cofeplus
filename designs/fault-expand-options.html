@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>故障行展开方案对比</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f3f4f6;
+    color: #0f172a;
+    padding: 32px 24px 80px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .lead { color: #64748b; font-size: 14px; margin-bottom: 28px; max-width: 780px; }
+  .lead b { color: #0f172a; }
+
+  .option { margin-bottom: 40px; }
+  .option-head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 12px;
+  }
+  .badge {
+    background: #0f766e; color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .badge.recommended { background: #b45309; }
+  .option h2 { font-size: 17px; font-weight: 600; }
+  .option-note { color: #64748b; font-size: 13px; margin-bottom: 14px; }
+
+  /* fault table base */
+  .fault-table {
+    background: #fff;
+    border: 1px solid #d8e0ea;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+  }
+  .fault-table-head, .fault-row-summary {
+    display: grid;
+    grid-template-columns: 120px 1.2fr 1.4fr 160px 110px;
+    gap: 14px;
+    align-items: center;
+    padding: 0 18px;
+  }
+  .fault-table-head {
+    min-height: 44px;
+    font-size: 12px; font-weight: 600;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .fault-row-summary { min-height: 64px; cursor: pointer; }
+  .fault-row { border-bottom: 1px solid #edf2f7; background: #fff; transition: background-color .18s; }
+  .fault-row:last-child { border-bottom: none; }
+  .fault-row:hover { background: #f8fbff; }
+  .fault-cell { font-size: 14px; color: #0f172a; padding: 12px 0; }
+  .fault-cell-id { font-weight: 700; }
+  .fault-cell-site-name { line-height: 1.4; }
+  .notify-pill {
+    display: inline-block; margin-top: 4px;
+    font-size: 11.5px; color: #0f766e;
+    background: #ccfbf1;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .fault-cell-time { color: #64748b; font-size: 13px; }
+  .action-btn {
+    background: #0f766e; color: #fff;
+    border: 0; border-radius: 8px;
+    padding: 7px 12px; font-size: 13px; font-weight: 500;
+    cursor: pointer;
+  }
+  .action-btn:hover { background: #115e59; }
+
+  /* === Option A: always-visible first step + 查看全部 link === */
+  .a-content-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .a-desc { font-weight: 500; }
+  .a-step-preview {
+    color: #475569; font-size: 12.5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .a-step-preview::before {
+    content: '①';
+    color: #0f766e; font-weight: 600;
+  }
+  .a-more {
+    color: #0f766e; font-size: 12px; font-weight: 500;
+    cursor: pointer; margin-left: 4px;
+  }
+  .a-more:hover { text-decoration: underline; }
+  .a-detail {
+    display: none;
+    padding: 14px 18px 18px 156px;
+    background: #f0fdfa;
+    border-top: 1px dashed #99f6e4;
+  }
+  .a-row.is-expanded .a-detail { display: block; }
+  .a-row.is-expanded .a-more::after { content: ' ▴'; }
+  .a-row:not(.is-expanded) .a-more::after { content: ' ▾'; }
+  .a-detail-label {
+    font-size: 11.5px; font-weight: 600; color: #0f766e;
+    text-transform: uppercase; letter-spacing: .05em;
+    margin-bottom: 8px;
+  }
+  .a-detail ol { padding-left: 20px; line-height: 1.8; }
+
+  /* === Option B: 「如何处理」按钮 in action column === */
+  .b-action-col { display: flex; gap: 8px; align-items: center; }
+  .b-howto {
+    background: #fff;
+    color: #0f766e;
+    border: 1.5px solid #0f766e;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .b-howto:hover { background: #ccfbf1; }
+  .b-detail {
+    display: none;
+    padding: 14px 18px 18px 156px;
+    background: #f0fdfa;
+    border-top: 1px dashed #99f6e4;
+  }
+  .b-row.is-expanded .b-detail { display: block; }
+  .b-detail ol { padding-left: 20px; line-height: 1.8; }
+  .b-detail-label {
+    font-size: 11.5px; font-weight: 600; color: #0f766e;
+    text-transform: uppercase; letter-spacing: .05em;
+    margin-bottom: 8px;
+  }
+
+  /* === Option C: right-edge help banner === */
+  .c-fault-table-head, .c-row-summary {
+    display: grid;
+    grid-template-columns: 120px 1fr 1.2fr 150px 110px 180px;
+    gap: 14px;
+    align-items: center;
+    padding: 0 18px;
+  }
+  .c-fault-table-head {
+    min-height: 44px;
+    font-size: 12px; font-weight: 600;
+    color: #64748b;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .c-row-summary { min-height: 64px; cursor: pointer; }
+  .c-help-cell {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 0 8px 8px 0;
+    display: flex; flex-direction: column; gap: 2px;
+    cursor: pointer;
+  }
+  .c-help-label {
+    font-size: 11px; color: #b45309; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .05em;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .c-help-summary { font-size: 12.5px; color: #92400e; line-height: 1.4; }
+  .c-help-summary b { color: #78350f; }
+  .c-detail {
+    display: none;
+    padding: 14px 18px 18px 156px;
+    background: #fffbeb;
+    border-top: 1px dashed #fde68a;
+  }
+  .c-row.is-expanded .c-detail { display: block; }
+  .c-detail-label {
+    font-size: 11.5px; font-weight: 600; color: #b45309;
+    margin-bottom: 8px;
+  }
+  .c-detail ol { padding-left: 20px; line-height: 1.8; }
+
+  /* pros / cons */
+  .compare-list {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-top: 12px;
+    font-size: 13px;
+  }
+  .pros, .cons {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+  }
+  .pros { border-left: 3px solid #10b981; }
+  .cons { border-left: 3px solid #ef4444; }
+  .pros h4, .cons h4 {
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .05em;
+    margin-bottom: 6px;
+  }
+  .pros h4 { color: #047857; }
+  .cons h4 { color: #b91c1c; }
+  .pros ul, .cons ul { padding-left: 18px; line-height: 1.6; }
+
+  .pick-hint {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13.5px; color: #134e4a;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h1>故障行展开方案对比</h1>
+<p class="lead">
+  当前问题:故障行虽然可以点击展开,但只有左侧一个小三角(▸)作为提示,客户感知不到。
+  下面 3 个方案都用<b>同一份 mock 数据</b>(RCK386 / 咖啡机未检测到 SD 卡),
+  让你看哪个交互最让客户「自然知道这一行有更多信息」。
+</p>
+
+<!-- ===== Option A ===== -->
+<div class="option">
+  <div class="option-head">
+    <span class="badge recommended">A · 推荐</span>
+    <h2>第一步常驻显示 + 「查看全部」链接</h2>
+  </div>
+  <div class="option-note">
+    第一条处理步骤始终可见,后面的步骤折叠。客户一眼就知道「这行有处理建议,我可以展开看全部」。
+  </div>
+
+  <div class="fault-table">
+    <div class="fault-table-head">
+      <div>设备编号</div><div>设备地址</div><div>故障内容</div><div>故障时间</div><div>操作</div>
+    </div>
+
+    <div class="fault-row a-row" id="rowA1">
+      <div class="fault-row-summary" onclick="toggleA('rowA1')">
+        <div class="fault-cell fault-cell-id">RCK386</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">广州广交会A区</div>
+          <span class="notify-pill">✉️ 推送至 ops.starbucks@example.com</span>
+        </div>
+        <div class="fault-cell a-content-wrap">
+          <div class="a-desc">咖啡机 · 未检测到 SD 卡</div>
+          <div class="a-step-preview">
+            请检查 SD 卡是否插入到位
+            <span class="a-more" onclick="event.stopPropagation();toggleA('rowA1')">查看全部 2 步</span>
+          </div>
+        </div>
+        <div class="fault-cell fault-cell-time">15:06</div>
+        <div class="fault-cell"><button class="action-btn">远程重启</button></div>
+      </div>
+      <div class="a-detail">
+        <div class="a-detail-label">如何处理 · 完整步骤</div>
+        <ol>
+          <li>请检查 SD 卡是否插入到位</li>
+          <li>尝试重新插拔 SD 卡</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="fault-row a-row" id="rowA2">
+      <div class="fault-row-summary" onclick="toggleA('rowA2')">
+        <div class="fault-cell fault-cell-id">RCK385</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">深圳南山店</div>
+          <span class="notify-pill">✉️ 推送至 ops.luckin@example.com</span>
+        </div>
+        <div class="fault-cell a-content-wrap">
+          <div class="a-desc">咖啡机 · 蒸汽锅炉压力过高</div>
+          <div class="a-step-preview">
+            当压力 ≥ 2.3 bar 时触发
+            <span class="a-more" onclick="event.stopPropagation();toggleA('rowA2')">查看全部 3 步</span>
+          </div>
+        </div>
+        <div class="fault-cell fault-cell-time">14:42</div>
+        <div class="fault-cell"><button class="action-btn">远程重启</button></div>
+      </div>
+      <div class="a-detail">
+        <div class="a-detail-label">如何处理 · 完整步骤</div>
+        <ol>
+          <li>当压力 ≥ 2.3 bar 时触发</li>
+          <li>检查压力传感器是否故障</li>
+          <li>联系维修排查泄压阀</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-list">
+    <div class="pros">
+      <h4>优势</h4>
+      <ul>
+        <li>感知最强:第一条步骤永远可见,客户立即明白「这有处理建议」</li>
+        <li>对运维有帮助:常见故障一眼解决,不用点开</li>
+        <li>「查看全部 N 步」的 N 数字也是 hint,告诉用户后面还有内容</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>代价</h4>
+      <ul>
+        <li>每行变高 ~18px,屏幕能显示的行数变少</li>
+        <li>故障内容列字数变多,要注意截断</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== Option B ===== -->
+<div class="option">
+  <div class="option-head">
+    <span class="badge">B</span>
+    <h2>「如何处理」按钮 in 操作列</h2>
+  </div>
+  <div class="option-note">
+    在「操作」列加一个白底描边按钮 ▾「如何处理」。最像 web 应用的标准做法,按钮显式可点。
+  </div>
+
+  <div class="fault-table">
+    <div class="fault-table-head">
+      <div>设备编号</div><div>设备地址</div><div>故障内容</div><div>故障时间</div><div>操作</div>
+    </div>
+
+    <div class="fault-row b-row" id="rowB1">
+      <div class="fault-row-summary">
+        <div class="fault-cell fault-cell-id">RCK386</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">广州广交会A区</div>
+          <span class="notify-pill">✉️ 推送至 ops.starbucks@example.com</span>
+        </div>
+        <div class="fault-cell">咖啡机 · 未检测到 SD 卡</div>
+        <div class="fault-cell fault-cell-time">15:06</div>
+        <div class="fault-cell b-action-col">
+          <button class="b-howto" onclick="toggleB('rowB1')">如何处理 ▾</button>
+        </div>
+      </div>
+      <div class="b-detail">
+        <div class="b-detail-label">如何处理</div>
+        <ol>
+          <li>请检查 SD 卡是否插入到位</li>
+          <li>尝试重新插拔 SD 卡</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="fault-row b-row" id="rowB2">
+      <div class="fault-row-summary">
+        <div class="fault-cell fault-cell-id">RCK385</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">深圳南山店</div>
+          <span class="notify-pill">✉️ 推送至 ops.luckin@example.com</span>
+        </div>
+        <div class="fault-cell">咖啡机 · 蒸汽锅炉压力过高</div>
+        <div class="fault-cell fault-cell-time">14:42</div>
+        <div class="fault-cell b-action-col">
+          <button class="b-howto" onclick="toggleB('rowB2')">如何处理 ▾</button>
+        </div>
+      </div>
+      <div class="b-detail">
+        <div class="b-detail-label">如何处理</div>
+        <ol>
+          <li>当压力 ≥ 2.3 bar 时触发</li>
+          <li>检查压力传感器是否故障</li>
+          <li>联系维修排查泄压阀</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-list">
+    <div class="pros">
+      <h4>优势</h4>
+      <ul>
+        <li>最标准:按钮就是按钮,不会有人不懂</li>
+        <li>「故障内容」列保持紧凑</li>
+        <li>容易扩展:以后加「上传处理结果」「联系维修」等按钮直接并排</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>代价</h4>
+      <ul>
+        <li>「操作」列变拥挤,「远程重启」按钮要让位或换图标</li>
+        <li>仍然要点一次才能看到处理建议,运维不能直接执行常见操作</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== Option C ===== -->
+<div class="option">
+  <div class="option-head">
+    <span class="badge">C</span>
+    <h2>右侧「处理提示」常驻色块</h2>
+  </div>
+  <div class="option-note">
+    在表格右边加一个新列(琥珀色卡片),专门放第一句处理提示。整张卡片可点击展开看完整步骤。
+  </div>
+
+  <div class="fault-table">
+    <div class="c-fault-table-head">
+      <div>设备编号</div><div>设备地址</div><div>故障内容</div><div>故障时间</div><div>操作</div><div>处理提示</div>
+    </div>
+
+    <div class="fault-row c-row" id="rowC1">
+      <div class="c-row-summary" onclick="toggleC('rowC1')">
+        <div class="fault-cell fault-cell-id">RCK386</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">广州广交会A区</div>
+          <span class="notify-pill">✉️ 推送至 ops.starbucks@example.com</span>
+        </div>
+        <div class="fault-cell">咖啡机 · 未检测到 SD 卡</div>
+        <div class="fault-cell fault-cell-time">15:06</div>
+        <div class="fault-cell"><button class="action-btn">远程重启</button></div>
+        <div class="c-help-cell">
+          <div class="c-help-label">💡 如何处理 (2步)</div>
+          <div class="c-help-summary"><b>请检查 SD 卡是否插入到位</b></div>
+        </div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-label">如何处理 · 完整步骤</div>
+        <ol>
+          <li>请检查 SD 卡是否插入到位</li>
+          <li>尝试重新插拔 SD 卡</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="fault-row c-row" id="rowC2">
+      <div class="c-row-summary" onclick="toggleC('rowC2')">
+        <div class="fault-cell fault-cell-id">RCK385</div>
+        <div class="fault-cell">
+          <div class="fault-cell-site-name">深圳南山店</div>
+          <span class="notify-pill">✉️ 推送至 ops.luckin@example.com</span>
+        </div>
+        <div class="fault-cell">咖啡机 · 蒸汽锅炉压力过高</div>
+        <div class="fault-cell fault-cell-time">14:42</div>
+        <div class="fault-cell"><button class="action-btn">远程重启</button></div>
+        <div class="c-help-cell">
+          <div class="c-help-label">💡 如何处理 (3步)</div>
+          <div class="c-help-summary"><b>当压力 ≥ 2.3 bar 时触发</b></div>
+        </div>
+      </div>
+      <div class="c-detail">
+        <div class="c-detail-label">如何处理 · 完整步骤</div>
+        <ol>
+          <li>当压力 ≥ 2.3 bar 时触发</li>
+          <li>检查压力传感器是否故障</li>
+          <li>联系维修排查泄压阀</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-list">
+    <div class="pros">
+      <h4>优势</h4>
+      <ul>
+        <li>视觉权重最高:琥珀色卡片放在右边,客户一定看得到</li>
+        <li>「💡 提示」语义最自然</li>
+        <li>明确的步骤数 (2步 / 3步) 让用户判断要不要点开</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>代价</h4>
+      <ul>
+        <li>表格列数从 5 增加到 6,1280px 以下屏幕会挤</li>
+        <li>琥珀色和现有 teal 主色不完全协调</li>
+        <li>移动端必须重新设计(纵向堆叠)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="pick-hint">
+  <b>我的推荐:方案 A</b>。理由:故障处理本质上是「一句提示就能解决 60% 问题」的场景,
+  把第一步永远露出来,运维(或客户自己)看一眼就知道做啥,不用每次都点。
+  方案 B 标准但效率低,方案 C 视觉冲击大但和现有 teal 风格冲突。
+</div>
+
+
+<script>
+  function toggleA(id) {
+    document.getElementById(id).classList.toggle('is-expanded');
+  }
+  function toggleB(id) {
+    document.getElementById(id).classList.toggle('is-expanded');
+  }
+  function toggleC(id) {
+    document.getElementById(id).classList.toggle('is-expanded');
+  }
+</script>
+
+</body>
+</html>

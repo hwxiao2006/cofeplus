@@ -9,7 +9,7 @@ There is no build step or bundler in this repository.
 - `python3 scripts/no_cache_http_server.py --port 8080` starts a no-cache local server for manual QA.
 - `node --test tests/` runs the full Node built-in test suite.
 - `node --test tests/orders.shared-source.test.js` runs one targeted test file while iterating.
-- `npx wrangler deploy` deploys the static prototype with the Cloudflare config in `wrangler.jsonc`.
+- Production is a Cloudflare Pages project connected to GitHub `main`; release by committing to `main` and pushing to GitHub so Pages auto-deploys. Do not use `npx wrangler deploy` for production releases.
 
 ## Coding Style & Naming Conventions
 Follow the surrounding file before refactoring. Root HTML pages generally use 4-space indentation and keep markup, CSS variables, and vanilla JavaScript together in one file. Shared utilities use kebab-case filenames, for example `business-tag-library.js`. Prefer descriptive page-state globals, preserve existing `localStorage` keys, and reuse established layout tokens such as `--primary`, `--bg-sidebar`, and the 240px sidebar width. Name new plan docs `YYYY-MM-DD-topic-plan.md`; name tests `<page>.<focus>.test.js`.

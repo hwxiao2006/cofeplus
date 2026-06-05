@@ -751,6 +751,262 @@
             margin-top: 12px;
         }
 
+        /* 角色选择样式 */
+        .role-selection-section {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+
+        .role-selection-section + .section-block {
+            margin-top: 12px;
+        }
+
+        .role-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .role-card {
+            border: 2px solid #e5eef5;
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+            min-height: 88px;
+            position: relative;
+        }
+
+        .role-card:hover {
+            border-color: #bfe9e6;
+            background: #f0fbfa;
+        }
+
+        .role-card.selected {
+            border-color: #4ECDC4;
+            background: linear-gradient(180deg, #ecfbf9 0%, #f0fbfa 100%);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2);
+        }
+
+        .role-card-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .role-card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .role-card-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .role-card-check {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ECDC4;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .role-card.selected .role-card-check {
+            display: flex;
+        }
+
+        /* 当前角色条：永远只回答"我是谁"；撤销按钮仅在 lastCommitSnapshot != null 时显示 */
+        .role-current-banner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f0fbfa;
+            border: 1px solid #d6ece7;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* hidden 属性遇到 display:flex 不会生效，显式补齐 */
+        .role-current-banner[hidden],
+        .role-switch-preview[hidden],
+        .role-banner-undo[hidden] {
+            display: none !important;
+        }
+
+        .role-banner-icon {
+            font-size: 18px;
+        }
+
+        .role-banner-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .role-banner-name {
+            font-weight: 700;
+            color: #0f766e;
+        }
+
+        .role-banner-undo {
+            margin-left: auto;
+            background: #fff;
+            border: 1px solid #4ECDC4;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .role-banner-undo:hover {
+            background: #ecfbf9;
+        }
+
+        /* 待确认切换：点新卡片后展示的对比 + 操作条 */
+        .role-switch-preview {
+            border-radius: 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 12px 14px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .role-switch-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .role-switch-arrow {
+            color: #f59e0b;
+            font-size: 16px;
+            margin: 0 4px;
+        }
+
+        .role-switch-detail {
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .role-switch-warning {
+            color: #c2410c;
+            background: #ffedd5;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .role-switch-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .role-switch-actions .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .role-switch-actions .btn-primary {
+            background: #4ECDC4;
+            color: #fff;
+        }
+
+        .role-switch-actions .btn-primary:hover {
+            background: #0f766e;
+        }
+
+        .role-switch-actions .btn-ghost {
+            background: #fff;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .role-switch-actions .btn-ghost:hover {
+            background: #f1f5f9;
+        }
+
+        /* 待确认状态的卡片：虚线橙边 + 待确认角标 */
+        .role-card[data-pending="true"] {
+            border-style: dashed;
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .role-card-pending-mark {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #f59e0b;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .role-card[data-pending="true"] .role-card-pending-mark {
+            display: flex;
+        }
+
+        .role-card[data-pending="true"] .role-card-check {
+            display: none;
+        }
+
+        .permission-customization-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #c2410c;
+        }
+
+        .permission-customization-hint.hidden {
+            display: none;
+        }
+
         .staff-modal-basic-section {
             margin-bottom: 12px;
         }
@@ -1680,6 +1936,10 @@
                 padding: 10px 14px;
             }
 
+            .role-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .manager-list {
                 padding: 10px;
                 gap: 8px;
@@ -1869,8 +2129,8 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
+                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
@@ -1895,7 +2155,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
+                    <a href="customers.html" class="nav-item" data-nav="customers"><span class="nav-icon">🏢</span><span class="nav-label">我的商户</span></a>
                     <a href="locations.html" class="nav-item"><span class="nav-icon">📍</span><span>点位管理</span></a>
                 </div>
             </nav>
@@ -1961,7 +2221,44 @@
                             <label class="form-label" for="staffPhone">手机号</label>
                             <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
                         </div>
+                        <div class="form-item">
+                            <label class="form-label" for="staffWechatOpenId">公众号 OpenID</label>
+                            <input type="text" class="form-input" id="staffWechatOpenId" placeholder="员工本人在咖啡运营公众号下的 OpenID" maxlength="128">
+                            <div class="form-hint" style="font-size:12px;color:#6b7280;margin-top:4px;">
+                                配置后,当所属商户开启「公众号推送」时,本人将接收授权范围内的故障消息
+                            </div>
+                        </div>
                     </div>
+                </section>
+
+                <section class="role-selection-section" id="roleSelectionSection">
+                    <div class="section-title">选择角色<span class="required">*</span></div>
+                    <p class="section-helper">选择角色模板可快速分配权限，之后可以微调</p>
+
+                    <div class="role-current-banner" id="roleCurrentBanner" hidden>
+                        <span class="role-banner-icon" id="roleCurrentIcon">👑</span>
+                        <span class="role-banner-label">当前角色：</span>
+                        <span class="role-banner-name" id="roleCurrentName">超级管理员</span>
+                        <button type="button" class="role-banner-undo" id="roleCurrentUndoBtn" onclick="undoRoleSwitch()" hidden>↩ 撤销切换</button>
+                    </div>
+
+                    <div class="role-switch-preview" id="roleSwitchPreview" hidden>
+                        <div class="role-switch-line">
+                            <span id="roleSwitchFromIcon">👑</span>
+                            <span id="roleSwitchFromName">超级管理员</span>
+                            <span class="role-switch-arrow">→</span>
+                            <span id="roleSwitchToIcon">🏪</span>
+                            <span id="roleSwitchToName">店长</span>
+                        </div>
+                        <div class="role-switch-detail" id="roleSwitchDetail"></div>
+                        <div class="role-switch-warning" id="roleSwitchWarning" hidden></div>
+                        <div class="role-switch-actions">
+                            <button type="button" class="btn btn-ghost" onclick="cancelRoleSwitch()">取消，保留原角色</button>
+                            <button type="button" class="btn btn-primary" onclick="confirmRoleSwitch()">确认切换</button>
+                        </div>
+                    </div>
+
+                    <div class="role-cards-grid" id="roleCardsGrid"></div>
                 </section>
 
                 <section class="section-block staff-device-section" id="staffDeviceSection">
@@ -1986,6 +2283,10 @@
                             <p class="permission-section-note">在每个页面行里设置可进入页面和可查看设备。</p>
                         </div>
                         <span class="permission-selection-stats" id="permissionSelectionStats">0项已选</span>
+                    </div>
+                    <div class="permission-customization-hint" id="permissionCustomizationHint">
+                        <span>ℹ️</span>
+                        <span id="permissionCustomizationText">基于"店长"角色，已添加 1 项权限，移除 1 项权限</span>
                     </div>
                     <div class="permission-tree" id="permissionTree">
                         <div class="permission-group-row" data-permission-group="overview" data-selected="false" data-expanded="false">
@@ -2164,6 +2465,11 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/admin-staff-access.js"></script>
+    <script src="shared/fault-notify-channels.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
+    <script src="shared/permissions-registry.js"></script>
+    <script src="shared/role-definitions.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -2420,6 +2726,14 @@
         let moduleScopeSearchKeyword = '';
         let showOnlySelectedModuleScopeDevices = false;
 
+        // 角色相关变量
+        // committedRoleId：已确认的角色，写入员工记录用
+        // pendingRoleId：待确认的目标角色，null 表示无切换中
+        // lastCommitSnapshot：上一次 confirm 前的快照，撤销用；铁律：只在 confirmRoleSwitch() 里赋值
+        let committedRoleId = 'custom';
+        let pendingRoleId = null;
+        let lastCommitSnapshot = null;
+
         const defaultDeviceMap = {
             C001: ['RCK386', 'RCK385', 'RCK384', 'RCK409'],
             C002: ['RCK410', 'RCK406', 'RCK404'],
@@ -2521,6 +2835,50 @@
             { moduleKey: 'faults', label: '故障列表', permission: 'ops.faults' }
         ];
 
+        // 使用权限注册表中的数据（如果可用）
+        const permissionRegistry = window.CofePermissionsRegistry || {};
+        const roleDefinitions = window.CofeRoleDefinitions || {};
+
+        // 获取权限树（优先使用注册表）
+        function getPermissionTreeGroups() {
+            if (permissionRegistry.getPermissionTree) {
+                return permissionRegistry.getPermissionTree();
+            }
+            return permissionTreeGroups;
+        }
+
+        // 获取所有角色模板
+        function getAllRoles() {
+            if (roleDefinitions.getAllRoleTemplates) {
+                return roleDefinitions.getAllRoleTemplates();
+            }
+            return [];
+        }
+
+        // 获取角色权限
+        function getRolePermissions(roleId) {
+            if (roleDefinitions.getRolePermissions) {
+                return roleDefinitions.getRolePermissions(roleId);
+            }
+            return [];
+        }
+
+        // 获取角色默认模块范围
+        function getRoleDefaultModuleScopes(roleId) {
+            if (roleDefinitions.getRoleDefaultModuleScopes) {
+                return roleDefinitions.getRoleDefaultModuleScopes(roleId);
+            }
+            return {};
+        }
+
+        // 计算权限变更
+        function calculatePermissionChanges(roleId, finalPermissions) {
+            if (roleDefinitions.calculatePermissionChanges) {
+                return roleDefinitions.calculatePermissionChanges(roleId, finalPermissions);
+            }
+            return { added: [], removed: [], fromRole: null };
+        }
+
         const allPermissionKeys = permissionTreeGroups.flatMap((group) => group.children.map((child) => child.value));
         const allPermissionKeySet = new Set(allPermissionKeys);
         const legacyPermissionMigrationMap = {
@@ -2538,8 +2896,9 @@
                 merchantName: '星巴克咖啡',
                 username: '王运维',
                 phone: '13800138021',
+                wechatOpenId: '',
                 accountEnabled: true,
-                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.staff', 'ops.staff.manage'],
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.faults', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
                 moduleDeviceScopes: {
                     devices: { mode: 'inherit', deviceIds: [] },
@@ -2554,6 +2913,7 @@
                 merchantName: '星巴克咖啡',
                 username: '李财务',
                 phone: '13800138022',
+                wechatOpenId: '',
                 accountEnabled: false,
                 permissions: ['ops.orders'],
                 devices: ['RCK384'],
@@ -2570,6 +2930,7 @@
                 merchantName: '瑞幸咖啡',
                 username: '张维修',
                 phone: '13800138023',
+                wechatOpenId: '',
                 accountEnabled: true,
                 permissions: ['ops.devices', 'ops.faults'],
                 devices: ['RCK410', 'RCK406'],
@@ -2585,10 +2946,271 @@
         function init() {
             renderSidebarLoginProfile();
             bootstrapStaffManagers();
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
             renderPermissionTree();
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             renderManagers();
             updateStats();
+        }
+
+        // ========== 角色相关函数 ==========
+
+        function renderRoleCards() {
+            const grid = document.getElementById('roleCardsGrid');
+            if (!grid) return;
+
+            const roles = getAllRoles();
+            if (!roles.length) {
+                grid.innerHTML = '<div class="empty-state">暂无角色模板</div>';
+                return;
+            }
+
+            grid.innerHTML = roles.map(role => {
+                const isSelected = role.id === committedRoleId;
+                const isPending = role.id === pendingRoleId;
+                return `
+                <div class="role-card ${isSelected ? 'selected' : ''}"
+                     data-role-id="${role.id}"
+                     data-pending="${isPending ? 'true' : 'false'}"
+                     onclick="requestRoleSwitch('${role.id}')">
+                    <div class="role-card-check">✓</div>
+                    <div class="role-card-pending-mark">⋯</div>
+                    <span class="role-card-icon">${role.icon || '👤'}</span>
+                    <span class="role-card-name">${role.name}</span>
+                    <span class="role-card-desc">${role.description || ''}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function getRoleTemplate(roleId) {
+            if (roleDefinitions.getRoleTemplate) {
+                return roleDefinitions.getRoleTemplate(roleId);
+            }
+            return null;
+        }
+
+        // 用户点角色卡片：进入"待确认"状态，权限树暂不改动
+        function requestRoleSwitch(roleId) {
+            // 同角色无操作
+            if (roleId === committedRoleId && !pendingRoleId) return;
+
+            // 在 pending 中再点回原角色 = 取消
+            if (pendingRoleId && roleId === committedRoleId) {
+                cancelRoleSwitch();
+                return;
+            }
+
+            pendingRoleId = roleId;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 确认切换：唯一允许给 lastCommitSnapshot 赋值的地方
+        function confirmRoleSwitch() {
+            if (!pendingRoleId) return;
+            // 保存撤销点（铁律：仅此一处）
+            lastCommitSnapshot = snapshotCurrentRoleState();
+            committedRoleId = pendingRoleId;
+            pendingRoleId = null;
+            applyRolePermissions(committedRoleId);
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 取消切换：清掉 pending，回到 B 状态
+        function cancelRoleSwitch() {
+            pendingRoleId = null;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        // 撤销：把 committedRoleId 还原为 snapshot 里的角色，权限/scopes 一并回滚
+        function undoRoleSwitch() {
+            if (!lastCommitSnapshot) return;
+            committedRoleId = lastCommitSnapshot.roleId;
+            pendingRoleId = null;
+            restoreFromSnapshot(lastCommitSnapshot);
+            lastCommitSnapshot = null;
+            renderRoleCards();
+            renderRoleSwitchPreview();
+            renderRoleCurrentBanner();
+        }
+
+        function snapshotCurrentRoleState() {
+            return {
+                roleId: committedRoleId,
+                permissions: Array.from(document.querySelectorAll('input[name="permission"]:checked'))
+                    .map((input) => input.value),
+                moduleScopes: JSON.parse(JSON.stringify(currentModuleDeviceScopes || {}))
+            };
+        }
+
+        function restoreFromSnapshot(snapshot) {
+            const set = new Set(snapshot.permissions || []);
+            document.querySelectorAll('input[name="permission"]').forEach((input) => {
+                input.checked = set.has(input.value);
+            });
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(
+                snapshot.moduleScopes || {},
+                getAssignedDeviceIds()
+            );
+            refreshPermissionSelectionUi();
+        }
+
+        function applyRolePermissions(roleId) {
+            if (roleId === 'custom') {
+                return;
+            }
+
+            const rolePermissions = getRolePermissions(roleId);
+            const roleModuleScopes = getRoleDefaultModuleScopes(roleId);
+
+            document.querySelectorAll('input[name="permission"]').forEach(input => {
+                input.checked = rolePermissions.includes(input.value);
+            });
+
+            const assignedDevices = getAssignedDeviceIds();
+            currentModuleDeviceScopes = normalizeModuleDeviceScopes(roleModuleScopes, assignedDevices);
+
+            refreshPermissionSelectionUi();
+        }
+
+        function renderRoleCurrentBanner() {
+            const banner = document.getElementById('roleCurrentBanner');
+            if (!banner) return;
+
+            // 待确认切换时，让对比条占位
+            if (pendingRoleId) {
+                banner.hidden = true;
+                return;
+            }
+
+            if (!committedRoleId || committedRoleId === 'custom') {
+                banner.hidden = true;
+                return;
+            }
+
+            const role = getRoleTemplate(committedRoleId);
+            if (!role) {
+                banner.hidden = true;
+                return;
+            }
+
+            document.getElementById('roleCurrentIcon').textContent = role.icon || '👤';
+            document.getElementById('roleCurrentName').textContent = role.name;
+            // 撤销按钮：仅在 lastCommitSnapshot != null 时显示
+            document.getElementById('roleCurrentUndoBtn').hidden = !lastCommitSnapshot;
+            banner.hidden = false;
+        }
+
+        function renderRoleSwitchPreview() {
+            const preview = document.getElementById('roleSwitchPreview');
+            if (!preview) return;
+
+            if (!pendingRoleId) {
+                preview.hidden = true;
+                return;
+            }
+
+            const fromRole = (committedRoleId && committedRoleId !== 'custom')
+                ? getRoleTemplate(committedRoleId)
+                : { icon: '⚙️', name: '自定义' };
+            const toRole = getRoleTemplate(pendingRoleId);
+            if (!toRole) {
+                preview.hidden = true;
+                return;
+            }
+
+            document.getElementById('roleSwitchFromIcon').textContent = fromRole?.icon || '⚙️';
+            document.getElementById('roleSwitchFromName').textContent = fromRole?.name || '自定义';
+            document.getElementById('roleSwitchToIcon').textContent = toRole.icon || '👤';
+            document.getElementById('roleSwitchToName').textContent = toRole.name;
+
+            // 计算切换影响
+            const currentChecked = new Set(
+                Array.from(document.querySelectorAll('input[name="permission"]:checked'))
+                    .map((input) => input.value)
+            );
+            const targetPerms = new Set(getRolePermissions(pendingRoleId));
+            let kept = 0, added = 0, removed = 0;
+            targetPerms.forEach((p) => { (currentChecked.has(p) ? kept++ : added++); });
+            currentChecked.forEach((p) => { if (!targetPerms.has(p)) removed++; });
+            document.getElementById('roleSwitchDetail').textContent =
+                `保留 ${kept} 项重叠权限，引入 ${toRole.name} 的 ${added} 项默认权限，移除 ${removed} 项不在新角色范围内的权限`;
+
+            // 自定义微调丢失警告（基于当前 committedRoleId 计算）
+            const warning = document.getElementById('roleSwitchWarning');
+            if (committedRoleId && committedRoleId !== 'custom') {
+                const changes = calculatePermissionChanges(
+                    committedRoleId,
+                    Array.from(currentChecked)
+                );
+                if ((changes.added && changes.added.length) || (changes.removed && changes.removed.length)) {
+                    const parts = [];
+                    if (changes.added.length) parts.push(`${changes.added.length} 项自定义新增`);
+                    if (changes.removed.length) parts.push(`${changes.removed.length} 项自定义移除`);
+                    warning.textContent = `⚠ 你在原角色基础上的 ${parts.join(' / ')} 将被覆盖`;
+                    warning.hidden = false;
+                } else {
+                    warning.hidden = true;
+                }
+            } else {
+                // 从 custom 切到角色时，提示当前自定义权限会被替换
+                if (currentChecked.size > 0) {
+                    warning.textContent = `⚠ 你当前的 ${currentChecked.size} 项自定义权限将被新角色的默认权限替换`;
+                    warning.hidden = false;
+                } else {
+                    warning.hidden = true;
+                }
+            }
+
+            preview.hidden = false;
+        }
+
+        // 用户主动改了权限 checkbox 后，撤销点失效（避免回滚丢掉新微调）
+        function invalidateRoleSnapshotOnManualEdit() {
+            if (lastCommitSnapshot) {
+                lastCommitSnapshot = null;
+                renderRoleCurrentBanner();
+            }
+        }
+
+        function updatePermissionCustomizationHint() {
+            const hint = document.getElementById('permissionCustomizationHint');
+            const hintText = document.getElementById('permissionCustomizationText');
+
+            if (!hint || !hintText) return;
+
+            // 切换待确认时不显示微调提示，避免和对比条信息打架
+            if (pendingRoleId) {
+                hint.classList.add('hidden');
+                return;
+            }
+
+            const currentPermissions = getSelectedPermissionValues();
+            const changes = calculatePermissionChanges(committedRoleId, currentPermissions);
+
+            if (committedRoleId === 'custom' || (!changes.added.length && !changes.removed.length)) {
+                hint.classList.add('hidden');
+                return;
+            }
+
+            const parts = [];
+            if (changes.added.length) {
+                parts.push(`添加 ${changes.added.length} 项`);
+            }
+            if (changes.removed.length) {
+                parts.push(`移除 ${changes.removed.length} 项`);
+            }
+
+            const roleName = changes.fromRole?.name || '该角色';
+            hintText.textContent = `基于"${roleName}"，${parts.join('，')}权限`;
+            hint.classList.remove('hidden');
         }
 
         function bootstrapStaffManagers() {
@@ -2598,6 +3220,9 @@
                     ...item,
                     accountEnabled: item.accountEnabled !== false,
                     permissions: normalizeStaffPermissions(item.permissions),
+                    wechatOpenId: window.CofeFaultNotifyChannels
+                        ? window.CofeFaultNotifyChannels.normalizeOpenId(item.wechatOpenId)
+                        : String(item.wechatOpenId || '').trim(),
                     moduleDeviceScopes: normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices)
                 }));
                 shouldPersist = true;
@@ -2606,9 +3231,13 @@
                     const normalizedPermissions = normalizeStaffPermissions(item.permissions);
                     const normalizedAccountEnabled = item.accountEnabled !== false;
                     const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(item.moduleDeviceScopes, item.devices);
+                    const normalizedWechatOpenId = window.CofeFaultNotifyChannels
+                        ? window.CofeFaultNotifyChannels.normalizeOpenId(item.wechatOpenId)
+                        : String(item.wechatOpenId || '').trim();
                     if (
                         JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
                         || normalizedAccountEnabled !== item.accountEnabled
+                        || normalizedWechatOpenId !== (item.wechatOpenId || '')
                         || JSON.stringify(normalizedModuleDeviceScopes) !== JSON.stringify(item.moduleDeviceScopes || {})
                     ) {
                         shouldPersist = true;
@@ -2617,6 +3246,7 @@
                         ...item,
                         accountEnabled: normalizedAccountEnabled,
                         permissions: normalizedPermissions,
+                        wechatOpenId: normalizedWechatOpenId,
                         moduleDeviceScopes: normalizedModuleDeviceScopes
                     };
                 });
@@ -2818,6 +3448,8 @@
         }
 
         function handlePermissionParentChange(groupKey, checked) {
+            // 用户主动改权限 → 撤销点失效（仅限有 snapshot 时）
+            invalidateRoleSnapshotOnManualEdit();
             getPermissionChildInputs(groupKey).forEach((input) => {
                 input.checked = checked;
             });
@@ -2825,6 +3457,8 @@
         }
 
         function handlePermissionChildChange(groupKey) {
+            // 用户主动改权限 → 撤销点失效（仅限有 snapshot 时）
+            invalidateRoleSnapshotOnManualEdit();
             const group = getPermissionGroupConfig(groupKey);
             const childInputs = getPermissionChildInputs(groupKey);
             if (!group || !childInputs.length) {
@@ -2891,13 +3525,15 @@
         }
 
         function refreshPermissionSelectionUi() {
-            permissionTreeGroups.forEach((group) => {
+            const groups = getPermissionTreeGroups();
+            groups.forEach((group) => {
                 syncPermissionParentState(group.key);
                 updatePermissionGroupDisplay(group.key);
                 syncPermissionGroupVisibility(group.key);
             });
             updatePermissionSelectionStats();
             renderModuleDeviceScopeRows();
+            updatePermissionCustomizationHint();
         }
 
         function renderPermissionTree() {
@@ -3266,6 +3902,7 @@
                                 </div>
                                 <div class="manager-detail-stack">
                                     <div class="manager-meta">${manager.phone}</div>
+                                    ${manager.wechatOpenId ? '<div class="manager-meta"><span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:10px;font-size:11px;">📱 已绑公众号</span></div>' : ''}
                                     <div class="manager-meta">创建时间：${manager.createdAt || '-'}</div>
                                     <div class="manager-device-summary">
                                         <span class="manager-device-label">可管理设备：</span>
@@ -3353,10 +3990,13 @@
                 return;
             }
 
-            staffManagersData[staffIndex] = {
+            const nextStaff = {
                 ...currentStaff,
                 accountEnabled: nextEnabled
             };
+            const gate = validateAndCommitStaffChange({ ...currentStaff }, nextStaff);
+            if (!gate.proceed) return;
+            staffManagersData[staffIndex] = nextStaff;
             localStorage.setItem('staffManagersData', JSON.stringify(staffManagersData));
             renderManagers();
             updateStats();
@@ -3378,6 +4018,7 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
+            document.getElementById('staffWechatOpenId').value = '';
             currentModuleDeviceScopes = createDefaultModuleDeviceScopes();
 
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
@@ -3386,19 +4027,38 @@
 
             expandedPermissionGroups.clear();
             renderPermissionTree();
+
+            // 重置角色选择（注意：lastCommitSnapshot 必须显式置 null，避免"刚打开就出现撤销按钮"）
+            committedRoleId = 'custom';
+            pendingRoleId = null;
+            lastCommitSnapshot = null;
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
+            updatePermissionCustomizationHint();
         }
 
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
+            document.getElementById('staffWechatOpenId').value = targetStaff.wechatOpenId || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
+
+            // 恢复角色信息（回填不是切换，绝不触发 toast/撤销 UI）
+            const staffRole = targetStaff.role || {};
+            committedRoleId = staffRole.id || 'custom';
+            pendingRoleId = null;
+            lastCommitSnapshot = null;   // 铁律：回填时必须显式清掉
 
             const permissionSet = new Set(normalizeStaffPermissions(targetStaff.permissions));
             document.querySelectorAll('input[name="permission"]').forEach((input) => {
                 input.checked = permissionSet.has(input.value);
             });
             expandedPermissionGroups.clear();
-            renderPermissionTree();
+            renderRoleCards();
+            renderRoleCurrentBanner();
+            renderRoleSwitchPreview();
+            refreshPermissionSelectionUi();
         }
 
         function buildMerchantAliases(merchantId) {
@@ -3625,10 +4285,71 @@
             }
         }
 
+        function validateAndCommitStaffChange(beforeStaff, afterStaff) {
+            if (!window.CofeFaultNotifyChannels) return { proceed: true };
+            let customers = [];
+            try {
+                const parsed = JSON.parse(localStorage.getItem('customersData') || '[]');
+                customers = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                customers = [];
+            }
+
+            const projected = staffManagersData.slice();
+            const targetId = String((beforeStaff || afterStaff || {}).id || '');
+            const index = projected.findIndex((item) => String(item.id) === targetId);
+            if (afterStaff) {
+                if (index >= 0) projected[index] = afterStaff;
+                else projected.push(afterStaff);
+            } else if (index >= 0) {
+                projected.splice(index, 1);
+            }
+
+            const impact = window.CofeFaultNotifyChannels.previewStaffChangeImpact(
+                beforeStaff,
+                afterStaff,
+                customers,
+                projected
+            );
+            if (!impact.length) return { proceed: true };
+
+            const names = impact.map((item) => item.merchantName).join('、');
+            const choice = window.prompt(
+                `此变更将使商户「${names}」的公众号推送失去全部可达接收人。请选择处理方式:\n\n` +
+                `1 = 保留员工变更,并自动取消该商户的「公众号推送」(推荐)\n` +
+                `2 = 暂不保存,先去人员管理给该商户补一位 OpenID 接收人\n` +
+                `3 = 取消本次操作\n\n` +
+                `请输入 1 / 2 / 3:`,
+                '1'
+            );
+
+            if (choice !== '1') {
+                return { proceed: false };
+            }
+
+            impact.forEach((item) => {
+                const customer = customers.find((entry) => String(entry.id) === String(item.merchantId));
+                if (!customer) return;
+                const channels = window.CofeFaultNotifyChannels.normalizeChannelList(customer.notifyChannels, customer.notifyEmail);
+                customer.notifyChannels = channels.filter((channel) => channel !== 'wechat');
+                window.CofeFaultNotifyChannels.appendReconcileLog(localStorage, {
+                    merchantId: customer.id,
+                    merchantName: customer.name,
+                    kind: 'manual',
+                    reason: 'staff-change-cascade'
+                });
+            });
+            localStorage.setItem('customersData', JSON.stringify(customers));
+            return { proceed: true };
+        }
+
         function saveStaff() {
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
+            const wechatOpenId = window.CofeFaultNotifyChannels
+                ? window.CofeFaultNotifyChannels.normalizeOpenId(document.getElementById('staffWechatOpenId').value)
+                : String(document.getElementById('staffWechatOpenId').value || '').trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
             const merchantName = getCurrentMerchantContext().merchantName || '';
@@ -3659,23 +4380,32 @@
                 merchantName,
                 username,
                 phone,
+                wechatOpenId,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
-                moduleDeviceScopes: normalizedModuleDeviceScopes
+                moduleDeviceScopes: normalizedModuleDeviceScopes,
+                role: committedRoleId !== 'custom' ? {
+                    id: committedRoleId,
+                    name: getRoleTemplate(committedRoleId)?.name || '未知角色',
+                    appliedAt: new Date().toISOString().slice(0, 10)
+                } : null,
+                permissionChanges: calculatePermissionChanges(committedRoleId, selectedPermissions)
             };
 
             let nextStaffManagersData = staffManagersData.slice();
+            let nextStaff = null;
             if (editingStaffId) {
                 const staffIndex = staffManagersData.findIndex((item) => item.id === editingStaffId);
                 if (staffIndex === -1) {
                     showToast('未找到可编辑人员');
                     return;
                 }
-                nextStaffManagersData[staffIndex] = {
+                nextStaff = {
                     ...staffManagersData[staffIndex],
                     ...staffPayload,
                     devices: selectedDevices
                 };
+                nextStaffManagersData[staffIndex] = nextStaff;
             } else {
                 const newStaff = {
                     id: createStaffId(),
@@ -3683,8 +4413,15 @@
                     accountEnabled: true,
                     createdAt: new Date().toISOString().slice(0, 10)
                 };
+                nextStaff = newStaff;
                 nextStaffManagersData.unshift(newStaff);
             }
+
+            const beforeStaff = editingStaffId
+                ? staffManagersData.find((item) => item.id === editingStaffId)
+                : null;
+            const gate = validateAndCommitStaffChange(beforeStaff ? { ...beforeStaff } : null, nextStaff);
+            if (!gate.proceed) return;
 
             try {
                 localStorage.setItem('staffManagersData', JSON.stringify(nextStaffManagersData));
@@ -3740,6 +4477,10 @@
         });
 
         init();
+        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
+            CofeAdminStaffAccess.applyNavLabelsByRole();
+        }
+    
     </script>
 </body>
 </html>

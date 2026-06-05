@@ -88,7 +88,9 @@ npx wrangler deploy
 - `shared/admin-mock-data.js` - Shared mock data generation utilities used across pages
 - `shared/business-tag-library.js` - Business tag management library
 - `shared/device-latte-art-library.js` - Device latte art pattern library
-- `shared/admin-staff-access.js` - Staff access control utilities
+- `shared/admin-staff-access.js` - Staff access control and merchant tenant isolation
+- `shared/fault-library.js` - Mock fault records with handling steps (30 entries)
+- `shared/tag-group-i18n.js` - Tag group name internationalization per device
 - `designs/` - Design files (`.pen` and `.svg` previews)
 - `docs/plans/` - Date-prefixed implementation and design plans (e.g. `2026-03-01-feature-name.md`)
 - `docs/superpowers/plans/` and `docs/superpowers/specs/` - Detailed feature specs and plans
@@ -101,6 +103,11 @@ npx wrangler deploy
 ## Development Workflow
 
 **No build step**: Open HTML files directly in browser. Changes are immediately visible on refresh.
+
+**Local dev server (with no-cache headers):**
+```bash
+python3 scripts/no_cache_http_server.py --port 8080
+```
 
 **Commit conventions:**
 - Use descriptive commit messages in English
@@ -144,6 +151,12 @@ npx wrangler deploy
 - Uses device ID as seed for deterministic randomness
 - Functions like `getStableDeviceSeed()`, `shiftHourlySeries()`, `normalizeShareItems()`
 - Ensures consistent data across page refreshes for same device
+
+**Merchant tenant isolation:**
+- Non-admin users are scoped to their merchant via `admin-staff-access.js`
+- Login sessions stored in localStorage with merchant context
+- Admin users see all merchants; regular staff see only their own
+- Affects sidebar visibility and data filtering across pages
 
 **Search and filtering:**
 - Search states persisted to localStorage with page-specific keys

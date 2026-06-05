@@ -1156,6 +1156,7 @@
     </div>
 
     <script src="shared/admin-mock-data.js"></script>
+    <script src="shared/admin-page-i18n.js"></script>
     <script>
         const merchantMap = {
             'mer001': '星巴克咖啡',
@@ -2170,6 +2171,40 @@
                 return parts.length ? Array.from(new Set(parts)).join('') : fallback;
             } catch (error) {
                 return fallback;
+            }
+        }
+
+        async function requestQuickLocationCurrentPosition() {
+            const button = document.getElementById('quickLocationLocateBtn');
+            if (!button) return;
+            if (!navigator.geolocation) {
+                alert('当前浏览器不支持定位功能');
+                return;
+            }
+            if (button.dataset.locating === '1') return;
+            button.dataset.locating = '1';
+            button.textContent = '定位中...';
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    });
+                });
+                const longitude = Number(position.coords.longitude).toFixed(6);
+                const latitude = Number(position.coords.latitude).toFixed(6);
+                document.getElementById('quickLocationLongitude').value = longitude;
+                document.getElementById('quickLocationLatitude').value = latitude;
+                const addressInput = document.getElementById('quickLocationAddress');
+                if (addressInput && !addressInput.value.trim()) {
+                    addressInput.value = await resolveAddressByCoordinates(latitude, longitude);
+                }
+            } catch (error) {
+                alert(getLocationErrorMessage(error));
+            } finally {
+                button.dataset.locating = '0';
+                button.textContent = '获取当前位置';
             }
         }
 

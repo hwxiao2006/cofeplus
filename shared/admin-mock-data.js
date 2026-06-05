@@ -4,7 +4,7 @@
         beans: '金奖黑咖-浓香意式',
         temperature: '热',
         strength: '标准',
-        syrup: '甘蔗冰糖糖浆',
+        syrup: '蔗糖糖浆',
         sweetness: '无糖',
         cupsize: '355ml',
         lid: '倡导环保 不使用杯盖',
@@ -63,18 +63,65 @@
             .filter(Boolean)));
     }
 
+    const MOCK_RECIPE_PRESETS = [
+        { baseCoffeeLiquid: 80, syrup: 25, milk: 180, foam: 20, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+        { baseCoffeeLiquid: 60, syrup: 0, milk: 200, foam: 35, water: 25, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+        { baseCoffeeLiquid: 90, syrup: 30, milk: 150, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+        { baseCoffeeLiquid: 70, syrup: 0, milk: 0, foam: 0, water: 200, ice: 120, powders: 0, concentrates: 0, decorToppings: 0 },
+        { baseCoffeeLiquid: 0, syrup: 0, milk: 280, foam: 0, water: 0, ice: 0, powders: 0, concentrates: 0, decorToppings: 0 },
+    ];
+
+    function buildMockOptionRecipes(product) {
+        const seed = (product.id || 1) - 1;
+        const presetIdx = seed % MOCK_RECIPE_PRESETS.length;
+        const preset = MOCK_RECIPE_PRESETS[presetIdx];
+        const groupOrder = ['baseCoffeeLiquid', 'syrup', 'milk', 'foam', 'water', 'ice', 'powders', 'concentrates', 'decorToppings'];
+
+        const makeRecipe = (mlOverrides) => {
+            const groups = {};
+            groupOrder.forEach(key => {
+                groups[key] = { names: [], percent: 100, ml: mlOverrides[key] || 0 };
+            });
+            return { groupOrder, groups };
+        };
+
+        const hotPreset = { ...preset, water: preset.water || 30, ice: 0 };
+        const coldPreset = { ...preset, water: preset.water || 60, ice: preset.ice || 100, foam: 0 };
+        const lightIcePreset = { ...preset, water: preset.water || 60, ice: 70, foam: 0 };
+
+        const recipes = {};
+        const links = {};
+        const pid = product.id || 0;
+
+        recipes['cupsize'] = {
+            '热': makeRecipe(hotPreset),
+            '标准冰': makeRecipe(coldPreset),
+            '少冰': makeRecipe(lightIcePreset)
+        };
+        links['cupsize'] = {
+            '热': 'cupsize:热:' + pid,
+            '标准冰': 'cupsize:标准冰:' + pid,
+            '少冰': 'cupsize:少冰:' + pid
+        };
+
+        return { optionRecipes: recipes, optionRecipeLinks: links };
+    }
+
     function normalizeMockProduct(product) {
         const sourceProduct = product || {};
         const derivedBusinessTagIds = Array.isArray(sourceProduct.businessTagIds)
             ? sourceProduct.businessTagIds
             : (sourceProduct.featured ? ['tag_signature'] : []);
+        const mockRecipe = buildMockOptionRecipes(sourceProduct);
         return {
             ...sourceProduct,
             defaultOptions: {
                 ...SHARED_PRODUCT_DEFAULT_OPTIONS,
                 ...(sourceProduct.defaultOptions || {})
             },
-            businessTagIds: normalizeBusinessTagIds(derivedBusinessTagIds)
+            businessTagIds: normalizeBusinessTagIds(derivedBusinessTagIds),
+            optionRecipes: sourceProduct.optionRecipes || mockRecipe.optionRecipes,
+            optionRecipeLinks: sourceProduct.optionRecipeLinks || mockRecipe.optionRecipeLinks
         };
     }
 
@@ -210,98 +257,509 @@
     }
 
     const SHARED_DEFAULT_PRODUCTS = normalizeMockCategories({
-        '3D拉花': {
-            icon: '🎨',
-            names: { zh: '3D拉花', en: '3D Latte Art', jp: '3Dラテアート' },
-            items: [
-                { id: 1, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop', names: { zh: '干卡布其诺*', en: 'Dry Cappuccino*', jp: 'ドライカプチーノ' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup', jp: 'エスプレッソ、ミルク、大カップ' } },
-                { id: 2, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop', names: { zh: '鲜牛奶*', en: 'Fresh Milk*' }, descs: { zh: '牛奶、大杯型', en: 'Milk, large cup' } },
-                { id: 3, price: 9.9, featured: true, image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&h=300&fit=crop', names: { zh: '美式拿铁*', en: 'Americano Latte*' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } },
-                { id: 4, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&h=300&fit=crop', names: { zh: '卡布其诺*', en: 'Cappuccino*' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } },
-                { id: 5, price: 6, featured: false, image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&h=300&fit=crop', names: { zh: '新·澳白*', en: 'New Flat White*' }, descs: { zh: '浓缩精粹咖啡、牛奶、大杯型', en: 'Ristretto, milk, large cup' } }
-            ]
+    "3D拉花": {
+        icon: "🎨",
+        names: {
+            zh: "3D拉花",
+            en: "3D Print Coffee",
+            jp: "Kawa z nadrukiem 3D"
         },
-        '千人千味': {
-            icon: '✨',
-            names: { zh: '千人千味', en: 'Custom Taste', jp: '千人千味' },
-            items: [
-                { id: 6, price: 9.9, featured: true, image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop', names: { zh: '美式拿铁', en: 'Americano Latte' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } },
-                { id: 7, price: 9.9, featured: true, image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&h=300&fit=crop', names: { zh: '美式拿铁*', en: 'Americano Latte*' }, descs: { zh: '浓缩咖啡、牛奶、大杯型', en: 'Espresso, milk, large cup' } }
-            ]
+        items: [
+            {
+                id: 1,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/gankabuqinuo.png",
+                names: {
+                    zh: "干卡布其诺*",
+                    en: "Dry Cappuccino*",
+                    jp: "干卡布奇諾"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、大杯型",
+                    en: "Espresso, milk,Grande",
+                    jp: "エスプレッソ、牛乳、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "生椰系列": {
+        icon: "🥥",
+        names: {
+            zh: "生椰系列",
+            en: "coconut",
+            jp: "生ココナッツシリーズ"
         },
-        '新品推荐': {
-            icon: '🆕',
-            names: { zh: '新品推荐', en: 'New Arrivals', jp: '新商品' },
-            items: [
-                { id: 8, price: 16.9, featured: false, image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=300&fit=crop', names: { zh: '橘皮拿铁', en: 'Orange Latte' }, descs: { zh: '浓缩咖啡、橘皮糖浆、大杯型', en: 'Espresso, orange syrup, large cup' } },
-                { id: 9, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&h=300&fit=crop', names: { zh: '白玉兰拿铁', en: 'Magnolia Latte' }, descs: { zh: '浓缩咖啡、牛奶、白玉兰糖浆、大杯型', en: 'Espresso, milk, magnolia syrup, large cup' } },
-                { id: 10, price: 9.9, featured: false, names: { zh: '白玉兰美式', en: 'Magnolia Americano' }, descs: { zh: '浓缩咖啡、水、白玉兰糖浆、大杯型', en: 'Espresso, water, magnolia syrup, large cup' } },
-                { id: 11, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1610632380989-680fe40816c6?w=400&h=300&fit=crop', names: { zh: '白玉兰卡布', en: 'Magnolia Cappuccino' }, descs: { zh: '浓缩咖啡、牛奶、白玉兰糖浆、大杯型', en: 'Espresso, milk, magnolia syrup, large cup' } },
-                { id: 12, price: 9.9, featured: false, image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=400&h=300&fit=crop', names: { zh: '热红酒拿铁', en: 'Mulled Wine Latte' }, descs: { zh: '热红酒糖浆、牛奶、浓缩咖啡、大杯型', en: 'Wine syrup, milk, espresso, large cup' } },
-                { id: 13, price: 18.9, featured: false, names: { zh: '热红酒美式', en: 'Mulled Wine Americano' }, descs: { zh: '热红酒糖浆、水、浓缩咖啡、大杯型', en: 'Wine syrup, water, espresso, large cup' } }
-            ]
+        items: [
+            {
+                id: 2,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/250520shengyenatie_detail.png",
+                names: {
+                    zh: "生椰咖啡拿铁",
+                    en: "Coconut Coffee Latte",
+                    jp: "ココナッツコーヒーラテ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、椰奶、大杯型",
+                    en: "Espresso, Coconut milk,Grande",
+                    jp: "エスプレッソ、ココナッツミルク、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "手工拉花": {
+        icon: "☕",
+        names: {
+            zh: "手工拉花",
+            en: "Hand Art Coffee",
+            jp: "Arte de leche artesanal"
         },
-        '经典咖啡': {
-            icon: '☕',
-            names: { zh: '经典咖啡', en: 'Classic Coffee', jp: 'クラシックコーヒー' },
-            items: [
-                { id: 14, price: 12.9, featured: true, image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop', names: { zh: '经典美式', en: 'Classic Americano' }, descs: { zh: '双份浓缩、水、中杯型', en: 'Double espresso, water, medium cup' } },
-                { id: 15, price: 14.9, featured: false, image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', names: { zh: '榛果美式', en: 'Hazelnut Americano' }, descs: { zh: '浓缩咖啡、榛果糖浆、中杯型', en: 'Espresso, hazelnut syrup, medium cup' } },
-                { id: 16, price: 15.9, featured: false, image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400&h=300&fit=crop', names: { zh: '厚乳黑咖', en: 'Milk Foam Black Coffee' }, descs: { zh: '黑咖啡、轻奶泡、大杯型', en: 'Black coffee, milk foam, large cup' } }
-            ]
+        items: [
+            {
+                id: 3,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/250910xinxinglahua_detail.png",
+                names: {
+                    zh: "拉花拿铁-心形",
+                    en: "Latte Art - Heart",
+                    jp: "ラテアート - ハート"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、大杯型",
+                    en: "Drip coffee,milk,Grande",
+                    jp: "ドリップコーヒー、牛乳、大型カップタイプ"
+                }
+            },
+            {
+                id: 4,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/250910yezilahua_detail.png",
+                names: {
+                    zh: "拉花拿铁-叶形",
+                    en: "Latte Art - Leaf",
+                    jp: "ラテアート-葉形"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、大杯型",
+                    en: "Drip coffee,milk,Grande",
+                    jp: "ドリップコーヒー、牛乳、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "一杯冰块": {
+        icon: "🧊",
+        names: {
+            zh: "一杯冰块",
+            en: "Just Ice",
+            jp: "Un vaso de hielo (o cubitos)"
         },
-        '奶咖系列': {
-            icon: '🥛',
-            names: { zh: '奶咖系列', en: 'Milk Coffee', jp: 'ミルクコーヒー' },
-            items: [
-                { id: 17, price: 18.9, featured: true, image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop', names: { zh: '丝绒拿铁', en: 'Velvet Latte' }, descs: { zh: '浓缩咖啡、鲜奶、丝绒奶泡', en: 'Espresso, milk, velvet foam' } },
-                { id: 18, price: 19.9, featured: false, image: 'https://images.unsplash.com/photo-1579992357154-faf4bde95b3d?w=400&h=300&fit=crop', names: { zh: '焦糖玛奇朵', en: 'Caramel Macchiato' }, descs: { zh: '牛奶、焦糖酱、浓缩咖啡', en: 'Milk, caramel, espresso' } },
-                { id: 19, price: 20.9, featured: false, image: 'https://images.unsplash.com/photo-1494314671902-399b18174975?w=400&h=300&fit=crop', names: { zh: '海盐拿铁', en: 'Sea Salt Latte' }, descs: { zh: '海盐奶盖、牛奶、咖啡', en: 'Sea-salt cream, milk, coffee' } }
-            ]
+        items: [
+            {
+                id: 23,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/bingshui_detail.png",
+                names: {
+                    zh: "冰水",
+                    en: "Ice water",
+                    jp: "Ice water"
+                },
+                descs: {
+                    zh: "水、大杯型",
+                    en: "water,Grande",
+                    jp: "水、大杯型"
+                }
+            }
+        ]
+    },
+    "各国王牌": {
+        icon: "🏆",
+        names: {
+            zh: "各国王牌",
+            en: "Regional Specialty",
+            jp: "Kawa według kraju pochodzenia"
         },
-        '茶饮特调': {
-            icon: '🍵',
-            names: { zh: '茶饮特调', en: 'Tea Specials', jp: 'ティースペシャル' },
-            items: [
-                { id: 20, price: 16.9, featured: false, image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&h=300&fit=crop', names: { zh: '抹茶牛奶', en: 'Matcha Milk' }, descs: { zh: '抹茶、牛奶、冰块', en: 'Matcha, milk, ice' } },
-                { id: 21, price: 17.9, featured: true, image: 'https://images.unsplash.com/photo-1464306076886-da185f6a9d05?w=400&h=300&fit=crop', names: { zh: '柚香红茶', en: 'Yuzu Black Tea' }, descs: { zh: '红茶、柚子果酱、柠檬片', en: 'Black tea, yuzu jam, lemon' } },
-                { id: 22, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&h=300&fit=crop', names: { zh: '茉莉冷萃茶', en: 'Jasmine Cold Brew Tea' }, descs: { zh: '茉莉茶底、冷萃工艺', en: 'Jasmine tea, cold brewed' } }
-            ]
+        items: [
+            {
+                id: 6,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/gankabuqinuo.png",
+                names: {
+                    zh: "干卡布其诺",
+                    en: "Dry Cappuccino",
+                    jp: "ドライカプチーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、大杯型",
+                    en: "Espresso, milk,Grande",
+                    jp: "エスプレッソ、牛乳、大型カップタイプ"
+                }
+            },
+            {
+                id: 7,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/shikabuqinuo.png",
+                names: {
+                    zh: "湿卡布其诺",
+                    en: "Wet Cappuccino",
+                    jp: "湿式カプチーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、大杯型",
+                    en: "Espresso, milk,Grande",
+                    jp: "エスプレッソ、牛乳、大型カップタイプ"
+                }
+            },
+            {
+                id: 8,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/fashioulei.png",
+                names: {
+                    zh: "法式欧蕾",
+                    en: "Café au Lait",
+                    jp: "フランス風のオーレ"
+                },
+                descs: {
+                    zh: "滴滤咖啡、牛奶、大杯型",
+                    en: "Drip coffee,milk,Grande",
+                    jp: "ドリップコーヒー、牛乳、大型カップタイプ"
+                }
+            },
+            {
+                id: 9,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/zhongdongmokaqinuo.png",
+                names: {
+                    zh: "中东摩卡其诺",
+                    en: "Middle East Mochaccino",
+                    jp: "中東モカキノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、牛奶、可可粉、大杯型",
+                    en: "Espresso, milk,cocoa powder,Grande",
+                    jp: "エスプレッソ、牛乳、ココアパウダー、大型カップタイプ"
+                }
+            },
+            {
+                id: 10,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/dongnanyabaikafei.png",
+                names: {
+                    zh: "东南亚白咖啡",
+                    en: "Ipoh White Coffee",
+                    jp: "東南アジア白コーヒー"
+                },
+                descs: {
+                    zh: "滴滤咖啡、牛奶、蔗糖糖浆、大杯型",
+                    en: "Drip coffee,milk,sucrose syrup,Grande",
+                    jp: "ドリップコーヒー、牛乳、ショ糖水飴、大型カップタイプ"
+                }
+            },
+            {
+                id: 11,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/ribenlvchakafei.png",
+                names: {
+                    zh: "绿茶咖啡",
+                    en: "Matcha Coffee",
+                    jp: "日本の緑茶コーヒー"
+                },
+                descs: {
+                    zh: "浓缩咖啡、抹茶粉、牛奶、大杯型",
+                    en: "Espresso,matcha powder, milk,Grande",
+                    jp: "エスプレッソ、抹茶粉、牛乳、大型カップタイプ"
+                }
+            },
+            {
+                id: 12,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/yishinongsuo_cn.png?v=2019091001",
+                names: {
+                    zh: "Espresso",
+                    en: "Espresso",
+                    jp: "イタリア濃縮"
+                },
+                descs: {
+                    zh: "浓缩咖啡、60ml",
+                    en: "Espress,60ml",
+                    jp: "エスプレッソ、60ml"
+                }
+            }
+        ]
+    },
+    "各国美式": {
+        icon: "🌎",
+        names: {
+            zh: "各国美式",
+            en: "Global Americano",
+            jp: "Américain par pays"
         },
-        '冰饮冷萃': {
-            icon: '🧊',
-            names: { zh: '冰饮冷萃', en: 'Cold Brew', jp: 'コールドブリュー' },
-            items: [
-                { id: 23, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1462917882517-e150004895fa?w=400&h=300&fit=crop', names: { zh: '冷萃咖啡', en: 'Cold Brew Coffee' }, descs: { zh: '冷萃咖啡液、冰块', en: 'Cold brew concentrate, ice' } },
-                { id: 24, price: 22.9, featured: true, image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=300&fit=crop', names: { zh: '椰青冷萃', en: 'Coconut Cold Brew' }, descs: { zh: '冷萃、椰子水、轻甜感', en: 'Cold brew, coconut water' } }
-            ]
+        items: [
+            {
+                id: 13,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/zhilimeishi_detail.png",
+                names: {
+                    zh: "智利美式",
+                    en: "Chilean Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, Orange Peel,Grande",
+                    jp: "エスプレッソ、オレンジピールシロップ、大型カップタイプ"
+                }
+            },
+            {
+                id: 14,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/eluosimeishi_detail.png",
+                names: {
+                    zh: "俄罗斯美式",
+                    en: "Russian Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, Lemon Syrup,Grande",
+                    jp: "エスプレッソ、レモンジュース、大型カップタイプ"
+                }
+            },
+            {
+                id: 15,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/xinjiapomeishi_detail.png",
+                names: {
+                    zh: "新加坡美式",
+                    en: "Singapore Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, Strawberry,Grande",
+                    jp: "エスプレッソ、いちご、大型カップタイプ"
+                }
+            },
+            {
+                id: 16,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/malaixiyameishi_detail.png",
+                names: {
+                    zh: "马来西亚美式",
+                    en: "Malaysian Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, Monin Peach Syrup,Grande",
+                    jp: "エスプレッソ、モーニン桃のシロップ、大型カップタイプ"
+                }
+            },
+            {
+                id: 17,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/danmaimeishi_detail.png",
+                names: {
+                    zh: "丹麦美式",
+                    en: "Danish Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, Pina-coco,Grande",
+                    jp: "エスプレッソ、Pina-coco、大型カップタイプ"
+                }
+            },
+            {
+                id: 18,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/shatemeishi_detail.png",
+                names: {
+                    zh: "沙特美式",
+                    en: "Saudi Americano",
+                    jp: "シーソルト・ローズ・アメリカーノ"
+                },
+                descs: {
+                    zh: "浓缩咖啡、水、大杯型",
+                    en: "Espresso, water,Sugar-free sea salt rose,Grande",
+                    jp: "エスプレッソ、水、無糖海塩バラ、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "新鲜乳饮": {
+        icon: "🥛",
+        names: {
+            zh: "新鲜乳饮",
+            en: "Fresh Milk",
+            jp: "Bebida láctea fresca"
         },
-        '低糖轻享': {
-            icon: '🌿',
-            names: { zh: '低糖轻享', en: 'Light Choice', jp: 'ライトチョイス' },
-            items: [
-                { id: 25, price: 17.9, featured: false, image: 'https://images.unsplash.com/photo-1527169402691-a7f2bdf3a2af?w=400&h=300&fit=crop', names: { zh: '轻盈拿铁', en: 'Light Latte' }, descs: { zh: '低脂奶、少糖、双份浓缩', en: 'Low-fat milk, less sugar, double espresso' } },
-                { id: 26, price: 15.9, featured: false, image: 'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=400&h=300&fit=crop', names: { zh: '燕麦美式', en: 'Oat Americano' }, descs: { zh: '美式咖啡、燕麦奶', en: 'Americano, oat milk' } }
-            ]
+        items: [
+            {
+                id: 19,
+                price: 10,
+                originalPrice: 10,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/xianniunai.png",
+                names: {
+                    zh: "鲜牛奶abc",
+                    en: "Fresh Milk",
+                    jp: "生牛乳"
+                },
+                descs: {
+                    zh: "牛奶、大杯型",
+                    en: "Milk,Grande",
+                    jp: "牛乳、ココアパウダー、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "本店王牌": {
+        icon: "⭐",
+        names: {
+            zh: "本店王牌",
+            en: "Ace of the store",
+            jp: "líder de tiendas"
         },
-        '早餐搭配': {
-            icon: '🥐',
-            names: { zh: '早餐搭配', en: 'Breakfast Pairing', jp: '朝食セット' },
-            items: [
-                { id: 27, price: 23.9, featured: false, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop', names: { zh: '可颂拿铁套餐', en: 'Croissant Latte Set' }, descs: { zh: '拿铁、黄油可颂、早餐组合', en: 'Latte with butter croissant' } },
-                { id: 28, price: 21.9, featured: false, image: 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&h=300&fit=crop', names: { zh: '贝果美式套餐', en: 'Bagel Americano Set' }, descs: { zh: '经典美式、谷物贝果', en: 'Americano with grain bagel' } }
-            ]
+        items: [
+            {
+                id: 20,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/ice410_410.png",
+                names: {
+                    zh: "纯冰块",
+                    en: "Ice Cubes",
+                    jp: "塊状の氷"
+                },
+                descs: {
+                    zh: "冰",
+                    en: "Ice",
+                    jp: "アイス"
+                }
+            }
+        ]
+    },
+    "儿童专享": {
+        icon: "👧",
+        names: {
+            zh: "儿童专享",
+            en: "Child Exclusive",
+            jp: "Especial para niños"
         },
-        '季节限定': {
-            icon: '🍂',
-            names: { zh: '季节限定', en: 'Seasonal Limited', jp: '季節限定' },
-            items: [
-                { id: 29, price: 21.9, featured: true, image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&h=300&fit=crop', names: { zh: '桂花燕麦拿铁', en: 'Osmanthus Oat Latte' }, descs: { zh: '桂花糖浆、燕麦奶、浓缩咖啡', en: 'Osmanthus syrup, oat milk, espresso' } },
-                { id: 30, price: 20.9, featured: false, image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&h=300&fit=crop', names: { zh: '莓果冷萃', en: 'Berry Cold Brew' }, descs: { zh: '冷萃咖啡、莓果果酱、冰块', en: 'Cold brew, berry jam, ice' } },
-                { id: 31, price: 18.9, featured: false, image: 'https://images.unsplash.com/photo-1464306076886-da185f6a9d05?w=400&h=300&fit=crop', names: { zh: '南瓜香料奶咖', en: 'Pumpkin Spice Latte' }, descs: { zh: '南瓜香料、牛奶、浓缩咖啡', en: 'Pumpkin spice, milk, espresso' } }
-            ]
-        }
-    });
+        items: [
+            {
+                id: 21,
+                price: 10,
+                originalPrice: 10,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/xianniunai.png",
+                names: {
+                    zh: "鲜牛奶abc",
+                    en: "Fresh Milk",
+                    jp: "生牛乳"
+                },
+                descs: {
+                    zh: "牛奶、大杯型",
+                    en: "Milk,Grande",
+                    jp: "牛乳、ココアパウダー、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "夜间安享": {
+        icon: "🌙",
+        names: {
+            zh: "夜间安享",
+            en: "Nighttime Drinks",
+            jp: "Disfrute nocturno"
+        },
+        items: [
+            {
+                id: 22,
+                price: 10,
+                originalPrice: 10,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_ipad_detail/xianniunai.png",
+                names: {
+                    zh: "鲜牛奶abc",
+                    en: "Fresh Milk",
+                    jp: "生牛乳"
+                },
+                descs: {
+                    zh: "牛奶、大杯型",
+                    en: "Milk,Grande",
+                    jp: "牛乳、ココアパウダー、大型カップタイプ"
+                }
+            }
+        ]
+    },
+    "热水": {
+        icon: "💧",
+        names: {
+            zh: "热水",
+            en: "HOT WATER",
+            jp: "Agua caliente"
+        },
+        items: [
+            {
+                id: 24,
+                price: 14.9,
+                originalPrice: 14.9,
+                featured: false,
+                image: "https://cofeplus.oss-cn-beijing.aliyuncs.com/product_detail/bingshui_detail.png",
+                names: {
+                    zh: "热水",
+                    en: "hot water",
+                    jp: "hot water"
+                },
+                descs: {
+                    zh: "水、大杯型",
+                    en: "water,Grande",
+                    jp: "水、大杯型"
+                }
+            }
+        ]
+    }
+});
+    
     const SHARED_DEFAULT_DEVICES = [
         { id: 'RCK386', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
         { id: 'RCK385', merchant: 'mer001', location: 'k8298', status: 'operational', sales: 'enabled', heartbeat: '2026年2月11日 15:06' },
