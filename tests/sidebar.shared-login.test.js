@@ -59,7 +59,6 @@ test('同款侧栏页面应统一读取 sidebarLoginProfile 并初始化渲染',
   }
 });
 
-
 test('同款侧栏页面应提供退出登录入口并回到登录页', () => {
   for (const filename of sidebarFiles) {
     const html = fs.readFileSync(path.join(__dirname, '..', filename), 'utf8');

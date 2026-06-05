@@ -907,23 +907,23 @@
                     </section>
 
                     <section class="form-section">
-                        <div class="section-title">定位设置</div>
+                        <div class="section-title">点位坐标</div>
                         <div class="rows">
                             <div class="row">
-                                <div class="label">选择GPS定位</div>
-                                <div class="value"><span id="gpsActionDisplay" class="link">获取当前位置 ›</span></div>
+                                <div class="label">坐标来源</div>
+                                <div class="value"><span id="gpsActionDisplay">请选择点位</span></div>
                             </div>
                             <div class="row">
                                 <div class="label">经度</div>
-                                <div class="value"><span id="longitudeDisplay" style="color:#9ca3af;">手动输入</span></div>
+                                <div class="value"><span id="longitudeDisplay" style="color:#9ca3af;">未配置</span></div>
                             </div>
                             <div class="row">
                                 <div class="label">纬度</div>
-                                <div class="value"><span id="latitudeDisplay" style="color:#9ca3af;">手动输入</span></div>
+                                <div class="value"><span id="latitudeDisplay" style="color:#9ca3af;">未配置</span></div>
                             </div>
                             <div class="row">
                                 <div class="label">点位地址</div>
-                                <div class="value"><input id="locationAddressInput" placeholder="请输入地址"></div>
+                                <div class="value"><input id="locationAddressInput" placeholder="选择点位后自动带出地址" readonly></div>
                             </div>
                         </div>
                     </section>
@@ -1193,7 +1193,6 @@
             setTodayAsDefaultDeviceStartDate();
             toggleEnergyTimeRowsVisibility();
             renderEntryDraftAssets();
-            document.getElementById('gpsActionDisplay').addEventListener('click', requestCurrentLocation);
             document.getElementById('quickCreateLocationModal').addEventListener('click', function(event) {
                 if (event.target === this) {
                     closeQuickCreateLocationModal();
@@ -1401,6 +1400,7 @@
             if (!merchantContext.isResolved) return false;
             const customerId = String(location.customerId || '').trim();
             const customerName = String(location.customerName || '').trim();
+            if (!customerId && !customerName) return true;
             return customerId === merchantContext.merchantId || (!!customerName && customerName === merchantContext.merchantName);
         }
 
@@ -1586,7 +1586,7 @@
             const currentValue = select ? String(select.value || '').trim() : '';
             let html = '<option value="">请选择</option>';
             locationsData.filter(location => isLocationInCurrentMerchantScope(location)).forEach(l => {
-                html += `<option value="${l.code}" data-address="${l.address || ''}">${l.name}（${l.code}）</option>`;
+                html += `<option value="${l.code}" data-address="${l.address || ''}" data-longitude="${l.longitude || ''}" data-latitude="${l.latitude || ''}" data-gps-action="${l.gpsAction || (l.longitude || l.latitude ? '来自点位信息' : '未配置点位坐标')}">${l.name}（${l.code}）</option>`;
             });
             select.innerHTML = html;
             if (currentValue && Array.from(select.options).some(option => option.value === currentValue)) {
@@ -1776,7 +1776,16 @@
             const select = document.getElementById('locationSelect');
             const option = select.options[select.selectedIndex];
             const address = option ? (option.dataset.address || '') : '';
+            const longitude = option ? (option.dataset.longitude || '') : '';
+            const latitude = option ? (option.dataset.latitude || '') : '';
+            const gpsAction = option ? (option.dataset.gpsAction || '') : '';
             document.getElementById('locationAddressInput').value = address;
+            setCoordinateDisplay('longitudeDisplay', longitude);
+            setCoordinateDisplay('latitudeDisplay', latitude);
+            const gpsDisplay = document.getElementById('gpsActionDisplay');
+            if (gpsDisplay) {
+                gpsDisplay.textContent = gpsAction || (select.value ? '未配置点位坐标' : '请选择点位');
+            }
         }
 
         function initSwitchGroups() {
@@ -1810,7 +1819,7 @@
             if (!el) return;
             const text = String(value || '').trim();
             if (!text) {
-                el.textContent = '手动输入';
+                el.textContent = '未配置';
                 el.style.color = '#9ca3af';
                 return;
             }
@@ -2150,39 +2159,31 @@
         async function resolveAddressByCoordinates(latitude, longitude) {
             const fallback = `当前位置（经度${longitude}，纬度${latitude}）`;
             try {
-                const params = new URLSearchParams({
-                    latitude: String(latitude),
-                    longitude: String(longitude),
-                    localityLanguage: 'zh'
-                });
-                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?${params.toString()}`);
+                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&localityLanguage=zh`);
                 if (!response.ok) return fallback;
                 const data = await response.json();
                 const parts = [
-                    data.countryName,
                     data.principalSubdivision,
-                    data.city || data.locality,
+                    data.city,
                     data.locality,
-                    data.streetName,
-                    data.street
-                ].map(item => String(item || '').trim()).filter(Boolean);
-                const deduped = parts.filter((item, index) => parts.indexOf(item) === index);
-                return deduped.join('') || fallback;
+                    data.localityInfo?.administrative?.find(item => item.adminLevel === 8)?.name
+                ].filter(Boolean);
+                return parts.length ? Array.from(new Set(parts)).join('') : fallback;
             } catch (error) {
                 return fallback;
             }
         }
 
-        async function requestCurrentLocation() {
-            const actionEl = document.getElementById('gpsActionDisplay');
-            if (!actionEl) return;
+        async function requestQuickLocationCurrentPosition() {
+            const button = document.getElementById('quickLocationLocateBtn');
+            if (!button) return;
             if (!navigator.geolocation) {
                 alert('当前浏览器不支持定位功能');
                 return;
             }
-            if (actionEl.dataset.locating === '1') return;
-            actionEl.dataset.locating = '1';
-            actionEl.textContent = '定位中...';
+            if (button.dataset.locating === '1') return;
+            button.dataset.locating = '1';
+            button.textContent = '定位中...';
             try {
                 const position = await new Promise((resolve, reject) => {
                     navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -2193,14 +2194,17 @@
                 });
                 const longitude = Number(position.coords.longitude).toFixed(6);
                 const latitude = Number(position.coords.latitude).toFixed(6);
-                setCoordinateDisplay('longitudeDisplay', longitude);
-                setCoordinateDisplay('latitudeDisplay', latitude);
-                document.getElementById('locationAddressInput').value = await resolveAddressByCoordinates(latitude, longitude);
+                document.getElementById('quickLocationLongitude').value = longitude;
+                document.getElementById('quickLocationLatitude').value = latitude;
+                const addressInput = document.getElementById('quickLocationAddress');
+                if (addressInput && !addressInput.value.trim()) {
+                    addressInput.value = await resolveAddressByCoordinates(latitude, longitude);
+                }
             } catch (error) {
                 alert(getLocationErrorMessage(error));
             } finally {
-                actionEl.dataset.locating = '0';
-                actionEl.textContent = '获取当前位置 ›';
+                button.dataset.locating = '0';
+                button.textContent = '获取当前位置';
             }
         }
 
@@ -2297,9 +2301,9 @@
                 locationAddress: normalizeEditableValue(getInputValue('locationAddressInput'), '-'),
                 operatorName: normalizeEditableValue(operatorMeta.name, '未选择'),
                 operatorPhone: normalizeEditableValue(operatorMeta.phone, '-'),
-                gpsAction: normalizeEditableValue(getTextValue('gpsActionDisplay', '未获取'), '未获取'),
-                longitude: normalizeEditableValue(getTextValue('longitudeDisplay', '手动输入'), '手动输入'),
-                latitude: normalizeEditableValue(getTextValue('latitudeDisplay', '手动输入'), '手动输入'),
+                gpsAction: normalizeEditableValue(getTextValue('gpsActionDisplay', '未配置点位坐标'), '未配置点位坐标'),
+                longitude: normalizeEditableValue(getTextValue('longitudeDisplay', '未配置'), '-'),
+                latitude: normalizeEditableValue(getTextValue('latitudeDisplay', '未配置'), '-'),
                 energyMode,
                 networkSignal: normalizeEditableValue(getInputValue('networkSignalInput', '优'), '优'),
                 energyStartTime: energyModeEnabled ? normalizeEditableValue(getInputValue('energyStartInput'), '-') : '-',

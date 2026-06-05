@@ -2283,6 +2283,15 @@
             flex: 0 0 auto;
         }
 
+        .order-screen-refresh-status {
+            flex: 1 1 100%;
+            min-width: 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.4;
+            text-align: right;
+        }
+
         .menu-manage-scope-toggle {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5094,6 +5103,10 @@
                 justify-content: flex-start;
             }
 
+            .order-screen-refresh-status {
+                text-align: left;
+            }
+
             .overview-multi-device-filter {
                 width: 100%;
             }
@@ -5937,8 +5950,10 @@
                                         </div>
                                     </div>
                                     <div class="menu-manage-toolbar-actions">
+                                        <button type="button" class="btn btn-primary" onclick="refreshOrderScreenCache()">刷新点单屏</button>
                                         <button type="button" class="btn btn-default" onclick="openCategoryModal()">新增分类</button>
                                         <button type="button" class="btn btn-default" onclick="openCopyProductModal(menuManageActiveCategory || '')">复制商品</button>
+                                        <div class="order-screen-refresh-status" id="orderScreenRefreshStatus">通知当前设备点单屏更新商户商品缓存</div>
                                     </div>
                                 </div>
                                 <div id="categoriesContainer" class="menu-manage-content">
@@ -7486,6 +7501,8 @@
         const NEXT_PRODUCT_ID_STORAGE_KEY = 'menuNextProductId';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const ORDERS_PREVIEW_RECORDS_KEY = 'ordersPreviewRecords';
+        const ORDER_SCREEN_REFRESH_COMMAND_KEY = 'orderScreenRefreshCommand';
+        const ORDER_SCREEN_REFRESH_HISTORY_KEY = 'orderScreenRefreshHistory';
         const SUPPORTED_CURRENCIES = {
             CNY: { decimals: 2 },
             USD: { decimals: 2 },
@@ -11094,6 +11111,111 @@
 
             document.getElementById('totalProducts').textContent = uniqueProducts.size;
             document.getElementById('onSaleProducts').textContent = Array.from(uniqueProducts.values()).filter(isProductOnSale).length;
+        }
+
+        function getOrderScreenRefreshProductCount() {
+            const uniqueProductIds = new Set();
+            Object.values(productsData || {}).forEach(category => {
+                (category?.items || []).forEach(item => {
+                    if (!item) return;
+                    const numericId = Number(item.id);
+                    uniqueProductIds.add(Number.isFinite(numericId) ? String(numericId) : JSON.stringify(item.names || item));
+                });
+            });
+            return uniqueProductIds.size;
+        }
+
+        function resolveOrderScreenRefreshMerchantContext() {
+            const fallback = { merchantId: 'C001', merchantName: '星巴克咖啡' };
+            const keys = [LOGIN_SESSION_KEY, SIDEBAR_LOGIN_PROFILE_KEY];
+
+            for (const key of keys) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    const merchantId = String(parsed?.merchantId || '').trim();
+                    const merchantName = String(parsed?.merchantName || '').trim();
+                    if (merchantId || merchantName) {
+                        return {
+                            merchantId: merchantId || fallback.merchantId,
+                            merchantName: merchantName || fallback.merchantName
+                        };
+                    }
+                } catch (e) {
+                    // ignore malformed login cache and fall back to the demo merchant
+                }
+            }
+
+            return fallback;
+        }
+
+        function refreshOrderScreenCache() {
+            const merchant = resolveOrderScreenRefreshMerchantContext();
+            const deviceId = String(currentDevice || '').trim() || '未选择设备';
+            const command = {
+                type: 'refresh-order-screen-cache',
+                source: 'menu-management',
+                deviceId,
+                merchantId: merchant.merchantId,
+                merchantName: merchant.merchantName,
+                productCount: getOrderScreenRefreshProductCount(),
+                revision: `${deviceId}-${Date.now()}`,
+                createdAt: new Date().toISOString()
+            };
+            const serialized = JSON.stringify(command);
+
+            try {
+                localStorage.setItem(ORDER_SCREEN_REFRESH_COMMAND_KEY, serialized);
+                const history = JSON.parse(localStorage.getItem(ORDER_SCREEN_REFRESH_HISTORY_KEY) || '[]');
+                history.unshift(command);
+                localStorage.setItem(ORDER_SCREEN_REFRESH_HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
+            } catch (e) {
+                showToast('刷新指令写入失败，请重试', 'error');
+                return;
+            }
+
+            notifyOrderScreenCacheRefresh(serialized, command);
+            updateOrderScreenRefreshStatus(command);
+            showToast('已通知点单屏刷新缓存');
+        }
+
+        function notifyOrderScreenCacheRefresh(serialized, command) {
+            if (!window || typeof window.dispatchEvent !== 'function' || typeof Event !== 'function') return;
+
+            const refreshEvent = new Event('order-screen-cache-refresh');
+            refreshEvent.detail = command;
+            window.dispatchEvent(refreshEvent);
+
+            if (typeof StorageEvent === 'function') {
+                try {
+                    window.dispatchEvent(new StorageEvent('storage', {
+                        key: ORDER_SCREEN_REFRESH_COMMAND_KEY,
+                        newValue: serialized,
+                        storageArea: localStorage
+                    }));
+                    return;
+                } catch (e) {
+                    // fall through to generic event for runtimes without StorageEvent support
+                }
+            }
+
+            const storageEvent = new Event('storage');
+            storageEvent.key = ORDER_SCREEN_REFRESH_COMMAND_KEY;
+            storageEvent.newValue = serialized;
+            storageEvent.storageArea = localStorage;
+            window.dispatchEvent(storageEvent);
+        }
+
+        function updateOrderScreenRefreshStatus(command) {
+            const status = document.getElementById('orderScreenRefreshStatus');
+            if (!status) return;
+
+            const time = new Date(command.createdAt);
+            const displayTime = Number.isNaN(time.getTime())
+                ? command.createdAt
+                : time.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            status.textContent = `${displayTime} 已通知 ${command.deviceId} 更新缓存`;
         }
 
         function formatCurrency(amount) {

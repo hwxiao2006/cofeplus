@@ -22,3 +22,12 @@ Recent history uses concise Conventional Commit-style messages in English, for e
 
 ## Agent Notes
 Repo-local automation lives in `.agents/skills/`, with vendored gstack workflows under `.claude/skills/gstack/`. For browser-based QA in this repo, prefer the gstack `/browse` workflow over ad hoc browser tooling.
+
+## PRD Writing Rules
+PRDs must include reference screenshots for the user flows or key UI states they describe. Keep screenshots in `screenshots/` and make browser-ready HTML PRDs self-contained by inlining those screenshots when practical.
+
+PRDs must be written in product and user-facing language. Do not include implementation variables, function names, DOM ids, CSS selectors, localStorage keys, or other code-level identifiers in PRD requirements unless the user explicitly asks for a technical spec. Put those implementation details in separate engineering specs, plans, or tests instead.
+
+Every new PRD should have a Markdown source in `tasks/` and a matching standalone HTML version for browser or Feishu-style review.
+
+Standalone HTML PRDs should use a compact table of contents. List top-level sections only by default; do not flatten every subsection and user-story heading into a large grid. If subsection navigation is necessary, group it under its parent section instead of mixing all levels together.

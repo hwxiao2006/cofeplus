@@ -720,6 +720,23 @@
             background: #f8fafc;
         }
 
+        .detail-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .detail-main {
+            min-width: 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+        }
+
         .detail-section {
             scroll-margin-top: 10px;
         }
@@ -1227,238 +1244,66 @@
             min-width: 112px;
         }
 
-        /* ============ 新详情页:置顶头 ============ */
-        .detail-top-head {
+        .detail-aside {
+            min-width: 0;
+        }
+
+        .detail-aside-stack {
+            position: sticky;
+            top: 2px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-side-card {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
             background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px 12px 0 0;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            border-bottom: 0;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         }
-        .detail-top-back {
-            color: #6b7280;
-            font-size: 18px;
-            cursor: pointer;
-            background: transparent;
-            border: 0;
-            padding: 0 6px;
-            line-height: 1;
-        }
-        .detail-top-back:hover { color: #0f766e; }
-        .detail-top-id {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-        .detail-top-pill {
-            padding: 2px 10px;
-            border-radius: 999px;
-            font-size: 11px;
+
+        .detail-side-title {
+            font-size: 13px;
             font-weight: 600;
-            background: #dcfce7;
-            color: #166534;
+            color: var(--text-primary);
+            margin-bottom: 8px;
         }
-        .detail-top-pill.entered {
-            background: #dbeafe;
-            color: #1e40af;
+
+        .detail-side-action-list {
+            display: grid;
+            gap: 8px;
         }
-        .detail-top-pill.stopped {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .detail-top-pill.faulted {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .detail-top-loc {
-            color: #6b7280;
-            font-size: 12px;
-            flex: 1;
-        }
-        .detail-top-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        .detail-top-action-btn {
-            padding: 7px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+
+        .detail-side-action-btn {
+            width: 100%;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
             background: #fff;
-            font-size: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
             font-weight: 500;
+            padding: 9px 10px;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: #1f2937;
+            text-align: left;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
         }
-        .detail-top-action-btn:hover {
-            border-color: #0f766e;
-            color: #0f766e;
+
+        .detail-side-action-btn:hover {
+            border-color: #bfdbfe;
+            background: #f8fafc;
         }
-        .detail-top-action-btn.blue {
+
+        .detail-side-action-btn.primary {
+            border-color: #1d4ed8;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #fff;
-            border-color: #1d4ed8;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.18);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
         }
-        .detail-top-action-btn.blue:hover {
+
+        .detail-side-action-btn.primary:hover {
+            border-color: #1e40af;
             background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-            color: #fff;
-        }
-
-        /* Tabs 栏 */
-        .detail-tabs {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-top: 0;
-            display: flex;
-            padding: 0 18px;
-            gap: 4px;
-            overflow-x: auto;
-        }
-        .detail-tabs::-webkit-scrollbar { display: none; }
-        .detail-tab {
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #6b7280;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: color 0.15s, border-color 0.15s;
-            background: transparent;
-            border-left: 0;
-            border-right: 0;
-            border-top: 0;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-        .detail-tab:hover { color: #0f766e; }
-        .detail-tab.active {
-            color: #0f766e;
-            border-bottom-color: #0f766e;
-            font-weight: 700;
-        }
-
-        /* Tab body */
-        .detail-tab-body {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-top: 0;
-            border-radius: 0 0 12px 12px;
-            padding: 20px;
-            min-height: 300px;
-        }
-        .detail-tab-pane { display: none; }
-        .detail-tab-pane.active { display: block; }
-
-        /* Tab body 通用栅格 */
-        .detail-tab-grid { display: grid; gap: 14px; }
-        .detail-tab-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-        .detail-tab-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-        .detail-tab-grid > .span-all { grid-column: 1 / -1; }
-        @media (max-width: 768px) {
-            .detail-tab-grid.cols-2,
-            .detail-tab-grid.cols-3 { grid-template-columns: 1fr; }
-        }
-
-        /* Run tab: 温度瓦片 */
-        .detail-temp-tile-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-        @media (max-width: 768px) {
-            .detail-temp-tile-row { grid-template-columns: repeat(2, 1fr); }
-        }
-        .detail-temp-tile {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 10px 12px;
-            text-align: center;
-        }
-        .detail-temp-tile-lbl {
-            font-size: 10.5px;
-            color: #6b7280;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .detail-temp-tile-val {
-            font-size: 20px;
-            font-weight: 700;
-            color: #134e4a;
-            margin: 4px 0 2px;
-        }
-        .detail-temp-tile-sub {
-            font-size: 10.5px;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        /* Run tab: 温度区块卡 */
-        .detail-temp-zone {
-            padding: 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            background: #fff;
-        }
-        .detail-temp-zone-title {
-            font-weight: 600;
-            font-size: 12.5px;
-            margin-bottom: 6px;
-            color: #374151;
-        }
-        .detail-card-action {
-            font-size: 11px;
-            color: #0f766e;
-            cursor: pointer;
-            font-weight: 500;
-            margin-left: 8px;
-        }
-        .detail-empty-hint {
-            padding: 14px;
-            text-align: center;
-            color: #9ca3af;
-            font-size: 12px;
-        }
-
-        /* 更多菜单下拉 */
-        .detail-more-menu {
-            position: absolute;
-            min-width: 180px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-            padding: 6px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .detail-more-menu-item {
-            padding: 8px 12px;
-            border: 0;
-            background: transparent;
-            color: #1f2937;
-            font-size: 13px;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: inherit;
-        }
-        .detail-more-menu-item:hover {
-            background: #f0fdfa;
-            color: #0f766e;
         }
 
 
@@ -1601,7 +1446,6 @@
             display: flex;
         }
 
-        /* 同步副本在 shared/fault-restart-flow.js 的 STYLES 常量中,修改请同步 */
         .detail-fault-sheet-dialog {
             width: min(360px, 100%);
             border-radius: 12px;
@@ -1636,114 +1480,6 @@
 
         .detail-fault-sheet-option:hover {
             background: #f8fafc;
-        }
-
-        .detail-remote-volume-shell {
-            padding: 18px 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .detail-remote-volume-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .detail-remote-volume-back,
-        .detail-remote-volume-close {
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .detail-remote-volume-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            text-align: center;
-        }
-
-        .detail-remote-volume-icon {
-            width: 72px;
-            height: 72px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-remote-volume-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .detail-remote-volume-copy {
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1.6;
-        }
-
-        .detail-remote-volume-slider {
-            width: 100%;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .detail-remote-volume-controls {
-            display: grid;
-            grid-template-columns: 56px minmax(72px, 1fr) 56px;
-            gap: 10px;
-            width: min(220px, 100%);
-        }
-
-        .detail-remote-volume-step,
-        .detail-remote-volume-value,
-        .detail-remote-volume-save {
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            background: #f8fafc;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        .detail-remote-volume-step {
-            cursor: pointer;
-            color: var(--primary);
-            font-size: 26px;
-            line-height: 1;
-        }
-
-        .detail-remote-volume-step:disabled {
-            cursor: not-allowed;
-            color: #cbd5e1;
-            background: #f8fafc;
-        }
-
-        .detail-remote-volume-value {
-            color: var(--primary);
-            font-size: 22px;
-        }
-
-        .detail-remote-volume-save {
-            width: 100%;
-            border: none;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-            margin-top: 4px;
         }
 
         .detail-fault-record-modal {
@@ -3232,6 +2968,18 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .detail-layout {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .detail-aside {
+                display: block;
+            }
+
+            .detail-aside-stack {
+                position: static;
+            }
         }
 
         @media (max-width: 768px) {
@@ -3295,6 +3043,11 @@
             .detail-modal-body {
                 max-height: 75vh;
                 padding: 12px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
 
             .detail-card {
@@ -4532,8 +4285,8 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
@@ -4579,9 +4332,9 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item" data-nav="customers">
+                    <a href="customers.html" class="nav-item">
                         <span class="nav-icon">🏢</span>
-                        <span class="nav-label">我的商户</span>
+                        <span>客户管理</span>
                     </a>
                     <a href="locations.html" class="nav-item">
                         <span class="nav-icon">📍</span>
@@ -5026,8 +4779,6 @@
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
-    <script src="shared/fault-restart-flow.js"></script>
-    <script src="shared/admin-page-i18n.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -5321,8 +5072,6 @@
         let activeFaultActionDeviceId = '';
         let detailRemoteActionMode = 'root';
         let detailRemotePendingCommand = '';
-        const DETAIL_REMOTE_VOLUME_STORAGE_KEY = 'deviceRemoteVolumeSettings';
-        let detailRemoteVolumeContext = null;
         let currentTemperatureAlarmDeviceId = '';
         let currentTemperatureAlarmZoneKey = '';
         let detailStatusRecordTab = 'abnormal';
@@ -5924,7 +5673,6 @@
         }
 
         function init() {
-            if (window.CofeFaultRestartFlow) window.CofeFaultRestartFlow.injectStyles();
             renderSidebarLoginProfile();
             const stored = JSON.parse(localStorage.getItem('devicesData') || '[]');
             if (stored.length === 0) {
@@ -6159,239 +5907,6 @@
             `;
         }
 
-        // ============ 新详情页:tabs 外壳 ============
-        function renderDetailTabsShell(summary, fault, entryData, counts, device) {
-            const deviceId = escapeHtml(summary?.deviceId || '-');
-            const statusName = escapeHtml(summary?.statusName || '-');
-            const statusClass = summary?.status === 'stopped' ? 'stopped'
-                : summary?.status === 'faulted' ? 'faulted' : '';
-            const locationName = escapeHtml(summary?.locationName || '未分配点位');
-            const entered = summary?.entered !== false;
-
-            const head = `
-                <div class="detail-top-head">
-                    <button type="button" class="detail-top-back" onclick="closeDetailModal()">‹</button>
-                    <div class="detail-top-id">${deviceId}</div>
-                    <span class="detail-top-pill ${statusClass}">● ${statusName}</span>
-                    <span class="detail-top-pill entered">${entered ? '已入场' : '未入场'}</span>
-                    <div class="detail-top-loc">${locationName}</div>
-                    <div class="detail-top-actions">
-                        <div class="detail-side-restart-split" style="position:relative">
-                            <button type="button" class="detail-side-restart-primary" onclick="openDetailRestartSystem('${deviceId}')" aria-label="重启设备">
-                                <span class="detail-side-restart-icon" aria-hidden="true"></span>
-                                <span>重启</span>
-                            </button>
-                            <button type="button" class="detail-side-restart-caret" onclick="toggleDetailRestartPopover(event, '${deviceId}')" aria-haspopup="menu" aria-expanded="false" aria-label="选择重启部件">
-                                <span class="detail-side-restart-chevron" aria-hidden="true"></span>
-                            </button>
-                            <div class="detail-side-restart-popover" role="menu" data-open="false">
-                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（左）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(左)</span></button>
-                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启点单屏（右）')"><span class="detail-side-restart-popover-dot"></span><span>点单屏(右)</span></button>
-                                <button type="button" class="detail-side-restart-popover-item" role="menuitem" onclick="openDetailRestartPart('${deviceId}', '重启六轴机械臂（注意安全，谨慎使用）')"><span class="detail-side-restart-popover-dot detail-side-restart-popover-dot--danger"></span><span>六轴机械臂</span><span class="detail-side-restart-popover-hint">谨慎</span></button>
-                            </div>
-                        </div>
-                        <button type="button" class="detail-top-action-btn blue" onclick="openDetailRemoteActions('${deviceId}')">远程操作</button>
-                        <button type="button" class="detail-top-action-btn" onclick="openDetailMoreMenu(event, '${deviceId}')">⋯ 更多</button>
-                    </div>
-                </div>
-            `;
-
-            const tabs = `
-                <div class="detail-tabs" role="tablist">
-                    <button type="button" class="detail-tab" role="tab" data-tab="overview" onclick="switchDetailTab('overview')">概览</button>
-                    <button type="button" class="detail-tab" role="tab" data-tab="run" onclick="switchDetailTab('run')">运行</button>
-                    <button type="button" class="detail-tab" role="tab" data-tab="records" onclick="switchDetailTab('records')">记录</button>
-                    <button type="button" class="detail-tab" role="tab" data-tab="entry" onclick="switchDetailTab('entry')">入场</button>
-                    <button type="button" class="detail-tab" role="tab" data-tab="adscreen" onclick="switchDetailTab('adscreen')">广告屏</button>
-                </div>
-            `;
-
-            const body = `
-                <div class="detail-tab-body">
-                    <div class="detail-tab-pane" data-tab-pane="overview">${renderDetailTabOverview(summary, fault)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="run">${renderDetailTabRun(summary, fault, entryData)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="records">${renderDetailTabRecords(summary)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="entry">${renderDetailTabEntry(entryData, device)}</div>
-                    <div class="detail-tab-pane" data-tab-pane="adscreen">${renderDetailTabAdScreen(device)}</div>
-                </div>
-            `;
-
-            return head + tabs + body;
-        }
-
-        // Tab render 占位(Task 4-8 分别实现)
-        function renderDetailTabOverview(summary, fault) {
-            return `
-                <div class="detail-tab-grid cols-2">
-                    ${renderDeviceOverviewCard(summary)}
-                    ${renderDeviceStatusCard(summary, fault)}
-                </div>
-            `;
-        }
-        function renderDetailTabRun(summary, fault, entryData) {
-            const snap = fault || {};
-            const info = entryData?.info || {};
-            const deviceId = escapeHtml(summary?.deviceId || '');
-
-            const tempTiles = `
-                <div class="detail-temp-tile-row">
-                    <div class="detail-temp-tile">
-                        <div class="detail-temp-tile-lbl">冰箱温度</div>
-                        <div class="detail-temp-tile-val">${escapeHtml(snap.fridgeTemp || '-')}</div>
-                        <div class="detail-temp-tile-sub">fridgeTemp</div>
-                    </div>
-                    <div class="detail-temp-tile">
-                        <div class="detail-temp-tile-lbl">豆仓温度</div>
-                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanTemp || '-')}</div>
-                        <div class="detail-temp-tile-sub">beanTemp</div>
-                    </div>
-                    <div class="detail-temp-tile">
-                        <div class="detail-temp-tile-lbl">制作仓温度</div>
-                        <div class="detail-temp-tile-val">${escapeHtml(snap.craftTemp || '-')}</div>
-                        <div class="detail-temp-tile-sub">craftTemp</div>
-                    </div>
-                    <div class="detail-temp-tile">
-                        <div class="detail-temp-tile-lbl">豆仓湿度</div>
-                        <div class="detail-temp-tile-val">${escapeHtml(snap.beanHumidity || '-')}</div>
-                        <div class="detail-temp-tile-sub">beanHumidity</div>
-                    </div>
-                </div>
-            `;
-
-            const softwareRows = [
-                ['上位机软件', snap.upperSoftware],
-                ['点单屏软件', snap.orderSoftware],
-                ['点单屏系统', snap.orderSystem],
-                ['点单屏内核', snap.orderKernel],
-                ['广告屏版本', snap.adVersion],
-                ['固件版本', snap.firmwareVersion],
-                ['更新时间', snap.updatedAt]
-            ].map(([l, v]) => renderDetailRow(l, v || '-')).join('');
-            const softwareCard = renderDetailCard('软件 / 固件版本', softwareRows);
-
-            const opRows = [
-                renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
-                renderDetailRow('节能模式', info.energyMode || '-'),
-                renderDetailRow('网络信号', info.networkSignal || '-')
-            ].join('');
-            const opCard = renderDetailCard('运营参数', opRows);
-
-            const orgStatusList = Array.isArray(snap.orgStatus) ? snap.orgStatus : [];
-            const chipHtml = orgStatusList.map(part => `
-                <span class="detail-fault-chip ${escapeHtml(part.status || 'normal')}">${escapeHtml(`${part.label || ''} ${part.name || ''}`.trim())}</span>
-            `).join('') || '<span class="detail-empty-hint">暂无机构状态</span>';
-            const orgCard = renderDetailCard('机构状态',
-                `<div class="detail-fault-chip-list">${chipHtml}</div>`);
-
-            const zones = (typeof buildDetailTemperatureAlarmZones === 'function')
-                ? buildDetailTemperatureAlarmZones(summary?.deviceId) : [];
-            const zonesHtml = zones.map(z => `
-                <div class="detail-temp-zone">
-                    <div class="detail-temp-zone-title">${escapeHtml(z.title || '-')}</div>
-                    ${renderDetailRow('温度报警', z.tempAlarm || '-')}
-                    ${z.humidityAlarm ? renderDetailRow('湿度报警', z.humidityAlarm) : ''}
-                    ${z.tempStop ? renderDetailRow('停机温度', z.tempStop) : ''}
-                    ${renderDetailRow('存储温度', z.storageTemp || '-')}
-                    ${z.normalHumidity ? renderDetailRow('正常湿度', z.normalHumidity) : ''}
-                </div>
-            `).join('');
-            const tempAlarmCard = renderDetailCard(
-                '温度报警设置',
-                `<div class="detail-tab-grid cols-3">${zonesHtml}</div>`
-            );
-
-            return `
-                ${tempTiles}
-                <div class="detail-tab-grid cols-2">
-                    ${softwareCard}
-                    ${opCard}
-                    <div class="span-all">${orgCard}</div>
-                    <div class="span-all">${tempAlarmCard}</div>
-                </div>
-            `;
-        }
-        function renderDetailTabRecords(summary) {
-            const deviceId = summary?.deviceId || '';
-            const abnormalRecords = (typeof getFaultAbnormalRecords === 'function')
-                ? getFaultAbnormalRecords(deviceId) : [];
-            const operationRecords = (typeof getMaintenanceRecordsByDevice === 'function')
-                ? getMaintenanceRecordsByDevice(deviceId) : [];
-            const abnormalBody = renderDetailStatusRecordItems(abnormalRecords, 'abnormal');
-            const operationBody = renderDetailStatusRecordItems(operationRecords, 'operation');
-            const abnormalCard = renderDetailCard(
-                `异常记录(${abnormalRecords.length})`,
-                abnormalBody
-            );
-            const operationCard = renderDetailCard(
-                `运维记录(${operationRecords.length})`,
-                operationBody
-            );
-            return `
-                <div class="detail-tab-grid cols-2">
-                    ${abnormalCard}
-                    ${operationCard}
-                </div>
-            `;
-        }
-        function renderDetailTabEntry(entryData, device) {
-            return `
-                <div class="detail-tab-grid cols-2">
-                    <div class="span-all">${renderEntryInfoCard(entryData, device, { expanded: true })}</div>
-                </div>
-            `;
-        }
-        function renderDetailTabAdScreen(device) {
-            if (!device) {
-                return `<div class="detail-empty-hint">暂无广告屏信息</div>`;
-            }
-            return `
-                <div class="detail-tab-grid cols-2">
-                    <div class="span-all">${renderAdScreenInfoCard(device, { expanded: true })}</div>
-                </div>
-            `;
-        }
-
-        // 更多菜单:下拉列出非高频操作
-        function openDetailMoreMenu(event, deviceId) {
-            if (event) event.stopPropagation();
-            const existing = document.getElementById('detailMoreMenu');
-            if (existing) {
-                existing.remove();
-                return;
-            }
-            const btn = event?.currentTarget;
-            if (!btn) return;
-            const rect = btn.getBoundingClientRect();
-            const menu = document.createElement('div');
-            menu.id = 'detailMoreMenu';
-            menu.className = 'detail-more-menu';
-            menu.setAttribute('role', 'menu');
-            menu.style.top = `${rect.bottom + window.scrollY + 6}px`;
-            menu.style.left = `${rect.right + window.scrollX - 180}px`;
-            const id = escapeHtml(deviceId || '');
-            menu.innerHTML = `
-                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailTemperatureAlarmModal('${id}')">温度报警设置</button>
-                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();openDetailEditFaultStatus('${id}')">编辑状态</button>
-                <button type="button" class="detail-more-menu-item" role="menuitem" onclick="closeDetailMoreMenu();goToDeviceMaterials('${id}')">物料页面</button>
-            `;
-            document.body.appendChild(menu);
-        }
-
-        function closeDetailMoreMenu() {
-            const existing = document.getElementById('detailMoreMenu');
-            if (existing) existing.remove();
-        }
-
-        document.addEventListener('click', function(e) {
-            const menu = document.getElementById('detailMoreMenu');
-            if (!menu) return;
-            if (menu.contains(e.target)) return;
-            // 点击触发按钮本身已经 toggle 过了,这里只处理外部点击
-            const target = e.target;
-            if (target && target.closest && target.closest('[onclick*="openDetailMoreMenu"]')) return;
-            closeDetailMoreMenu();
-        });
-
         function resolveEntryLocationName(device, runtimeLocationMap) {
             const info = device.entryInfo || {};
             if (info.locationName && info.locationName !== '-') {
@@ -6534,6 +6049,7 @@
         function renderDeviceStatusCard(base, fault, counts) {
             const summary = base || {};
             const snapshot = fault || {};
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
             const abnormalSummary = buildDeviceAbnormalSummary(snapshot);
             const rows = [
                 renderDetailRow('设备状态', summary.statusName || '-'),
@@ -6546,6 +6062,9 @@
             if (snapshot.hasFault && snapshot.updatedAt && snapshot.updatedAt !== '-') {
                 noteParts.push(`最近异常时间：${snapshot.updatedAt}`);
             }
+            if (abnormalCount > 0) {
+                noteParts.push(`历史异常记录：${abnormalCount} 条`);
+            }
             const note = noteParts.length
                 ? `<div class="detail-status-note">${escapeHtml(noteParts.join(' ｜ '))}</div>`
                 : '';
@@ -6555,12 +6074,15 @@
         function renderDeviceOperationSummaryCard(entryData, counts) {
             const info = entryData?.info || {};
             const changeCount = Array.isArray(info.locationChangeRecords) ? info.locationChangeRecords.length : 0;
+            const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
+            const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
             const rows = [
                 renderDetailRow('当前点位', entryData?.locationName || '-'),
                 renderDetailRow('支付方式', entryData?.paymentMethods || resolvePaymentMethods(info)),
                 renderDetailRow('节能模式', info.energyMode || '-'),
                 renderDetailRow('网络信号', info.networkSignal || '-'),
-                renderDetailRow('最近变更', changeCount ? `点位变更 ${changeCount} 条` : '暂无点位变更')
+                renderDetailRow('最近变更', changeCount ? `点位变更 ${changeCount} 条` : '暂无点位变更'),
+                renderDetailRow('记录摘要', `异常 ${abnormalCount} 条，运维 ${operationCount} 条`)
             ].join('');
             return renderDetailCard('运营摘要', rows, 'detail-card-operation-summary');
         }
@@ -7415,7 +6937,9 @@
             return `
                 <div class="detail-fault-sheet-dialog">
                     <div class="detail-fault-sheet-title">远程操作 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('机构重启')">机构重启</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备开门')">设备开门</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('更新配方')">更新配方</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备停售')">设备停售</button>
                     <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('音量调节')">音量调节</button>
                 </div>
@@ -7423,204 +6947,32 @@
         }
 
         function renderDetailRemoteRestartPanel(deviceId) {
-            return window.CofeFaultRestartFlow.renderSubPanel(deviceId);
-        }
-
-        function getDetailRemoteRestartMeta(actionName) {
-            return window.CofeFaultRestartFlow.getActionMeta(actionName);
+            return `
+                <div class="detail-fault-sheet-dialog">
+                    <div class="detail-fault-sheet-title">机构重启 · ${escapeHtml(deviceId)}</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启系统')">重启系统</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（左）')">重启点单屏（左）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启点单屏（右）')">重启点单屏（右）</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('重启六轴机械臂（注意安全，谨慎使用）')">重启六轴机械臂（注意安全，谨慎使用）</button>
+                </div>
+            `;
         }
 
         function renderDetailRemoteConfirmDialog(actionName) {
-            return window.CofeFaultRestartFlow.renderConfirmDialog(actionName);
-        }
-
-        function renderDetailRemoteHardwareGuidePanel(deviceId, restartAction) {
-            return window.CofeFaultRestartFlow.renderHardwareGuide(deviceId, restartAction);
-        }
-
-        function getDetailRemoteVolumeMeta(volumeType) {
-            if (volumeType === 'device') {
-                return {
-                    mode: 'volume-device',
-                    title: '设备音量',
-                    description: '待机背景音乐、饮品出品信息、排队号语音',
-                    actionName: '设备音量调节',
-                    storageKey: 'deviceVolume',
-                    icon: `
-                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                            <rect x="12" y="10" width="28" height="44" rx="4" stroke="currentColor" stroke-width="3"></rect>
-                            <path d="M20 22H32M20 30H32M20 38H26" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M44 28C47 30 49 33 49 37C49 41 47 44 44 46" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M48 22C53 25 56 30 56 37C56 44 53 49 48 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                        </svg>
-                    `
-                };
-            }
-            if (volumeType === 'order-screen') {
-                return {
-                    mode: 'volume-order-screen',
-                    title: '点单屏音量',
-                    description: '欢迎语音、下单提示语音、制作中音乐',
-                    actionName: '点单屏音量调节',
-                    storageKey: 'orderScreenVolume',
-                    icon: `
-                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                            <rect x="18" y="8" width="22" height="40" rx="4" stroke="currentColor" stroke-width="3"></rect>
-                            <path d="M25 16H33" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M29 43H29.1" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M43 24C46 26 48 29 48 33C48 37 46 40 43 42" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            <path d="M47 19C52 22 55 27 55 33C55 39 52 44 47 47" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                        </svg>
-                    `
-                };
-            }
-            return null;
-        }
-
-        function clampDetailRemoteVolumeValue(value) {
-            if (!Number.isFinite(Number(value))) return 0;
-            return Math.max(0, Math.min(15, Math.round(Number(value))));
-        }
-
-        function getStoredDetailRemoteVolumes() {
-            try {
-                const raw = JSON.parse(localStorage.getItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY) || '{}');
-                return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-            } catch (error) {
-                return {};
-            }
-        }
-
-        function getDetailRemoteVolumeValue(deviceId, volumeType) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            if (!meta) return 0;
-            const stored = getStoredDetailRemoteVolumes();
-            const deviceConfig = stored[String(deviceId || '').trim()] || {};
-            return clampDetailRemoteVolumeValue(deviceConfig[meta.storageKey]);
-        }
-
-        function persistDetailRemoteVolumeValue(deviceId, volumeType, nextValue) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            if (!meta) return null;
-            const safeDeviceId = String(deviceId || '').trim();
-            if (!safeDeviceId) return null;
-            const clampedValue = clampDetailRemoteVolumeValue(nextValue);
-            try {
-                const stored = getStoredDetailRemoteVolumes();
-                stored[safeDeviceId] = {
-                    ...(stored[safeDeviceId] && typeof stored[safeDeviceId] === 'object' ? stored[safeDeviceId] : {}),
-                    [meta.storageKey]: clampedValue
-                };
-                localStorage.setItem(DETAIL_REMOTE_VOLUME_STORAGE_KEY, JSON.stringify(stored));
-                return clampedValue;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function renderDetailRemoteVolumeMenu(deviceId) {
             return `
                 <div class="detail-fault-sheet-dialog">
-                    <div class="detail-fault-sheet-title">音量调节 · ${escapeHtml(deviceId)}</div>
-                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('设备音量')">设备音量</button>
-                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('点单屏音量')">点单屏音量</button>
+                    <div class="detail-fault-sheet-title">确认操作</div>
+                    <div style="padding: 16px; text-align: center; color: #666;">确定要${escapeHtml(actionName)}？</div>
+                    <button type="button" class="detail-fault-sheet-option" onclick="handleDetailRemoteAction('确认执行')">确认执行</button>
+                    <button type="button" class="detail-fault-sheet-option" onclick="closeDetailRemoteActions()">取消</button>
                 </div>
             `;
-        }
-
-        function renderDetailRemoteVolumePanel(deviceId, volumeType) {
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            const currentValue = detailRemoteVolumeContext && detailRemoteVolumeContext.type === volumeType
-                ? clampDetailRemoteVolumeValue(detailRemoteVolumeContext.value)
-                : getDetailRemoteVolumeValue(deviceId, volumeType);
-            if (!meta) return renderDetailRemoteActionPanel(deviceId);
-            return `
-                <div class="detail-fault-sheet-dialog">
-                    <div class="detail-fault-sheet-title">${escapeHtml(meta.title)} · ${escapeHtml(deviceId)}</div>
-                    <div class="detail-remote-volume-shell">
-                        <div class="detail-remote-volume-topbar">
-                            <button type="button" class="detail-remote-volume-back" onclick="handleDetailRemoteAction('音量调节')">返回音量调节</button>
-                            <button type="button" class="detail-remote-volume-close" onclick="closeDetailRemoteActions()">关闭</button>
-                        </div>
-                        <div class="detail-remote-volume-card">
-                            <div class="detail-remote-volume-icon">${meta.icon}</div>
-                            <div class="detail-remote-volume-copy">${escapeHtml(meta.description)}</div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="15"
-                                step="1"
-                                class="detail-remote-volume-slider"
-                                value="${currentValue}"
-                                oninput="setDetailRemoteVolumeDraftValue(this.value)"
-                            >
-                            <div class="detail-remote-volume-controls">
-                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(-1)" ${currentValue <= 0 ? 'disabled' : ''}>-</button>
-                                <div class="detail-remote-volume-value">${currentValue}</div>
-                                <button type="button" class="detail-remote-volume-step" onclick="changeDetailRemoteVolumeDraftValue(1)" ${currentValue >= 15 ? 'disabled' : ''}>+</button>
-                            </div>
-                        </div>
-                        <button type="button" class="detail-remote-volume-save" onclick="saveDetailRemoteVolumeSetting()">保存</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function openDetailRemoteVolumePanel(volumeType) {
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            const meta = getDetailRemoteVolumeMeta(volumeType);
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!deviceId || !meta || !panel) return;
-            detailRemoteActionMode = meta.mode;
-            detailRemoteVolumeContext = {
-                deviceId,
-                type: volumeType,
-                value: getDetailRemoteVolumeValue(deviceId, volumeType)
-            };
-            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, volumeType);
-            panel.classList.add('active');
-        }
-
-        function refreshDetailRemoteVolumePanel() {
-            const panel = document.getElementById('detailRemoteActionSheet');
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            if (!panel || !detailRemoteVolumeContext || !deviceId) return;
-            panel.innerHTML = renderDetailRemoteVolumePanel(deviceId, detailRemoteVolumeContext.type);
-            panel.classList.add('active');
-        }
-
-        function changeDetailRemoteVolumeDraftValue(delta) {
-            if (!detailRemoteVolumeContext) return;
-            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue((detailRemoteVolumeContext.value || 0) + Number(delta || 0));
-            refreshDetailRemoteVolumePanel();
-        }
-
-        function setDetailRemoteVolumeDraftValue(nextValue) {
-            if (!detailRemoteVolumeContext) return;
-            detailRemoteVolumeContext.value = clampDetailRemoteVolumeValue(nextValue);
-            refreshDetailRemoteVolumePanel();
-        }
-
-        function saveDetailRemoteVolumeSetting() {
-            const deviceId = activeFaultActionDeviceId || currentDetailDeviceId;
-            if (!detailRemoteVolumeContext || !deviceId) return;
-            const meta = getDetailRemoteVolumeMeta(detailRemoteVolumeContext.type);
-            if (!meta) return;
-            const savedValue = persistDetailRemoteVolumeValue(deviceId, detailRemoteVolumeContext.type, detailRemoteVolumeContext.value);
-            if (savedValue === null) {
-                showToast('音量保存失败，请重试', 'error');
-                return;
-            }
-            appendFaultOperationRecord(deviceId, meta.actionName, '成功', `${deviceId} ${meta.title}已调整为 ${savedValue}`);
-            closeDetailRemoteActions();
-            showToast('已下发音量调节');
         }
 
         function openDetailRemoteActions(deviceId) {
             activeFaultActionDeviceId = deviceId;
             detailRemoteActionMode = 'root';
             detailRemotePendingCommand = '';
-            detailRemoteVolumeContext = null;
             const panel = document.getElementById('detailRemoteActionSheet');
             if (!panel) return;
             panel.innerHTML = renderDetailRemoteActionPanel(deviceId);
@@ -7630,137 +6982,10 @@
         function closeDetailRemoteActions() {
             const panel = document.getElementById('detailRemoteActionSheet');
             if (!panel) return;
-            if (window.CofeFaultRestartFlow) window.CofeFaultRestartFlow.close(null);
             panel.classList.remove('active');
             panel.innerHTML = '';
             detailRemoteActionMode = 'root';
             detailRemotePendingCommand = '';
-            detailRemoteVolumeContext = null;
-        }
-
-        function openDetailQuickRestart(deviceId, actionName) {
-            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
-            const restartAction = getDetailRemoteRestartMeta(actionName) ? actionName : '重启系统';
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!targetDeviceId || !panel) return;
-            activeFaultActionDeviceId = targetDeviceId;
-            detailRemoteActionMode = 'confirm';
-            detailRemotePendingCommand = restartAction;
-            detailRemoteVolumeContext = null;
-            panel.innerHTML = renderDetailRemoteConfirmDialog(restartAction);
-            panel.classList.add('active');
-            if (window.CofeFaultRestartFlow) {
-                window.CofeFaultRestartFlow._setActiveCtx({
-                    deviceId: targetDeviceId,
-                    panel,
-                    mode: 'confirm',
-                    pendingAction: restartAction,
-                    onCommit(did, cmd) {
-                        appendFaultOperationRecord(did, cmd, '成功', `${did} 已执行${cmd}`);
-                        showToast(`已向设备 ${did} 下发指令：${cmd}`);
-                    },
-                    onCancel() {}
-                });
-            }
-        }
-
-        // Restart split button: 主区、部件菜单、popover 开关
-        function openDetailRestartSystem(deviceId) {
-            openDetailQuickRestart(deviceId, '重启系统');
-        }
-
-        function openDetailRestartPart(deviceId, actionName) {
-            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
-            closeDetailRestartPopover();
-            openDetailQuickRestart(targetDeviceId, actionName);
-        }
-
-        function toggleDetailRestartPopover(event, deviceId) {
-            if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
-            if (event && typeof event.preventDefault === 'function') event.preventDefault();
-            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
-            if (targetDeviceId) activeFaultActionDeviceId = targetDeviceId;
-            const popover = document.querySelector('.detail-side-restart-popover');
-            const caret = document.querySelector('.detail-side-restart-caret');
-            if (!popover || !caret) return;
-            const isOpen = popover.getAttribute('data-open') === 'true';
-            popover.setAttribute('data-open', isOpen ? 'false' : 'true');
-            caret.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-        }
-
-        function closeDetailRestartPopover() {
-            const popover = document.querySelector('.detail-side-restart-popover');
-            const caret = document.querySelector('.detail-side-restart-caret');
-            if (popover) popover.setAttribute('data-open', 'false');
-            if (caret) caret.setAttribute('aria-expanded', 'false');
-        }
-
-        // 详情页 tabs 切换
-        function switchDetailTab(tabKey) {
-            const validKeys = ['overview', 'run', 'records', 'entry', 'adscreen'];
-            if (!validKeys.includes(tabKey)) tabKey = 'overview';
-
-            document.querySelectorAll('.detail-tab').forEach(el => {
-                const on = el.getAttribute('data-tab') === tabKey;
-                el.classList.toggle('active', on);
-                el.setAttribute('aria-selected', on ? 'true' : 'false');
-            });
-            document.querySelectorAll('.detail-tab-pane').forEach(el => {
-                el.classList.toggle('active', el.getAttribute('data-tab-pane') === tabKey);
-            });
-
-            if (typeof history !== 'undefined' && history.replaceState) {
-                history.replaceState(null, '', '#tab=' + tabKey);
-            }
-        }
-
-        function readDetailTabFromHash() {
-            const m = /tab=([a-z]+)/.exec((typeof window !== 'undefined' && window.location && window.location.hash) || '');
-            return m ? m[1] : 'overview';
-        }
-
-        document.addEventListener('click', function(e) {
-            const popover = document.querySelector('.detail-side-restart-popover');
-            if (!popover || popover.getAttribute('data-open') !== 'true') return;
-            if (popover.contains(e.target)) return;
-            const caret = document.querySelector('.detail-side-restart-caret');
-            if (caret && caret.contains(e.target)) return;
-            closeDetailRestartPopover();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key !== 'Escape') return;
-            const popover = document.querySelector('.detail-side-restart-popover');
-            if (popover && popover.getAttribute('data-open') === 'true') {
-                closeDetailRestartPopover();
-            }
-        });
-
-        // legacy: 保留以防其他入口引用。split button popover 已取代此入口。
-        function openDetailRestartOptions(deviceId) {
-            const targetDeviceId = String(deviceId || currentDetailDeviceId || '').trim();
-            const panel = document.getElementById('detailRemoteActionSheet');
-            if (!targetDeviceId || !panel) return;
-            activeFaultActionDeviceId = targetDeviceId;
-            detailRemoteActionMode = 'restart';
-            detailRemotePendingCommand = '';
-            detailRemoteVolumeContext = null;
-            if (window.CofeFaultRestartFlow) {
-                window.CofeFaultRestartFlow.open({
-                    deviceId: targetDeviceId,
-                    panel,
-                    mode: 'sub',
-                    pendingAction: '',
-                    onCommit(did, cmd) {
-                        appendFaultOperationRecord(did, cmd, '成功', `${did} 已执行${cmd}`);
-                        showToast(`已向设备 ${did} 下发指令：${cmd}`);
-                    },
-                    onCancel() {}
-                });
-            } else {
-                panel.innerHTML = renderDetailRemoteRestartPanel(targetDeviceId);
-            }
-            panel.classList.add('active');
         }
 
         function handleDetailRemoteAction(actionName) {
@@ -7768,43 +6993,27 @@
             const panel = document.getElementById('detailRemoteActionSheet');
             if (!panel) return;
 
-            if (actionName === '音量调节') {
-                detailRemoteActionMode = 'volume-menu';
-                detailRemoteVolumeContext = null;
-                panel.innerHTML = renderDetailRemoteVolumeMenu(deviceId);
-                panel.classList.add('active');
-                return;
-            }
-
-            if (detailRemoteActionMode === 'volume-menu' && actionName === '设备音量') {
-                openDetailRemoteVolumePanel('device');
-                return;
-            }
-
-            if (detailRemoteActionMode === 'volume-menu' && actionName === '点单屏音量') {
-                openDetailRemoteVolumePanel('order-screen');
-                return;
-            }
-
             // Root menu: 机构重启 enters sub-panel
             if (actionName === '机构重启') {
                 detailRemoteActionMode = 'restart';
-                if (window.CofeFaultRestartFlow) {
-                    window.CofeFaultRestartFlow.open({
-                        deviceId,
-                        panel,
-                        mode: 'sub',
-                        pendingAction: '',
-                        onCommit(did, cmd) {
-                            appendFaultOperationRecord(did, cmd, '成功', `${did} 已执行${cmd}`);
-                            showToast(`已向设备 ${did} 下发指令：${cmd}`);
-                        },
-                        onCancel() {}
-                    });
-                } else {
-                    panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
-                }
-                panel.classList.add('active');
+                panel.innerHTML = renderDetailRemoteRestartPanel(deviceId);
+                return;
+            }
+
+            // Restart sub-panel items show confirmation
+            if (detailRemoteActionMode === 'restart' && actionName !== '确认执行') {
+                detailRemotePendingCommand = actionName;
+                detailRemoteActionMode = 'confirm';
+                panel.innerHTML = renderDetailRemoteConfirmDialog(actionName);
+                return;
+            }
+
+            // Confirmation: execute the pending command
+            if (actionName === '确认执行' && detailRemotePendingCommand) {
+                const cmd = detailRemotePendingCommand;
+                appendFaultOperationRecord(deviceId, cmd, '成功', `${deviceId} 已执行${cmd}`);
+                closeDetailRemoteActions();
+                showToast(`已向设备 ${deviceId} 下发指令：${cmd}`);
                 return;
             }
 
@@ -8288,40 +7497,34 @@
             `;
         }
 
-        function renderEntryInfoCard(entryData, device, options) {
+        function renderEntryInfoCard(entryData, device) {
             const coreRows = renderEntryCoreRows(entryData);
             const extendedRows = renderEntryAllRows(entryData);
             const locationImages = renderEntryImageGallery(device, 'location', '暂无点位图片');
             const locationChangeRecords = renderLocationChangeRecords(entryData);
-            const expanded = options && options.expanded;
-            const innerContent = `
-                <div class="detail-subsection">
-                    <div class="detail-subsection-title">基础信息</div>
-                    ${coreRows}
-                </div>
-                ${extendedRows ? `
-                    <div class="detail-subsection">
-                        <div class="detail-subsection-title">补充信息</div>
-                        ${extendedRows}
-                    </div>
-                ` : ''}
-                <div class="detail-subsection">
-                    <div class="detail-subsection-title">点位图片</div>
-                    ${locationImages}
-                </div>
-                <div class="detail-subsection">
-                    <div class="detail-subsection-title">点位变更记录</div>
-                    ${locationChangeRecords}
-                </div>
-            `;
-            const body = expanded
-                ? `<div class="detail-disclosure-content">${innerContent}</div>`
-                : `
+            const body = `
                 <details class="detail-disclosure">
                     <summary>展开入场信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">包含入场基础信息、补充配置、点位图片以及点位变更记录，默认折叠以减少首屏干扰。</div>
-                        ${innerContent}
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">基础信息</div>
+                            ${coreRows}
+                        </div>
+                        ${extendedRows ? `
+                            <div class="detail-subsection">
+                                <div class="detail-subsection-title">补充信息</div>
+                                ${extendedRows}
+                            </div>
+                        ` : ''}
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">点位图片</div>
+                            ${locationImages}
+                        </div>
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">点位变更记录</div>
+                            ${locationChangeRecords}
+                        </div>
                     </div>
                 </details>
             `;
@@ -8381,28 +7584,22 @@
             `;
         }
 
-        function renderAdScreenInfoCard(device, options) {
+        function renderAdScreenInfoCard(device) {
             const adScreen = normalizeEntryAdScreen(device.entryInfo || {});
-            const expanded = options && options.expanded;
-            const innerContent = `
-                ${renderDetailAdScreenStage(device, adScreen)}
-                <div class="detail-subsection">
-                    <div class="detail-subsection-title">左侧菜单</div>
-                    ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
-                </div>
-                <div class="detail-subsection">
-                    <div class="detail-subsection-title">右侧排队号背景</div>
-                    ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
-                </div>
-            `;
-            const body = expanded
-                ? `<div class="detail-disclosure-content">${innerContent}</div>`
-                : `
+            const body = `
                 <details class="detail-disclosure">
                     <summary>展开广告屏信息</summary>
                     <div class="detail-disclosure-content">
                         <div class="detail-section-meta">广告屏画面按左右独立管理，避免误传到错误的物理屏幕。</div>
-                        ${innerContent}
+                        ${renderDetailAdScreenStage(device, adScreen)}
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">左侧菜单</div>
+                            ${renderDetailAdScreenSlot(device, 'adScreenLeft', '左侧菜单', adScreen.leftMenu)}
+                        </div>
+                        <div class="detail-subsection">
+                            <div class="detail-subsection-title">右侧排队号背景</div>
+                            ${renderDetailAdScreenSlot(device, 'adScreenRight', '右侧排队号背景', adScreen.rightQueueBackground)}
+                        </div>
                     </div>
                 </details>
             `;
@@ -8413,12 +7610,17 @@
             const abnormalCount = Number.isFinite(counts?.abnormal) ? counts.abnormal : 0;
             const operationCount = Number.isFinite(counts?.operation) ? counts.operation : 0;
             const body = `
-                <div class="detail-section-meta">异常和远程/运维操作统一在这里汇总，需要追溯时进入状态记录查看。</div>
-                ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
-                ${renderDetailRow('运维记录', `${operationCount} 条`)}
-                <div class="detail-subsection">
-                    <button type="button" class="detail-top-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
-                </div>
+                <details class="detail-disclosure">
+                    <summary>展开状态记录</summary>
+                    <div class="detail-disclosure-content">
+                        <div class="detail-section-meta">历史异常和远程/运维操作仍保留在统一记录弹层里，需要时再展开查看。</div>
+                        ${renderDetailRow('异常记录', `${abnormalCount} 条`)}
+                        ${renderDetailRow('运维记录', `${operationCount} 条`)}
+                        <div class="detail-subsection">
+                            <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(deviceId || '')}')">查看状态记录</button>
+                        </div>
+                    </div>
+                </details>
             `;
             return renderDetailCard('状态记录', body, 'detail-card-records');
         }
@@ -9075,6 +8277,35 @@
             showToast('入场信息已更新');
         }
 
+        function renderDetailAside(detailData) {
+            const summary = detailData?.base || {};
+            return `
+                <aside class="detail-aside">
+                    <div class="detail-aside-stack">
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">设备操作</div>
+                            <div class="detail-side-action-list">
+                                <button type="button" class="detail-side-action-btn primary" onclick="openDetailRemoteActions('${escapeHtml(summary.deviceId || '')}')">远程操作</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailTemperatureAlarmModal('${escapeHtml(summary.deviceId || '')}')">温度报警设置</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailStatusRecords('${escapeHtml(summary.deviceId || '')}')">状态记录</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailEditFaultStatus('${escapeHtml(summary.deviceId || '')}')">编辑状态</button>
+                                <button type="button" class="detail-side-action-btn" onclick="goToDeviceMaterials('${escapeHtml(summary.deviceId || '')}')">物料页面</button>
+                            </div>
+                        </section>
+                        <section class="detail-side-card">
+                            <div class="detail-side-title">详细信息</div>
+                            <div class="detail-side-action-list">
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('entry')">入场详情</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('adScreen')">广告屏信息</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('technical')">技术状态</button>
+                                <button type="button" class="detail-side-action-btn" onclick="openDetailInfoPanel('records')">记录摘要</button>
+                            </div>
+                        </section>
+                    </div>
+                </aside>
+            `;
+        }
+
         function viewDetail(deviceId) {
             const device = devicesData.find(d => d.id === deviceId);
             if (!device) return;
@@ -9096,14 +8327,24 @@
                 abnormal: abnormalRecords.length,
                 operation: operationRecords.length
             };
-            document.getElementById('detailModalBody').innerHTML = renderDetailTabsShell(
-                detailData.base,
-                detailData.fault,
-                detailData.entry,
-                detailRecordCounts,
-                device
-            );
-            switchDetailTab(readDetailTabFromHash());
+            document.getElementById('detailModalBody').innerHTML = `
+                <div class="detail-layout">
+                    <div class="detail-main">
+                        <div class="detail-grid">
+                            <section class="detail-section" id="detail-section-overview">
+                                ${renderDeviceOverviewCard(detailData.base)}
+                            </section>
+                            <section class="detail-section" id="detail-section-status">
+                                ${renderDeviceStatusCard(detailData.base, detailData.fault, detailRecordCounts)}
+                            </section>
+                            <section class="detail-section" id="detail-section-operation-summary">
+                                ${renderDeviceOperationSummaryCard(detailData.entry, detailRecordCounts)}
+                            </section>
+                        </div>
+                    </div>
+                    ${renderDetailAside(detailData)}
+                </div>
+            `;
             detailPreviewImages = collectDetailPreviewImages(device);
             bindEntryImageThumbEvents();
             document.getElementById('detailModal').classList.add('active');
@@ -9225,10 +8466,6 @@
         });
 
         window.onload = init;
-        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
-            CofeAdminStaffAccess.applyNavLabelsByRole();
-        }
-    
     </script>
 </body>
 </html>

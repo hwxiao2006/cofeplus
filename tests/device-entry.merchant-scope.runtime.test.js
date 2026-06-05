@@ -196,7 +196,7 @@ function seedSubmitForm(sandbox) {
     }],
     selectedIndex: 0
   };
-  elements.gpsActionDisplay = { id: 'gpsActionDisplay', textContent: '获取当前位置 ›' };
+  elements.gpsActionDisplay = { id: 'gpsActionDisplay', textContent: '来自点位信息' };
   elements.longitudeDisplay = { id: 'longitudeDisplay', textContent: '121.473700' };
   elements.latitudeDisplay = { id: 'latitudeDisplay', textContent: '31.230400' };
   elements.locationAddressInput = { id: 'locationAddressInput', value: '上海市静安区测试地址 1 号' };
@@ -204,7 +204,15 @@ function seedSubmitForm(sandbox) {
     id: 'locationSelect',
     value: 'k1001',
     selectedIndex: 0,
-    options: [{ textContent: '静安商圈点位（k1001）', dataset: { address: '上海市静安区测试地址 1 号' } }]
+    options: [{
+      textContent: '静安商圈点位（k1001）',
+      dataset: {
+        address: '上海市静安区测试地址 1 号',
+        longitude: '121.473700',
+        latitude: '31.230400',
+        gpsAction: '来自点位信息'
+      }
+    }]
   };
   elements.deviceSelect = {
     id: 'deviceSelect',
@@ -398,12 +406,13 @@ test('运行时：已有登录态时不应覆盖现有商户', () => {
   assert.strictEqual(merchantContext.deviceMerchantKey, 'mer002');
 });
 
-test('运行时：点位下拉应只展示当前商户的点位', () => {
+test('运行时：点位下拉应展示当前商户点位和未绑定商户的公共点位', () => {
   const sandbox = buildSandbox({
     cofeLoginSession: JSON.stringify({ merchantId: 'C001', merchantName: '星巴克咖啡' })
   });
   sandbox.locationsData = [
     { id: 'L001', code: 'k1001', name: '静安商圈点位', customerId: 'C001', customerName: '星巴克咖啡', address: '上海静安' },
+    { id: 'L003', code: 'k3001', name: '公共GIS点位', customerId: '', customerName: '', address: '上海青浦', longitude: '121.473700', latitude: '31.230400' },
     { id: 'L002', code: 'k2001', name: '朝阳门点位', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京朝阳' }
   ];
 
@@ -411,6 +420,7 @@ test('运行时：点位下拉应只展示当前商户的点位', () => {
 
   const select = sandbox.__elements.locationSelect;
   assert.ok(select.innerHTML.includes('静安商圈点位（k1001）'));
+  assert.ok(select.innerHTML.includes('公共GIS点位（k3001）'));
   assert.ok(!select.innerHTML.includes('朝阳门点位（k2001）'));
 });
 

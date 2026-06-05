@@ -879,8 +879,8 @@
                 </div>
                 <div class="sidebar-meta-row">
                     <div class="brand-version">Prototype v0</div>
-                    <div class="sidebar-admin-lang" data-admin-i18n-ignore="true" role="group" aria-label="后台菜单语言">
-                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中文</button>
+                    <div class="sidebar-admin-lang" role="group" aria-label="后台菜单语言">
+                        <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="zh" onclick="setAdminSidebarLang('zh')" aria-pressed="false">中</button>
                         <span class="sidebar-admin-lang-sep">|</span>
                         <button type="button" class="sidebar-admin-lang-btn" data-admin-lang-option="en" onclick="setAdminSidebarLang('en')" aria-pressed="false">EN</button>
                     </div>
@@ -905,7 +905,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">基础信息管理</div>
-                    <a href="customers.html" class="nav-item" data-nav="customers"><span class="nav-icon">🏢</span><span class="nav-label">我的商户</span></a>
+                    <a href="customers.html" class="nav-item"><span class="nav-icon">🏢</span><span>客户管理</span></a>
                     <a href="locations.html" class="nav-item active"><span class="nav-icon">📍</span><span>点位管理</span></a>
                 </div>
             </nav>
@@ -1002,15 +1002,11 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group" data-admin-only="locations">
+                    <div class="form-group">
                         <label class="form-label">所属客户（可选）</label>
                         <select class="form-select" id="customerSelect">
                             <option value="">选择客户</option>
                         </select>
-                    </div>
-                    <div class="form-group" id="customerReadonlyGroup" style="display:none;">
-                        <label class="form-label">所属商户</label>
-                        <div class="form-readonly-field" id="customerReadonlyDisplay" style="padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;color:#374151;font-size:14px;">-</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">点位状态</label>
@@ -1030,6 +1026,20 @@
                 <div class="form-group">
                     <label class="form-label">详细地址 <span class="required">*</span></label>
                     <input type="text" class="form-input" id="locationAddress" placeholder="输入详细地址">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">经度（可选）</label>
+                        <input type="text" class="form-input" id="locationLongitude" placeholder="例如 121.473700">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">纬度（可选）</label>
+                        <input type="text" class="form-input" id="locationLatitude" placeholder="例如 31.230400">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">当前位置</label>
+                    <button type="button" class="code-regenerate-btn" id="locationLocateBtn" onclick="requestLocationCurrentPosition()">获取当前位置</button>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -1055,8 +1065,6 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="shared/admin-staff-access.js"></script>
-    <script src="shared/admin-page-i18n.js"></script>
     <script>
 
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
@@ -1440,34 +1448,6 @@
             return { normalized, changed };
         }
 
-        // ---- 商户租户隔离辅助 ----
-        function getLocationScope() {
-            return (typeof CofeAdminStaffAccess !== 'undefined'
-                && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
-                ? CofeAdminStaffAccess.getMerchantScope() : null;
-        }
-
-        function isLocationSuperAdmin() {
-            return (typeof CofeAdminStaffAccess !== 'undefined'
-                && typeof CofeAdminStaffAccess.isSuperAdmin === 'function')
-                ? CofeAdminStaffAccess.isSuperAdmin() : false;
-        }
-
-        function getCurrentMerchantName() {
-            try {
-                const profile = JSON.parse(localStorage.getItem('sidebarLoginProfile') || '{}');
-                return String(profile.merchantName || '').trim();
-            } catch (e) { return ''; }
-        }
-
-        function applyLocationsRoleVisibility() {
-            const isSuper = isLocationSuperAdmin();
-            const adminOnly = document.querySelectorAll('[data-admin-only="locations"]');
-            adminOnly.forEach((el) => { el.style.display = isSuper ? '' : 'none'; });
-            const readonlyGroup = document.getElementById('customerReadonlyGroup');
-            if (readonlyGroup) readonlyGroup.style.display = isSuper ? 'none' : '';
-        }
-
         // 初始化
         function init() {
             renderSidebarLoginProfile();
@@ -1486,7 +1466,6 @@
             if (changed) {
                 saveToStorage();
             }
-            applyLocationsRoleVisibility();
             loadCustomers();
             renderLocations();
             updateStats();
@@ -1513,27 +1492,20 @@
 
         // 更新统计
         function updateStats() {
-            const scope = getLocationScope();
-            const visible = scope
-                ? locationsData.filter(l => String(l.customerId || '') === scope)
-                : locationsData;
-            const total = visible.length;
-            const active = visible.filter(l => l.status === 'operational').length;
-
+            const total = locationsData.length;
+            const active = locationsData.filter(l => l.status === 'operational').length;
+            
             // 从设备数据计算设备数
             const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
             const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-
+            
             document.getElementById('totalLocations').textContent = total;
             document.getElementById('activeLocations').textContent = active;
             document.getElementById('totalDevices').textContent = devicesData.length || 15;
-            const customerIds = visible
+            const customerIds = locationsData
                 .map(l => String(l.customerId || '').trim())
                 .filter(Boolean);
-            const distinctCount = new Set(customerIds).size;
-            document.getElementById('totalCustomers').textContent = scope
-                ? (distinctCount || 1)
-                : (distinctCount || customersData.length || 4);
+            document.getElementById('totalCustomers').textContent = new Set(customerIds).size || customersData.length || 4;
         }
 
         // 渲染点位列表
@@ -1541,11 +1513,8 @@
             const list = document.getElementById('locationList');
             const filterText = document.getElementById('searchInput').value.trim();
             const categoryFilter = document.getElementById('pointCategoryFilter').value;
-            const scope = getLocationScope();
 
-            let filtered = scope
-                ? locationsData.filter(l => String(l.customerId || '') === scope)
-                : locationsData;
+            let filtered = locationsData;
             if (filterText) {
                 const lower = filterText.toLowerCase();
                 filtered = filtered.filter(l =>
@@ -1601,6 +1570,55 @@
             renderLocations();
         }
 
+        function getGeolocationErrorMessage(error) {
+            if (!error) return '定位失败，请稍后重试';
+            if (error.code === 1) return '定位权限被拒绝，请允许定位权限后重试';
+            if (error.code === 2) return '无法获取当前位置，请确认定位服务已开启';
+            if (error.code === 3) return '定位超时，请稍后重试';
+            return '定位失败，请稍后重试';
+        }
+
+        async function resolveAddressByCoordinates(latitude, longitude) {
+            return `当前位置（经度${longitude}，纬度${latitude}）`;
+        }
+
+        async function requestLocationCurrentPosition() {
+            if (!navigator.geolocation) {
+                showToast('当前浏览器不支持定位功能', 'error');
+                return;
+            }
+            const button = document.getElementById('locationLocateBtn');
+            if (button) {
+                button.textContent = '定位中...';
+                button.disabled = true;
+            }
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                });
+                const longitude = Number(position.coords.longitude).toFixed(6);
+                const latitude = Number(position.coords.latitude).toFixed(6);
+                document.getElementById('locationLongitude').value = longitude;
+                document.getElementById('locationLatitude').value = latitude;
+                const addressInput = document.getElementById('locationAddress');
+                if (addressInput && !addressInput.value.trim()) {
+                    addressInput.value = await resolveAddressByCoordinates(latitude, longitude);
+                }
+                showToast('已获取当前位置');
+            } catch (error) {
+                showToast(getGeolocationErrorMessage(error), 'error');
+            } finally {
+                if (button) {
+                    button.textContent = '获取当前位置';
+                    button.disabled = false;
+                }
+            }
+        }
+
         // 打开模态框
         function openModal() {
             editingLocationId = null;
@@ -1612,15 +1630,16 @@
             document.getElementById('locationStatus').value = 'operational';
             document.getElementById('locationCategory').value = normalizePointCategory('', locationsData.length);
             document.getElementById('locationAddress').value = '';
+            document.getElementById('locationLongitude').value = '';
+            document.getElementById('locationLatitude').value = '';
+            const locateBtn = document.getElementById('locationLocateBtn');
+            if (locateBtn) {
+                locateBtn.textContent = '获取当前位置';
+                locateBtn.disabled = false;
+            }
             document.getElementById('locationManager').value = '';
             document.getElementById('locationPhone').value = '';
             document.getElementById('locationRemark').value = '';
-            // 普通用户:用当前商户名填充只读区
-            const scope = getLocationScope();
-            const display = document.getElementById('customerReadonlyDisplay');
-            if (display) {
-                display.textContent = scope ? (getCurrentMerchantName() || scope) : '-';
-            }
             document.getElementById('locationModal').classList.add('active');
         }
 
@@ -1634,11 +1653,6 @@
         function editLocation(id) {
             const location = locationsData.find(l => l.id === id);
             if (!location) return;
-            const scope = getLocationScope();
-            if (scope && String(location.customerId || '') !== scope) {
-                showToast('无权编辑该点位', 'error');
-                return;
-            }
 
             editingLocationId = id;
             loadCustomers();
@@ -1649,14 +1663,11 @@
             document.getElementById('locationStatus').value = location.status;
             document.getElementById('locationCategory').value = normalizePointCategory(location.pointCategory);
             document.getElementById('locationAddress').value = location.address;
+            document.getElementById('locationLongitude').value = location.longitude || '';
+            document.getElementById('locationLatitude').value = location.latitude || '';
             document.getElementById('locationManager').value = location.manager || '';
             document.getElementById('locationPhone').value = location.phone || '';
             document.getElementById('locationRemark').value = location.remark || '';
-            const display = document.getElementById('customerReadonlyDisplay');
-            if (display) {
-                display.textContent = location.customerName
-                    || (scope ? (getCurrentMerchantName() || scope) : '-');
-            }
             document.getElementById('locationModal').classList.add('active');
         }
 
@@ -1664,9 +1675,13 @@
         function saveLocation() {
             const name = document.getElementById('locationName').value.trim();
             const code = document.getElementById('locationCode').value.trim();
+            const customerId = document.getElementById('customerSelect').value;
             const status = document.getElementById('locationStatus').value;
             const pointCategory = document.getElementById('locationCategory').value;
             const address = document.getElementById('locationAddress').value.trim();
+            const longitude = document.getElementById('locationLongitude').value.trim();
+            const latitude = document.getElementById('locationLatitude').value.trim();
+            const gpsAction = longitude || latitude ? '来自点位管理' : '';
             const manager = document.getElementById('locationManager').value.trim();
             const phone = document.getElementById('locationPhone').value.trim();
             const remark = document.getElementById('locationRemark').value.trim();
@@ -1676,43 +1691,30 @@
                 return;
             }
 
-            // 商户绑定:普通用户用 scope,超管走选择器
-            const scope = getLocationScope();
+            // 获取客户名称
             const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-            let customerId;
-            let customerName;
-            if (scope) {
-                customerId = scope;
-                customerName = getCurrentMerchantName()
-                    || customersData.find(c => c.id === scope)?.name
-                    || '';
-            } else {
-                customerId = document.getElementById('customerSelect').value;
-                const customer = customersData.find(c => c.id === customerId);
-                customerName = customer?.name || '';
-            }
+            const customer = customersData.find(c => c.id === customerId);
 
             if (editingLocationId) {
-                // 编辑(已在 editLocation 中做过 scope 校验,这里再防御一次)
+                // 编辑
                 const index = locationsData.findIndex(l => l.id === editingLocationId);
-                if (index === -1) return;
-                if (scope && String(locationsData[index].customerId || '') !== scope) {
-                    showToast('无权编辑该点位', 'error');
-                    return;
+                if (index !== -1) {
+                    locationsData[index] = {
+                        ...locationsData[index],
+                        name, code, customerId, customerName: customer?.name || '',
+                        status, pointCategory: normalizePointCategory(pointCategory), address,
+                        longitude, latitude, gpsAction, manager, phone, remark
+                    };
                 }
-                locationsData[index] = {
-                    ...locationsData[index],
-                    name, code, customerId, customerName,
-                    status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark
-                };
                 showToast('点位信息已更新');
             } else {
                 // 新增
                 const newId = 'L' + String(locationsData.length + 1).padStart(3, '0');
                 locationsData.push({
                     id: newId,
-                    name, code, customerId, customerName,
-                    status, pointCategory: normalizePointCategory(pointCategory), address, manager, phone, remark,
+                    name, code, customerId, customerName: customer?.name || '',
+                    status, pointCategory: normalizePointCategory(pointCategory), address,
+                    longitude, latitude, gpsAction, manager, phone, remark,
                     createTime: new Date().toISOString().split('T')[0]
                 });
                 showToast('点位添加成功');
@@ -1726,15 +1728,8 @@
 
         // 删除点位
         function deleteLocation(id) {
-            const location = locationsData.find(l => l.id === id);
-            if (!location) return;
-            const scope = getLocationScope();
-            if (scope && String(location.customerId || '') !== scope) {
-                showToast('无权删除该点位', 'error');
-                return;
-            }
             if (!confirm('确定要删除该点位吗？')) return;
-
+            
             locationsData = locationsData.filter(l => l.id !== id);
             saveToStorage();
             renderLocations();
@@ -1763,10 +1758,6 @@
 
         // 初始化
         init();
-        if (typeof CofeAdminStaffAccess !== "undefined" && typeof CofeAdminStaffAccess.applyNavLabelsByRole === "function") {
-            CofeAdminStaffAccess.applyNavLabelsByRole();
-        }
-    
     </script>
 </body>
 </html>

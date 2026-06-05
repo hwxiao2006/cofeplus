@@ -69,3 +69,18 @@ test('点位管理：新增点位时点位编码应默认自动生成且支持�
   assert.ok(/function\s+regenerateLocationCode\s*\(/.test(html));
   assert.ok(/id="locationCodeRegenerate"/.test(html));
 });
+
+test('点位管理：新增/编辑表单应维护 GIS 经纬度并支持获取当前位置', () => {
+  assert.ok(/id="locationLongitude"/.test(html));
+  assert.ok(/id="locationLatitude"/.test(html));
+  assert.ok(/id="locationLocateBtn"/.test(html));
+  assert.ok(/function\s+requestLocationCurrentPosition\s*\(/.test(html));
+  assert.ok(/navigator\.geolocation\.getCurrentPosition/.test(html));
+});
+
+test('点位管理：保存点位时应写入 longitude latitude 和 gpsAction', () => {
+  assert.ok(/const\s+longitude\s*=\s*document\.getElementById\('locationLongitude'\)\.value\.trim\(\)/.test(html));
+  assert.ok(/const\s+latitude\s*=\s*document\.getElementById\('locationLatitude'\)\.value\.trim\(\)/.test(html));
+  assert.ok(/const\s+gpsAction\s*=\s*longitude\s*\|\|\s*latitude\s*\?\s*'来自点位管理'\s*:\s*''/.test(html));
+  assert.ok(/longitude,\s*latitude,\s*gpsAction/.test(html));
+});

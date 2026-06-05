@@ -17,30 +17,50 @@ function test(name, fn) {
     }
 }
 
-test('配方配置应使用主编辑加右侧对比布局', () => {
-    assert.ok(html.includes('id="recipeMainEditor"'), 'missing main editor');
-    assert.ok(html.includes('id="recipeCupSwitcher"'), 'missing cup switcher');
-    assert.ok(html.includes('id="recipeChangeComparePanel"'), 'missing comparison panel');
-    assert.ok(html.includes('id="recipeStickySaveBar"'), 'missing sticky save bar');
+test('配方配置应改为先选客户选项再获取配方', () => {
+    const recipePanelIndex = html.indexOf('id="productDetailRecipePanel"');
+    assert.notStrictEqual(recipePanelIndex, -1, 'recipe panel missing');
+    const panelSlice = html.slice(recipePanelIndex, html.indexOf('<!-- recipeHiddenOptions removed', recipePanelIndex));
+
+    assert.ok(panelSlice.includes('id="recipeMainEditor"'), 'missing recipe result editor');
+    assert.ok(panelSlice.includes('id="recipeRequiredOptionGroups"'), 'missing required option groups');
+    assert.ok(panelSlice.includes('id="recipeFetchButton"'), 'missing fetch recipe button');
+    assert.ok(panelSlice.includes('获取配方'), 'fetch recipe CTA missing');
+    assert.ok(panelSlice.includes('等待获取配方'), 'empty state should be visible before fetching');
+    assert.ok(panelSlice.includes('咖啡豆、温度、浓度'), 'required option copy missing');
+    assert.ok(!panelSlice.includes('id="recipeCupSwitcher"'), 'recipe tab should no longer use cup switcher');
+    assert.ok(!panelSlice.includes('id="recipeChangeComparePanel"'), 'recipe tab should no longer use comparison side panel');
 });
 
-test('标准杯量应是主编辑区的一层信息并先于当前容量出现', () => {
-    const mainEditorIndex = html.indexOf('id="recipeMainEditor"');
-    assert.notStrictEqual(mainEditorIndex, -1, 'main editor missing');
-
-    const standardIndex = html.indexOf('标准杯量', mainEditorIndex);
-    const currentIndex = html.indexOf('当前容量', mainEditorIndex);
-
-    assert.notStrictEqual(standardIndex, -1, 'standard capacity label missing');
-    assert.notStrictEqual(currentIndex, -1, 'current capacity label missing');
-    assert.ok(standardIndex < currentIndex, 'standard capacity should appear before current capacity');
-    assert.ok(/recipe-capacity-standard|recipe-standard-capacity-card/.test(html), 'standard capacity should have prominent class');
+test('配方配置读取咖啡豆温度浓度组合，获取后才展示成分编辑', () => {
+    assert.ok(/const\s+RECIPE_REQUIRED_OPTION_KEYS\s*=\s*\['beans',\s*'temperature',\s*'strength'\]/.test(html));
+    assert.ok(/const\s+RECIPE_COMBINATION_SPEC_KEY\s*=\s*'optionCombination'/.test(html));
+    assert.ok(/function\s+renderRecipeRequiredOptionGroups\s*\(/.test(html));
+    assert.ok(/function\s+fetchRecipeForSelectedOptions\s*\(/.test(html));
+    assert.ok(/function\s+renderFetchedRecipeEditor\s*\(/.test(html));
+    assert.ok(/function\s+getRecipeCombinationFromSelection\s*\(/.test(html));
+    assert.ok(/recipeSelectionState\.status\s*=\s*'fetched'/.test(html));
+    assert.ok(/recipeSelectionState\.status\s*=\s*'stale'/.test(html));
+    assert.ok(html.includes('已获取配方'));
+    assert.ok(html.includes('保存后只更新当前选项组合对应的配方'));
 });
 
-test('配方配置应显示杯型切换和当前杯型恢复入口', () => {
-    assert.ok(/恢复.{0,6}杯型修改前/.test(html), 'restore-current-cup button missing');
-    // cup-switcher 是动态渲染的，但渲染器函数应该存在
-    assert.ok(/function\s+renderRecipeCupSwitcher\s*\(/.test(html), 'cup switcher renderer missing');
+test('选项配置 tab 内容应保持生产版结构，不迁入配方配置', () => {
+    const tagsStart = html.indexOf('id="productDetailTagsPanel"');
+    const recipeStart = html.indexOf('id="productDetailRecipePanel"');
+    assert.notStrictEqual(tagsStart, -1, 'tags panel missing');
+    assert.notStrictEqual(recipeStart, -1, 'recipe panel missing');
+    const tagsPanel = html.slice(tagsStart, recipeStart);
+    const recipePanel = html.slice(recipeStart, html.indexOf('<!-- recipeHiddenOptions removed', recipeStart));
+
+    assert.ok(tagsPanel.includes('id="tagOptionsGrid"'));
+    assert.ok(tagsPanel.includes('id="openTagConfigDrawerBtn"'));
+    ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'].forEach(specKey => {
+        assert.ok(tagsPanel.includes(`data-spec-key="${specKey}"`), `${specKey} missing from option config`);
+    });
+    assert.ok(!recipePanel.includes('id="tagOptionsGrid"'));
+    assert.ok(!recipePanel.includes('id="openTagConfigDrawerBtn"'));
+    assert.ok(!recipePanel.includes('编辑多语言文案'));
 });
 
 test('浓缩应保持只读说明', () => {

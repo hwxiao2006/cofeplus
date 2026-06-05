@@ -814,6 +814,12 @@
             box-shadow: inset 0 0 0 1px rgba(78, 205, 196, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
         }
 
+        .material-card.warning {
+            border-color: rgba(245, 158, 11, 0.32);
+            background: linear-gradient(180deg, #fffaf0 0%, #fffdf7 100%);
+            box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.16), 0 14px 30px rgba(146, 64, 14, 0.08);
+        }
+
         .material-card.critical {
             box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.12), 0 14px 30px rgba(15, 23, 42, 0.06);
         }
@@ -1057,6 +1063,15 @@
             transition: width 0.3s ease;
         }
 
+        .material-card.warning .stock-fill {
+            background: #f59e0b;
+        }
+
+        .material-card.critical .stock-fill,
+        .material-card.soldout .stock-fill {
+            background: #ef4444;
+        }
+
         .threshold {
             position: absolute;
             top: 0;
@@ -1107,6 +1122,11 @@
         .status-pill.healthy {
             color: #0891b2;
             background: #dff7f8;
+        }
+
+        .status-pill.warning {
+            color: #b45309;
+            background: #fef3c7;
         }
 
         .status-pill.critical {
@@ -1952,6 +1972,8 @@
             制冰机: ['食材']
         };
         const SIDEBAR_LOGIN_PROFILE_KEY = 'sidebarLoginProfile';
+        const LOGIN_SESSION_KEY = 'cofeLoginSession';
+        const LOGIN_PAGE_URL = 'login-paper.html';
         const DEFAULT_SIDEBAR_LOGIN_PROFILE = {
             name: '运营管理员',
             phone: '13800138000',
@@ -2751,7 +2773,10 @@
             const groups = LANE_GROUP_ORDER.map(category => ({
                 category,
                 items: groupedMap[category],
-                criticalCount: groupedMap[category].filter(item => item.status !== 'healthy').length
+                criticalCount: groupedMap[category].filter(item => {
+                    const status = resolveMaterialDisplayStatus(item).className;
+                    return status === 'critical' || status === 'soldout';
+                }).length
             }));
 
             const nonEmptyGroups = groups.filter(group => group.items.length > 0);
@@ -2955,11 +2980,18 @@
         }
 
         function resolveMaterialDisplayStatus(item) {
-            if (Number(item?.remaining || 0) <= 0) {
+            const remaining = Number(item?.remaining || 0);
+            const critical = Number(item?.critical || 0);
+            const warning = Number(item?.warning || 0);
+
+            if (remaining <= 0) {
                 return { className: 'soldout', label: '售罄' };
             }
-            if (Number(item?.remaining || 0) <= Number(item?.critical || 0)) {
+            if (remaining <= critical) {
                 return { className: 'critical', label: '告急' };
+            }
+            if (warning > 0 && remaining <= warning) {
+                return { className: 'warning', label: '预警' };
             }
             return { className: 'healthy', label: '正常' };
         }
@@ -3028,8 +3060,11 @@
 
         function renderMaterials() {
             const sections = document.getElementById("materialsSections");
-            const healthyCount = materialsData.filter(item => item.status === "healthy").length;
-            const criticalCount = materialsData.filter(item => item.status !== "healthy").length;
+            const healthyCount = materialsData.filter(item => resolveMaterialDisplayStatus(item).className === "healthy").length;
+            const criticalCount = materialsData.filter(item => {
+                const status = resolveMaterialDisplayStatus(item).className;
+                return status === "critical" || status === "soldout";
+            }).length;
             const groups = buildLaneGroupSections(materialsData);
 
             sections.innerHTML = groups.map(group => {

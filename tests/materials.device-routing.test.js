@@ -208,12 +208,32 @@ test('物料页：货道名称不应被状态和编辑按钮挤压隐藏', () =>
 
 test('物料页：售罄和告急应使用不同状态与样式', () => {
   assert.ok(/function\s+resolveMaterialDisplayStatus\s*\(item\)/.test(html));
-  assert.ok(/Number\(item\?\.remaining\s*\|\|\s*0\)\s*<=\s*0[\s\S]*soldout/.test(html));
+  assert.ok(/remaining\s*<=\s*0[\s\S]*soldout/.test(html));
   assert.ok(/label:\s*'售罄'/.test(html));
   assert.ok(/label:\s*'告急'/.test(html));
   assert.ok(/\.material-card\.soldout\s*\{/.test(html));
   assert.ok(/\.status-pill\.soldout\s*\{/.test(html));
   assert.ok(/class="status-pill \$\{statusClass\}">\$\{statusText\}<\/span>/.test(html));
+});
+
+test('物料页：到达预警值但未到告警值时应显示预警样式而不是正常', () => {
+  const sandbox = {};
+  vm.createContext(sandbox);
+  vm.runInContext(extractFunctionSource(html, 'resolveMaterialDisplayStatus'), sandbox);
+
+  const belowWarning = sandbox.resolveMaterialDisplayStatus({ remaining: 60, warning: 100, critical: 40 });
+  const atWarning = sandbox.resolveMaterialDisplayStatus({ remaining: 100, warning: 100, critical: 40 });
+  const atCritical = sandbox.resolveMaterialDisplayStatus({ remaining: 40, warning: 100, critical: 40 });
+
+  assert.strictEqual(belowWarning.className, 'warning');
+  assert.strictEqual(belowWarning.label, '预警');
+  assert.strictEqual(atWarning.className, 'warning');
+  assert.strictEqual(atWarning.label, '预警');
+  assert.strictEqual(atCritical.className, 'critical');
+  assert.strictEqual(atCritical.label, '告急');
+  assert.ok(/\.material-card\.warning\s*\{/.test(html));
+  assert.ok(/\.status-pill\.warning\s*\{/.test(html));
+  assert.ok(/\.material-card\.warning\s+\.stock-fill\s*\{/.test(html));
 });
 
 test('物料页：桌面端应继续压缩为更强运营后台密度', () => {

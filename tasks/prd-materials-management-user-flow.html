@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>产品需求文档：物料管理（按用户流程）</title>
+<style>
+:root{--bg:#edf2f7;--page:#fff;--card:#f8fbfd;--text:#162033;--muted:#667085;--line:#d7e2ee;--accent:#109c93;--accent-soft:rgba(16,156,147,.12);--shadow:0 24px 60px rgba(15,23,42,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at top,#f7fbff 0%,var(--bg) 58%,#e7edf5 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.68}a{color:inherit}code{padding:2px 6px;border-radius:6px;background:#eef3f8;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.92em}.page{max-width:1180px;margin:28px auto 56px;padding:0 20px}.doc-shell{background:var(--page);border:1px solid rgba(215,226,238,.9);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}.hero{padding:42px 48px 28px;background:linear-gradient(135deg,#fff 0%,#f4fbfb 46%,#eef6fb 100%);border-bottom:1px solid var(--line)}.hero-kicker{display:inline-flex;padding:6px 12px;border-radius:999px;background:var(--accent-soft);color:#0a6d67;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}h1{margin:16px 0 10px;font-size:38px;line-height:1.18}.hero-meta{margin:0;color:var(--muted);font-size:15px}.hero-note{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(248,251,253,.9);color:#344054;font-size:14px}.toc{display:flex;flex-wrap:wrap;gap:10px;padding:20px 48px 0}.toc-item{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;text-decoration:none;color:#475467;font-size:13px;font-weight:600}.toc-item.flow{background:#f5fbfb;color:#0f766e}.content{padding:8px 48px 48px}.doc-section{margin-top:36px;padding-top:8px;border-top:1px solid var(--line)}.doc-subsection{margin-top:24px}.user-flow{padding:24px;border:1px solid rgba(16,156,147,.16);border-radius:24px;background:linear-gradient(180deg,rgba(16,156,147,.04) 0%,rgba(255,255,255,.98) 26%)}.user-flow+.user-flow{margin-top:28px}h2{margin:0 0 16px;font-size:26px}h3{margin:0 0 14px;font-size:21px}p{margin:10px 0}ul,ol{margin:10px 0 16px 22px;padding:0}li{margin:7px 0}li.task{list-style:none;margin-left:-22px}strong{color:#101828}.checkbox{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:8px;border:1px solid #b9c7d8;border-radius:5px;background:#fff;vertical-align:-3px}.doc-image{margin:18px 0 4px;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}.doc-image img{display:block;width:100%;height:auto;max-height:620px;object-fit:contain;object-position:top center;background:#fff}.doc-image figcaption{padding:10px 14px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}blockquote{margin:0 0 18px;padding:14px 18px;border-left:4px solid var(--accent);border-radius:14px;background:#f5fbfb;color:#344054}@media(max-width:760px){.page{margin:12px auto 28px;padding:0 10px}.hero,.content{padding-left:20px;padding-right:20px}.toc{padding-left:20px;padding-right:20px}h1{font-size:30px}.user-flow{padding:18px;border-radius:18px}.doc-image img{max-height:none}}
+</style>
+</head>
+<body>
+<main class="page">
+<article class="doc-shell">
+<header class="hero">
+<span class="hero-kicker">Material Management PRD</span>
+<h1>产品需求文档：物料管理（按用户流程）</h1>
+<p class="hero-meta">按其他模块 PRD 标准输出：用户流程、验收标准、功能需求、权限规则、截图。</p>
+<div class="hero-note"><strong>说明：</strong> 当前文件是可直接打开的 HTML 预览版。源 markdown 位于 <code>tasks/prd-materials-management-user-flow.md</code>。</div>
+</header>
+<nav class="toc"><a class="toc-item" href="#1.-介绍-概述">1. 介绍 / 概述</a><a class="toc-item" href="#2.-目标">2. 目标</a><a class="toc-item" href="#3.-用户流程-用户故事">3. 用户流程 / 用户故事</a><a class="toc-item flow" href="#uf-001-进入物料管理并切换设备">UF-001</a><a class="toc-item flow" href="#uf-002-按-6-类货道查看设备货道看板">UF-002</a><a class="toc-item flow" href="#uf-003-查看货道卡片信息和库存状态">UF-003</a><a class="toc-item flow" href="#uf-004-在货道卡片中执行补充库存">UF-004</a><a class="toc-item flow" href="#uf-005-从货道卡片进入添加物料并保留来源上下文">UF-005</a><a class="toc-item flow" href="#uf-006-编辑货道名称">UF-006</a><a class="toc-item flow" href="#uf-007-编辑货道关联物料">UF-007</a><a class="toc-item flow" href="#uf-008-在添加物料页按商户物料表选择物料">UF-008</a><a class="toc-item flow" href="#uf-009-选择配送日期并生成发货单">UF-009</a><a class="toc-item flow" href="#uf-010-查看我的发货单和全部发货单">UF-010</a><a class="toc-item flow" href="#uf-011-查看发货单详情和打印发货单">UF-011</a><a class="toc-item flow" href="#uf-012-作废本人待发货单">UF-012</a><a class="toc-item flow" href="#uf-013-移动端完成物料管理核心流程">UF-013</a><a class="toc-item" href="#4.-功能需求">4. 功能需求</a><a class="toc-item" href="#5.-权限与数据规则">5. 权限与数据规则</a><a class="toc-item" href="#6.-非功能需求">6. 非功能需求</a><a class="toc-item" href="#7.-当前版本限制">7. 当前版本限制</a></nav>
+<div class="content"><p># 产品需求文档：物料管理（按用户流程）</p>
+<blockquote>
+<p>使用说明：<code>Markdown</code> 版本适合在仓库内查看；如需在浏览器或飞书文档中阅读，优先使用同目录的 <a href="./prd-materials-management-user-flow.html">prd-materials-management-user-flow.html</a>。</p>
+</blockquote>
+<section class="doc-section" id="1.-介绍-概述"><h2>1. 介绍 / 概述</h2>
+<p>物料管理不是单纯的“库存列表”页面，而是后台运维人员围绕设备货道、关联物料、发货单和补料动作完成物料运营的统一入口。</p>
+<p>该模块由三个页面组成：</p>
+<ul>
+<li><strong>物料管理</strong>：以设备为维度展示货道看板，每张卡片代表一个货道，货道一对一关联一个物料。</li>
+<li><strong>添加物料</strong>：基于当前商户物料表选择补充物料，生成发货单。</li>
+<li><strong>运维清单</strong>：查看发货单、打印发货单、作废本人待发货单。</li>
+</ul>
+<p>默认用户角色：</p>
+<ul>
+<li>运维人员：查看设备货道余量、补充库存、发起发货、查看自己的发货单。</li>
+<li>补料人员：按商户物料表选择补充物料并生成发货单。</li>
+<li>商户管理员：维护货道名称、维护货道关联物料、按权限查看全部发货单。</li>
+</ul>
+</section>
+<section class="doc-section" id="2.-目标"><h2>2. 目标</h2>
+<ul>
+<li>让用户进入物料页后，能先按设备查看货道余量和风险状态。</li>
+<li>让货道名称、关联物料、商品编码、剩余量、预警值、告警值形成稳定信息结构。</li>
+<li>让“补充”和“发货”形成两条清晰路径：补充用于调整当前货道库存，发货用于进入添加物料生成发货单。</li>
+<li>让货道名称编辑和货道关联物料编辑都有独立权限控制。</li>
+<li>让添加物料严格来自当前商户物料表，并与业务确认的物料清单在商品编码、名称、单位、库存口径上保持一致。</li>
+<li>让运维清单只承担发货单查看、打印和作废，不再处理发货完成状态。</li>
+<li>让桌面端保持高密度运营看板，移动端保持完整可操作且不横向滚动。</li>
+</ul>
+</section>
+<section class="doc-section" id="3.-用户流程-用户故事"><h2>3. 用户流程 / 用户故事</h2>
+<section class="doc-subsection user-flow" id="uf-001-进入物料管理并切换设备"><h3>UF-001：进入物料管理并切换设备</h3>
+<p><strong>描述：</strong> 作为运维人员，我希望进入物料管理页面后，可以按设备编号或点位名称切换设备，这样我能查看目标设备的货道状态。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户进入物料管理页面。</li>
+<li>页面展示当前设备名称、设备编号和点位信息。</li>
+<li>用户在设备切换输入框中输入设备编号或点位名称。</li>
+<li>系统匹配设备并刷新货道看板。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>页面标题为“物料”，页头副标题显示当前设备名称，不再显示语言文案。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>设备切换支持设备编号和点位名称搜索。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>设备来源不在默认列表时，应自动加入可选设备。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>从其他页面携带设备进入时，物料管理页面应自动选中对应设备。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>切换设备后，设备摘要、点位信息和货道看板同步刷新。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-001 物料管理设备切换与货道看板" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-001 物料管理设备切换与货道看板</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-002-按-6-类货道查看设备货道看板"><h3>UF-002：按 6 类货道查看设备货道看板</h3>
+<p><strong>描述：</strong> 作为补料人员，我希望按货道大类查看设备内所有货道，这样我能快速判断哪些区域需要处理。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户选择设备。</li>
+<li>系统按货道大类展示货道分组。</li>
+<li>用户浏览每个分组下的货道卡片。</li>
+<li>若某分类没有货道数据，页面展示空分组提示。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>货道固定按 6 类展示：咖啡豆仓、牛奶&amp;水、糖浆、前/后道粉、包材、制冰机。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>有数据的分类排在无数据分类前面，但各分类内部保持原顺序。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>页面渲染为分组区块，不允许再将所有物料卡片单一混排。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>移动端也必须完整展示全部货道分组，不使用锚点或折叠替代完整内容。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>无数据分类展示明确空状态，例如“当前设备暂无此类物料”。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-002 货道分组看板" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-002 货道分组看板</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-003-查看货道卡片信息和库存状态"><h3>UF-003：查看货道卡片信息和库存状态</h3>
+<p><strong>描述：</strong> 作为运维人员，我希望每张货道卡片展示货道名称、关联物料和库存状态，这样我可以准确理解当前设备的真实货道情况。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户查看货道卡片。</li>
+<li>卡片标题展示货道名称。</li>
+<li>卡片主体展示关联物料、商品编码、剩余量、预警值和告警值。</li>
+<li>系统根据当前剩余量展示正常、告急或售罄状态。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>卡片标题必须显示货道名称，不得显示物料名称。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>关联物料名称只显示在“关联物料”字段。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>商品编码展示业务物料表中的商品编码，不展示页面内部标识。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>剩余量、预警值、告警值必须带单位。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>售罄和告急使用不同状态文案与视觉样式，不能只用同一种红色弱提示。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>桌面端卡片需支持五列高密度布局，并在较窄桌面宽度降级为四列或三列。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>移动端卡片必须单列展示且按钮可见。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-003 货道卡片与状态" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-003 货道卡片与状态</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-004-在货道卡片中执行补充库存"><h3>UF-004：在货道卡片中执行补充库存</h3>
+<p><strong>描述：</strong> 作为补料人员，我希望从货道卡片直接打开补充设置，并按原流程在当前库存上增加输入值，这样现场补料后能快速回填。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户点击货道卡片中的“补充”。</li>
+<li>系统打开补充设置弹窗。</li>
+<li>弹窗展示物料编码和当前库存。</li>
+<li>用户输入补充数量，必要时调整预警值和告警值。</li>
+<li>用户保存后，系统将当前量更新为“原当前库存 + 补充数量”。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>“补充”是货道卡片主按钮，“发货”是次按钮。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>弹窗标题显示“补充设置 - 货道名称”。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>补充数量输入框聚焦后自动选中原数字，避免用户手动删除。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>补充数量只允许整数。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>保存后当前量 = 当前库存 + 补充数量。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>系统提供“重置为 0”按钮，用于直接清空当前量。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>三个底部按钮顺序需符合当前页面设计：重置为 0、取消、确认保存。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>保存后写入设备运维记录。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-004 物料管理补充入口" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-004 物料管理补充入口</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-005-从货道卡片进入添加物料并保留来源上下文"><h3>UF-005：从货道卡片进入添加物料并保留来源上下文</h3>
+<p><strong>描述：</strong> 作为补料人员，我希望从某个货道点击发货或补充物料时，添加物料页能知道来源货道，这样生成的发货单可以带出货道名称。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户在货道卡片点击“发货”或从工具栏点击“补充物料”。</li>
+<li>系统写入来源上下文，包括设备编号、设备点位、货道名称、关联物料编码。</li>
+<li>页面跳转到添加物料页面。</li>
+<li>添加物料页读取来源上下文并展示来源货道。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>从货道卡片进入添加物料页时，页面应记住来源设备、点位、货道名称和关联物料。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>添加物料页应展示来源货道名称，便于用户确认当前发货来源。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>添加物料页返回时优先返回来源设备的物料管理页，而不是固定返回默认设备。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>无来源上下文时，添加物料页按普通添加流程运行。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-005 添加物料来源上下文" src="screenshots/11-materials-refill.png" loading="lazy"><figcaption>UF-005 添加物料来源上下文</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-006-编辑货道名称"><h3>UF-006：编辑货道名称</h3>
+<p><strong>描述：</strong> 作为商户管理员，我希望能单独编辑当前设备上的货道名称，但不改变货道关联物料和阈值，这样可以修正设备货道命名。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>具备权限的用户在货道卡片点击“编辑货道名称”。</li>
+<li>系统打开编辑货道名称弹窗。</li>
+<li>用户输入新的货道名称。</li>
+<li>用户确认保存。</li>
+<li>当前设备的该货道名称刷新展示。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>只有具备“编辑货道名称”权限的用户才能看到并使用该入口。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>无权限用户不显示入口。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>弹窗标题只显示“编辑货道名称”，不拼接物料名称。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>保存只更新当前设备上的货道名称，不改动物料关联、余量、预警值或告警值。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>货道名称不能为空。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>修改后的货道名称只影响当前设备，不影响其他设备同名货道。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-006 编辑货道名称入口" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-006 编辑货道名称入口</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-007-编辑货道关联物料"><h3>UF-007：编辑货道关联物料</h3>
+<p><strong>描述：</strong> 作为商户管理员，我希望能把货道关联到当前商户物料表中的其他物料，并且只能选择与当前货道大类匹配的物料，这样货道和物料关系不会混乱。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>具备权限的用户点击“编辑关联物料”。</li>
+<li>系统打开关联物料选择弹窗。</li>
+<li>弹窗展示当前商户物料表中的候选物料。</li>
+<li>用户按分类或搜索筛选物料。</li>
+<li>用户选择一个物料并保存。</li>
+<li>货道卡片展示新的关联物料和商品编码。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>只有具备“编辑货道关联物料”权限的用户才能看到并使用该入口。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>无权限用户不显示入口。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>关联物料必须来自当前商户物料表，不允许自由输入。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>候选物料分类必须与当前货道大类匹配。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>咖啡豆仓、牛奶&amp;水只能选择“奶&amp;咖啡&amp;水”分类。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>糖浆只能选择“糖浆”分类。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>前/后道粉只能选择“前/后道粉”分类。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>包材只能选择“包材”分类。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>制冰机只能选择“食材”分类。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>选择器样式需与添加物料页保持一致，使用分类 + 搜索 + 卡片选择，不使用原生下拉长列表。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-007 编辑关联物料入口" src="screenshots/04-materials.png" loading="lazy"><figcaption>UF-007 编辑关联物料入口</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-008-在添加物料页按商户物料表选择物料"><h3>UF-008：在添加物料页按商户物料表选择物料</h3>
+<p><strong>描述：</strong> 作为补料人员，我希望添加物料页只展示当前商户可用物料，并且数据与业务物料清单对齐，这样发货单明细不会出现旧编码或错误物料。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户进入添加物料页面。</li>
+<li>页面按物料分类展示物料池。</li>
+<li>用户切换分类或搜索物料。</li>
+<li>用户通过加减控件调整物料数量。</li>
+<li>已选物料区域实时展示选择结果。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>物料池数据必须与业务确认的物料清单一致。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>每个物料展示商品编码、物料名称、库存、最大值、单位。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>列表、已选清单、确认摘要都优先展示商品编码。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>分类默认只展开当前分类，其他分类不同时展开。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>已添加物料有独立颜色态，并随数量变化实时更新。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>来自货道卡片时，应默认定位并聚焦到对应物料行。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>物料数据需按当前商户隔离，不同商户对应不同物料表。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-008 添加物料分类物料池" src="screenshots/11-materials-refill.png" loading="lazy"><figcaption>UF-008 添加物料分类物料池</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-009-选择配送日期并生成发货单"><h3>UF-009：选择配送日期并生成发货单</h3>
+<p><strong>描述：</strong> 作为补料人员，我希望选择固定配送日期选项后生成发货单，这样发货计划明确且可在运维清单中追踪。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户在添加物料页选择一个或多个物料。</li>
+<li>用户选择配送日期选项。</li>
+<li>用户点击“完成”或“生成发货单”。</li>
+<li>系统生成发货单并写入本地发货单数据。</li>
+<li>系统跳转到运维清单。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>配送日期使用固定天数选项：1、3、5、8、10、12 天。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>确认生成时根据选项构造配送日期和发货时间。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>数量为 0 时不可完成。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>生成发货单时写入当前申请人姓名和手机号。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>发货单物料明细必须包含物料名称、商品编码、数量、单位。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>来自货道上下文的明细必须带出货道名称。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>生成成功后跳转到运维清单页面，并能在“我的发货单”中看到新发货单。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-009 添加物料生成发货单" src="screenshots/11-materials-refill.png" loading="lazy"><figcaption>UF-009 添加物料生成发货单</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-010-查看我的发货单和全部发货单"><h3>UF-010：查看我的发货单和全部发货单</h3>
+<p><strong>描述：</strong> 作为运维人员，我希望在运维清单中默认查看自己的发货单；具备权限时，可以查看权限范围内全部发货单。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户进入运维清单页面。</li>
+<li>页面默认展示“我的发货单”。</li>
+<li>若用户具备查看全部权限，页面展示“全部发货单”标签。</li>
+<li>用户查看发货单列表和明细摘要。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>页面标题为“运维清单”。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>默认展示“我的发货单”。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>无权限时隐藏“全部发货单”。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>不再展示“其他发货单”、“历史清单”或旧订单页语义。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>发货单列表展示单号、发货时间、设备、点位、申请人、状态、物料摘要。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>明细摘要必须展示商品编码，存在来源货道时展示货道名称。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>历史演示数据或旧发货单数据展示时，也应补齐当前物料清单中的商品编码。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-010 运维清单我的发货单" src="screenshots/10-materials-orders.png" loading="lazy"><figcaption>UF-010 运维清单我的发货单</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-011-查看发货单详情和打印发货单"><h3>UF-011：查看发货单详情和打印发货单</h3>
+<p><strong>描述：</strong> 作为仓配或运维人员，我希望能查看发货单详情并打印发货单，这样线下拣货和配送有明确依据。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户在运维清单中点击“详情”。</li>
+<li>系统展示发货单详情。</li>
+<li>用户点击“打印发货单”。</li>
+<li>系统打开或触发打印视图。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>发货单详情展示发货单号、状态、设备编号、点位、申请人、申请人电话、发货时间。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>发货单详情展示物料名称、商品编码、数量、单位。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>有来源货道时，详情中展示货道名称。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>打印发货单包含与详情一致的关键字段。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>作废单打印时需展示作废状态和作废原因。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-011 运维清单打印发货单入口" src="screenshots/10-materials-orders.png" loading="lazy"><figcaption>UF-011 运维清单打印发货单入口</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-012-作废本人待发货单"><h3>UF-012：作废本人待发货单</h3>
+<p><strong>描述：</strong> 作为发货单创建人，我希望能作废自己创建且仍待发货的发货单，并记录作废原因，这样错误申请可以被追踪处理。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户在自己的待发货单上点击“作废”。</li>
+<li>系统要求填写作废原因。</li>
+<li>用户确认作废。</li>
+<li>系统更新发货单状态并展示作废原因。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>运维清单页面不提供“完成”或“标记完成”功能。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>作废只允许当前用户处理自己的待发货单。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>作废必须填写原因。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>作废成功后列表和详情状态同步更新。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>作废原因在详情和打印内容中展示。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>非本人或非待发货单不允许作废。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-012 运维清单作废入口" src="screenshots/10-materials-orders.png" loading="lazy"><figcaption>UF-012 运维清单作废入口</figcaption></figure>
+</section>
+<section class="doc-subsection user-flow" id="uf-013-移动端完成物料管理核心流程"><h3>UF-013：移动端完成物料管理核心流程</h3>
+<p><strong>描述：</strong> 作为移动端运维人员，我希望在手机上也能完成设备切换、货道查看、补充、添加物料和查看运维清单，而不需要横向滚动。</p>
+<p><strong>主流程：</strong></p>
+<ol>
+<li>用户在移动端打开物料页。</li>
+<li>用户切换设备并查看货道卡片。</li>
+<li>用户打开补充弹窗或添加物料页。</li>
+<li>用户生成发货单并进入运维清单。</li>
+<li>用户查看自己的发货单。</li>
+</ol>
+<p><strong>验收标准：</strong></p>
+<ul>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>物料页移动端保留后台导航入口。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>货道分组和卡片在移动端单列展示，不横向滚动。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>卡片动作按钮在移动端始终可见且可点击。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>补充弹窗在移动端底部或适配视口展示，不溢出屏幕。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>添加物料页移动端左侧分类和右侧物料列表均可用。</li>
+<li class="task"><span class="checkbox" aria-hidden="true"></span>运维清单移动端使用卡片列表展示，不强制使用桌面表格。</li>
+</ul>
+<p><strong>参考截图：</strong></p>
+<figure class="doc-image"><img alt="UF-013 移动端物料管理" src="screenshots/14-materials-mobile.png" loading="lazy"><figcaption>UF-013 移动端物料管理</figcaption></figure>
+</section>
+</section>
+<section class="doc-section" id="4.-功能需求"><h2>4. 功能需求</h2>
+<ul>
+<li>FR-1：系统必须提供以设备为维度的物料管理页面。</li>
+<li>FR-2：物料管理页面必须支持按设备编号和点位名称搜索设备。</li>
+<li>FR-3：系统必须支持从其他页面进入时恢复对应设备。</li>
+<li>FR-4：物料管理页面必须按固定 6 类货道分组展示。</li>
+<li>FR-5：有数据货道分类必须排在无数据分类前面。</li>
+<li>FR-6：每张货道卡片必须代表一个货道，而不是一个物料池项。</li>
+<li>FR-7：货道与物料关系必须是一对一。</li>
+<li>FR-8：货道卡片必须展示货道名称、关联物料、商品编码、剩余量、预警值、告警值和状态。</li>
+<li>FR-9：售罄、告急、正常必须有不同文案和样式。</li>
+<li>FR-10：补充按钮必须作为货道卡片主操作。</li>
+<li>FR-11：发货按钮必须作为货道卡片次操作。</li>
+<li>FR-12：补充弹窗必须支持在当前库存上增加输入数量。</li>
+<li>FR-13：补充弹窗必须支持将当前量重置为 0。</li>
+<li>FR-14：补充弹窗输入框聚焦时必须自动选中当前数字。</li>
+<li>FR-15：补充保存后必须写入设备运维记录。</li>
+<li>FR-16：运维记录必须记录操作人员姓名和电话。</li>
+<li>FR-17：编辑货道名称必须由独立的“编辑货道名称”权限控制。</li>
+<li>FR-18：编辑关联物料必须由独立的“编辑货道关联物料”权限控制。</li>
+<li>FR-19：编辑关联物料必须限制在当前商户物料表内。</li>
+<li>FR-20：编辑关联物料必须限制候选物料分类与货道大类匹配。</li>
+<li>FR-21：添加物料页必须使用当前商户物料表数据。</li>
+<li>FR-22：添加物料页物料数据必须与业务确认的物料清单对齐。</li>
+<li>FR-23：添加物料页必须优先展示商品编码。</li>
+<li>FR-24：添加物料页必须支持分类浏览、搜索、数量增减和已选物料摘要。</li>
+<li>FR-25：添加物料页必须支持来源货道上下文。</li>
+<li>FR-26：生成发货单时必须写入申请人姓名和手机号。</li>
+<li>FR-27：生成发货单后必须跳转到运维清单。</li>
+<li>FR-28：运维清单必须默认展示我的发货单。</li>
+<li>FR-29：全部发货单必须由独立权限控制，无权限时隐藏。</li>
+<li>FR-30：运维清单不得处理发货完成状态。</li>
+<li>FR-31：运维清单必须支持打印发货单。</li>
+<li>FR-32：运维清单必须支持当前用户作废自己的待发货单。</li>
+<li>FR-33：作废必须填写原因，并在详情和打印中展示。</li>
+<li>FR-34：发货单明细必须展示商品编码。</li>
+<li>FR-35：发货单明细在有来源货道时必须展示货道名称。</li>
+<li>FR-36：历史演示发货单和旧发货单数据必须展示为当前带商品编码的物料。</li>
+<li>FR-37：桌面端物料看板必须支持高密度多列布局。</li>
+<li>FR-38：移动端物料、添加物料、运维清单都不得依赖横向滚动完成核心操作。</li>
+</ul>
+</section>
+<section class="doc-section" id="5.-权限与数据规则"><h2>5. 权限与数据规则</h2>
+<ul>
+<li>查看物料：允许用户进入物料管理页面。</li>
+<li>编辑货道名称：允许用户修改当前设备上的货道名称。</li>
+<li>编辑货道关联物料：允许用户修改当前设备货道关联的物料。</li>
+<li>查看全部发货单：控制运维清单中“全部发货单”标签是否展示。</li>
+<li>历史管理员账号升级后应自动具备新增的货道编辑能力，避免原管理员看不到编辑按钮。</li>
+<li>货道名称修改按设备隔离。</li>
+<li>货道关联物料修改按商户和设备隔离。</li>
+<li>不同商户对应不同物料表，物料选择不得跨商户。</li>
+</ul>
+</section>
+<section class="doc-section" id="6.-非功能需求"><h2>6. 非功能需求</h2>
+<ul>
+<li>NFR-1：桌面端需优先保证运营后台信息密度。</li>
+<li>NFR-2：移动端需保证无横向滚动、按钮可点击、弹窗不溢出。</li>
+<li>NFR-3：补充、发货、作废等关键动作需给出明确反馈。</li>
+<li>NFR-4：本地或接口数据异常时需安全降级为空数据或默认演示数据。</li>
+<li>NFR-5：页面切换设备、返回来源页面时需保持上下文一致。</li>
+</ul>
+</section>
+<section class="doc-section" id="7.-当前版本限制"><h2>7. 当前版本限制</h2>
+<ul>
+<li>当前为静态原型，物料、货道、发货单和权限数据使用演示数据。</li>
+<li>发货完成状态暂不在运维清单处理。</li>
+<li>打印发货单为前端打印视图，未接入真实后端单据模板。</li>
+<li>物料表按当前演示商户数据维护，真实商户物料主数据接口待后续接入。</li>
+</ul>
+</section></div>
+</article>
+</main>
+</body>
+</html>

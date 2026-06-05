@@ -192,7 +192,7 @@ function seedBaseForm(sandbox, overrides = {}) {
   };
   elements.gpsActionDisplay = {
     id: 'gpsActionDisplay',
-    textContent: overrides.gpsActionDisplay || '获取当前位置 ›'
+    textContent: overrides.gpsActionDisplay || '来自点位信息'
   };
   elements.longitudeDisplay = {
     id: 'longitudeDisplay',
@@ -273,6 +273,9 @@ test('运行时：buildEntryInfoPayload 应返回与详情页一致的 canonical
 
   assert.strictEqual(payload.locationName, '静安大悦城');
   assert.strictEqual(payload.locationAddress, '上海市静安区测试地址 1 号');
+  assert.strictEqual(payload.gpsAction, '来自点位信息');
+  assert.strictEqual(payload.longitude, '121.473700');
+  assert.strictEqual(payload.latitude, '31.230400');
   assert.strictEqual(payload.operatorName, '李运维');
   assert.strictEqual(payload.operatorPhone, '13912340000');
   assert.strictEqual(payload.networkSignal, '优');
