@@ -27,9 +27,9 @@ test('总览页应读取基础设置中的币种并支持多币种格式化', ()
 });
 
 test('总览页金额展示应使用币种格式化而非固定人民币符号', () => {
-  assert.ok(/document\.getElementById\('ovGrossSales'\)\.textContent\s*=\s*formatCurrency\(0\)/.test(html));
-  assert.ok(/document\.getElementById\('ovNetSales'\)\.textContent\s*=\s*formatCurrency\(0\)/.test(html));
-  assert.ok(/document\.getElementById\('ovAvgSales'\)\.textContent\s*=\s*formatCurrency\(0\)/.test(html));
+  // 经营总览 Bento 重设计后：hero 展示实收金额（ovNetSales），副标题展示销售总额/退款
+  assert.ok(/document\.getElementById\('ovNetSales'\)\.textContent\s*=\s*formatCurrency\(today\.net\)/.test(html));
+  assert.ok(/销售总额 \$\{formatCurrency\(today\.gross\)\} · 退款 \$\{formatCurrency\(Math\.max\(0, today\.gross - today\.net\)\)\}/.test(html));
   assert.ok(/title=\"\$\{hour\}:00 \$\{formatCurrency\(hourValues\[idx\]\)\}\"/.test(html));
   assert.ok(/<div class="product-price">\$\{formatMoneyByCurrency\(p\.price,\s*getMenuDisplayCurrency\(\)\)\}<\/div>/.test(html));
 });
