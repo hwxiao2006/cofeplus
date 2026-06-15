@@ -2025,7 +2025,7 @@ test('印花图片设置卡片按钮区不应使用底部撑开布局', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
   const css = getPageCss('menu-management.html');
   assert.ok(!css.includes('height: 100%;\n            display: flex;\n            flex-direction: column;\n            gap: 8px;'));
-  assert.ok(!html.includes('margin-top: auto;'));
+  assert.ok(!css.includes('margin-top: auto;'));
   assert.ok(!html.includes('menu-latte-art-action-spacer'));
   assert.ok(!html.includes('menu-latte-art-action-btn is-primary'));
   assert.ok(!html.includes('menu-latte-art-action-btn is-danger-subtle'));
