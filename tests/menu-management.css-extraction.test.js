@@ -25,3 +25,19 @@ test('getPageCss 仍能取到关键规则（经外部文件）', () => {
   assert.ok(/grid-template-columns:\s*repeat\(5,/.test(css), '丢失 5 列网格规则');
   assert.ok(css.includes('.sidebar'), '丢失侧边栏样式');
 });
+test('shared/theme.css 含主题变量', () => {
+  assert.ok(exists('shared/theme.css'));
+  const css = read('shared/theme.css');
+  assert.ok(css.includes(':root') && css.includes('--primary'));
+});
+test('页面 CSS 不再含 :root（已移动非复制）', () => {
+  assert.ok(!read('pages/menu-management/menu-management.css').includes(':root'));
+});
+test('theme.css <link> 在页面 CSS 之前', () => {
+  const html = read('menu-management.html');
+  assert.ok(html.indexOf('shared/theme.css') < html.indexOf('pages/menu-management/menu-management.css'));
+});
+test('getPageCss 仍取到主题变量与页面规则', () => {
+  const css = getPageCss('menu-management.html');
+  assert.ok(/--primary/.test(css) && /grid-template-columns:\s*repeat\(5,/.test(css));
+});
