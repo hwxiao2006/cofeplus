@@ -2707,11 +2707,11 @@ test('菜单管理商品卡片：业务标签应悬浮在商品图右上角，�
   };
 
   const cardHtml = ctx.renderMenuManageProductCard(product, { categoryKey: '奶咖系列' });
-  const source = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
 
   assert.ok(/<div class="product-image-wrapper">[\s\S]*product-business-tag-list product-business-tag-list-overlay/.test(cardHtml));
   assert.ok(!/<div class="product-content">[\s\S]*product-business-tag-list/.test(cardHtml));
-  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(source));
+  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(css));
 });
 
 test('菜单管理工作区：当前分类模式应提供调整商品顺序入口，全部分类模式不显示', () => {
