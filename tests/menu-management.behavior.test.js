@@ -821,18 +821,20 @@ test('点单屏预览：右侧标题仅显示分类名，不带“商品”', ()
 
 test('点单屏详情预览：伪下单按钮区域应吸底显示，避免长内容下被遮挡', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
 
-  assert.ok(/\.order-preview-detail-body\s*\{[\s\S]*padding:\s*14px 14px 96px;/.test(html));
-  assert.ok(/\.order-preview-detail-submit-row\s*\{[\s\S]*position:\s*sticky;[\s\S]*bottom:\s*0;/.test(html));
-  assert.ok(/\.order-preview-detail-submit-row\s*\{[\s\S]*padding:\s*14px 0 calc\(14px \+ env\(safe-area-inset-bottom, 0px\)\);/.test(html));
+  assert.ok(/\.order-preview-detail-body\s*\{[\s\S]*padding:\s*14px 14px 96px;/.test(css));
+  assert.ok(/\.order-preview-detail-submit-row\s*\{[\s\S]*position:\s*sticky;[\s\S]*bottom:\s*0;/.test(css));
+  assert.ok(/\.order-preview-detail-submit-row\s*\{[\s\S]*padding:\s*14px 0 calc\(14px \+ env\(safe-area-inset-bottom, 0px\)\);/.test(css));
 });
 
 test('点单屏预览：移动端详情层应受模态可视高度约束，避免按钮落到裁切区外', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
 
-  assert.ok(/\.order-preview-modal \.modal-body\s*\{[\s\S]*overflow-y:\s*hidden;/.test(html));
-  assert.ok(/\.order-preview-layout\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;[\s\S]*height:\s*calc\(90vh - 150px\);[\s\S]*min-height:\s*0;/.test(html));
-  assert.ok(/\.order-preview-products\s*\{[\s\S]*flex:\s*1 1 auto;[\s\S]*min-height:\s*0;/.test(html));
+  assert.ok(/\.order-preview-modal \.modal-body\s*\{[\s\S]*overflow-y:\s*hidden;/.test(css));
+  assert.ok(/\.order-preview-layout\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;[\s\S]*height:\s*calc\(90vh - 150px\);[\s\S]*min-height:\s*0;/.test(css));
+  assert.ok(/\.order-preview-products\s*\{[\s\S]*flex:\s*1 1 auto;[\s\S]*min-height:\s*0;/.test(css));
 });
 
 test('点单屏预览：应优先读取商品自定义标签附加价格', () => {
@@ -1329,6 +1331,7 @@ test('复制商品流程应保留工具栏与网格入口文案，并移除头�
 
 test('复制商品第一步应先选择目标分类，并支持直接新增分类', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
   assert.ok(html.includes('id="copyProductRangeStep"'));
   assert.ok(html.includes('id="copyProductConfigStep"'));
   assert.ok(html.includes('id="copyProductScopeCurrent"'));
@@ -1349,7 +1352,7 @@ test('复制商品第一步应先选择目标分类，并支持直接新增分�
   assert.ok(html.includes('id="copyCategorySyncExistingOnly"'));
   assert.ok(html.includes('id="copyCategorySyncAutoCreate"'));
   assert.ok(html.includes("openCategoryModal('copyTargetCategory')"));
-  assert.ok(/\.copy-product-target-controls\s*\{[\s\S]*display:\s*grid;[\s\S]*grid-template-columns:\s*1fr auto;[\s\S]*align-items:\s*center;/.test(html));
+  assert.ok(/\.copy-product-target-controls\s*\{[\s\S]*display:\s*grid;[\s\S]*grid-template-columns:\s*1fr auto;[\s\S]*align-items:\s*center;/.test(css));
   assert.ok(!html.includes('模板所属分类'));
 });
 
@@ -2020,7 +2023,8 @@ test('印花图片设置tab应提供当前设备作用域、总计统计、上�
 
 test('印花图片设置卡片按钮区不应使用底部撑开布局', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(!html.includes('height: 100%;\n            display: flex;\n            flex-direction: column;\n            gap: 8px;'));
+  const css = getPageCss('menu-management.html');
+  assert.ok(!css.includes('height: 100%;\n            display: flex;\n            flex-direction: column;\n            gap: 8px;'));
   assert.ok(!html.includes('margin-top: auto;'));
   assert.ok(!html.includes('menu-latte-art-action-spacer'));
   assert.ok(!html.includes('menu-latte-art-action-btn is-primary'));
@@ -2075,8 +2079,9 @@ test('基础设置：应新增当前设备点单屏联系信息卡片并标注�
 
 test('基础设置：桌面端设置卡片应改为两列布局，避免四张卡片横向挤压', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.settings-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/.test(html));
-  assert.ok(!/\.settings-card-contact\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.settings-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/.test(css));
+  assert.ok(!/\.settings-card-contact\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;/.test(css));
 });
 
 test('基础设置：语言卡片应保留顶部编辑入口和语言列表，但不显示卡片内设备编号', () => {
@@ -2088,8 +2093,9 @@ test('基础设置：语言卡片应保留顶部编辑入口和语言列表，�
 
 test('基础设置：语言卡片应在等高布局下使用紧凑纵向 flex 排布', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.settings-card-language\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*\}/.test(html));
-  assert.ok(/\.settings-device-summary\s*\{[^}]*justify-content:\s*center;[^}]*\}/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.settings-card-language\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*\}/.test(css));
+  assert.ok(/\.settings-device-summary\s*\{[^}]*justify-content:\s*center;[^}]*\}/.test(css));
 });
 
 test('基础设置：商品弹窗价格规则提示不应再提到税率', () => {
@@ -2183,10 +2189,11 @@ test('菜单管理工作区：桌面端工具栏应分组布局，商品网格�
 
 test('菜单管理工作区：桌面端操作按钮应保持紧凑宽度并右对齐', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.menu-manage-toolbar-actions\s*\{[\s\S]*?display:\s*flex;[\s\S]*?justify-content:\s*flex-end;/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s+\.btn\s*\{[^}]*width:\s*auto;[^}]*\}/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.menu-manage-toolbar-actions\s*\{[\s\S]*?display:\s*flex;[\s\S]*?justify-content:\s*flex-end;/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s+\.btn\s*\{[^}]*width:\s*auto;[^}]*\}/.test(css));
 });
 
 test('共享上下文：应位于菜单 tab 上方，并包含分类、商品搜索与清空入口', () => {
@@ -2600,16 +2607,18 @@ test('菜单管理工作区：默认仅展示当前分类商品，并同步分�
 
 test('菜单管理分类导航：桌面端应移除数量徽标，并允许分类名完整换行显示', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.menu-manage-category-item-name\s*\{[\s\S]*white-space:\s*normal;/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.menu-manage-category-item-name\s*\{[\s\S]*white-space:\s*normal;/.test(css));
   assert.ok(!html.includes('menu-manage-category-item-count'));
   assert.ok(!html.includes('class="menu-manage-category-item-meta"'));
 });
 
 test('菜单管理分类导航：桌面端分类行应恢复垂直居中对齐', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.menu-manage-category-item-select\s*\{[\s\S]*align-items:\s*center;/.test(html));
-  assert.ok(/\.menu-manage-category-item-actions\s*\{[\s\S]*align-items:\s*center;/.test(html));
-  assert.ok(/\.drag-handle\s*\{[\s\S]*margin-top:\s*0;/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.menu-manage-category-item-select\s*\{[\s\S]*align-items:\s*center;/.test(css));
+  assert.ok(/\.menu-manage-category-item-actions\s*\{[\s\S]*align-items:\s*center;/.test(css));
+  assert.ok(/\.drag-handle\s*\{[\s\S]*margin-top:\s*0;/.test(css));
 });
 
 test('菜单管理商品卡片：应统一提供上下架与编辑双按钮', () => {
@@ -2664,18 +2673,20 @@ test('菜单管理商品卡片：业务标签应叠加在商品图片上方', ()
 
 test('菜单管理商品卡片：桌面端 footer 不应横向挤压价格区', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
 
-  assert.ok(/\.product-price-single\s*\{[\s\S]*white-space:\s*nowrap;/.test(html));
-  assert.ok(/\.product-card\.product-row\s+\.product-footer\s*\{[\s\S]*flex-direction:\s*column;[\s\S]*align-items:\s*stretch;/.test(html));
-  assert.ok(/\.product-card\.product-row\s+\.product-actions\s*\{[\s\S]*width:\s*100%;[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/.test(html));
-  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(html));
+  assert.ok(/\.product-price-single\s*\{[\s\S]*white-space:\s*nowrap;/.test(css));
+  assert.ok(/\.product-card\.product-row\s+\.product-footer\s*\{[\s\S]*flex-direction:\s*column;[\s\S]*align-items:\s*stretch;/.test(css));
+  assert.ok(/\.product-card\.product-row\s+\.product-actions\s*\{[\s\S]*width:\s*100%;[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/.test(css));
+  assert.ok(/\.product-business-tag-list-overlay\s*\{[\s\S]*position:\s*absolute;[\s\S]*top:\s*12px;[\s\S]*right:\s*12px;/.test(css));
 });
 
 test('菜单管理商品卡片：上架和下架按钮应使用不同状态色', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
 
-  assert.ok(/\.product-action-btn-sale-on\s*\{[\s\S]*color:\s*#15803d;[\s\S]*background:\s*#dcfce7;/.test(html));
-  assert.ok(/\.product-action-btn-sale-off\s*\{[\s\S]*color:\s*#c2410c;[\s\S]*background:\s*#ffedd5;/.test(html));
+  assert.ok(/\.product-action-btn-sale-on\s*\{[\s\S]*color:\s*#15803d;[\s\S]*background:\s*#dcfce7;/.test(css));
+  assert.ok(/\.product-action-btn-sale-off\s*\{[\s\S]*color:\s*#c2410c;[\s\S]*background:\s*#ffedd5;/.test(css));
   assert.ok(/saleActionClass\s*=\s*isOnSale\s*\?\s*'product-action-btn-sale-off'\s*:\s*'product-action-btn-sale-on'/.test(html));
 });
 
@@ -3481,8 +3492,9 @@ test('批量改价：工作区应展示共享范围摘要和批量编辑区', ()
 
 test('批量改价：编辑卡片与列表容器应与共享筛选左侧对齐', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/\.batch-fixed-panel\s*\{[\s\S]*?margin:\s*0\s+0\s+16px;/.test(html));
-  assert.ok(/\.batch-fixed-list-wrap\s*\{[\s\S]*?margin:\s*0\s+0\s+22px;/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/\.batch-fixed-panel\s*\{[\s\S]*?margin:\s*0\s+0\s+16px;/.test(css));
+  assert.ok(/\.batch-fixed-list-wrap\s*\{[\s\S]*?margin:\s*0\s+0\s+22px;/.test(css));
 });
 
 test('批量改价列表应为文本行，不展示商品图片', () => {
@@ -3497,9 +3509,10 @@ test('批量改价列表应为文本行，不展示商品图片', () => {
 
 test('批量改价：移动端应改为无横向滚动的堆叠卡片布局', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-wrap\s*\{[^}]*overflow:\s*visible;[^}]*\}/.test(html));
-  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-head\s*\{[^}]*display:\s*none;[^}]*\}/.test(html));
-  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-row\s*\{[^}]*grid-template-columns:\s*1fr;[^}]*min-width:\s*0;[^}]*\}/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-wrap\s*\{[^}]*overflow:\s*visible;[^}]*\}/.test(css));
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-list-head\s*\{[^}]*display:\s*none;[^}]*\}/.test(css));
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.batch-fixed-row\s*\{[^}]*grid-template-columns:\s*1fr;[^}]*min-width:\s*0;[^}]*\}/.test(css));
   assert.ok(html.includes('class="batch-fixed-cell-label">现价</span>'));
   assert.ok(html.includes('class="batch-fixed-cell-label">原价</span>'));
   assert.ok(html.includes('class="batch-fixed-cell-label">状态</span>'));
@@ -3507,7 +3520,8 @@ test('批量改价：移动端应改为无横向滚动的堆叠卡片布局', ()
 
 test('共享上下文：移动端分类下拉与搜索输入应使用更大的字号', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
-  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.menu-shared-context\s+\.form-input,\s*[\s\S]*?\.menu-shared-context\s+\.form-select\s*\{[^}]*font-size:\s*16px;[^}]*min-height:\s*50px;[^}]*\}/.test(html));
+  const css = getPageCss('menu-management.html');
+  assert.ok(/@media \(max-width:\s*768px\)\s*\{[\s\S]*?\.menu-shared-context\s+\.form-input,\s*[\s\S]*?\.menu-shared-context\s+\.form-select\s*\{[^}]*font-size:\s*16px;[^}]*min-height:\s*50px;[^}]*\}/.test(css));
 });
 
 test('共享上下文：移动端应改为底部抽屉并支持分类排序模式', () => {
