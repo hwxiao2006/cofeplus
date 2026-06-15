@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { getPageCss } = require('./helpers/page-css');
 
 const targets = ['menu-management.html', 'menu.html', 'overview.html'];
 
@@ -19,8 +20,8 @@ test('桌面端商品卡片区域至少一行展示5个商品', () => {
   const pattern = /@media\s*\(min-width:\s*1025px\)\s*\{[\s\S]*?\.product-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\)/;
 
   targets.forEach((file) => {
-    const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
-    assert.ok(pattern.test(html), `${file} 未配置桌面端5列商品网格`);
+    const css = getPageCss(file);
+    assert.ok(pattern.test(css), `${file} 未配置桌面端5列商品网格`);
   });
 });
 

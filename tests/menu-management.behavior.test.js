@@ -2,6 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { getPageCss } = require('./helpers/page-css');
 
 function loadMenuContext(options = {}) {
   const htmlPath = path.join(__dirname, '..', 'menu-management.html');
@@ -2139,8 +2140,9 @@ test('按钮归属：新增分类按钮应只保留在菜单管理工作区，�
 
 test('移动端商品管理页不应重复显示顶部导航标题和内容区大标题', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
   assert.ok(/class="mobile-header-title"/.test(html), '移动端顶部缺少独立标题节点');
-  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.header-title\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*\.header-title-wrapper\s*\{[^}]*gap:\s*0;/.test(html), '移动端应隐藏重复的大标题并压缩标题区间距');
+  assert.ok(/@media\s*\(max-width:\s*768px\)[\s\S]*\.header-title\s*\{[^}]*display:\s*none;[^}]*\}[\s\S]*\.header-title-wrapper\s*\{[^}]*gap:\s*0;/.test(css), '移动端应隐藏重复的大标题并压缩标题区间距');
 });
 
 test('菜单管理：应改为分类导航和商品工作区布局，并提供共享筛选入口', () => {
@@ -2169,13 +2171,14 @@ test('菜单管理：左侧分类导航不应再展示说明文案与分类搜�
 
 test('菜单管理工作区：桌面端工具栏应分组布局，商品网格不应固定 5 列', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  const css = getPageCss('menu-management.html');
   assert.ok(html.includes('class="menu-shared-context-controls"'));
   assert.ok(html.includes('class="menu-manage-toolbar-actions"'));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*minmax\(220px,\s*260px\)\s+minmax\(0,\s*1fr\);[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(html));
-  assert.ok(!/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*repeat\(5,/.test(html));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*minmax\(220px,\s*260px\)\s+minmax\(0,\s*1fr\);[^}]*\}/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(css));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(css));
+  assert.ok(!/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*repeat\(5,/.test(css));
 });
 
 test('菜单管理工作区：桌面端操作按钮应保持紧凑宽度并右对齐', () => {

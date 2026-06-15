@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const { getPageCss } = require('./helpers/page-css');
 
 const expectedBodyFont = "font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;";
 const pageFiles = [
@@ -35,9 +36,9 @@ function test(name, fn) {
 
 test('主要页面 body 字体应统一为 overview 的系统字体栈', () => {
   pageFiles.forEach(file => {
-    const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+    const css = getPageCss(file);
     assert.ok(
-      html.includes(expectedBodyFont),
+      css.includes(expectedBodyFont),
       `${file} missing expected body font stack`
     );
   });
