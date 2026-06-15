@@ -1,8 +1,18 @@
 # COFE+ 页面拆分重构（修订：先落地 CSS 安全薄片）
 
 - 日期：2026-06-15
-- 状态：设计待评审（v2，经四路对抗审查后收窄范围）
-- 范围：**只抽 CSS、不碰 JS**。把 `menu-management.html` 的 5,629 行内联 `<style>` 外抽为 `<link>`，并拆出 `shared/theme.css` 与 `shared/admin-sidebar.css` 共享样式层。8000 行 JS 深拆**明确推迟**，相关结论存档于第 8 节。
+- 状态：**已实现**（CSS 薄片：theme + 页面，2026-06-15）
+- 范围：**只抽 CSS、不碰 JS**。把 `menu-management.html` 的内联 `<style>` 外抽为 `<link>`，拆出 `shared/theme.css`（仅 `:root`）+ `pages/menu-management/menu-management.css`（其余，含侧边栏样式，原序不动）。8000 行 JS 深拆**明确推迟**，相关结论存档于第 8 节。
+
+## 0. 实现说明（实际落地，2026-06-15）
+
+落地结果与下文 v2 设计的差异（以本节为准）：
+
+- **最终拆 2 个文件，非 3 个**：经执行期决策，**不抽 `shared/admin-sidebar.css`**——侧边栏 CSS 留在页面 CSS 文件内、保持原始相对顺序，从而彻底消除 §5 所述的非连续重排与 `.selector` 边界风险。下文 §4/§5 中关于 admin-sidebar.css 的内容已被本决策取代。
+- **测试影响远超 §6 的"极小"估计**：实际有 **6 个测试文件、约 32 处 CSS 断言**对 menu-management 内联 CSS 做 `html.match(/规则/)`，外抽即破。解决方案是新增 `tests/helpers/page-css.js` 的 `getPageCss(file)`（读取内联 `<style>` + 所有本地 `<link>` 样式表并拼接），把这些断言改为读它——外抽前后皆绿。此助手为未来推广复用。
+- **预存测试失败不在本次范围**：基线即有 5 个失败（`login-pages.runtime/structure`、`device-search.location-name`、`pages.font-stack`、`product-detail.pricing`），根因调查证明均为 device-entry/devices/product-detail/login 等**别页的在途功能**所致、与 menu-management 无关，故**保持不动**（只确保不新增失败）。
+- **结果**：`menu-management.html` 14,520 → 8,893 行（−38.8%）；全量套件 104 pass / 5 fail（失败集 = 那 5 个预存项，无新增）；关键画面截图与基线逐像素一致；`file://` 双击主题色 `#4ECDC4` 正常解析、无控制台错误。
+- **测试命令更正**：CLAUDE.md 写的 `node --test tests/` 在 Node 22 会 `MODULE_NOT_FOUND`，须用 `node --test tests/*.test.js`。
 
 ---
 

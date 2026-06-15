@@ -91,6 +91,9 @@ npx wrangler deploy
 - `shared/admin-staff-access.js` - Staff access control and merchant tenant isolation
 - `shared/fault-library.js` - Mock fault records with handling steps (30 entries)
 - `shared/tag-group-i18n.js` - Tag group name internationalization per device
+- `shared/theme.css` - Shared `:root` theme tokens (design variables); first adopted by menu-management
+- `pages/<page>/` - Page-specific external CSS loaded via `<link>` (no build step); first instance `pages/menu-management/menu-management.css`
+- `tests/helpers/page-css.js` - `getPageCss(file)`: a page's effective CSS (inline `<style>` + linked stylesheets) so CSS assertions survive extraction
 - `designs/` - Design files (`.pen` and `.svg` previews)
 - `docs/plans/` - Date-prefixed implementation and design plans (e.g. `2026-03-01-feature-name.md`)
 - `docs/superpowers/plans/` and `docs/superpowers/specs/` - Detailed feature specs and plans
