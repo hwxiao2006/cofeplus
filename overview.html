@@ -759,6 +759,40 @@
         }
 
         /* ============ 经营总览 · Bento 布局 ============ */
+        .ov-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .ov-period {
+            display: inline-flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 3px;
+        }
+        .ov-period button {
+            border: 0;
+            background: none;
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .ov-period button.on {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+        .ov-period-hint {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
         .ov-bento {
             display: grid;
             gap: 14px;
@@ -2195,9 +2229,17 @@
 
             <div class="content">
                 <div id="overviewView" class="view-section">
+                    <div class="ov-toolbar">
+                        <div class="ov-period" id="ovPeriodSwitch">
+                            <button type="button" class="on" data-period="today" onclick="setOverviewPeriod('today')">今日</button>
+                            <button type="button" data-period="7d" onclick="setOverviewPeriod('7d')">近 7 日</button>
+                            <button type="button" data-period="30d" onclick="setOverviewPeriod('30d')">近 30 日</button>
+                        </div>
+                        <span class="ov-period-hint" id="ovPeriodHint">统计当日数据</span>
+                    </div>
                     <div class="ov-bento">
                         <div class="ov-tile ov-rev">
-                            <div class="ov-tile-lbl">今日实收金额</div>
+                            <div class="ov-tile-lbl" id="ovNetLabel">今日实收金额</div>
                             <div class="ov-rev-big" id="ovNetSales">-</div>
                             <span class="ov-delta" id="ovNetDelta"></span>
                             <div class="ov-rev-sub" id="ovRevSub"></div>
@@ -3570,6 +3612,22 @@
         let overviewTop5Mode = 'sales';
         let overviewTop5Data = [];
 
+        // 时间周期：今日 / 近7日 / 近30日（演示优先：7日为真实聚合，30日按比例估算）
+        let overviewPeriod = 'today';
+        const OVERVIEW_PERIODS = {
+            today: { label: '今日', days: 1, hint: '统计当日数据' },
+            '7d': { label: '近 7 日', days: 7, hint: '统计最近 7 个自然日累计' },
+            '30d': { label: '近 30 日', days: 30, hint: '统计最近 30 个自然日累计' }
+        };
+
+        function setOverviewPeriod(period) {
+            overviewPeriod = OVERVIEW_PERIODS[period] ? period : 'today';
+            document.querySelectorAll('#ovPeriodSwitch button').forEach(btn => {
+                btn.classList.toggle('on', btn.dataset.period === overviewPeriod);
+            });
+            renderOverview();
+        }
+
         function setTop5Mode(mode) {
             overviewTop5Mode = mode === 'cups' ? 'cups' : 'sales';
             document.querySelectorAll('#top5Toggle button').forEach(btn => {
@@ -3630,30 +3688,61 @@
             const today = history[history.length - 1];
             const yesterday = history[history.length - 2] || today;
 
-            const vsNetYesterday = ((today.net - yesterday.net) / (yesterday.net || 1)) * 100;
-            const vsOrdersYesterday = ((today.orders - yesterday.orders) / (yesterday.orders || 1)) * 100;
-            const vsCupsYesterday = ((today.cups - yesterday.cups) / (yesterday.cups || 1)) * 100;
+            // ---- 按时间周期聚合（今日真实 / 7日真实累计 / 30日按比例估算）----
+            const periodCfg = OVERVIEW_PERIODS[overviewPeriod];
+            document.getElementById('ovPeriodHint').textContent = periodCfg.hint;
+            document.getElementById('ovNetLabel').textContent = `${periodCfg.label}实收金额`;
+
+            const win = history.slice(-Math.min(periodCfg.days, history.length));
+            const periodScale = periodCfg.days / win.length; // 30日窗口数据不足时外推
+            const periodSum = key => Math.round(win.reduce((sum, d) => sum + (d[key] || 0), 0) * periodScale);
+
+            // 周期内趋势（前半段均值 vs 后半段均值），给多日周期当作环比方向
+            const trendWindow = history.slice(-7);
+            const trendDelta = key => {
+                if (overviewPeriod === 'today') {
+                    return ((today[key] - yesterday[key]) / (yesterday[key] || 1)) * 100;
+                }
+                const half = Math.max(1, Math.floor(trendWindow.length / 2));
+                const firstAvg = trendWindow.slice(0, half).reduce((s, d) => s + (d[key] || 0), 0) / half;
+                const secondAvg = trendWindow.slice(-half).reduce((s, d) => s + (d[key] || 0), 0) / half;
+                return ((secondAvg - firstAvg) / (firstAvg || 1)) * 100;
+            };
+            const deltaSuffix = overviewPeriod === 'today' ? '对比昨日' : '对比上一周期';
+
+            const netVal = overviewPeriod === 'today' ? today.net : periodSum('net');
+            const grossVal = overviewPeriod === 'today' ? today.gross : periodSum('gross');
+            const ordersVal = overviewPeriod === 'today' ? today.orders : periodSum('orders');
+            const cupsVal = overviewPeriod === 'today' ? today.cups : periodSum('cups');
+            const netDeltaPct = trendDelta('net');
+            const ordersDeltaPct = trendDelta('orders');
+            const cupsDeltaPct = trendDelta('cups');
 
             // Hero：实收 + 环比 + 总额/退款副标题
-            document.getElementById('ovNetSales').textContent = formatCurrency(today.net);
+            document.getElementById('ovNetSales').textContent = formatCurrency(netVal);
             const netDelta = document.getElementById('ovNetDelta');
-            netDelta.textContent = `${formatPercent(vsNetYesterday)} 对比昨日`;
-            netDelta.className = `ov-delta ${compareClass(vsNetYesterday)}`;
-            document.getElementById('ovRevSub').textContent = `销售总额 ${formatCurrency(today.gross)} · 退款 ${formatCurrency(Math.max(0, today.gross - today.net))}`;
+            netDelta.textContent = `${formatPercent(netDeltaPct)} ${deltaSuffix}`;
+            netDelta.className = `ov-delta ${compareClass(netDeltaPct)}`;
+            document.getElementById('ovRevSub').textContent = `销售总额 ${formatCurrency(grossVal)} · 退款 ${formatCurrency(Math.max(0, grossVal - netVal))}`;
 
             // 订单 / 出杯
-            document.getElementById('ovOrders').textContent = today.orders.toLocaleString('zh-CN');
+            document.getElementById('ovOrders').textContent = ordersVal.toLocaleString('zh-CN');
             const ordersDelta = document.getElementById('ovOrdersDelta');
-            ordersDelta.textContent = formatPercent(vsOrdersYesterday);
-            ordersDelta.className = `ov-delta sm ${compareClass(vsOrdersYesterday)}`;
-            document.getElementById('ovCups').innerHTML = `${today.cups.toLocaleString('zh-CN')} <small>杯</small>`;
+            ordersDelta.textContent = formatPercent(ordersDeltaPct);
+            ordersDelta.className = `ov-delta sm ${compareClass(ordersDeltaPct)}`;
+            document.getElementById('ovCups').innerHTML = `${cupsVal.toLocaleString('zh-CN')} <small>杯</small>`;
             const cupsDelta = document.getElementById('ovCupsDelta');
-            cupsDelta.textContent = formatPercent(vsCupsYesterday);
-            cupsDelta.className = `ov-delta sm ${compareClass(vsCupsYesterday)}`;
+            cupsDelta.textContent = formatPercent(cupsDeltaPct);
+            cupsDelta.className = `ov-delta sm ${compareClass(cupsDeltaPct)}`;
 
-            // 分时销售额（高于日内均值的时段加深）
+            // 分时销售额（今日=当日；多日周期=周期内日均小时分布；高于均值时段加深）
             const hourIndexes = [7,8,9,10,11,12,13,14,15,16,17,18];
-            const hourValues = hourIndexes.map(hour => today.hourly[hour] || 0);
+            const hourValues = hourIndexes.map(hour => {
+                if (overviewPeriod === 'today') return today.hourly[hour] || 0;
+                return Math.round(win.reduce((sum, d) => sum + (d.hourly?.[hour] || 0), 0) / win.length);
+            });
+            document.getElementById('hourlyChartTypeLabel').textContent =
+                overviewPeriod === 'today' ? '深色为峰值时段' : `${periodCfg.label}日均 · 深色为峰值时段`;
             const hourMax = Math.max(...hourValues, 1);
             const hourAvg = hourValues.reduce((sum, v) => sum + v, 0) / hourValues.length;
             document.getElementById('hourlyChart').innerHTML = hourIndexes.map((hour, idx) => {
