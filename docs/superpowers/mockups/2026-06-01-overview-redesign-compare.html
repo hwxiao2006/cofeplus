@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>经营总览重设计 · 三方案对比</title>
+<style>
+:root { --primary: #4ECDC4; --primary-dark: #0f766e; --ink: #0b132b; --border: #e5eef5; --muted: #64748b; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; background: #f1f5f9; color: #1f2937; padding: 24px; }
+header { max-width: 1500px; margin: 0 auto 18px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+h1 { font-size: 20px; font-weight: 800; }
+.sub { font-size: 13px; color: var(--muted); }
+.mode { display: flex; gap: 8px; }
+.mode button { border: 1px solid var(--border); background: #fff; padding: 8px 16px; border-radius: 999px; font-size: 13px; cursor: pointer; }
+.mode button.on { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+
+.tabs { max-width: 1500px; margin: 0 auto 14px; display: flex; gap: 10px; }
+.tab { flex: 1; text-align: left; border: 2px solid var(--border); background: #fff; border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: all .15s; }
+.tab:hover { border-color: #bfe9e6; }
+.tab.on { border-color: var(--primary); background: linear-gradient(180deg,#ecfbf9,#fff); }
+.tab b { display: block; font-size: 15px; margin-bottom: 4px; }
+.tab span { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.stage { max-width: 1500px; margin: 0 auto; }
+.single iframe { width: 100%; height: 1400px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.grid3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid3 .cell h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; text-align: center; }
+.grid3 .wrap { height: 560px; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+.grid3 iframe { width: 1280px; height: 1500px; border: 0; transform: scale(0.39); transform-origin: 0 0; pointer-events: none; }
+.grid3 .cell a { display: block; text-align: center; font-size: 12px; color: var(--primary-dark); margin-top: 8px; }
+.hide { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>经营总览重设计 · 三方案对比</h1>
+    <div class="sub">点击下方卡片切换方案；「并排」模式可三个一起看。每个方案都可单独打开全屏体验。</div>
+  </div>
+  <div class="mode">
+    <button class="on" onclick="setMode('single', this)">单个查看</button>
+    <button onclick="setMode('grid', this)">三个并排</button>
+  </div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab" data-src="2026-06-01-overview-redesign-A-cockpit.html" onclick="pick(this)">
+    <b>A · 数据驾驶舱</b>
+    <span>深色 hero 指标带 + 迷你趋势线，高密度、值班室风格。强调"一眼看到涨跌"。</span>
+  </button>
+  <button class="tab" data-src="2026-06-01-overview-redesign-B-morning-brief.html" onclick="pick(this)">
+    <b>B · 晨间简报</b>
+    <span>一个超大头条数字 + 业务叙事摘要，大量留白、报刊式排版。强调"先讲结论再看数"。</span>
+  </button>
+  <button class="tab" data-src="2026-06-01-overview-redesign-C-bento.html" onclick="pick(this)">
+    <b>C · 便当网格</b>
+    <span>Bento 瓷砖布局，主收入瓷砖品牌色渐变，设备状态点阵 + 产品结构 donut。强调"模块自由组合"。</span>
+  </button>
+  <button class="tab on" data-src="2026-06-15-overview-redesign-D-hybrid.html" onclick="pick(this)">
+    <b>D · Bento+趋势（推荐）</b>
+    <span>C 的浅色 bento 骨架 + A 的 KPI 趋势线，主砖加一句模板化结论。去掉了 C 的 donut 和 B 的叙事段。与现状风格一致、落地风险最低。</span>
+  </button>
+</div>
+
+<div class="stage">
+  <div class="single" id="singleView">
+    <iframe id="frame" src="2026-06-15-overview-redesign-D-hybrid.html"></iframe>
+  </div>
+  <div class="grid3 hide" id="gridView">
+    <div class="cell">
+      <h4>A · 数据驾驶舱</h4>
+      <div class="wrap"><iframe src="2026-06-01-overview-redesign-A-cockpit.html"></iframe></div>
+      <a href="2026-06-01-overview-redesign-A-cockpit.html" target="_blank">全屏打开 ↗</a>
+    </div>
+    <div class="cell">
+      <h4>B · 晨间简报</h4>
+      <div class="wrap"><iframe src="2026-06-01-overview-redesign-B-morning-brief.html"></iframe></div>
+      <a href="2026-06-01-overview-redesign-B-morning-brief.html" target="_blank">全屏打开 ↗</a>
+    </div>
+    <div class="cell">
+      <h4>C · 便当网格</h4>
+      <div class="wrap"><iframe src="2026-06-01-overview-redesign-C-bento.html"></iframe></div>
+      <a href="2026-06-01-overview-redesign-C-bento.html" target="_blank">全屏打开 ↗</a>
+    </div>
+    <div class="cell">
+      <h4>D · Bento+趋势（推荐）</h4>
+      <div class="wrap"><iframe src="2026-06-15-overview-redesign-D-hybrid.html"></iframe></div>
+      <a href="2026-06-15-overview-redesign-D-hybrid.html" target="_blank">全屏打开 ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function pick(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === tab));
+  document.getElementById('frame').src = tab.dataset.src;
+  setModeName('single');
+}
+function setMode(name, btn) {
+  if (btn) document.querySelectorAll('.mode button').forEach(b => b.classList.toggle('on', b === btn));
+  setModeName(name);
+}
+function setModeName(name) {
+  document.getElementById('singleView').classList.toggle('hide', name !== 'single');
+  document.getElementById('gridView').classList.toggle('hide', name !== 'grid');
+  if (name === 'single') {
+    document.querySelectorAll('.mode button').forEach((b,i) => b.classList.toggle('on', i === 0));
+  }
+}
+</script>
+</body>
+</html>

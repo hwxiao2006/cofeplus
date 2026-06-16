@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>经营总览 · 方案D Bento+趋势（推荐）</title>
+<style>
+:root {
+  --primary: #4ECDC4; --primary-dark: #0f766e; --danger: #ff6b6b; --warning: #ffa502; --success: #2ed573;
+  --ink: #0b132b; --text: #1f2937; --muted: #6b7686; --border: #e8edf3;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; background: #eef2f6; color: var(--text); }
+.layout { display: flex; min-height: 100vh; }
+.sidebar { width: 240px; background: var(--ink); color: #cbd5e1; padding: 20px 14px; flex: none; }
+.sidebar .brand { color: #fff; font-weight: 800; font-size: 17px; margin-bottom: 28px; }
+.sidebar .brand span { color: var(--primary); }
+.nav-item { padding: 10px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 2px; cursor: pointer; }
+.nav-item.active { background: rgba(78,205,196,.16); color: #fff; }
+.main { flex: 1; min-width: 0; padding: 28px 32px 48px; }
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.page-head h1 { font-size: 21px; font-weight: 800; }
+.page-head .sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.filters { display: flex; gap: 8px; }
+.chip { background: #fff; border: 1px solid var(--border); padding: 8px 15px; border-radius: 10px; font-size: 13px; cursor: pointer; }
+.chip.on { background: var(--primary-dark); border-color: var(--primary-dark); color: #fff; font-weight: 600; }
+
+/* ── Bento 主网格 ── */
+.bento {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "rev   rev    orders cups"
+    "chart chart chart  top5"
+    "chart chart chart  top5"
+    "daily daily daily  daily"
+    "devs  devs  alerts alerts";
+}
+
+/* ── 主收入瓷砖（品牌色渐变，吸收 A 的 hero 感）── */
+/* 用 .tile.t-rev 复合选择器提升优先级，覆盖 .tile { background:#fff } */
+.tile.t-rev {
+  grid-area: rev;
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a9 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.t-rev .lbl { font-size: 13px; color: rgba(255,255,255,.78); font-weight: 600; margin-bottom: 8px; }
+.t-rev .big { font-size: 44px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; line-height: 1.05; }
+.t-rev .big small { font-size: 18px; font-weight: 600; opacity: .75; }
+.t-rev .delta { display: inline-block; margin-top: 10px; background: rgba(255,255,255,.18); padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; }
+/* 模板化结论短句（替代 B 的 NLG 叙事段，零风险）*/
+.t-rev .summary { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.82); line-height: 1.55; max-width: 360px; }
+.t-rev .summary b { color: #fff; }
+.t-rev::after { content: "☕"; position: absolute; right: -10px; bottom: -18px; font-size: 110px; opacity: .12; }
+
+/* ── KPI 小瓷砖（吸收 A 的 spark 趋势线，但必须接真实数据）── */
+.t-num { display: flex; flex-direction: column; }
+.t-num .lbl { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.t-num .big { font-size: 32px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+.t-num .big small { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.t-num .delta { font-size: 12px; font-weight: 700; color: #0e9f6e; margin-top: 8px; }
+.t-num .delta.down { color: #d64545; }
+.spark { display: flex; align-items: flex-end; gap: 3px; height: 26px; margin-top: 10px; }
+.spark i { flex: 1; background: linear-gradient(180deg,#7adfd8,var(--primary-dark)); border-radius: 2px 2px 0 0; opacity: .75; }
+.spark i.last { opacity: 1; }
+.t-orders { grid-area: orders; }
+.tile.t-cups  { grid-area: cups; background: #fff7ec; }
+.t-cups .spark i { background: linear-gradient(180deg,#ffd9a0,#f59e0b); }
+
+/* ── 分时图大瓷砖 ── */
+.tile { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+.t-chart { grid-area: chart; display: flex; flex-direction: column; }
+.t-chart .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+.t-chart h3 { font-size: 15px; font-weight: 700; }
+.t-chart .legend { font-size: 11.5px; color: var(--muted); }
+.chart { flex: 1; display: grid; grid-template-columns: repeat(12,1fr); align-items: end; gap: 8px; min-height: 200px; padding-top: 8px; }
+.bar-w { display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.bar-v { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { width: 100%; border-radius: 8px; background: #e0f4f2; }
+.bar.hot { background: linear-gradient(180deg,#5fd9d0,var(--primary-dark)); }
+.bar-l { font-size: 11px; color: var(--muted); }
+
+/* ── 日环比通栏（替代 C 的 4 列通栏，信息更聚焦）── */
+.t-daily { grid-area: daily; }
+.t-daily .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
+.t-daily h3 { font-size: 15px; font-weight: 700; }
+.t-daily .legend { font-size: 11.5px; color: var(--muted); }
+.daily-chart { display: grid; grid-template-columns: repeat(7,1fr); align-items: end; gap: 16px; height: 190px; padding-top: 6px; }
+.day-w { display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.day-pct { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.day-pct.up { color: #0e9f6e; background: #e2f8ee; }
+.day-pct.down { color: #d64545; background: #ffecec; }
+.day-pct.flat { color: var(--muted); background: #f0f3f7; }
+.day-duo { display: flex; align-items: flex-end; gap: 4px; width: 52%; flex: 1; }
+.day-duo i { flex: 1; border-radius: 7px; display: block; }
+.day-duo .rev { background: linear-gradient(180deg,#5fd9d0,var(--primary-dark)); }
+.day-duo .cup { background: #dbe2ea; }
+.day-amt { font-size: 10.5px; color: var(--muted); text-align: center; line-height: 1.45; font-variant-numeric: tabular-nums; }
+.day-w.today .day-amt { color: var(--text); font-weight: 700; }
+.day-w.today .bar-l { color: var(--primary-dark); font-weight: 800; }
+
+/* ── Top5（保留 C 的交互切换，价值高成本低）── */
+.t-top5 { grid-area: top5; }
+.t-top5 .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; flex-wrap: wrap; }
+.t-top5 h3 { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.t5-tabs { display: inline-flex; background: #f0f4f6; border-radius: 8px; padding: 2px; flex: none; }
+.t5-tab { border: 0; background: none; font-size: 12px; font-weight: 600; color: var(--muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.t5-tab.on { background: #fff; color: var(--primary-dark); box-shadow: 0 1px 2px rgba(15,23,42,.08); }
+.t5-list { display: none; }
+.t5-list.on { display: block; }
+.t5 { display: grid; grid-template-columns: 22px 1fr auto; gap: 4px 10px; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; align-items: center; }
+.t5:last-child { border-bottom: 0; }
+.t5 .rk { width: 22px; height: 22px; border-radius: 6px; background: #e6fbf9; color: var(--primary-dark); font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+.t5:first-child .rk { background: var(--primary-dark); color: #fff; }
+.t5 .nm { display: flex; flex-direction: column; }
+.t5 .sub { font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.t5 .amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.t5 .meter { grid-column: 2 / -1; height: 5px; border-radius: 99px; background: #f0f4f6; overflow: hidden; }
+.t5 .meter i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,#7adfd8,var(--primary-dark)); }
+
+/* ── 设备状态（合并到一行，去掉 C 的 donut，避免与商品页重复）── */
+.t-devs { grid-area: devs; }
+.t-devs .head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+.t-devs h3 { font-size: 15px; font-weight: 700; }
+.t-devs .dev-sum { font-size: 12px; color: var(--muted); }
+.dev-pills { display: flex; gap: 10px; }
+.dev-pill { flex: 1; border-radius: 12px; padding: 14px; text-align: center; }
+.dev-pill b { display: block; font-size: 24px; font-weight: 800; }
+.dev-pill span { font-size: 11.5px; }
+.dev-on { background: #ecfdf5; color: #047857; }
+.dev-off { background: #f1f5f9; color: #64748b; }
+.dev-err { background: #fff1f2; color: #be123c; }
+
+/* ── 告警（C 的 tag 化样式）── */
+.tile.t-alert { grid-area: alerts; background: #fffaf3; border: 1px solid #ffe9c7; }
+.t-alert .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.t-alert h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.t-alert .more { font-size: 12px; color: var(--primary-dark); cursor: pointer; }
+.al { display: flex; gap: 10px; font-size: 12.5px; padding: 8px 0; align-items: baseline; }
+.al + .al { border-top: 1px dashed #f3e3c7; }
+.al time { color: var(--muted); flex: none; font-variant-numeric: tabular-nums; }
+.al .tag { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #ffe1e1; color: #c0392b; }
+.al .tag.warn { background: #fff0d4; color: #b06000; }
+.al .tag.ok { background: #dcf7e7; color: #11865c; }
+
+/* 中间断点（1100–1440）：4 列 → 仍 4 列但 Top5 拉窄，避免瓷砖拉太宽留白 */
+@media (max-width: 1320px) {
+  .bento { grid-template-columns: repeat(4, 1fr); }
+}
+/* 平板：2 列重排 */
+@media (max-width: 1100px) {
+  .bento { grid-template-columns: repeat(2,1fr); grid-template-areas:
+    "rev rev" "orders cups" "chart chart" "top5 top5" "daily daily" "devs alerts"; }
+}
+/* 移动端：单列 */
+@media (max-width: 640px) {
+  .main { padding: 18px 16px 36px; }
+  .bento { grid-template-columns: 1fr; grid-template-areas:
+    "rev" "orders" "cups" "chart" "top5" "daily" "devs" "alerts"; }
+  .t-rev .big { font-size: 36px; }
+  .dev-pills { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">COFE<span>+</span> 运营控制台</div>
+    <div class="nav-item active">📊 经营总览</div>
+    <div class="nav-item">⚙️ 设备</div>
+    <div class="nav-item">📦 商品管理</div>
+    <div class="nav-item">🧂 物料</div>
+    <div class="nav-item">🧾 订单</div>
+    <div class="nav-item">🛠 故障列表</div>
+    <div class="nav-item">👥 人员管理</div>
+  </aside>
+  <main class="main">
+
+    <div class="page-head">
+      <div>
+        <h1>经营总览</h1>
+        <div class="sub">星巴克咖啡 · 14 台设备 · 更新于 16:42</div>
+      </div>
+      <div class="filters">
+        <button class="chip on">今日</button>
+        <button class="chip">近7日</button>
+        <button class="chip">近30日</button>
+        <button class="chip">设备：全部 ▾</button>
+      </div>
+    </div>
+
+    <div class="bento">
+
+      <!-- 主收入瓷砖：C 的品牌色 + A 的 hero 感 + 模板短句（替代 B 的 NLG 叙事）-->
+      <div class="tile t-rev">
+        <div class="lbl">今日实收金额</div>
+        <div class="big">¥3,302<small>.50</small></div>
+        <span class="delta">▲ 12.4% 对比昨日</span>
+        <div class="summary">实收超昨日 <b>12.4%</b>，峰值在 <b>13:00</b>；需关注 <b>RCK403</b> 缺料停机。</div>
+      </div>
+
+      <!-- KPI 瓷砖：吸收 A 的 spark，但 spark 必须接真实 7 日数据 -->
+      <div class="tile t-num t-orders">
+        <div class="lbl">🧾 订单数</div>
+        <div class="big">142</div>
+        <div class="delta">▲ 8.0% 对比昨日</div>
+        <div class="spark"><i style="height:40%"></i><i style="height:35%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:64%"></i><i class="last" style="height:88%"></i></div>
+      </div>
+      <div class="tile t-num t-cups">
+        <div class="lbl">☕ 出杯量</div>
+        <div class="big">156<small>杯</small></div>
+        <div class="delta">▲ 6.1% 对比昨日</div>
+        <div class="spark"><i style="height:36%"></i><i style="height:42%"></i><i style="height:50%"></i><i style="height:46%"></i><i style="height:66%"></i><i style="height:72%"></i><i class="last" style="height:90%"></i></div>
+      </div>
+
+      <!-- 分时图大瓷砖 -->
+      <div class="tile t-chart">
+        <div class="head">
+          <h3>分时销售额</h3>
+          <span class="legend">深色 = 高于日内均值 · 峰值 13:00（¥412）</span>
+        </div>
+        <div class="chart">
+          <div class="bar-w"><span class="bar-v">86</span><div class="bar" style="height:18%"></div><span class="bar-l">9</span></div>
+          <div class="bar-w"><span class="bar-v">142</span><div class="bar" style="height:30%"></div><span class="bar-l">10</span></div>
+          <div class="bar-w"><span class="bar-v">221</span><div class="bar" style="height:46%"></div><span class="bar-l">11</span></div>
+          <div class="bar-w"><span class="bar-v">368</span><div class="bar hot" style="height:78%"></div><span class="bar-l">12</span></div>
+          <div class="bar-w"><span class="bar-v">412</span><div class="bar hot" style="height:88%"></div><span class="bar-l">13</span></div>
+          <div class="bar-w"><span class="bar-v">298</span><div class="bar" style="height:62%"></div><span class="bar-l">14</span></div>
+          <div class="bar-w"><span class="bar-v">344</span><div class="bar hot" style="height:72%"></div><span class="bar-l">15</span></div>
+          <div class="bar-w"><span class="bar-v">286</span><div class="bar" style="height:60%"></div><span class="bar-l">16</span></div>
+          <div class="bar-w"><span class="bar-v">252</span><div class="bar" style="height:52%"></div><span class="bar-l">17</span></div>
+          <div class="bar-w"><span class="bar-v">196</span><div class="bar" style="height:42%"></div><span class="bar-l">18</span></div>
+          <div class="bar-w"><span class="bar-v">158</span><div class="bar" style="height:34%"></div><span class="bar-l">19</span></div>
+          <div class="bar-w"><span class="bar-v">112</span><div class="bar" style="height:24%"></div><span class="bar-l">20</span></div>
+        </div>
+      </div>
+
+      <!-- Top5：保留 C 的切换交互 -->
+      <div class="tile t-top5">
+        <div class="head">
+          <h3>今日 Top 5</h3>
+          <div class="t5-tabs">
+            <button class="t5-tab on" onclick="switchTop5('amt', this)">按金额</button>
+            <button class="t5-tab" onclick="switchTop5('cup', this)">按杯量</button>
+          </div>
+        </div>
+        <div class="t5-list on" data-top5="amt">
+          <div class="t5"><span class="rk">1</span><span class="nm">生椰拿铁<span class="sub">42 杯</span></span><span class="amt">¥686</span><span class="meter"><i style="width:100%"></i></span></div>
+          <div class="t5"><span class="rk">2</span><span class="nm">经典美式<span class="sub">38 杯</span></span><span class="amt">¥542</span><span class="meter"><i style="width:79%"></i></span></div>
+          <div class="t5"><span class="rk">3</span><span class="nm">冰美式<span class="sub">45 杯</span></span><span class="amt">¥495</span><span class="meter"><i style="width:72%"></i></span></div>
+          <div class="t5"><span class="rk">4</span><span class="nm">卡布奇诺<span class="sub">26 杯</span></span><span class="amt">¥438</span><span class="meter"><i style="width:64%"></i></span></div>
+          <div class="t5"><span class="rk">5</span><span class="nm">焦糖玛奇朵<span class="sub">21 杯</span></span><span class="amt">¥395</span><span class="meter"><i style="width:58%"></i></span></div>
+        </div>
+        <div class="t5-list" data-top5="cup">
+          <div class="t5"><span class="rk">1</span><span class="nm">冰美式<span class="sub">¥495</span></span><span class="amt">45 杯</span><span class="meter"><i style="width:100%"></i></span></div>
+          <div class="t5"><span class="rk">2</span><span class="nm">生椰拿铁<span class="sub">¥686</span></span><span class="amt">42 杯</span><span class="meter"><i style="width:93%"></i></span></div>
+          <div class="t5"><span class="rk">3</span><span class="nm">经典美式<span class="sub">¥542</span></span><span class="amt">38 杯</span><span class="meter"><i style="width:84%"></i></span></div>
+          <div class="t5"><span class="rk">4</span><span class="nm">卡布奇诺<span class="sub">¥438</span></span><span class="amt">26 杯</span><span class="meter"><i style="width:58%"></i></span></div>
+          <div class="t5"><span class="rk">5</span><span class="nm">焦糖玛奇朵<span class="sub">¥395</span></span><span class="amt">21 杯</span><span class="meter"><i style="width:47%"></i></span></div>
+        </div>
+      </div>
+
+      <!-- 日环比通栏 -->
+      <div class="tile t-daily">
+        <div class="head">
+          <h3>日环比 · 近 7 日</h3>
+          <span class="legend">彩柱 = 交易额 · 灰柱 = 杯量 · 百分比为交易额对前一日环比</span>
+        </div>
+        <div class="daily-chart">
+          <div class="day-w"><span class="day-pct flat">—</span><div class="day-duo"><i class="rev" style="height:62%"></i><i class="cup" style="height:70%"></i></div><span class="day-amt">¥2,710<br>128杯</span><span class="bar-l">5/26</span></div>
+          <div class="day-w"><span class="day-pct up">+8.9%</span><div class="day-duo"><i class="rev" style="height:70%"></i><i class="cup" style="height:78%"></i></div><span class="day-amt">¥2,950<br>139杯</span><span class="bar-l">5/27</span></div>
+          <div class="day-w"><span class="day-pct down">-8.8%</span><div class="day-duo"><i class="rev" style="height:60%"></i><i class="cup" style="height:68%"></i></div><span class="day-amt">¥2,690<br>125杯</span><span class="bar-l">5/28</span></div>
+          <div class="day-w"><span class="day-pct up">+16.0%</span><div class="day-duo"><i class="rev" style="height:76%"></i><i class="cup" style="height:82%"></i></div><span class="day-amt">¥3,120<br>144杯</span><span class="bar-l">5/29</span></div>
+          <div class="day-w"><span class="day-pct up">+7.7%</span><div class="day-duo"><i class="rev" style="height:85%"></i><i class="cup" style="height:88%"></i></div><span class="day-amt">¥3,360<br>151杯</span><span class="bar-l">5/30</span></div>
+          <div class="day-w"><span class="day-pct down">-12.6%</span><div class="day-duo"><i class="rev" style="height:68%"></i><i class="cup" style="height:75%"></i></div><span class="day-amt">¥2,938<br>135杯</span><span class="bar-l">5/31</span></div>
+          <div class="day-w today"><span class="day-pct up">+12.4%</span><div class="day-duo"><i class="rev" style="height:82%"></i><i class="cup" style="height:100%"></i></div><span class="day-amt">¥3,302<br>156杯</span><span class="bar-l">今日</span></div>
+        </div>
+      </div>
+
+      <!-- 设备状态（合并行，去掉 donut）-->
+      <div class="tile t-devs">
+        <div class="head">
+          <h3>设备状态</h3>
+          <span class="dev-sum">共 14 台</span>
+        </div>
+        <div class="dev-pills">
+          <div class="dev-pill dev-on"><b>11</b><span>在线</span></div>
+          <div class="dev-pill dev-off"><b>2</b><span>离线</span></div>
+          <div class="dev-pill dev-err"><b>1</b><span>故障</span></div>
+        </div>
+      </div>
+
+      <!-- 告警 -->
+      <div class="tile t-alert">
+        <div class="head">
+          <h3>⚡ 需要关注</h3>
+          <span class="more">查看全部 ›</span>
+        </div>
+        <div class="al"><time>16:31</time><span class="tag">故障</span><span>RCK403 奶箱缺料停机，已自动派单维修</span></div>
+        <div class="al"><time>15:48</time><span class="tag warn">低料</span><span>RCK386 糖浆余量 18%，建议今日补料</span></div>
+        <div class="al"><time>14:02</time><span class="tag ok">恢复</span><span>RCK410 补料完成，恢复在线出杯</span></div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+<script>
+  function switchTop5(kind, btn) {
+    document.querySelectorAll('.t5-tab').forEach(t => t.classList.toggle('on', t === btn));
+    document.querySelectorAll('.t5-list').forEach(l => l.classList.toggle('on', l.dataset.top5 === kind));
+  }
+</script>
+</body>
+</html>
