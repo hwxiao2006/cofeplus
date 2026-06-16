@@ -185,6 +185,7 @@
         '设备状态': 'Device Status',
         '产品结构': 'Product Mix',
         '⚡ 需要关注': '⚡ Needs Attention',
+        '今日': 'Today',
         '近 7 日': 'Last 7 days',
         '近 30 日': 'Last 30 days',
         '统计当日数据': 'Showing today',

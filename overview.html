@@ -853,14 +853,16 @@
         .ov-chart .hourly-chart { flex: 1; border-top: 1px dashed var(--border); }
 
         .ov-top5 { grid-area: top5; }
-        .ov-toggle { display: inline-flex; background: #f0f4f6; border-radius: 999px; padding: 2px; }
-        .ov-toggle button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; font-size: 12px; color: var(--text-muted); cursor: pointer; font-weight: 600; }
+        .ov-top5 .ov-tile-head { flex-wrap: wrap; align-items: center; row-gap: 8px; }
+        .ov-top5 .ov-tile-head h3 { white-space: nowrap; }
+        .ov-toggle { display: inline-flex; background: #f0f4f6; border-radius: 999px; padding: 2px; flex: none; }
+        .ov-toggle button { border: 0; background: none; padding: 5px 10px; border-radius: 999px; font-size: 11.5px; color: var(--text-muted); cursor: pointer; font-weight: 600; white-space: nowrap; }
         .ov-toggle button.on { background: var(--primary-dark); color: #fff; }
         .ov-top5 .top5-list { border: 0; padding: 0; gap: 4px; }
         .ov-t5 { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
         .ov-t5:last-child { border-bottom: 0; }
         .ov-t5 .ov-t5-amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
-        .ov-t5 .ov-t5-sub { font-size: 11px; color: var(--text-muted); }
+        .ov-t5 .ov-t5-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
         .ov-t5 .ov-t5-meter { grid-column: 1 / -1; height: 5px; border-radius: 999px; background: #f0f4f6; overflow: hidden; }
         .ov-t5 .ov-t5-meter i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg,#7adfd8,var(--primary-dark)); }
 
@@ -2756,6 +2758,10 @@
                 // ignore localStorage write failures
             }
             renderAdminSidebarTranslations();
+            // 重渲染总览，让 JS 拼接的动态文案（环比/单位/告警等）跟随语言切换
+            if (typeof renderOverview === 'function') {
+                try { renderOverview(); } catch (e) { /* overview may not be active */ }
+            }
         }
 
         let overviewCurrency = 'CNY';
@@ -3597,15 +3603,16 @@
         }
 
         // 需要关注：基于当前选中设备里的故障/离线设备生成告警（演示优先，但跟随筛选）
-        function getOverviewAlerts(selectedIds) {
+        function getOverviewAlerts(selectedIds, lang = 'zh') {
+            const en = lang === 'en';
             const statusMap = getOverviewDeviceStatusMap();
             const alerts = [];
             const faultDev = selectedIds.find(id => statusMap[id] === 'fault');
-            if (faultDev) alerts.push({ time: '16:31', tag: '故障', cls: '', text: `${faultDev} 奶箱缺料停机，已自动派单维修` });
+            if (faultDev) alerts.push({ time: '16:31', tag: en ? 'Fault' : '故障', cls: '', text: en ? `${faultDev} milk box empty, stopped — repair dispatched` : `${faultDev} 奶箱缺料停机，已自动派单维修` });
             const offlineDev = selectedIds.find(id => statusMap[id] === 'offline');
-            if (offlineDev) alerts.push({ time: '15:48', tag: '低料', cls: 'warn', text: `${offlineDev} 糖浆余量 18%，建议今日补料` });
+            if (offlineDev) alerts.push({ time: '15:48', tag: en ? 'Low' : '低料', cls: 'warn', text: en ? `${offlineDev} syrup at 18%, refill today` : `${offlineDev} 糖浆余量 18%，建议今日补料` });
             const onlineDev = selectedIds.find(id => statusMap[id] === 'online');
-            if (onlineDev) alerts.push({ time: '14:02', tag: '恢复', cls: 'ok', text: `${onlineDev} 补料完成，恢复在线出杯` });
+            if (onlineDev) alerts.push({ time: '14:02', tag: en ? 'Recovered' : '恢复', cls: 'ok', text: en ? `${onlineDev} refilled, back online` : `${onlineDev} 补料完成，恢复在线出杯` });
             return alerts;
         }
 
@@ -3639,16 +3646,17 @@
         function renderTop5List() {
             const node = document.getElementById('top5List');
             if (!node) return;
+            const cupsUnit = (window.CofeAdminPageI18n && CofeAdminPageI18n.getLang && CofeAdminPageI18n.getLang() === 'en') ? ' cups' : ' 杯';
             const key = overviewTop5Mode;
             const ranked = overviewTop5Data.slice().sort((a, b) => (b[key] || 0) - (a[key] || 0));
             const maxVal = Math.max(...ranked.map(item => item[key] || 0), 1);
             node.innerHTML = ranked.map(item => {
                 const primary = key === 'cups'
-                    ? `${(item.cups || 0).toLocaleString('zh-CN')} 杯`
+                    ? `${(item.cups || 0).toLocaleString('zh-CN')}${cupsUnit}`
                     : formatCurrency(item.sales);
                 const sub = key === 'cups'
                     ? formatCurrency(item.sales)
-                    : `${(item.cups || 0).toLocaleString('zh-CN')} 杯`;
+                    : `${(item.cups || 0).toLocaleString('zh-CN')}${cupsUnit}`;
                 const pct = Math.round(((item[key] || 0) / maxVal) * 100);
                 return `
                     <div class="ov-t5">
@@ -3688,10 +3696,19 @@
             const today = history[history.length - 1];
             const yesterday = history[history.length - 2] || today;
 
+            // 语言感知：动态拼接的文案按当前后台语言渲染，避免中英混排
+            const ovLang = (window.CofeAdminPageI18n && CofeAdminPageI18n.getLang && CofeAdminPageI18n.getLang() === 'en') ? 'en' : 'zh';
+            const t = (zh, en) => (ovLang === 'en' ? en : zh);
+
             // ---- 按时间周期聚合（今日真实 / 7日真实累计 / 30日按比例估算）----
             const periodCfg = OVERVIEW_PERIODS[overviewPeriod];
-            document.getElementById('ovPeriodHint').textContent = periodCfg.hint;
-            document.getElementById('ovNetLabel').textContent = `${periodCfg.label}实收金额`;
+            const periodLabel = t(periodCfg.label, { today: 'Today', '7d': 'Last 7 days', '30d': 'Last 30 days' }[overviewPeriod]);
+            document.getElementById('ovPeriodHint').textContent = t(periodCfg.hint, {
+                today: 'Showing today',
+                '7d': 'Last 7 calendar days (cumulative)',
+                '30d': 'Last 30 calendar days (cumulative)'
+            }[overviewPeriod]);
+            document.getElementById('ovNetLabel').textContent = t(`${periodCfg.label}实收金额`, `${periodLabel} Net Sales`);
 
             const win = history.slice(-Math.min(periodCfg.days, history.length));
             const periodScale = periodCfg.days / win.length; // 30日窗口数据不足时外推
@@ -3708,7 +3725,7 @@
                 const secondAvg = trendWindow.slice(-half).reduce((s, d) => s + (d[key] || 0), 0) / half;
                 return ((secondAvg - firstAvg) / (firstAvg || 1)) * 100;
             };
-            const deltaSuffix = overviewPeriod === 'today' ? '对比昨日' : '对比上一周期';
+            const deltaSuffix = overviewPeriod === 'today' ? t('对比昨日', 'vs yesterday') : t('对比上一周期', 'vs previous period');
 
             const netVal = overviewPeriod === 'today' ? today.net : periodSum('net');
             const grossVal = overviewPeriod === 'today' ? today.gross : periodSum('gross');
@@ -3723,14 +3740,14 @@
             const netDelta = document.getElementById('ovNetDelta');
             netDelta.textContent = `${formatPercent(netDeltaPct)} ${deltaSuffix}`;
             netDelta.className = `ov-delta ${compareClass(netDeltaPct)}`;
-            document.getElementById('ovRevSub').textContent = `销售总额 ${formatCurrency(grossVal)} · 退款 ${formatCurrency(Math.max(0, grossVal - netVal))}`;
+            document.getElementById('ovRevSub').textContent = `${t('销售总额', 'Gross')} ${formatCurrency(grossVal)} · ${t('退款', 'Refund')} ${formatCurrency(Math.max(0, grossVal - netVal))}`;
 
             // 订单 / 出杯
             document.getElementById('ovOrders').textContent = ordersVal.toLocaleString('zh-CN');
             const ordersDelta = document.getElementById('ovOrdersDelta');
             ordersDelta.textContent = formatPercent(ordersDeltaPct);
             ordersDelta.className = `ov-delta sm ${compareClass(ordersDeltaPct)}`;
-            document.getElementById('ovCups').innerHTML = `${cupsVal.toLocaleString('zh-CN')} <small>杯</small>`;
+            document.getElementById('ovCups').innerHTML = `${cupsVal.toLocaleString('zh-CN')} <small>${t('杯', 'cups')}</small>`;
             const cupsDelta = document.getElementById('ovCupsDelta');
             cupsDelta.textContent = formatPercent(cupsDeltaPct);
             cupsDelta.className = `ov-delta sm ${compareClass(cupsDeltaPct)}`;
@@ -3742,7 +3759,9 @@
                 return Math.round(win.reduce((sum, d) => sum + (d.hourly?.[hour] || 0), 0) / win.length);
             });
             document.getElementById('hourlyChartTypeLabel').textContent =
-                overviewPeriod === 'today' ? '深色为峰值时段' : `${periodCfg.label}日均 · 深色为峰值时段`;
+                overviewPeriod === 'today'
+                    ? t('深色为峰值时段', 'Darker bars mark peak hours')
+                    : t(`${periodCfg.label}日均 · 深色为峰值时段`, `${periodLabel} daily average · darker = peak`);
             const hourMax = Math.max(...hourValues, 1);
             const hourAvg = hourValues.reduce((sum, v) => sum + v, 0) / hourValues.length;
             document.getElementById('hourlyChart').innerHTML = hourIndexes.map((hour, idx) => {
@@ -3768,7 +3787,7 @@
                     ? '<span class="ov-day-pct flat">—</span>'
                     : `<span class="ov-day-pct ${compareClass(pct)}">${formatPercent(pct)}</span>`;
                 const isToday = idx === week.length - 1;
-                const dateLabel = isToday ? '今日' : day.date.slice(5).replace('-', '/');
+                const dateLabel = isToday ? t('今日', 'Today') : day.date.slice(5).replace('-', '/');
                 return `
                     <div class="ov-day${isToday ? ' today' : ''}">
                         ${pctHtml}
@@ -3776,7 +3795,7 @@
                             <i class="rev" style="height:${Math.round((day.gross / wGrossMax) * 100)}%"></i>
                             <i class="cup" style="height:${Math.round((day.cups / wCupsMax) * 100)}%"></i>
                         </div>
-                        <div class="ov-day-amt">${formatCurrency(day.gross)}<br>${day.cups.toLocaleString('zh-CN')}杯</div>
+                        <div class="ov-day-amt">${formatCurrency(day.gross)}<br>${day.cups.toLocaleString('zh-CN')}${t('杯', ' cups')}</div>
                         <div class="ov-day-date">${dateLabel}</div>
                     </div>
                 `;
@@ -3792,9 +3811,10 @@
             const statuses = selectedIds.map(id => statusMap[id] || 'online');
             const onlineCount = statuses.filter(s => s === 'online').length;
             document.getElementById('ovDevOnline').textContent = onlineCount;
-            document.getElementById('ovDevTotal').textContent = `/ ${selectedIds.length} 在线`;
+            document.getElementById('ovDevTotal').textContent = `/ ${selectedIds.length} ${t('在线', 'online')}`;
+            const statusTitle = { online: t('在线', 'Online'), offline: t('离线', 'Offline'), fault: t('故障', 'Fault') };
             document.getElementById('ovDevDots').innerHTML = statuses
-                .map(s => `<i class="${s === 'online' ? '' : s}" title="${s === 'online' ? '在线' : (s === 'offline' ? '离线' : '故障')}"></i>`)
+                .map(s => `<i class="${s === 'online' ? '' : s}" title="${statusTitle[s]}"></i>`)
                 .join('');
 
             // 产品结构 donut（取品类前三）
@@ -3807,15 +3827,16 @@
                 return `${donutColors[i]} ${start}% ${acc}%`;
             }).join(', ');
             document.getElementById('ovDonut').style.background = `conic-gradient(${stops})`;
+            const structLabelMap = { '浓缩咖啡': 'Espresso', '奶咖': 'Milk Coffee', '茶饮/特调': 'Tea / Specialty' };
             document.getElementById('ovStructLegend').innerHTML = typeShare
-                .map((item, i) => `<span><i style="background:${donutColors[i]}"></i>${item.label} ${item.value}%</span>`)
+                .map((item, i) => `<span><i style="background:${donutColors[i]}"></i>${t(item.label, structLabelMap[item.label] || item.label)} ${item.value}%</span>`)
                 .join('');
 
             // 需要关注
-            const alerts = getOverviewAlerts(selectedIds);
+            const alerts = getOverviewAlerts(selectedIds, ovLang);
             document.getElementById('ovAlertList').innerHTML = alerts.length
                 ? alerts.map(a => `<div class="ov-al"><time>${a.time}</time><span class="ov-al-tag ${a.cls}">${a.tag}</span><span>${a.text}</span></div>`).join('')
-                : '<div class="ov-alert-empty">所选设备暂无异常，运行正常 ✓</div>';
+                : `<div class="ov-alert-empty">${t('所选设备暂无异常，运行正常 ✓', 'No anomalies in selected devices — all running ✓')}</div>`;
         }
 
         // ==================== 渲染菜单 ====================
