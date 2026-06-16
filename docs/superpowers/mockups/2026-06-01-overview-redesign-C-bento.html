@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>经营总览 · 方案C 便当网格</title>
+<style>
+:root {
+  --primary: #4ECDC4; --primary-dark: #0f766e; --danger: #ff6b6b; --warning: #ffa502;
+  --ink: #0b132b; --text: #1f2937; --muted: #6b7686; --border: #e8edf3;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; background: #eef2f6; color: var(--text); }
+.layout { display: flex; min-height: 100vh; }
+.sidebar { width: 240px; background: var(--ink); color: #cbd5e1; padding: 20px 14px; flex: none; }
+.sidebar .brand { color: #fff; font-weight: 800; font-size: 17px; margin-bottom: 28px; }
+.sidebar .brand span { color: var(--primary); }
+.nav-item { padding: 10px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 2px; cursor: pointer; }
+.nav-item.active { background: rgba(78,205,196,.16); color: #fff; }
+.main { flex: 1; min-width: 0; padding: 28px 32px 48px; }
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.page-head h1 { font-size: 21px; font-weight: 800; }
+.page-head .sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.filters { display: flex; gap: 8px; }
+.chip { background: #fff; border: 1px solid var(--border); padding: 8px 15px; border-radius: 10px; font-size: 13px; cursor: pointer; }
+.chip.on { background: var(--primary-dark); border-color: var(--primary-dark); color: #fff; font-weight: 600; }
+
+/* ── Bento ── */
+.bento {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "rev rev orders cups"
+    "chart chart chart top5"
+    "chart chart chart top5"
+    "daily daily daily daily"
+    "devices struct alert alert";
+}
+.tile { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.05); position: relative; overflow: hidden; }
+.tile .lbl { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.tile .lbl .ico { font-size: 14px; }
+
+.t-rev { grid-area: rev; background: linear-gradient(135deg, #0f766e 0%, #14b8a9 100%); color: #fff; }
+.t-rev .lbl { color: rgba(255,255,255,.75); }
+.t-rev .big { font-size: 44px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; line-height: 1.05; }
+.t-rev .big small { font-size: 18px; font-weight: 600; opacity: .75; }
+.t-rev .delta { display: inline-block; margin-top: 10px; background: rgba(255,255,255,.18); padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; }
+.t-rev .gross { margin-top: 10px; font-size: 12px; color: rgba(255,255,255,.65); }
+.t-rev::after { content: "☕"; position: absolute; right: -8px; bottom: -14px; font-size: 96px; opacity: .14; }
+
+.t-num .big { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.t-num .big small { font-size: 15px; font-weight: 600; color: var(--muted); }
+.t-num .delta { font-size: 12px; font-weight: 700; color: #0e9f6e; margin-top: 6px; display: inline-block; }
+.t-orders { grid-area: orders; }
+.t-cups { grid-area: cups; background: #fff7ec; }
+
+.t-chart { grid-area: chart; display: flex; flex-direction: column; }
+.t-chart .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.t-chart h3 { font-size: 15px; font-weight: 700; }
+.t-chart .legend { font-size: 11.5px; color: var(--muted); }
+.chart { flex: 1; display: grid; grid-template-columns: repeat(12,1fr); align-items: end; gap: 8px; min-height: 200px; padding-top: 8px; }
+.bar-w { display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; border-radius: 8px; background: #e0f4f2; position: relative; }
+.bar.hot { background: linear-gradient(180deg,#5fd9d0,var(--primary-dark)); }
+.bar-l { font-size: 11px; color: var(--muted); }
+
+/* 日环比瓷砖（近7日，交易额+杯量双柱） */
+.t-daily { grid-area: daily; }
+.t-daily .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.t-daily h3 { font-size: 15px; font-weight: 700; }
+.t-daily .legend { font-size: 11.5px; color: var(--muted); }
+.daily-chart { display: grid; grid-template-columns: repeat(7,1fr); align-items: end; gap: 16px; height: 190px; padding-top: 6px; }
+.day-w { display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+.day-pct { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.day-pct.up { color: #0e9f6e; background: #e2f8ee; }
+.day-pct.down { color: #d64545; background: #ffecec; }
+.day-pct.flat { color: var(--muted); background: #f0f3f7; }
+.day-duo { display: flex; align-items: flex-end; gap: 4px; width: 52%; flex: 1; }
+.day-duo i { flex: 1; border-radius: 7px; display: block; }
+.day-duo .rev { background: linear-gradient(180deg,#5fd9d0,var(--primary-dark)); }
+.day-duo .cup { background: #dbe2ea; }
+.day-amt { font-size: 10.5px; color: var(--muted); text-align: center; line-height: 1.45; font-variant-numeric: tabular-nums; }
+.day-w.today .day-amt { color: var(--text); font-weight: 700; }
+.day-w.today .bar-l { color: var(--primary-dark); font-weight: 800; }
+
+.t-top5 { grid-area: top5; }
+.t-top5 .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 8px; flex-wrap: wrap; }
+.t-top5 h3 { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.t5-tabs { display: inline-flex; background: #f0f4f6; border-radius: 8px; padding: 2px; flex: none; }
+.t5-tab { border: 0; background: none; font-size: 12px; font-weight: 600; color: var(--muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.t5-tab.on { background: #fff; color: var(--primary-dark); box-shadow: 0 1px 2px rgba(15,23,42,.08); }
+.t5-list { display: none; }
+.t5-list.on { display: block; }
+.t5 { display: grid; grid-template-columns: 22px 1fr auto; gap: 4px 10px; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; align-items: center; }
+.t5:last-child { border-bottom: 0; }
+.t5 .rk { width: 22px; height: 22px; border-radius: 6px; background: #e6fbf9; color: var(--primary-dark); font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+.t5:first-child .rk { background: var(--primary-dark); color: #fff; }
+.t5 .nm { display: flex; flex-direction: column; }
+.t5 .sub { font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.t5 .amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.t5 .meter { grid-column: 2 / -1; height: 5px; border-radius: 99px; background: #f0f4f6; overflow: hidden; }
+.t5 .meter i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,#7adfd8,var(--primary-dark)); }
+
+.t-devices { grid-area: devices; }
+.dev-num { display: flex; align-items: baseline; gap: 6px; margin: 4px 0 10px; }
+.dev-num b { font-size: 32px; font-weight: 800; }
+.dev-num span { font-size: 12.5px; color: var(--muted); }
+.dev-dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.dev-dots i { width: 16px; height: 16px; border-radius: 5px; background: #2ed573; opacity: .85; }
+.dev-dots i.off { background: #cbd5e1; }
+.dev-dots i.err { background: var(--danger); }
+
+.t-struct { grid-area: struct; }
+.donut { width: 92px; height: 92px; border-radius: 50%; margin: 8px auto 10px;
+  background: conic-gradient(var(--primary-dark) 0 62%, #ffd166 62% 85%, #e3e9ef 85% 100%); position: relative; }
+.donut::after { content:"62%"; position:absolute; inset: 18px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; }
+.struct-legend { font-size: 11.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+.struct-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+
+.t-alert { grid-area: alert; background: #fffaf3; border: 1px solid #ffe9c7; }
+.t-alert h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.al { display: flex; gap: 10px; font-size: 12.5px; padding: 7px 0; align-items: baseline; }
+.al time { color: var(--muted); flex: none; font-variant-numeric: tabular-nums; }
+.al .tag { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #ffe1e1; color: #c0392b; }
+.al .tag.warn { background: #fff0d4; color: #b06000; }
+.al .tag.ok { background: #dcf7e7; color: #11865c; }
+
+@media (max-width: 1100px) {
+  .bento { grid-template-columns: repeat(2,1fr); grid-template-areas:
+    "rev rev" "orders cups" "chart chart" "chart chart" "top5 top5" "daily daily" "devices struct" "alert alert"; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">COFE<span>+</span> 运营控制台</div>
+    <div class="nav-item active">📊 经营总览</div>
+    <div class="nav-item">⚙️ 设备</div>
+    <div class="nav-item">📦 商品管理</div>
+    <div class="nav-item">🧂 物料</div>
+    <div class="nav-item">🧾 订单</div>
+    <div class="nav-item">🛠 故障列表</div>
+    <div class="nav-item">👥 人员管理</div>
+  </aside>
+  <main class="main">
+
+    <div class="page-head">
+      <div>
+        <h1>经营总览</h1>
+        <div class="sub">星巴克咖啡 · 14 台设备 · 更新于 16:42</div>
+      </div>
+      <div class="filters">
+        <button class="chip on">今日</button>
+        <button class="chip">近7日</button>
+        <button class="chip">近30日</button>
+        <button class="chip">设备：全部 ▾</button>
+      </div>
+    </div>
+
+    <div class="bento">
+      <div class="tile t-rev">
+        <div class="lbl">今日实收金额</div>
+        <div class="big">¥3,302<small>.50</small></div>
+        <span class="delta">▲ 12.4% 对比昨日</span>
+        <div class="gross">销售总额 ¥3,486 · 退款 ¥183.50</div>
+      </div>
+      <div class="tile t-num t-orders">
+        <div class="lbl"><span class="ico">🧾</span>订单数</div>
+        <div class="big">142</div>
+        <span class="delta">▲ 8.0%</span>
+      </div>
+      <div class="tile t-num t-cups">
+        <div class="lbl"><span class="ico">☕</span>出杯量</div>
+        <div class="big">156 <small>杯</small></div>
+        <span class="delta">▲ 6.1%</span>
+      </div>
+
+      <div class="tile t-chart">
+        <div class="head">
+          <h3>分时销售额</h3>
+          <span class="legend">深色 = 高于日内均值 · 峰值 13:00（¥412）</span>
+        </div>
+        <div class="chart">
+          <div class="bar-w"><div class="bar" style="height:18%"></div><span class="bar-l">9</span></div>
+          <div class="bar-w"><div class="bar" style="height:30%"></div><span class="bar-l">10</span></div>
+          <div class="bar-w"><div class="bar" style="height:46%"></div><span class="bar-l">11</span></div>
+          <div class="bar-w"><div class="bar hot" style="height:78%"></div><span class="bar-l">12</span></div>
+          <div class="bar-w"><div class="bar hot" style="height:88%"></div><span class="bar-l">13</span></div>
+          <div class="bar-w"><div class="bar hot" style="height:62%"></div><span class="bar-l">14</span></div>
+          <div class="bar-w"><div class="bar hot" style="height:72%"></div><span class="bar-l">15</span></div>
+          <div class="bar-w"><div class="bar" style="height:60%"></div><span class="bar-l">16</span></div>
+          <div class="bar-w"><div class="bar" style="height:52%"></div><span class="bar-l">17</span></div>
+          <div class="bar-w"><div class="bar" style="height:42%"></div><span class="bar-l">18</span></div>
+          <div class="bar-w"><div class="bar" style="height:34%"></div><span class="bar-l">19</span></div>
+          <div class="bar-w"><div class="bar" style="height:24%"></div><span class="bar-l">20</span></div>
+        </div>
+      </div>
+
+      <div class="tile t-daily">
+        <div class="head">
+          <h3>日环比 · 近 7 日</h3>
+          <span class="legend">彩柱 = 交易额 · 灰柱 = 杯量 · 百分比为交易额对前一日环比</span>
+        </div>
+        <div class="daily-chart">
+          <div class="day-w"><span class="day-pct flat">—</span><div class="day-duo"><i class="rev" style="height:62%"></i><i class="cup" style="height:70%"></i></div><span class="day-amt">¥2,710<br>128杯</span><span class="bar-l">5/26</span></div>
+          <div class="day-w"><span class="day-pct up">+8.9%</span><div class="day-duo"><i class="rev" style="height:70%"></i><i class="cup" style="height:78%"></i></div><span class="day-amt">¥2,950<br>139杯</span><span class="bar-l">5/27</span></div>
+          <div class="day-w"><span class="day-pct down">-8.8%</span><div class="day-duo"><i class="rev" style="height:60%"></i><i class="cup" style="height:68%"></i></div><span class="day-amt">¥2,690<br>125杯</span><span class="bar-l">5/28</span></div>
+          <div class="day-w"><span class="day-pct up">+16.0%</span><div class="day-duo"><i class="rev" style="height:76%"></i><i class="cup" style="height:82%"></i></div><span class="day-amt">¥3,120<br>144杯</span><span class="bar-l">5/29</span></div>
+          <div class="day-w"><span class="day-pct up">+7.7%</span><div class="day-duo"><i class="rev" style="height:85%"></i><i class="cup" style="height:88%"></i></div><span class="day-amt">¥3,360<br>151杯</span><span class="bar-l">5/30</span></div>
+          <div class="day-w"><span class="day-pct down">-12.6%</span><div class="day-duo"><i class="rev" style="height:68%"></i><i class="cup" style="height:75%"></i></div><span class="day-amt">¥2,938<br>135杯</span><span class="bar-l">5/31</span></div>
+          <div class="day-w today"><span class="day-pct up">+12.4%</span><div class="day-duo"><i class="rev" style="height:82%"></i><i class="cup" style="height:100%"></i></div><span class="day-amt">¥3,302<br>156杯</span><span class="bar-l">今日</span></div>
+        </div>
+      </div>
+
+      <div class="tile t-top5">
+        <div class="head">
+          <h3>今日 Top 5</h3>
+          <div class="t5-tabs">
+            <button class="t5-tab on" onclick="switchTop5('amt', this)">按金额</button>
+            <button class="t5-tab" onclick="switchTop5('cup', this)">按杯量</button>
+          </div>
+        </div>
+        <!-- 按金额排名 -->
+        <div class="t5-list on" data-top5="amt">
+          <div class="t5"><span class="rk">1</span><span class="nm">生椰拿铁<span class="sub">42 杯</span></span><span class="amt">¥686</span><span class="meter"><i style="width:100%"></i></span></div>
+          <div class="t5"><span class="rk">2</span><span class="nm">经典美式<span class="sub">38 杯</span></span><span class="amt">¥542</span><span class="meter"><i style="width:79%"></i></span></div>
+          <div class="t5"><span class="rk">3</span><span class="nm">冰美式<span class="sub">45 杯</span></span><span class="amt">¥495</span><span class="meter"><i style="width:72%"></i></span></div>
+          <div class="t5"><span class="rk">4</span><span class="nm">卡布奇诺<span class="sub">26 杯</span></span><span class="amt">¥438</span><span class="meter"><i style="width:64%"></i></span></div>
+          <div class="t5"><span class="rk">5</span><span class="nm">焦糖玛奇朵<span class="sub">21 杯</span></span><span class="amt">¥395</span><span class="meter"><i style="width:58%"></i></span></div>
+        </div>
+        <!-- 按杯量排名（顺序不同：冰美式登顶）-->
+        <div class="t5-list" data-top5="cup">
+          <div class="t5"><span class="rk">1</span><span class="nm">冰美式<span class="sub">¥495</span></span><span class="amt">45 杯</span><span class="meter"><i style="width:100%"></i></span></div>
+          <div class="t5"><span class="rk">2</span><span class="nm">生椰拿铁<span class="sub">¥686</span></span><span class="amt">42 杯</span><span class="meter"><i style="width:93%"></i></span></div>
+          <div class="t5"><span class="rk">3</span><span class="nm">经典美式<span class="sub">¥542</span></span><span class="amt">38 杯</span><span class="meter"><i style="width:84%"></i></span></div>
+          <div class="t5"><span class="rk">4</span><span class="nm">卡布奇诺<span class="sub">¥438</span></span><span class="amt">26 杯</span><span class="meter"><i style="width:58%"></i></span></div>
+          <div class="t5"><span class="rk">5</span><span class="nm">焦糖玛奇朵<span class="sub">¥395</span></span><span class="amt">21 杯</span><span class="meter"><i style="width:47%"></i></span></div>
+        </div>
+      </div>
+
+      <div class="tile t-devices">
+        <div class="lbl"><span class="ico">⚙️</span>设备状态</div>
+        <div class="dev-num"><b>11</b><span>/ 14 在线</span></div>
+        <div class="dev-dots">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i class="off"></i><i class="off"></i><i class="err"></i>
+        </div>
+      </div>
+
+      <div class="tile t-struct">
+        <div class="lbl"><span class="ico">🍹</span>产品结构</div>
+        <div class="donut"></div>
+        <div class="struct-legend">
+          <span><i style="background:var(--primary-dark)"></i>咖啡类 62%</span>
+          <span><i style="background:#ffd166"></i>奶茶类 23%</span>
+          <span><i style="background:#e3e9ef"></i>其他 15%</span>
+        </div>
+      </div>
+
+      <div class="tile t-alert">
+        <h3>⚡ 需要关注</h3>
+        <div class="al"><time>16:31</time><span class="tag">故障</span><span>RCK403 奶箱缺料停机，已自动派单维修</span></div>
+        <div class="al"><time>15:48</time><span class="tag warn">低料</span><span>RCK386 糖浆余量 18%，建议今日补料</span></div>
+        <div class="al"><time>14:02</time><span class="tag ok">恢复</span><span>RCK410 补料完成，恢复在线出杯</span></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script>
+  function switchTop5(kind, btn) {
+    document.querySelectorAll('.t5-tab').forEach(t => t.classList.toggle('on', t === btn));
+    document.querySelectorAll('.t5-list').forEach(l => l.classList.toggle('on', l.dataset.top5 === kind));
+  }
+</script>
+</body>
+</html>
