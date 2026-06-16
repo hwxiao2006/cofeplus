@@ -849,10 +849,10 @@
         .ov-orders { grid-area: orders; }
         .ov-cups-tile { grid-area: cups; background: #fff7ec; }
 
-        .ov-chart { grid-area: chart; display: flex; flex-direction: column; }
+        .ov-chart { grid-area: chart; display: flex; flex-direction: column; min-height: 340px; }
         .ov-chart .hourly-chart { flex: 1; border-top: 1px dashed var(--border); }
 
-        .ov-top5 { grid-area: top5; }
+        .ov-top5 { grid-area: top5; min-height: 340px; }
         .ov-top5 .ov-tile-head { flex-wrap: wrap; align-items: center; row-gap: 8px; }
         .ov-top5 .ov-tile-head h3 { white-space: nowrap; }
         .ov-toggle { display: inline-flex; background: #f0f4f6; border-radius: 999px; padding: 2px; flex: none; }
@@ -861,7 +861,7 @@
         .ov-top5 .top5-list { border: 0; padding: 0; gap: 4px; }
         .ov-t5 { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
         .ov-t5:last-child { border-bottom: 0; }
-        .ov-t5 .ov-t5-amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+        .ov-t5 .ov-t5-amt { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
         .ov-t5 .ov-t5-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
         .ov-t5 .ov-t5-meter { grid-column: 1 / -1; height: 5px; border-radius: 999px; background: #f0f4f6; overflow: hidden; }
         .ov-t5 .ov-t5-meter i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg,#7adfd8,var(--primary-dark)); }
