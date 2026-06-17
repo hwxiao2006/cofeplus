@@ -2471,6 +2471,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="shared/admin-mock-data.js"></script>
     <script src="shared/admin-staff-access.js"></script>
     <script src="shared/admin-page-i18n.js"></script>
     <script>
@@ -3178,10 +3179,26 @@
             return runtimeLocationMap[locationCode] || '';
         }
 
+        // 与 devices.html 共用同一份默认设备源，避免"新用户"时两页设备数量不一致
+        function getSharedDefaultDeviceOptions() {
+            const shared = (typeof window !== 'undefined' && window.COFE_SHARED_MOCK_DATA) || {};
+            const defaults = Array.isArray(shared.defaultDevices) ? shared.defaultDevices : [];
+            const runtimeLocationMap = buildRuntimeLocationMap();
+            const optionMap = {};
+            defaults.forEach(device => {
+                const id = normalizeDeviceSearchId(device?.id);
+                if (!id || optionMap[id]) return;
+                optionMap[id] = { id, locationName: resolveDeviceLocationName(device, runtimeLocationMap) || '' };
+            });
+            const options = Object.values(optionMap);
+            // 共享库不可用时的最终兜底，保持页面可用
+            return options.length ? options : ['RCK111', 'RCK112', 'RCK113'].map(id => ({ id, locationName: '' }));
+        }
+
         function loadDeviceSearchOptions() {
             const storedDevices = parseStoredDeviceSearchArray('devicesData');
             if (!storedDevices.length) {
-                return ['RCK111', 'RCK112', 'RCK113'].map(id => ({ id, locationName: '' }));
+                return getSharedDefaultDeviceOptions();
             }
 
             const runtimeLocationMap = buildRuntimeLocationMap();
@@ -3199,7 +3216,7 @@
             });
 
             const options = Object.values(optionMap);
-            return options.length ? options : ['RCK111', 'RCK112', 'RCK113'].map(id => ({ id, locationName: '' }));
+            return options.length ? options : getSharedDefaultDeviceOptions();
         }
 
         function rebuildDeviceSearchData() {
