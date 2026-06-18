@@ -3219,8 +3219,26 @@
             return options.length ? options : getSharedDefaultDeviceOptions();
         }
 
+        // 与 devices.html 一致的员工/商户设备隔离：受限员工只看到分配给自己的设备
+        // 返回 null 表示不隔离（如超级管理员或非员工登录）。
+        // 注意：'overview' 不在 DEVICE_SCOPED_MODULES 内，故按员工分配设备(devices)隔离，
+        // 这与 devices.html 在常规(继承)场景下的可见设备一致。
+        function getOverviewVisibleDeviceIdSet() {
+            const helper = window.CofeAdminStaffAccess;
+            if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function') return null;
+            const access = helper.resolveCurrentStaffAccess();
+            if (!access || !access.isScoped || !access.currentStaff) return null;
+            const assigned = Array.isArray(access.currentStaff.devices) ? access.currentStaff.devices : [];
+            return new Set(assigned.map(id => String(id || '').trim()).filter(Boolean));
+        }
+
         function rebuildDeviceSearchData() {
-            deviceSearchOptions = loadDeviceSearchOptions();
+            let options = loadDeviceSearchOptions();
+            const visibleSet = getOverviewVisibleDeviceIdSet();
+            if (visibleSet) {
+                options = options.filter(item => visibleSet.has(String(item.id || '').trim()));
+            }
+            deviceSearchOptions = options;
             allDeviceOptions = deviceSearchOptions.map(item => item.id);
             deviceSearchLocationMap = {};
             deviceSearchOptions.forEach(item => {
