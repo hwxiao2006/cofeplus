@@ -693,6 +693,81 @@
             padding: 0 14px;
         }
 
+        /* ===== 设备入场 · 分步向导重设计 ===== */
+        .content-shell { max-width: 780px; margin: 0 auto; padding-bottom: 96px; }
+
+        .wiz-stepper { display: flex; align-items: flex-start; margin: 6px 4px 22px; }
+        .wiz-node { display: flex; flex-direction: column; align-items: center; width: 34%; flex: 0 0 auto; }
+        .wiz-node .dot { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: #fff; border: 2px solid #d4dbe4; color: #98a2b3; transition: all .25s; }
+        .wiz-node .cap { margin-top: 9px; font-size: 12.5px; font-weight: 600; color: #98a2b3; text-align: center; }
+        .wiz-node.active .dot { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 6px 16px rgba(78,205,196,.45); }
+        .wiz-node.active .cap { color: var(--text-primary); }
+        .wiz-node.done .dot { background: #e8faf8; border-color: var(--primary); color: var(--primary-dark); }
+        .wiz-node.done .cap { color: var(--primary-dark); }
+        .wiz-line { flex: 1; height: 2px; background: #d4dbe4; margin-top: 17px; border-radius: 2px; transition: .25s; }
+        .wiz-line.done { background: var(--primary); }
+
+        .wiz-step[hidden] { display: none; }
+        .wiz-head { margin: 2px 2px 14px; }
+        .wiz-head h2 { margin: 0; font-size: 21px; font-weight: 750; letter-spacing: -.2px; color: var(--text-primary); }
+        .wiz-head p { margin: 6px 0 0; font-size: 13px; color: var(--text-secondary); }
+
+        .wiz-step .form-section { background: #fff; border: 1px solid #e6ebf1; border-radius: 16px; box-shadow: 0 1px 3px rgba(16,24,40,.04), 0 10px 24px rgba(16,24,40,.05); overflow: hidden; margin-bottom: 16px; }
+        .wiz-step .form-section:last-child { margin-bottom: 4px; }
+        .wiz-step .section-title { font-size: 15px; font-weight: 700; color: var(--text-primary); padding: 16px 18px 2px; display: flex; align-items: center; gap: 9px; min-height: 0; border: 0; background: transparent; }
+        .wiz-step .section-title::before { content: ""; width: 4px; height: 15px; border-radius: 2px; background: var(--primary); flex: 0 0 auto; }
+        .wiz-step .section-title small { font-weight: 500 !important; color: var(--danger) !important; margin-left: 4px; }
+        .wiz-step .rows { padding: 4px 18px 14px; }
+        .wiz-step .row { flex-direction: column; align-items: stretch; gap: 7px; padding: 11px 0; min-height: 0; }
+        .wiz-step .row + .row { border-top: 1px solid #f1f4f7; }
+        .wiz-step .label { min-width: 0; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .wiz-step .label small { color: var(--danger); margin-left: 3px; }
+        .wiz-step .value { justify-content: flex-start; text-align: left; }
+        .wiz-step .value > input:not([type=checkbox]):not([type=file]),
+        .wiz-step .value select,
+        .wiz-step .value textarea { width: 100%; height: 46px; padding: 0 14px; border: 1.5px solid #d4dbe4; border-radius: 10px; background: #fff; font-size: 14px; color: var(--text-primary); transition: border-color .15s, box-shadow .15s; }
+        .wiz-step .value textarea { height: auto; min-height: 88px; padding: 12px 14px; line-height: 1.5; }
+        .wiz-step .value > input:not([type=checkbox]):not([type=file]):focus,
+        .wiz-step .value select:focus,
+        .wiz-step .value textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px #e8faf8; }
+        .wiz-step .value select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 38px; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2398a2b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+        .wiz-step .location-select-wrap { width: 100%; }
+
+        .wiz-step .switch-group { border: 0; background: #eef2f6; border-radius: 10px; padding: 3px; gap: 2px; display: inline-flex; }
+        .wiz-step .switch-item { background: transparent; border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+        .wiz-step .switch-item.active { background: #fff; color: var(--primary-dark); box-shadow: 0 1px 3px rgba(0,0,0,.1); font-weight: 600; }
+
+        .wiz-paycard { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1.5px solid #d4dbe4; border-radius: 12px; cursor: pointer; transition: .15s; background: #fff; margin-bottom: 11px; }
+        .wiz-paycard:last-child { margin-bottom: 2px; }
+        .wiz-paycard:hover { border-color: var(--primary); }
+        .wiz-paycard.is-checked { border-color: var(--primary); background: #e8faf8; }
+        .wiz-paycard input[type=checkbox] { position: absolute; opacity: 0; pointer-events: none; }
+        .wiz-paybox { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #d4dbe4; display: grid; place-items: center; flex: 0 0 auto; transition: .15s; }
+        .wiz-paycard.is-checked .wiz-paybox { background: var(--primary); border-color: var(--primary); }
+        .wiz-paycard.is-checked .wiz-paybox::after { content: "✓"; color: #fff; font-size: 14px; font-weight: 800; }
+        .wiz-payicon { width: 38px; height: 38px; border-radius: 9px; display: grid; place-items: center; font-size: 19px; flex: 0 0 auto; }
+        .wiz-paytext b { font-size: 14px; font-weight: 600; display: block; }
+        .wiz-paytext small { font-size: 12px; color: #98a2b3; }
+
+        .wiz-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-top: 1px solid #e6ebf1; padding: 13px 20px; }
+        .wiz-actionbar .inner { max-width: 780px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+        .wbtn { height: 48px; padding: 0 24px; border-radius: 12px; font-size: 15px; font-weight: 650; cursor: pointer; border: 1.5px solid #d4dbe4; background: #fff; color: var(--text-primary); transition: .15s; }
+        .wbtn:hover { border-color: #98a2b3; }
+        .wbtn-primary { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 8px 18px rgba(78,205,196,.36); }
+        .wbtn-primary:hover { filter: brightness(.97); }
+        .wstep-count { font-size: 13px; color: #98a2b3; font-weight: 600; }
+        .wspacer { flex: 1; }
+
+        @media (max-width: 768px) {
+            .content-shell { padding-bottom: 86px; }
+            .wiz-stepper { margin: 4px 0 16px; }
+            .wiz-node .cap { font-size: 11.5px; }
+            .wiz-step .form-section { border-radius: 14px; border-left: 1px solid #e6ebf1; border-right: 1px solid #e6ebf1; }
+            .wiz-head h2 { font-size: 19px; }
+            .wbtn { height: 44px; padding: 0 15px; font-size: 14px; }
+            .wiz-actionbar .inner { gap: 8px; }
+        }
+
         @media (max-width: 1023px) {
             .page {
                 padding: 12px 12px 18px;
@@ -865,13 +940,22 @@
         </header>
 
         <div class="content-shell">
-            <div class="form-grid">
-                <div class="form-column left-column">
+            <div class="wizard">
+                <nav class="wiz-stepper">
+                    <div class="wiz-node active" data-node="1"><div class="dot">1</div><div class="cap">基本信息</div></div>
+                    <div class="wiz-line" data-line="1"></div>
+                    <div class="wiz-node" data-node="2"><div class="dot">2</div><div class="cap">运维 · 支付</div></div>
+                    <div class="wiz-line" data-line="2"></div>
+                    <div class="wiz-node" data-node="3"><div class="dot">3</div><div class="cap">广告屏</div></div>
+                </nav>
+
+                <div class="wiz-step" data-step="1">
+                    <div class="wiz-head"><h2>基本信息</h2><p>选择要入场的设备与投放点位，坐标信息将自动带出。</p></div>
                     <section class="form-section">
                         <div class="section-title">基本信息</div>
                         <div class="rows">
                             <div class="row">
-                                <div class="label">选择设备</div>
+                                <div class="label">选择设备<small>*</small></div>
                                 <div class="value">
                                     <select id="deviceSelect" onchange="onDeviceChange()">
                                         <option value="">请选择</option>
@@ -879,7 +963,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="label">点位名称</div>
+                                <div class="label">点位名称<small>*</small></div>
                                 <div class="value">
                                     <div class="location-select-wrap">
                                         <select id="locationSelect" onchange="onLocationChange()">
@@ -887,20 +971,6 @@
                                         </select>
                                         <button type="button" class="quick-link-btn" onclick="openQuickCreateLocationModal()">+ 新增点位</button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="form-section">
-                        <div class="section-title">运维人员<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
-                        <div class="rows">
-                            <div class="row">
-                                <div class="label">选择员工</div>
-                                <div class="value">
-                                    <select id="operatorSelect" onchange="onOperatorChange()">
-                                        <option value="">请选择</option>
-                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -929,7 +999,59 @@
                     </section>
 
                     <section class="form-section">
-                        <div class="section-title">其他设置</div>
+                        <div class="section-title">点位照片</div>
+                        <div class="rows">
+                            <div class="location-upload-wrap">
+                                <div class="location-upload-head">
+                                    <label class="entry-upload-btn">
+                                        选择图片
+                                        <input id="locationImagesInput" type="file" accept="image/*" multiple onchange="handleEntryImageUpload(event)">
+                                    </label>
+                                    <span id="locationImagesCount" class="location-upload-count">0张</span>
+                                </div>
+                                <div id="locationImagesPreview" class="location-images-preview"></div>
+                                <div class="location-upload-tip">支持本地上传多张点位照片，提交后会同步到设备详情的点位图片区域。</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="wiz-step" data-step="2" hidden>
+                    <div class="wiz-head"><h2>运维 · 支付</h2><p>指派运维人员、配置收款方式，并设定设备运行参数。</p></div>
+                    <section class="form-section">
+                        <div class="section-title">运维人员<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="label">选择员工</div>
+                                <div class="value">
+                                    <select id="operatorSelect" onchange="onOperatorChange()">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <div class="section-title">支付方式<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
+                        <div class="rows">
+                            <label class="wiz-paycard">
+                                <input id="payQrCheckbox" type="checkbox" checked>
+                                <span class="wiz-paybox"></span>
+                                <span class="wiz-payicon" style="background:#e8f7ee;">💚</span>
+                                <span class="wiz-paytext"><b>微信 / 支付宝 扫码支付</b><small>主流扫码收款，默认开启</small></span>
+                            </label>
+                            <label class="wiz-paycard">
+                                <input id="payDigitalRmbCheckbox" type="checkbox">
+                                <span class="wiz-paybox"></span>
+                                <span class="wiz-payicon" style="background:#fdeaea;">💴</span>
+                                <span class="wiz-paytext"><b>数字人民币支付</b><small>支持 e-CNY 钱包付款</small></span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <div class="section-title">运行设置</div>
                         <div class="rows">
                             <div class="row">
                                 <div class="label">节能模式</div>
@@ -997,31 +1119,8 @@
                     </section>
                 </div>
 
-                <div class="form-column right-column">
-                    <section class="form-section">
-                        <div class="section-title">支付方式选择<small style="color:#ef4444;margin-left:4px;">（至少选择一个）</small></div>
-                        <div class="rows">
-                            <div class="row">
-                                <div class="label">微信/支付宝扫码支付</div>
-                                <div class="value">
-                                    <div class="pay-item">
-                                        <span style="color:#9ca3af;">˄ ˅</span>
-                                        <input id="payQrCheckbox" type="checkbox" checked>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="label">数字人民币支付</div>
-                                <div class="value">
-                                    <div class="pay-item">
-                                        <span style="color:#9ca3af;">˄ ˅</span>
-                                        <input id="payDigitalRmbCheckbox" type="checkbox">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
+                <div class="wiz-step" data-step="3" hidden>
+                    <div class="wiz-head"><h2>广告屏</h2><p>上传广告屏投放内容（选填，可稍后在设备详情补充）。</p></div>
                     <section class="form-section">
                         <div class="section-title">广告屏设置</div>
                         <div class="rows">
@@ -1058,31 +1157,17 @@
                             </div>
                         </div>
                     </section>
-
-                    <section class="form-section">
-                        <div class="section-title">点位照片</div>
-                        <div class="rows">
-                            <div class="location-upload-wrap">
-                                <div class="location-upload-head">
-                                    <label class="entry-upload-btn">
-                                        选择图片
-                                        <input id="locationImagesInput" type="file" accept="image/*" multiple onchange="handleEntryImageUpload(event)">
-                                    </label>
-                                    <span id="locationImagesCount" class="location-upload-count">0张</span>
-                                </div>
-                                <div id="locationImagesPreview" class="location-images-preview"></div>
-                                <div class="location-upload-tip">支持本地上传多张点位照片，提交后会同步到设备详情的点位图片区域。</div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="form-section actions-section">
-                        <div class="actions">
-                            <button class="btn" onclick="window.location.href='devices.html'">取消</button>
-                            <button class="btn btn-primary" onclick="submitEntry()">提交入场</button>
-                        </div>
-                    </section>
                 </div>
+            </div>
+        </div>
+
+        <div class="wiz-actionbar">
+            <div class="inner">
+                <button class="wbtn" id="wizCancel" onclick="window.location.href='devices.html'">取消</button>
+                <button class="wbtn" id="wizPrev" hidden onclick="wizStep(-1)">← 上一步</button>
+                <span class="wstep-count" id="wizCount">第 1 / 3 步</span>
+                <span class="wspacer"></span>
+                <button class="wbtn wbtn-primary" id="wizNext" onclick="wizNextOrSubmit()">下一步 →</button>
             </div>
         </div>
     </div>
@@ -1108,6 +1193,7 @@
                 <label class="quick-location-field">
                     <span>点位分类 *</span>
                     <select id="quickLocationCategory">
+                        <option value="">请选择分类</option>
                         <option value="exhibition">展会点位</option>
                         <option value="operation">运营点位</option>
                     </select>
@@ -1654,7 +1740,7 @@
         function resetQuickCreateLocationForm() {
             document.getElementById('quickLocationName').value = '';
             document.getElementById('quickLocationCode').value = generateNextLocationCodeForEntry();
-            document.getElementById('quickLocationCategory').value = 'operation';
+            document.getElementById('quickLocationCategory').value = '';
             document.getElementById('quickLocationStatus').value = 'operational';
             document.getElementById('quickLocationManager').value = '';
             document.getElementById('quickLocationPhone').value = '';
@@ -1703,6 +1789,10 @@
         function validateQuickCreateLocation(location) {
             if (!location.name || !location.code || !location.address) {
                 return '请填写点位名称、编码和地址';
+            }
+            const selectedCategory = String(document.getElementById('quickLocationCategory')?.value || '').trim();
+            if (!selectedCategory) {
+                return '请选择点位分类';
             }
             const normalizedCode = String(location.code || '').trim();
             const duplicated = locationsData.some(existing =>
@@ -2335,6 +2425,19 @@
                 return;
             }
 
+            const operatorId = String(document.getElementById('operatorSelect')?.value || '').trim();
+            if (!operatorId) {
+                alert('请选择运维人员');
+                return;
+            }
+
+            const payQrChecked = !!document.getElementById('payQrCheckbox')?.checked;
+            const payDigitalRmbChecked = !!document.getElementById('payDigitalRmbCheckbox')?.checked;
+            if (!payQrChecked && !payDigitalRmbChecked) {
+                alert('请至少选择一种支付方式');
+                return;
+            }
+
             const merchantContext = resolveEntryCurrentMerchantContext();
             if (!merchantContext.isResolved) {
                 alert('未识别当前商户，无法提交设备入场');
@@ -2362,7 +2465,84 @@
             alert(`设备 ${deviceId} 已完成入场`);
             window.location.href = 'devices.html';
         }
+
+        // ===== 分步向导：导航 + 每步先校验再放行 =====
+        var wizCurrent = 1;
+        var WIZ_TOTAL = 3;
+
+        function wizValidateStep(step) {
+            if (step === 1) {
+                var deviceId = String(document.getElementById('deviceSelect')?.value || '').trim();
+                if (!deviceId) { alert('请选择设备'); return false; }
+                var locationCode = String(document.getElementById('locationSelect')?.value || '').trim();
+                if (!locationCode) { alert('请选择点位'); return false; }
+            } else if (step === 2) {
+                var operatorId = String(document.getElementById('operatorSelect')?.value || '').trim();
+                if (!operatorId) { alert('请选择运维人员'); return false; }
+                var qr = !!document.getElementById('payQrCheckbox')?.checked;
+                var rmb = !!document.getElementById('payDigitalRmbCheckbox')?.checked;
+                if (!qr && !rmb) { alert('请至少选择一种支付方式'); return false; }
+            }
+            return true;
+        }
+
+        function wizRender() {
+            document.querySelectorAll('.wiz-step').forEach(function(card) {
+                card.hidden = (parseInt(card.dataset.step, 10) !== wizCurrent);
+            });
+            document.querySelectorAll('.wiz-node').forEach(function(node) {
+                var i = parseInt(node.dataset.node, 10);
+                node.classList.toggle('active', i === wizCurrent);
+                node.classList.toggle('done', i < wizCurrent);
+            });
+            document.querySelectorAll('.wiz-line').forEach(function(line) {
+                line.classList.toggle('done', parseInt(line.dataset.line, 10) < wizCurrent);
+            });
+            var count = document.getElementById('wizCount');
+            if (count) { count.textContent = '第 ' + wizCurrent + ' / ' + WIZ_TOTAL + ' 步'; }
+            var cancel = document.getElementById('wizCancel');
+            if (cancel) { cancel.hidden = (wizCurrent !== 1); }
+            var prev = document.getElementById('wizPrev');
+            if (prev) { prev.hidden = (wizCurrent === 1); }
+            var next = document.getElementById('wizNext');
+            if (next) { next.textContent = (wizCurrent === WIZ_TOTAL) ? '提交入场' : '下一步 →'; }
+            if (typeof window !== 'undefined' && window.scrollTo) {
+                try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+            }
+        }
+
+        function wizStep(delta) {
+            var target = wizCurrent + delta;
+            if (target < 1 || target > WIZ_TOTAL) { return; }
+            if (delta > 0 && !wizValidateStep(wizCurrent)) { return; }
+            wizCurrent = target;
+            wizRender();
+        }
+
+        function wizNextOrSubmit() {
+            if (wizCurrent < WIZ_TOTAL) {
+                wizStep(1);
+                return;
+            }
+            if (!wizValidateStep(1)) { wizCurrent = 1; wizRender(); return; }
+            if (!wizValidateStep(2)) { wizCurrent = 2; wizRender(); return; }
+            submitEntry();
+        }
+
+        function initWizardPaymentCards() {
+            document.querySelectorAll('.wiz-paycard input[type="checkbox"]').forEach(function(cb) {
+                var sync = function() {
+                    var card = cb.closest('.wiz-paycard');
+                    if (card) { card.classList.toggle('is-checked', cb.checked); }
+                };
+                cb.addEventListener('change', sync);
+                sync();
+            });
+        }
+
         initPage();
+        initWizardPaymentCards();
+        wizRender();
     </script>
 </body>
 </html>

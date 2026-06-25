@@ -36,8 +36,8 @@ test('主筛选栏下拉与搜索框应沿用订单页输入样式', () => {
 test('设备管理页设备录入入口应使用可直接跳转的链接', () => {
   const entryLinks = html.match(/href="device-entry\.html"/g) || [];
   assert.strictEqual(entryLinks.length, 2);
-  assert.ok(/<a class="page-primary-btn" href="device-entry\.html">\+ 设备录入<\/a>/.test(html));
-  assert.ok(/<a class="mobile-fab" href="device-entry\.html" aria-label="设备录入">\+<\/a>/.test(html));
+  assert.ok(/<a class="page-primary-btn" href="device-entry\.html">\+ 设备入场<\/a>/.test(html));
+  assert.ok(/<a class="mobile-fab" href="device-entry\.html" aria-label="设备入场">\+<\/a>/.test(html));
   assert.ok(!/function\s+openDeviceEntryPage\s*\(/.test(html));
 });
 
