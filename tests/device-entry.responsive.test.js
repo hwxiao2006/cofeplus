@@ -16,10 +16,14 @@ function test(name, fn) {
   }
 }
 
-test('设备入场页应使用桌面双栏容器结构', () => {
-  assert.ok(html.includes('class="form-grid"'));
-  assert.ok(html.includes('class="form-column left-column"'));
-  assert.ok(html.includes('class="form-column right-column"'));
+test('设备入场页应使用分步向导容器结构', () => {
+  assert.ok(html.includes('class="wizard"'));
+  assert.ok(html.includes('class="wiz-stepper"'));
+  assert.ok(/<div class="wiz-step" data-step="1">/.test(html));
+  assert.ok(/data-step="2"/.test(html));
+  assert.ok(/data-step="3"/.test(html));
+  assert.ok(html.includes('class="wiz-actionbar"'));
+  assert.ok(!html.includes('class="form-column left-column"'));
 });
 
 test('设备入场页应保留脚本依赖的关键字段ID', () => {

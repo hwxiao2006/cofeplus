@@ -34,7 +34,7 @@ test('设备页应保留新设计变量，但菜单样式回到共享侧栏结�
 
 test('设备页头部与筛选栏应使用新文案与录入入口', () => {
   assert.ok(/管理和监控所有咖啡设备/.test(html));
-  assert.ok(/>\s*\+\s*设备录入\s*</.test(html));
+  assert.ok(/>\s*\+\s*设备入场\s*</.test(html));
   assert.ok(/placeholder="搜索设备编号或点位\.\.\."/.test(html));
   assert.ok(/<option value="all">全部状态<\/option>/.test(html));
   assert.ok(/<option value="all">全部点位<\/option>/.test(html));
