@@ -95,7 +95,7 @@ test('设备页列表与详情都不应再展示商户字段', () => {
 
 test('设备页移动端应提供状态色条卡片与悬浮录入按钮', () => {
   assert.ok(/device-mobile-status-bar/.test(html));
-  assert.ok(/查看详情\s*→/.test(html));
+  assert.ok(/>详情<\/button>/.test(html));
   assert.ok(/class="mobile-fab"/.test(html));
 });
 

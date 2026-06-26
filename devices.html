@@ -4587,6 +4587,33 @@
         @media (max-width:1024px){
             .mobile-fab{ background:var(--primary); box-shadow:0 14px 30px rgba(78,205,196,.32); }
         }
+
+        /* ===== 设备详情弹窗 restyle（对齐新风格 · 纯视觉）===== */
+        .detail-top-id{ font-family:var(--font-ui); font-size:20px; font-weight:750; color:var(--text-primary); }
+        .detail-top-loc{ font-size:13px; color:var(--text-secondary); }
+        .detail-top-back{ border:1px solid var(--border); border-radius:8px; background:#fff; color:var(--text-secondary); }
+        /* 头部徽章 → pill（文本自带 ● 圆点）*/
+        .detail-top-pill{ display:inline-flex; align-items:center; gap:5px; height:25px; padding:0 11px; border-radius:999px; font-size:12.5px; font-weight:600; border:0; background:#e7faec; color:#1aa251; }
+        .detail-top-pill.stopped{ background:#f1f3f5; color:#7b8489; }
+        .detail-top-pill.faulted{ background:#ffecec; color:#e0484c; }
+        .detail-top-pill.entered{ background:var(--primary-soft); color:var(--primary-dark); }
+        /* 操作按钮统一青绿/中性，去蓝 */
+        .detail-top-action-btn{ border:1px solid var(--border); border-radius:9px; color:var(--text-secondary); background:#fff; font-weight:600; }
+        .detail-top-action-btn:hover{ border-color:var(--primary); color:var(--primary-dark); }
+        .detail-top-action-btn.blue{ background:var(--primary-soft); color:var(--primary-dark); border-color:transparent; box-shadow:none; font-weight:600; }
+        .detail-top-action-btn.blue:hover{ background:#d6f5f1; color:var(--primary-dark); }
+        .detail-side-restart-primary, .detail-side-restart-caret{ background:var(--primary); color:#fff; border-color:var(--primary); }
+        /* 卡片标题加青绿强调条 */
+        .detail-card-title{ display:flex; align-items:center; gap:9px; font-size:15px; font-weight:700; }
+        .detail-card-title::before{ content:""; width:4px; height:14px; border-radius:2px; background:var(--primary); flex:0 0 auto; }
+        /* 行：值不再贴右 */
+        .detail-row strong{ text-align:left; font-weight:600; }
+        /* 概览 / 状态卡 → 两列 key-value（标签在上、值在下）*/
+        .detail-card-basic, .detail-card-status{ display:grid; grid-template-columns:1fr 1fr; gap:0 28px; align-content:start; }
+        .detail-card-basic > .detail-card-title, .detail-card-status > .detail-card-title{ grid-column:1 / -1; }
+        .detail-card-basic > .detail-row, .detail-card-status > .detail-row{ display:flex; flex-direction:column; align-items:flex-start; gap:3px; }
+        .detail-card-status > .detail-status-note{ grid-column:1 / -1; }
+        @media(max-width:640px){ .detail-card-basic, .detail-card-status{ grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
@@ -6078,7 +6105,7 @@
                     <td><span class="heartbeat-time">${heartbeatText}</span></td>
                     <td>
                         <div class="action-group">
-                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">查看</button>
+                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">详情</button>
                             <button class="table-link-btn muted ${isSalesEnabled ? 'danger' : ''}" type="button" onclick="toggleSales('${device.id}')">${isSalesEnabled ? '停卖' : '恢复'}</button>
                         </div>
                     </td>
@@ -6117,7 +6144,7 @@
                             <span>${heartbeatText}</span>
                         </div>
                         <div class="device-mobile-actions">
-                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">查看详情 →</button>
+                            <button class="table-link-btn" type="button" onclick="viewDetail('${device.id}')">详情</button>
                             <button class="table-link-btn muted ${isSalesEnabled ? 'danger' : ''}" type="button" onclick="toggleSales('${device.id}')">${isSalesEnabled ? '停卖' : '恢复'}</button>
                         </div>
                     </article>
