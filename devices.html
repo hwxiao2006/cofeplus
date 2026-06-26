@@ -6512,6 +6512,7 @@
                     deviceId: device.id,
                     locationName: device.entered === false || !device.location ? '未入场' : locationName,
                     categoryName: categoryMap[device.category] || device.category || '-',
+                    status: device.status,
                     statusName: statusMap[device.status] || device.status,
                     salesName: salesMap[device.sales] || device.sales,
                     heartbeat: device.heartbeat
