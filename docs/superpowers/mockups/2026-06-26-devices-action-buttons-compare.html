@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>操作按钮方案对比</title>
+<style>
+  :root{
+    --primary:#4ECDC4; --primary-dark:#3dbdb4; --primary-soft:#e8faf8;
+    --text-primary:#2d3436; --text-secondary:#636e72; --text-faint:#9aa3a8;
+    --bg-page:#f4f6f9; --bg-card:#fff; --border:#e9ecef;
+    --danger:#ff6b6b; --danger-soft:#ffecec; --danger-dark:#e0484c;
+    --success:#2ed573; --success-soft:#e7faec; --success-dark:#1aa251;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:-apple-system,"system-ui","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; background:var(--bg-page); color:var(--text-primary); padding:28px 32px; }
+  h2{ font-size:18px; margin:0 0 4px; }
+  .sub{ font-size:13px; color:var(--text-secondary); margin-bottom:22px; }
+  .variant{ background:var(--bg-card); border:1px solid var(--border); border-radius:12px; box-shadow:0 1px 2px rgba(45,52,54,.04),0 6px 18px rgba(45,52,54,.06); padding:0; margin-bottom:18px; overflow:hidden; }
+  .vhead{ display:flex; align-items:baseline; gap:10px; padding:14px 18px 0; }
+  .vhead .tag{ font-size:12px; font-weight:700; color:var(--primary-dark); background:var(--primary-soft); padding:2px 9px; border-radius:6px; }
+  .vhead .name{ font-size:14px; font-weight:700; }
+  .vhead .desc{ font-size:12px; color:var(--text-faint); }
+  table{ width:100%; border-collapse:collapse; margin-top:10px; }
+  th{ text-align:left; font-size:12px; font-weight:600; color:var(--text-secondary); background:#fafbfc; padding:10px 18px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  td{ padding:14px 18px; font-size:13.5px; border-bottom:1px solid #f1f3f5; vertical-align:middle; }
+  tr:last-child td{ border-bottom:0; }
+  .dev-id{ font-weight:700; } .muted{ color:var(--text-secondary); }
+  .badge{ display:inline-flex; align-items:center; gap:6px; height:25px; padding:0 10px; border-radius:999px; font-size:12px; font-weight:600; }
+  .badge .dot{ width:7px; height:7px; border-radius:50%; }
+  .b-run{ background:var(--success-soft); color:var(--success-dark); } .b-run .dot{ background:var(--success); }
+  .b-stop{ background:#f1f3f5; color:#7b8489; } .b-stop .dot{ background:#b2bec3; }
+  .ops{ display:flex; gap:10px; align-items:center; }
+
+  /* A 文字链接（当前） */
+  .a .op{ font-size:13px; font-weight:600; cursor:pointer; }
+  .a .view{ color:var(--primary-dark); } .a .danger{ color:var(--danger); } .a .restore{ color:var(--success-dark); }
+
+  /* B 描边按钮 */
+  .b .btn{ height:30px; padding:0 13px; border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer; background:#fff; border:1px solid var(--border); color:var(--text-primary); }
+  .b .btn.view{ border-color:var(--primary); color:var(--primary-dark); }
+  .b .btn.danger{ border-color:var(--danger); color:var(--danger); }
+  .b .btn.restore{ border-color:var(--success); color:var(--success-dark); }
+
+  /* C 浅底色按钮（与徽章同语言） */
+  .c .btn{ height:30px; padding:0 14px; border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer; border:0; }
+  .c .view{ background:var(--primary-soft); color:var(--primary-dark); }
+  .c .danger{ background:var(--danger-soft); color:var(--danger-dark); }
+  .c .restore{ background:var(--success-soft); color:var(--success-dark); }
+
+  /* D 图标按钮 */
+  .d .iconbtn{ width:34px; height:34px; border-radius:9px; border:1px solid var(--border); background:#fff; cursor:pointer; display:grid; place-items:center; font-size:15px; color:var(--text-secondary); }
+  .d .iconbtn.danger{ color:var(--danger); border-color:#fadbdb; }
+  .d .iconbtn.restore{ color:var(--success-dark); border-color:#cdeed5; }
+
+  /* E 主操作 + 溢出菜单 */
+  .e .btn-main{ height:30px; padding:0 16px; border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer; border:0; background:var(--primary); color:#fff; }
+  .e .more{ width:32px; height:30px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; color:var(--text-secondary); font-weight:700; letter-spacing:1px; }
+</style>
+</head>
+<body>
+  <h2>「操作」列按钮方案对比</h2>
+  <div class="sub">同一行：运行中设备（查看 / 停卖）与停用设备（查看 / 恢复）。配色沿用商品管理风格。</div>
+
+  <!-- A -->
+  <div class="variant a">
+    <div class="vhead"><span class="tag">A</span><span class="name">文字链接（当前）</span><span class="desc">最轻量，但按钮感弱、点击区域小</span></div>
+    <table><thead><tr><th>设备编号</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <tr><td class="dev-id">RCK386</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><div class="ops"><span class="op view">查看</span><span class="op danger">停卖</span></div></td></tr>
+      <tr><td class="dev-id">RCK402</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><div class="ops"><span class="op view">查看</span><span class="op restore">恢复</span></div></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- B -->
+  <div class="variant b">
+    <div class="vhead"><span class="tag">B</span><span class="name">描边按钮</span><span class="desc">清晰、克制，点击区域明确</span></div>
+    <table><thead><tr><th>设备编号</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <tr><td class="dev-id">RCK386</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><div class="ops"><button class="btn view">查看</button><button class="btn danger">停卖</button></div></td></tr>
+      <tr><td class="dev-id">RCK402</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><div class="ops"><button class="btn view">查看</button><button class="btn restore">恢复</button></div></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- C -->
+  <div class="variant c">
+    <div class="vhead"><span class="tag">C</span><span class="name">浅底色按钮</span><span class="desc">与状态徽章同一套色彩语言，最协调（推荐）</span></div>
+    <table><thead><tr><th>设备编号</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <tr><td class="dev-id">RCK386</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><div class="ops"><button class="btn view">查看</button><button class="btn danger">停卖</button></div></td></tr>
+      <tr><td class="dev-id">RCK402</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><div class="ops"><button class="btn view">查看</button><button class="btn restore">恢复</button></div></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- D -->
+  <div class="variant d">
+    <div class="vhead"><span class="tag">D</span><span class="name">图标按钮</span><span class="desc">最省空间，但语义不如文字直观</span></div>
+    <table><thead><tr><th>设备编号</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <tr><td class="dev-id">RCK386</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><div class="ops"><button class="iconbtn" title="查看">👁</button><button class="iconbtn danger" title="停卖">⏸</button></div></td></tr>
+      <tr><td class="dev-id">RCK402</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><div class="ops"><button class="iconbtn" title="查看">👁</button><button class="iconbtn restore" title="恢复">▶</button></div></td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- E -->
+  <div class="variant e">
+    <div class="vhead"><span class="tag">E</span><span class="name">主操作 + 更多菜单</span><span class="desc">查看为主按钮，停卖/恢复收进 ⋯，操作多时最干净</span></div>
+    <table><thead><tr><th>设备编号</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <tr><td class="dev-id">RCK386</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><div class="ops"><button class="btn-main">查看</button><button class="more">⋯</button></div></td></tr>
+      <tr><td class="dev-id">RCK402</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><div class="ops"><button class="btn-main">查看</button><button class="more">⋯</button></div></td></tr>
+    </tbody></table>
+  </div>
+</body>
+</html>

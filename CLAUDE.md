@@ -76,10 +76,14 @@ node --test tests/sidebar.admin-lang.test.js tests/sidebar.admin-lang.runtime.te
 
 ## Deployment
 
-Deployed via Cloudflare Workers (see `wrangler.jsonc`). The entire repo root is served as static assets.
+**Live site:** https://cofeplus.pages.dev
+
+Hosted on **Cloudflare Pages**, connected to this repo's GitHub `main` branch. Pushing or merging to `main` automatically triggers a build and deploy — no manual step needed (typical build ~1-2 min). The entire repo root is served as static assets.
+
+To verify a release, open https://cofeplus.pages.dev with gstack `/browse` after the build finishes.
 
 ```bash
-# Deploy to Cloudflare
+# Manual deploy (legacy fallback only; normal flow is auto-deploy from main)
 npx wrangler deploy
 ```
 

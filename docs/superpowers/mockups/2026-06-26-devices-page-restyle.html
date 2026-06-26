@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设备管理 · 商品管理风格（重设计预览）</title>
+<style>
+  /* 采用「商品管理 / menu-management」的字体与风格 token */
+  :root{
+    --primary:#4ECDC4; --primary-dark:#3dbdb4; --primary-soft:#e8faf8;
+    --text-primary:#2d3436; --text-secondary:#636e72; --text-faint:#9aa3a8;
+    --bg-page:#f4f6f9; --bg-card:#ffffff; --border:#e9ecef;
+    --danger:#ff6b6b; --danger-soft:#ffecec;
+    --success:#2ed573; --success-soft:#e7faec;
+    --muted:#b2bec3; --muted-soft:#f1f3f5;
+    --radius:12px; --radius-sm:9px;
+    --shadow:0 1px 2px rgba(45,52,54,.04), 0 6px 18px rgba(45,52,54,.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,"system-ui","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg-page); color:var(--text-primary); -webkit-font-smoothing:antialiased;
+  }
+  .app{ display:flex; min-height:100vh; }
+
+  /* ── sidebar（保持一致的深色，仅作上下文）── */
+  .sidebar{ width:200px; flex:0 0 200px; background:#0b132b; color:#c7cdd6; padding:18px 0; }
+  .sidebar .brand{ padding:0 18px 16px; }
+  .sidebar .brand .logo{ font-weight:800; color:#fff; font-size:15px; }
+  .sidebar .brand .sub{ font-size:11px; color:#7b8493; margin-top:3px; }
+  .sidebar .group{ font-size:11px; color:#5b6473; padding:14px 18px 6px; }
+  .sidebar .nav{ display:flex; align-items:center; gap:10px; padding:9px 18px; font-size:13.5px; color:#c7cdd6; cursor:pointer; }
+  .sidebar .nav.active{ background:#1b2236; color:#fff; border-left:3px solid var(--primary); padding-left:15px; }
+  .sidebar .nav .ic{ width:18px; text-align:center; opacity:.9; }
+
+  /* ── main ── */
+  .main{ flex:1; min-width:0; padding:22px 26px 40px; }
+  .pagehead{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; }
+  .pagehead h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:-.2px; }
+  .pagehead p{ margin:6px 0 0; font-size:13px; color:var(--text-secondary); }
+  .btn-primary{ height:40px; padding:0 18px; border:0; border-radius:10px; background:var(--primary); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:0 6px 14px rgba(78,205,196,.32); font-family:inherit; white-space:nowrap; }
+
+  /* ── stat cards（仿商品管理：图标方块 + 标签 + 大数字）── */
+  .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .stat{ display:flex; align-items:center; gap:14px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; }
+  .stat .ic{ width:46px; height:46px; border-radius:12px; display:grid; place-items:center; font-size:22px; flex:0 0 auto; }
+  .stat .lbl{ font-size:12.5px; color:var(--text-secondary); }
+  .stat .num{ font-size:26px; font-weight:750; line-height:1.1; margin-top:3px; }
+  .ic-total{ background:var(--primary-soft); }
+  .ic-run{ background:var(--success-soft); }
+  .num-run{ color:var(--success); }
+  .ic-fault{ background:var(--danger-soft); }
+  .num-fault{ color:var(--danger); }
+  .ic-stop{ background:var(--muted-soft); }
+  .num-stop{ color:var(--muted); }
+
+  /* ── filter bar ── */
+  .filterbar{ display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .search{ position:relative; flex:1; min-width:240px; }
+  .search input{ width:100%; height:42px; padding:0 14px 0 38px; border:1px solid var(--border); border-radius:10px; background:var(--bg-card); font-size:14px; color:var(--text-primary); font-family:inherit; }
+  .search .mag{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--text-faint); font-size:15px; }
+  .selectbox{ position:relative; }
+  .selectbox select{ height:42px; padding:0 36px 0 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg-card); font-size:14px; color:var(--text-primary); appearance:none; -webkit-appearance:none; cursor:pointer; font-family:inherit;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%23636e72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l4 4 4-4'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 11px center; }
+  input:focus, select:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+
+  /* ── table card ── */
+  .table-card{ background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{ text-align:left; font-size:12.5px; font-weight:600; color:var(--text-secondary); background:#fafbfc; padding:13px 18px; border-bottom:1px solid var(--border); }
+  tbody td{ padding:15px 18px; font-size:13.5px; border-bottom:1px solid #f1f3f5; vertical-align:middle; }
+  tbody tr:last-child td{ border-bottom:0; }
+  tbody tr:hover{ background:#fbfcfd; }
+  .dev-id{ font-weight:700; letter-spacing:.2px; }
+  .muted{ color:var(--text-secondary); }
+
+  /* ── badges（视觉，非交互）── */
+  .badge{ display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 11px; border-radius:999px; font-size:12.5px; font-weight:600; }
+  .badge .dot{ width:7px; height:7px; border-radius:50%; }
+  .b-run{ background:var(--success-soft); color:#1aa251; } .b-run .dot{ background:var(--success); }
+  .b-fault{ background:var(--danger-soft); color:#e0484c; } .b-fault .dot{ background:var(--danger); }
+  .b-stop{ background:var(--muted-soft); color:#7b8489; } .b-stop .dot{ background:var(--muted); }
+  .tag{ display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:7px; font-size:12px; font-weight:600; }
+  .tag-onsale{ background:var(--primary-soft); color:var(--primary-dark); }
+  .tag-off{ background:#fff4e6; color:#d9890a; }
+
+  /* ── operations（方案 C：浅底色按钮，与状态徽章同色彩语言）── */
+  .ops{ display:flex; gap:8px; }
+  .op{ display:inline-flex; align-items:center; height:30px; padding:0 14px; border:0; border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .op-view{ background:var(--primary-soft); color:var(--primary-dark); }
+  .op-danger{ background:var(--danger-soft); color:#e0484c; }
+  .op-restore{ background:var(--success-soft); color:#1aa251; }
+
+  /* ── pagination ── */
+  .pager{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; }
+  .pager .info{ font-size:13px; color:var(--text-secondary); }
+  .pager .btns{ display:flex; gap:8px; }
+  .pager .pg{ height:34px; padding:0 14px; border:1px solid var(--border); border-radius:8px; background:#fff; font-size:13px; color:var(--text-secondary); cursor:pointer; font-family:inherit; }
+  .pager .pg.disabled{ color:var(--text-faint); background:#fafbfc; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">COFE+ 运营控制台</div><div class="sub">Prototype v0 · 中文/EN</div></div>
+      <div class="group">运营管理</div>
+      <div class="nav"><span class="ic">📊</span>总览</div>
+      <div class="nav active"><span class="ic">⚙️</span>设备</div>
+      <div class="nav"><span class="ic">📋</span>商品管理</div>
+      <div class="nav"><span class="ic">📦</span>物料</div>
+      <div class="nav"><span class="ic">🧾</span>订单</div>
+      <div class="nav"><span class="ic">🛠️</span>故障列表</div>
+      <div class="nav"><span class="ic">👤</span>人员管理</div>
+      <div class="group">基础信息管理</div>
+      <div class="nav"><span class="ic">🏬</span>我的商户</div>
+      <div class="nav"><span class="ic">📍</span>点位管理</div>
+    </aside>
+
+    <main class="main">
+      <div class="pagehead">
+        <div>
+          <h1>设备管理</h1>
+          <p>管理和监控所有咖啡设备</p>
+        </div>
+        <button class="btn-primary">+ 设备入场</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="ic ic-total">☕</div><div><div class="lbl">设备总数</div><div class="num">18</div></div></div>
+        <div class="stat"><div class="ic ic-run">✅</div><div><div class="lbl">运行中</div><div class="num num-run">16</div></div></div>
+        <div class="stat"><div class="ic ic-fault">⚠️</div><div><div class="lbl">故障</div><div class="num num-fault">2</div></div></div>
+        <div class="stat"><div class="ic ic-stop">⏸️</div><div><div class="lbl">停用</div><div class="num num-stop">5</div></div></div>
+      </div>
+
+      <div class="filterbar">
+        <div class="search"><span class="mag">🔍</span><input placeholder="搜索设备编号或点位..."></div>
+        <div class="selectbox"><select><option>全部状态</option><option>运行中</option><option>故障</option><option>停用</option></select></div>
+        <div class="selectbox"><select><option>全部点位</option><option>展会点位</option><option>运营点位</option></select></div>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr><th>设备编号</th><th>点位</th><th>状态</th><th>在售</th><th>最近心跳</th><th>操作</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="dev-id">RCK386</td><td class="muted">上海市中心店</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-11 15:06</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+            <tr><td class="dev-id">RCK385</td><td class="muted">上海市中心店</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-11 15:06</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+            <tr><td class="dev-id">RCK406</td><td class="muted">上海市中心店</td><td><span class="badge b-fault"><span class="dot"></span>故障</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-11 15:06</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+            <tr><td class="dev-id">RCK405</td><td class="muted">上海市中心店</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-09 11:13</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+            <tr><td class="dev-id">RCB036</td><td class="muted">北京朝阳门店</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-04 16:38</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+            <tr><td class="dev-id">RCK402</td><td class="muted">上海市中心店</td><td><span class="badge b-stop"><span class="dot"></span>停用</span></td><td><span class="tag tag-off">停卖</span></td><td class="muted">2026-02-10 09:30</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-restore">恢复</span></div></td></tr>
+            <tr><td class="dev-id">RCK401</td><td class="muted">上海市中心店</td><td><span class="badge b-fault"><span class="dot"></span>故障</span></td><td><span class="tag tag-off">停卖</span></td><td class="muted">2026-02-09 08:15</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-restore">恢复</span></div></td></tr>
+            <tr><td class="dev-id">RCK400</td><td class="muted">北京朝阳门店</td><td><span class="badge b-run"><span class="dot"></span>运行中</span></td><td><span class="tag tag-onsale">在售</span></td><td class="muted">2026-02-08 14:22</td><td><div class="ops"><span class="op op-view">查看</span><span class="op op-danger">停卖</span></div></td></tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info">显示 1-15 条，共 18 条</div>
+          <div class="btns"><button class="pg disabled">上一页</button><button class="pg">下一页</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
