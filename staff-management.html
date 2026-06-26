@@ -850,7 +850,8 @@
         /* hidden 属性遇到 display:flex 不会生效，显式补齐 */
         .role-current-banner[hidden],
         .role-switch-preview[hidden],
-        .role-banner-undo[hidden] {
+        .role-banner-undo[hidden],
+        .btn[hidden] {
             display: none !important;
         }
 
@@ -1186,6 +1187,20 @@
             font-size: 12px;
             color: #6b7280;
             line-height: 1.5;
+        }
+
+        /* 步骤卡作为统一外层卡片，内部 section 透明化以避免卡中卡 */
+        .staff-modal-step-section > .section-block,
+        .staff-modal-step-section > .role-selection-section {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+        }
+
+        .staff-modal-step-section > .section-block + .section-block,
+        .staff-modal-step-section > .role-selection-section + .section-block {
+            margin-top: 18px;
         }
 
         .section-title {
@@ -2210,6 +2225,31 @@
                 <button type="button" class="modal-close" onclick="closeStaffModal()">×</button>
             </div>
             <div class="modal-body">
+                <div class="staff-modal-step-layout">
+                <div class="staff-modal-stepbar">
+                    <button type="button" class="staff-modal-step-trigger" data-step="1" data-state="current" onclick="gotoStaffWizardStep(1)">
+                        <span class="staff-modal-step-trigger-index">1</span>
+                        <span class="staff-modal-step-trigger-text">
+                            <span class="staff-modal-step-trigger-label">基本信息</span>
+                            <span class="staff-modal-step-trigger-hint">用户名 · 手机号 · OpenID</span>
+                        </span>
+                    </button>
+                    <button type="button" class="staff-modal-step-trigger" data-step="2" data-state="locked" onclick="gotoStaffWizardStep(2)">
+                        <span class="staff-modal-step-trigger-index">2</span>
+                        <span class="staff-modal-step-trigger-text">
+                            <span class="staff-modal-step-trigger-label">角色与设备</span>
+                            <span class="staff-modal-step-trigger-hint">选择角色 · 可管理设备</span>
+                        </span>
+                    </button>
+                    <button type="button" class="staff-modal-step-trigger" data-step="3" data-state="locked" onclick="gotoStaffWizardStep(3)">
+                        <span class="staff-modal-step-trigger-index">3</span>
+                        <span class="staff-modal-step-trigger-text">
+                            <span class="staff-modal-step-trigger-label">权限确认</span>
+                            <span class="staff-modal-step-trigger-hint">页面权限 · 设备范围</span>
+                        </span>
+                    </button>
+                </div>
+                <div class="staff-modal-step-section" data-step="1">
                 <section class="section-block staff-modal-basic-section">
                     <div class="section-title">基本信息<span class="required">*</span></div>
                     <div class="form-grid">
@@ -2230,6 +2270,8 @@
                         </div>
                     </div>
                 </section>
+                </div>
+                <div class="staff-modal-step-section" data-step="2" hidden>
 
                 <section class="role-selection-section" id="roleSelectionSection">
                     <div class="section-title">选择角色<span class="required">*</span></div>
@@ -2275,6 +2317,8 @@
                     </div>
                     <div class="selected-device-summary" id="selectedDeviceSummary"></div>
                 </section>
+                </div>
+                <div class="staff-modal-step-section" data-step="3" hidden>
 
                 <section class="section-block permission-matrix-section" id="staffPermissionMatrix">
                     <div class="permission-section-head">
@@ -2409,10 +2453,14 @@
                         </div>
                     </div>
                 </section>
+                </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="closeStaffModal()">取消</button>
-                <button type="button" class="btn btn-primary" id="staffSubmitBtn" onclick="saveStaff()">确认新增</button>
+                <button type="button" class="btn btn-default" id="staffPrevBtn" onclick="goStaffWizardStep(-1)" hidden>上一步</button>
+                <button type="button" class="btn btn-primary" id="staffNextBtn" onclick="goStaffWizardStep(1)">下一步</button>
+                <button type="button" class="btn btn-primary" id="staffSubmitBtn" onclick="saveStaff()" hidden>确认新增</button>
             </div>
         </div>
     </div>
@@ -3937,6 +3985,79 @@
             document.getElementById('listHint').textContent = `共 ${filteredManagers.length} 位管理人员`;
         }
 
+        // ===== 添加/编辑员工 · 3 步向导 =====
+        let staffWizardStep = 1;
+        let staffWizardMaxReached = 1;
+        const STAFF_WIZARD_TOTAL = 3;
+        // 校验返回的 stepKey 归属于哪一步
+        const STAFF_STEP_OF_VALIDATION_KEY = { '': 1, manageableDevices: 2, pagePermissions: 3, permissionMatrix: 3 };
+
+        function renderStaffWizard() {
+            const isEditing = !!editingStaffId;
+            // 编辑模式：三步全解锁、可自由跳转；新增模式：只解锁到已到达的步
+            const maxReached = isEditing ? STAFF_WIZARD_TOTAL : staffWizardMaxReached;
+
+            document.querySelectorAll('#staffModal .staff-modal-step-section').forEach((section) => {
+                const step = Number(section.getAttribute('data-step'));
+                section.hidden = step !== staffWizardStep;
+            });
+
+            document.querySelectorAll('#staffModal .staff-modal-step-trigger').forEach((trigger) => {
+                const step = Number(trigger.getAttribute('data-step'));
+                let state = 'locked';
+                if (step === staffWizardStep) state = 'current';
+                else if (step <= maxReached) state = 'done';
+                trigger.setAttribute('data-state', state);
+            });
+
+            const prevBtn = document.getElementById('staffPrevBtn');
+            const nextBtn = document.getElementById('staffNextBtn');
+            const submitBtn = document.getElementById('staffSubmitBtn');
+            if (prevBtn) prevBtn.hidden = staffWizardStep <= 1;
+            if (nextBtn) nextBtn.hidden = staffWizardStep >= STAFF_WIZARD_TOTAL;
+            // 末步必出现提交按钮；编辑模式任意步都可保存
+            if (submitBtn) submitBtn.hidden = !(isEditing || staffWizardStep >= STAFF_WIZARD_TOTAL);
+        }
+
+        function validateStaffWizardStep(step) {
+            const username = document.getElementById('staffUsername').value.trim();
+            const phone = document.getElementById('staffPhone').value.trim();
+            const selectedPermissions = getSelectedPermissionValues();
+            const selectedDevices = Array.from(deviceSelectionSet);
+            const moduleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
+            const result = resolveStaffModalValidationResult({
+                username, phone, selectedPermissions, selectedDevices, moduleDeviceScopes
+            });
+            if (!result.message) return true;
+            // 仅当错误属于「当前步或更早」时才拦截；属于后续步则放行
+            const errStep = STAFF_STEP_OF_VALIDATION_KEY[result.stepKey] || 1;
+            if (errStep <= step) {
+                focusStaffModalValidationTarget(result.stepKey);
+                showToast(result.message);
+                return false;
+            }
+            return true;
+        }
+
+        function gotoStaffWizardStep(targetStep, options) {
+            const force = !!(options && options.force);
+            const step = Math.min(Math.max(Number(targetStep) || 1, 1), STAFF_WIZARD_TOTAL);
+            const maxReached = editingStaffId ? STAFF_WIZARD_TOTAL : staffWizardMaxReached;
+            // 非强制跳转只能落在已解锁（已到达过）的步上，前进解锁须走「下一步」逐步校验
+            if (!force && step > maxReached) return;
+            staffWizardStep = step;
+            renderStaffWizard();
+        }
+
+        function goStaffWizardStep(delta) {
+            const next = staffWizardStep + delta;
+            if (next < 1 || next > STAFF_WIZARD_TOTAL) return;
+            if (delta > 0 && !validateStaffWizardStep(staffWizardStep)) return;
+            if (delta > 0) staffWizardMaxReached = Math.max(staffWizardMaxReached, next);
+            staffWizardStep = next;
+            renderStaffWizard();
+        }
+
         function openStaffModal() {
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             if (!selectedMerchantId || !getCurrentMerchantContext().merchantName) {
@@ -3949,6 +4070,9 @@
             updateStaffModalState();
             resetStaffForm();
             renderDevicePicker(selectedMerchantId, []);
+            staffWizardStep = 1;
+            staffWizardMaxReached = 1;
+            renderStaffWizard();
             document.getElementById('staffModal').classList.add('active');
         }
 
@@ -3970,6 +4094,9 @@
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
             closeModuleDeviceScopeSelector();
+            staffWizardStep = 1;
+            staffWizardMaxReached = STAFF_WIZARD_TOTAL;
+            renderStaffWizard();
             document.getElementById('staffModal').classList.add('active');
         }
 
@@ -4274,6 +4401,9 @@
         }
 
         function focusStaffModalValidationTarget(targetKey) {
+            // 校验失败时把向导切到出错的步，再滚动定位到对应区块
+            const step = STAFF_STEP_OF_VALIDATION_KEY[targetKey] || 1;
+            gotoStaffWizardStep(step, { force: true });
             const targetIdMap = {
                 manageableDevices: 'staffDeviceSection',
                 pagePermissions: 'staffPermissionMatrix',
@@ -4368,9 +4498,7 @@
                 moduleDeviceScopes: normalizedModuleDeviceScopes
             });
             if (validationResult.message) {
-                if (validationResult.stepKey) {
-                    focusStaffModalValidationTarget(validationResult.stepKey);
-                }
+                focusStaffModalValidationTarget(validationResult.stepKey);
                 showToast(validationResult.message);
                 return;
             }

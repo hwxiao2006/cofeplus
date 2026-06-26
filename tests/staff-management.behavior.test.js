@@ -75,17 +75,19 @@ test('人员管理页：移动端头部应与订单和商品页保持一致', ()
   assert.ok(/@media \(max-width: 768px\)[\s\S]*?\.header-title\s*\{\s*display:\s*none;/.test(staffHtml), '移动端应隐藏重复的大标题');
 });
 
-test('人员管理页：添加人员表单应保留精简结构并新增公众号 OpenID 字段', () => {
+test('人员管理页：添加人员表单应为 3 步向导并保留公众号 OpenID 字段', () => {
   assert.ok(staffHtml.includes('基本信息<span class="required">*</span>'));
   assert.ok(staffHtml.includes('用户名'));
   assert.ok(staffHtml.includes('手机号'));
   assert.ok(staffHtml.includes('公众号 OpenID'));
   assert.ok(staffHtml.includes('id="staffWechatOpenId"'));
-  assert.ok(!/步骤 1 · 可管理设备/.test(staffHtml));
-  assert.ok(!/步骤 2 · 页面权限/.test(staffHtml));
-  assert.ok(!/步骤 3 · 页面设备范围/.test(staffHtml));
-  assert.ok(!/class="staff-modal-stepbar"/.test(staffHtml));
-  assert.ok(!/class="staff-modal-step-summary-list"/.test(staffHtml));
+  // 添加员工弹窗应为 3 步向导结构
+  assert.ok(/class="staff-modal-stepbar"/.test(staffHtml), '应使用分步向导步骤条');
+  assert.ok((staffHtml.match(/class="staff-modal-step-section"/g) || []).length === 3, '应有 3 个步骤区块');
+  assert.ok(/staff-modal-step-trigger-label">基本信息</.test(staffHtml), '步骤1 标签应为基本信息');
+  assert.ok(/staff-modal-step-trigger-label">角色与设备</.test(staffHtml), '步骤2 标签应为角色与设备');
+  assert.ok(/staff-modal-step-trigger-label">权限确认</.test(staffHtml), '步骤3 标签应为权限确认');
+  assert.ok(/id="staffNextBtn"/.test(staffHtml) && /id="staffPrevBtn"/.test(staffHtml), '应有上一步/下一步导航按钮');
   assert.ok(/可管理设备/.test(staffHtml));
   assert.ok(/全部可管理设备/.test(staffHtml));
   assert.ok(/这个员工最多只能看到这里选中的设备/.test(staffHtml));
