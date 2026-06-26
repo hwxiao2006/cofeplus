@@ -44,7 +44,7 @@ test('设备管理页设备录入入口应使用可直接跳转的链接', () =>
 test('设备管理主筛选栏应提供点位筛选', () => {
   assert.ok(/<label class="filter-label">点位筛选<\/label>/.test(html));
   assert.ok(/<select class="filter-select" id="locationCategoryFilter" onchange="filterDevices\(\)">/.test(html));
-  assert.ok(/<option value="all">全部点位<\/option>/.test(html));
+  assert.ok(/<option value="all">全部分类<\/option>/.test(html));
   assert.ok(/<option value="exhibition">展会点位<\/option>/.test(html));
   assert.ok(/<option value="operation">运营点位<\/option>/.test(html));
 });

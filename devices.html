@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>设备管理 - 运营控制台</title>
     <meta name="format-detection" content="telephone=no">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4ECDC4;
@@ -3738,8 +3737,8 @@
             --accent-green: #22C55E;
             --accent-blue: #3B82F6;
             --text-on-dark: #FAFAFA;
-            --font-ui: 'Sora', sans-serif;
-            --font-data: 'IBM Plex Mono', monospace;
+            --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-data: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             --primary: #111827;
             --primary-light: #F3F4F6;
             --primary-dark: #000000;
@@ -4518,6 +4517,76 @@
                 display: none !important;
             }
         }
+
+        /* ===== restyle：对齐「商品管理」字体与风格（追加覆盖 · 纯视觉 · 不改交互）===== */
+        :root{
+            --text-primary:#2d3436; --text-secondary:#636e72; --text-tertiary:#9aa3a8;
+            --border:#e9ecef; --border-light:#f1f3f5;
+            --accent-red:#ff6b6b; --danger:#ff6b6b; --danger-light:#ffecec;
+            --accent-green:#2ed573; --success:#2ed573; --success-light:#e7faec;
+            --bg-page:#f4f6f9; --bg-body:#f4f6f9; --bg-surface:#f4f6f9; --bg-card:#ffffff;
+            --primary:#4ECDC4; --primary-dark:#3dbdb4; --primary-soft:#e8faf8;
+            --radius-sm:8px; --radius:12px; --radius-lg:16px;
+            --shadow-sm:0 1px 2px rgba(45,52,54,.04);
+            --shadow:0 1px 3px rgba(45,52,54,.04),0 10px 24px rgba(45,52,54,.06);
+        }
+        .device-id{ font-family:var(--font-ui); color:#2d3436; }
+
+        /* 统计卡 → 图标方块 + 大数字 白色立体卡 */
+        .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; border:0; }
+        .stat-card{ display:flex; align-items:center; gap:14px; min-height:0; border:1px solid var(--border); border-right:1px solid var(--border); border-radius:12px; background:#fff; box-shadow:var(--shadow); padding:16px 18px; }
+        .stat-card::before{ content:"☕"; width:46px; height:46px; border-radius:12px; display:grid; place-items:center; font-size:22px; background:var(--primary-soft); flex:0 0 auto; }
+        .stat-card.is-online::before{ content:"✅"; background:#e7faec; }
+        .stat-card.is-fault::before{ content:"⚠️"; background:#ffecec; }
+        .stat-card.is-stopped::before{ content:"⏸️"; background:#f1f3f5; }
+        .stat-content{ width:auto; gap:2px; align-items:flex-start; }
+        .stat-label{ font-size:12.5px; color:var(--text-secondary); font-weight:500; }
+        .stat-value{ font-family:var(--font-ui); font-size:26px; font-weight:750; }
+
+        /* 搜索框 + 下拉 圆角化 */
+        .main-search-box{ border:1px solid var(--border); border-radius:10px; background:#fff; }
+        .main-filter-item .filter-select{ border:1px solid var(--border); border-radius:10px; background:#fff; }
+
+        /* 表格容器与表头 柔化 */
+        .table-container{ border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); backdrop-filter:none; }
+        .device-table th{ color:var(--text-secondary); background:#fafbfc; border-bottom:1px solid var(--border); font-weight:600; letter-spacing:0; text-transform:none; }
+        .device-table td{ border-bottom:1px solid var(--border-light); color:var(--text-primary); }
+        .device-table tbody tr:hover{ background:#fbfcfd; }
+        .location-text{ font-size:14px; font-weight:600; color:var(--text-primary); }
+
+        /* 状态 → 浅底色 pill 徽章 */
+        .status-badge{ display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 11px; border-radius:999px; font-size:12.5px; font-weight:600; }
+        .status-badge::before{ content:""; width:7px; height:7px; border-radius:50%; }
+        .status-badge.status-operational{ background:#e7faec; color:#1aa251; }
+        .status-badge.status-operational::before{ background:#2ed573; }
+        .status-badge.status-faulted{ background:#ffecec; color:#e0484c; }
+        .status-badge.status-faulted::before{ background:#ff6b6b; }
+        .status-badge.status-disabled{ background:#f1f3f5; color:#7b8489; }
+        .status-badge.status-disabled::before{ background:#b2bec3; }
+
+        /* 在售 / 停卖 → tag */
+        .sales-state{ display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:7px; font-size:12px; font-weight:600; background:var(--primary-soft); color:var(--primary-dark); }
+        .sales-state.disabled{ background:#fff4e6; color:#d9890a; }
+
+        /* 操作 → 方案 C 浅底色按钮 */
+        .action-group{ gap:8px; }
+        .table-link-btn{ display:inline-flex; align-items:center; height:30px; padding:0 14px; border-radius:8px; font-size:12.5px; font-weight:600; background:var(--primary-soft); color:var(--primary-dark); }
+        .table-link-btn.muted{ background:#f1f3f5; color:#7b8489; }
+        .table-link-btn.danger{ background:#ffecec; color:#e0484c; }
+
+        /* 分页柔化 */
+        .pagination-btn{ border:1px solid var(--border); border-radius:8px; color:var(--text-secondary); background:#fff; }
+        .pagination-wrapper{ border-top:1px solid var(--border); }
+
+        /* 移动端卡片：去灰底块、圆角、系统字体 */
+        .device-mobile-card{ border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); }
+        .device-mobile-id{ font-family:var(--font-ui); }
+        .device-mobile-meta-item{ background:transparent; border:0; padding:0; }
+        .device-mobile-value{ font-size:13px; color:var(--text-primary); }
+        .device-mobile-heartbeat{ font-family:var(--font-ui); color:var(--text-secondary); }
+        @media (max-width:1024px){
+            .mobile-fab{ background:var(--primary); box-shadow:0 14px 30px rgba(78,205,196,.32); }
+        }
     </style>
 </head>
 <body>
@@ -4651,7 +4720,7 @@
                     <div class="main-filter-item">
                         <label class="filter-label">点位筛选</label>
                         <select class="filter-select" id="locationCategoryFilter" onchange="filterDevices()">
-                            <option value="all">全部点位</option>
+                            <option value="all">全部分类</option>
                             <option value="exhibition">展会点位</option>
                             <option value="operation">运营点位</option>
                         </select>

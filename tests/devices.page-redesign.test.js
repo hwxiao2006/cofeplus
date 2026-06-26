@@ -16,15 +16,16 @@ function test(name, fn) {
   }
 }
 
-test('设备页应引入 Sora 与 IBM Plex Mono 字体', () => {
-  assert.ok(/fonts\.googleapis\.com\/css2\?family=Sora/.test(html));
-  assert.ok(/IBM\+Plex\+Mono/.test(html));
+test('设备页应使用系统字体栈，不再外链 Sora / IBM Plex Mono', () => {
+  assert.ok(!/fonts\.googleapis\.com/.test(html));
+  assert.ok(!/family=Sora/.test(html));
+  assert.ok(/--font-ui:\s*-apple-system, BlinkMacSystemFont/.test(html));
 });
 
 test('设备页应保留新设计变量，但菜单样式回到共享侧栏结构', () => {
   assert.ok(/--bg-page:\s*#FAFAFA/.test(html));
-  assert.ok(/--font-ui:\s*'Sora',\s*sans-serif/.test(html));
-  assert.ok(/--font-data:\s*'IBM Plex Mono',\s*monospace/.test(html));
+  assert.ok(/--font-ui:\s*-apple-system, BlinkMacSystemFont/.test(html));
+  assert.ok(/--font-data:\s*-apple-system, BlinkMacSystemFont/.test(html));
   assert.ok(/\.sidebar\s*\{[\s\S]*--sidebar-header-padding-x:\s*24px;/.test(html));
   assert.ok(/\.sidebar\s*\{[\s\S]*width:\s*240px/.test(html));
   assert.ok(/\.main\s*\{[\s\S]*margin-left:\s*240px/.test(html));
@@ -37,7 +38,7 @@ test('设备页头部与筛选栏应使用新文案与录入入口', () => {
   assert.ok(/>\s*\+\s*设备入场\s*</.test(html));
   assert.ok(/placeholder="搜索设备编号或点位\.\.\."/.test(html));
   assert.ok(/<option value="all">全部状态<\/option>/.test(html));
-  assert.ok(/<option value="all">全部点位<\/option>/.test(html));
+  assert.ok(/<option value="all">全部分类<\/option>/.test(html));
   assert.ok(/\.page-primary-btn\s*\{[\s\S]*background:\s*#4ECDC4/.test(html));
   assert.ok(/\.page-primary-btn\s*\{[\s\S]*color:\s*#fff/.test(html));
   assert.ok(/\.page-primary-btn:hover\s*\{[\s\S]*background:\s*#3dbdb4/.test(html));
