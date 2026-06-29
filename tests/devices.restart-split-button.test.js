@@ -16,29 +16,29 @@ function test(name, fn) {
   }
 }
 
-test('侧栏重启 split button 容器样式应使用 teal 渐变', () => {
+test('侧栏重启 split button 容器样式应使用品牌薄荷绿实心', () => {
   assert.ok(
-    /\.detail-side-restart-split\s*\{[\s\S]*background:\s*linear-gradient\(135deg,\s*#14b8a6,\s*#0f766e\)/.test(restartFlowSource),
-    '.detail-side-restart-split 应为 teal 渐变'
+    /\.detail-side-restart-split\s*\{[\s\S]*background:\s*#4ECDC4/.test(restartFlowSource),
+    '.detail-side-restart-split 应为品牌薄荷绿 #4ECDC4'
   );
   assert.ok(
-    /\.detail-side-restart-split\s*\{[\s\S]*border:\s*1px solid #0f766e/.test(restartFlowSource)
+    /\.detail-side-restart-split\s*\{[\s\S]*border:\s*1px solid #4ECDC4/.test(restartFlowSource)
   );
   assert.ok(
     /\.detail-side-restart-split\s*\{[\s\S]*border-radius:\s*6px/.test(restartFlowSource)
   );
   assert.ok(
-    /\.detail-side-restart-split\s*\{[\s\S]*box-shadow:\s*0 6px 14px rgba\(15,\s*118,\s*110,\s*0?\.22\)/.test(restartFlowSource)
+    /\.detail-side-restart-split\s*\{[\s\S]*box-shadow:\s*0 6px 14px rgba\(78,\s*205,\s*196,\s*0?\.28\)/.test(restartFlowSource)
   );
 });
 
 test('split button 主区 / caret 应有独立 hover 反馈', () => {
-  assert.ok(/\.detail-side-restart-primary:hover\s*\{[\s\S]*background:\s*rgba\(0,\s*0,\s*0,\s*0?\.08\)/.test(restartFlowSource));
-  assert.ok(/\.detail-side-restart-caret:hover\s*\{[\s\S]*background:\s*rgba\(0,\s*0,\s*0,\s*0?\.15\)/.test(restartFlowSource));
+  assert.ok(/\.detail-side-restart-primary:hover\s*\{[\s\S]*background:\s*rgba\(0,\s*0,\s*0,\s*0?\.06\)/.test(restartFlowSource));
+  assert.ok(/\.detail-side-restart-caret:hover\s*\{[\s\S]*background:\s*rgba\(0,\s*0,\s*0,\s*0?\.10\)/.test(restartFlowSource));
 });
 
 test('split button 主区与 caret 之间应有 1px 半透明白分隔线', () => {
-  assert.ok(/\.detail-side-restart-caret\s*\{[\s\S]*border-left:\s*1px solid rgba\(255,\s*255,\s*255,\s*0?\.25\)/.test(restartFlowSource));
+  assert.ok(/\.detail-side-restart-caret\s*\{[\s\S]*border-left:\s*1px solid rgba\(255,\s*255,\s*255,\s*0?\.4\)/.test(restartFlowSource));
 });
 
 test('popover 应右对齐按钮下方 6px,带阴影', () => {
@@ -47,9 +47,9 @@ test('popover 应右对齐按钮下方 6px,带阴影', () => {
   assert.ok(/\.detail-side-restart-popover\s*\{[\s\S]*box-shadow:\s*0 10px 30px rgba\(15,\s*23,\s*42,\s*0?\.12\)/.test(restartFlowSource));
 });
 
-test('popover item hover 使用浅 teal 背景', () => {
-  assert.ok(/\.detail-side-restart-popover-item:hover\s*\{[\s\S]*background:\s*#ccfbf1/.test(restartFlowSource));
-  assert.ok(/\.detail-side-restart-popover-item:hover\s*\{[\s\S]*color:\s*#0f766e/.test(restartFlowSource));
+test('popover item hover 使用浅薄荷绿背景', () => {
+  assert.ok(/\.detail-side-restart-popover-item:hover\s*\{[\s\S]*background:\s*#e8faf8/.test(restartFlowSource));
+  assert.ok(/\.detail-side-restart-popover-item:hover\s*\{[\s\S]*color:\s*#3dbdb4/.test(restartFlowSource));
 });
 
 test('旧的 .detail-status-recovery-* CSS 类应全部移除', () => {

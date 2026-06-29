@@ -102,14 +102,14 @@
             position: relative;
             display: grid;
             grid-template-columns: 1fr auto;
-            border: 1px solid #0f766e;
+            border: 1px solid #4ECDC4;
             border-radius: 6px;
             overflow: visible;
-            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            background: #4ECDC4;
             color: #fff;
             font-weight: 700;
             font-size: 13px;
-            box-shadow: 0 6px 14px rgba(15, 118, 110, 0.22);
+            box-shadow: 0 6px 14px rgba(78, 205, 196, 0.28);
         }
 
         .detail-side-restart-primary,
@@ -133,12 +133,12 @@
 
         .detail-side-restart-caret {
             padding: 10px;
-            border-left: 1px solid rgba(255, 255, 255, 0.25);
+            border-left: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 0 5px 5px 0;
         }
 
-        .detail-side-restart-primary:hover { background: rgba(0, 0, 0, 0.08); }
-        .detail-side-restart-caret:hover { background: rgba(0, 0, 0, 0.15); }
+        .detail-side-restart-primary:hover { background: rgba(0, 0, 0, 0.06); }
+        .detail-side-restart-caret:hover { background: rgba(0, 0, 0, 0.10); }
 
         .detail-side-restart-icon {
             display: inline-block;
@@ -209,24 +209,24 @@
         }
 
         .detail-side-restart-popover-item:hover {
-            background: #ccfbf1;
-            color: #0f766e;
+            background: #e8faf8;
+            color: #3dbdb4;
         }
 
         .detail-side-restart-popover-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #0f766e;
+            background: #4ECDC4;
             flex-shrink: 0;
         }
 
-        .detail-side-restart-popover-dot--danger { background: #dc2626; }
+        .detail-side-restart-popover-dot--danger { background: #ff6b6b; }
 
         .detail-side-restart-popover-hint {
             margin-left: auto;
             font-size: 10px;
-            color: #dc2626;
+            color: #ff6b6b;
             font-weight: 600;
         }
 
