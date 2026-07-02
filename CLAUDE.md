@@ -82,6 +82,8 @@ Hosted on **Cloudflare Pages**, connected to this repo's GitHub `main` branch. P
 
 To verify a release, open https://cofeplus.pages.dev with gstack `/browse` after the build finishes.
 
+**PRD custom domain:** https://prd.cofeplus.dpdns.org is a separate Cloudflare Pages direct-upload project named `cofeplus-prd`. It serves the ignored `prd-site/` bundle, not the tracked `tasks/` files directly. After changing a PRD that must appear on this domain, copy the updated HTML into `prd-site/tasks/`, deploy with `npx wrangler pages deploy prd-site --project-name cofeplus-prd --branch main --commit-dirty=true`, then verify the custom-domain URL. Do not assume a GitHub `main` push has updated the PRD domain.
+
 ```bash
 # Manual deploy (legacy fallback only; normal flow is auto-deploy from main)
 npx wrangler deploy
