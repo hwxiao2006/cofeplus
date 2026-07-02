@@ -37,3 +37,14 @@ assert.ok(
   html.includes('生产页面当前通过浏览器原生确认弹窗完成删除确认'),
   'delete flow should explain why the native confirm dialog is not visible in the reference screenshot'
 );
+
+for (const requiredText of [
+  '复制目标设备列表仅展示当前用户有权管理印花素材的设备',
+  '确认复制时，系统再次校验目标设备权限',
+  '无权限设备不得新增或覆盖印花素材',
+]) {
+  assert.ok(
+    html.includes(requiredText),
+    `copy permission rule should be documented: ${requiredText}`
+  );
+}
