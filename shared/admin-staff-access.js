@@ -83,6 +83,7 @@
       accountEnabled: source.accountEnabled !== false,
       permissions: normalizeStaffPermissions(source.permissions),
       devices,
+      deviceDataScope: source.deviceDataScope === 'all' ? 'all' : 'merchant',
       moduleDeviceScopes: normalizeModuleDeviceScopes(source.moduleDeviceScopes, devices)
     };
   }
@@ -156,6 +157,19 @@
     const storage = global.localStorage || (global.window && global.window.localStorage);
     const profile = readSidebarLoginProfile(storage);
     return !!(profile && profile.role === 'super_admin');
+  }
+
+  // 当前登录者匹配到的 staff 记录，其数据范围是否为「全平台」（如平台运维）。
+  function isCurrentStaffDeviceScopeAll() {
+    const access = resolveCurrentStaffAccess();
+    return !!(access && access.currentStaff && access.currentStaff.deviceDataScope === 'all');
+  }
+
+  // 设备可见范围是否「不受限」（看全平台）。与功能权限正交：
+  // 超管、或数据范围=all 的角色返回 true；各业务页据此在设备过滤前放行，
+  // 但能否使用某模块仍由 permissions / hasModulePermission 决定。
+  function deviceScopeUnrestricted() {
+    return isSuperAdmin() || isCurrentStaffDeviceScopeAll();
   }
 
   function getAdminSidebarLang() {
@@ -294,6 +308,8 @@
     detectRole,
     getAdminSidebarLang,
     isSuperAdmin,
+    isCurrentStaffDeviceScopeAll,
+    deviceScopeUnrestricted,
     getMerchantScope,
     convertMerchantKeyToMerchantId,
     getMerchantDeviceIds,

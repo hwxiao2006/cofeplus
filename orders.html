@@ -5252,8 +5252,11 @@
                 return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
             }
 
-            // 1) 超管：不过滤，能看全部订单
-            if (typeof helper.isSuperAdmin === 'function' && helper.isSuperAdmin()) {
+            // 1) 超管 / 平台运维：设备范围不受限，能看全部订单
+            const orderScopeUnrestricted = typeof helper.deviceScopeUnrestricted === 'function'
+                ? helper.deviceScopeUnrestricted()
+                : (typeof helper.isSuperAdmin === 'function' && helper.isSuperAdmin());
+            if (orderScopeUnrestricted) {
                 return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
             }
 

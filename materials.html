@@ -2514,6 +2514,8 @@
             if (!helper || typeof helper.resolveCurrentStaffAccess !== 'function' || typeof helper.getModuleVisibleDeviceIds !== 'function') {
                 return null;
             }
+            // 设备范围不受限（超管 / 平台运维）→ 返回 null 表示不过滤
+            if (typeof helper.deviceScopeUnrestricted === 'function' && helper.deviceScopeUnrestricted()) return null;
             const access = helper.resolveCurrentStaffAccess();
             if (!access || !access.isScoped || !access.currentStaff) return null;
             return new Set(helper.getModuleVisibleDeviceIds(access.currentStaff, 'materials').map(normalizeDeviceId));
