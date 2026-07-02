@@ -2192,7 +2192,7 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button type="button" class="btn btn-primary" onclick="openStaffModal()">
+                    <button type="button" class="btn btn-primary" id="addStaffBtn" onclick="openStaffModal()">
                         <span>➕</span>
                         <span>添加人员</span>
                     </button>
@@ -2253,6 +2253,13 @@
                 <section class="section-block staff-modal-basic-section">
                     <div class="section-title">基本信息<span class="required">*</span></div>
                     <div class="form-grid">
+                        <div class="form-item" id="staffMerchantItem" hidden>
+                            <label class="form-label" for="staffMerchantSelect">所属商户</label>
+                            <select class="form-input" id="staffMerchantSelect" onchange="handleStaffMerchantChange(this.value)"></select>
+                            <div class="form-hint" style="font-size:12px;color:#6b7280;margin-top:4px;">
+                                超级管理员可为指定商户创建人员；选择「平台级」则创建不绑定商户的平台角色
+                            </div>
+                        </div>
                         <div class="form-item">
                             <label class="form-label" for="staffUsername">用户名</label>
                             <input type="text" class="form-input" id="staffUsername" placeholder="请输入名称">
@@ -2720,6 +2727,69 @@
             };
         }
 
+        // ===== 权限治理 helpers（角色体系 2026）=====
+        function getStaffAccessHelper() {
+            return window.CofeAdminStaffAccess || null;
+        }
+
+        function isSuperAdminUser() {
+            const helper = getStaffAccessHelper();
+            return !!(helper && typeof helper.isSuperAdmin === 'function' && helper.isSuperAdmin());
+        }
+
+        // 当前登录者的角色 id（超管→super_admin；否则取其 staff 记录 role.id；未知→merchant）
+        function getCurrentUserRoleId() {
+            if (isSuperAdminUser()) return 'super_admin';
+            const helper = getStaffAccessHelper();
+            if (helper && typeof helper.resolveCurrentStaffAccess === 'function') {
+                const access = helper.resolveCurrentStaffAccess();
+                const staff = access && access.currentStaff;
+                const roleId = staff && staff.role && staff.role.id;
+                if (roleId) return String(roleId);
+                // 无显式角色但持有人员管理权 → 视为商户管理员（可管理本商户人员）
+                if (staff && Array.isArray(staff.permissions) && staff.permissions.includes('ops.staff.manage')) {
+                    return 'merchant_admin';
+                }
+            }
+            return 'merchant';
+        }
+
+        // 当前登录者是否有权管理人员（超管，或持 ops.staff.manage 的员工）
+        function canManageStaff() {
+            if (isSuperAdminUser()) return true;
+            const helper = getStaffAccessHelper();
+            if (helper && typeof helper.resolveCurrentStaffAccess === 'function') {
+                const access = helper.resolveCurrentStaffAccess();
+                const perms = access && access.currentStaff && access.currentStaff.permissions;
+                return Array.isArray(perms) && perms.includes('ops.staff.manage');
+            }
+            return false;
+        }
+
+        // 当前登录者可创建的角色 id 列表（含 custom）
+        function getCreatableRoleIds() {
+            if (roleDefinitions && typeof roleDefinitions.getCreatableRoles === 'function') {
+                return roleDefinitions.getCreatableRoles(getCurrentUserRoleId()).map((role) => role.id);
+            }
+            return [];
+        }
+
+        // 全部商户选项（超管跨商户加人用）：优先 customersData，回退已有员工商户
+        function getAllMerchantOptions() {
+            try {
+                const customers = JSON.parse(localStorage.getItem('customersData') || '[]');
+                const opts = (Array.isArray(customers) ? customers : [])
+                    .map((c) => ({ id: String(c.id || '').trim(), name: String(c.name || c.merchantName || '').trim() }))
+                    .filter((c) => c.id);
+                if (opts.length) return opts;
+            } catch (e) { /* ignore malformed */ }
+            const seen = new Map();
+            staffManagersData.forEach((s) => {
+                if (s.merchantId && !seen.has(s.merchantId)) seen.set(s.merchantId, s.merchantName || s.merchantId);
+            });
+            return Array.from(seen, ([id, name]) => ({ id, name }));
+        }
+
         function renderSidebarLoginProfile() {
             const profile = getSidebarLoginProfile();
             const nameNode = document.getElementById('sidebarLoginName');
@@ -3009,9 +3079,10 @@
             const grid = document.getElementById('roleCardsGrid');
             if (!grid) return;
 
-            const roles = getAllRoles();
+            const creatableIds = getCreatableRoleIds();
+            const roles = getAllRoles().filter((role) => creatableIds.includes(role.id));
             if (!roles.length) {
-                grid.innerHTML = '<div class="empty-state">暂无角色模板</div>';
+                grid.innerHTML = '<div class="empty-state">暂无可分配的角色</div>';
                 return;
             }
 
@@ -3378,7 +3449,8 @@
             phone,
             selectedPermissions,
             selectedDevices,
-            moduleDeviceScopes
+            moduleDeviceScopes,
+            skipDeviceRequirement = false
         }) {
             if (!username || !phone) {
                 return { stepKey: '', message: '请填写用户名和手机号' };
@@ -3386,7 +3458,7 @@
             if (!/^1\d{10}$/.test(phone)) {
                 return { stepKey: '', message: '请输入正确的手机号' };
             }
-            if (!Array.isArray(selectedDevices) || !selectedDevices.length) {
+            if (!skipDeviceRequirement && (!Array.isArray(selectedDevices) || !selectedDevices.length)) {
                 return { stepKey: 'manageableDevices', message: '请至少选择一个可管理设备' };
             }
             if (!Array.isArray(selectedPermissions) || !selectedPermissions.length) {
@@ -3908,6 +3980,8 @@
         function renderManagers() {
             const list = document.getElementById('managerList');
             const listTitle = document.getElementById('listTitle');
+            const addStaffBtn = document.getElementById('addStaffBtn');
+            if (addStaffBtn) addStaffBtn.hidden = !canManageStaff();
             selectedMerchantId = getCurrentMerchantContext().merchantId;
             listTitle.textContent = `${getCurrentMerchantContext().merchantName || '未获取登录商户'} · 管理人员列表`;
 
@@ -3932,6 +4006,7 @@
                 return;
             }
 
+            const canManage = canManageStaff();
             list.innerHTML = filteredManagers
                 .map((manager) => {
                     const devices = Array.isArray(manager.devices) ? manager.devices.filter(Boolean) : [];
@@ -3960,10 +4035,10 @@
                                     ${deviceSummary.expandedMarkup ? `<div class="manager-device-expanded">${deviceSummary.expandedMarkup}</div>` : ''}
                                     ${deviceCount ? `<div class="manager-meta">共 ${deviceCount} 台设备</div>` : ''}
                                 </div>
-                                <div class="manager-actions">
+                                ${canManage ? `<div class="manager-actions">
                                     <button type="button" class="manager-edit-btn" onclick="editStaff('${manager.id}')">编辑人员</button>
                                     <button type="button" class="manager-toggle-btn ${isEnabled ? 'is-danger' : ''}" onclick="toggleStaffLoginStatus('${manager.id}')">${isEnabled ? '停用账号' : '启用账号'}</button>
-                                </div>
+                                </div>` : ''}
                             </div>
                         </article>
                     `;
@@ -4019,6 +4094,13 @@
             if (submitBtn) submitBtn.hidden = !(isEditing || staffWizardStep >= STAFF_WIZARD_TOTAL);
         }
 
+        // 当前选中角色是否为全平台数据范围（如平台运维）——此类角色无需选择可管理设备
+        function isPlatformScopeRoleSelected() {
+            if (committedRoleId === 'custom') return false;
+            const tpl = getRoleTemplate(committedRoleId);
+            return !!(tpl && tpl.deviceDataScope === 'all');
+        }
+
         function validateStaffWizardStep(step) {
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
@@ -4026,7 +4108,8 @@
             const selectedDevices = Array.from(deviceSelectionSet);
             const moduleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
             const result = resolveStaffModalValidationResult({
-                username, phone, selectedPermissions, selectedDevices, moduleDeviceScopes
+                username, phone, selectedPermissions, selectedDevices, moduleDeviceScopes,
+                skipDeviceRequirement: isPlatformScopeRoleSelected()
             });
             if (!result.message) return true;
             // 仅当错误属于「当前步或更早」时才拦截；属于后续步则放行
@@ -4059,8 +4142,17 @@
         }
 
         function openStaffModal() {
-            selectedMerchantId = getCurrentMerchantContext().merchantId;
-            if (!selectedMerchantId || !getCurrentMerchantContext().merchantName) {
+            if (!canManageStaff()) {
+                showToast('当前账号无权限管理人员');
+                return;
+            }
+            const isSuper = isSuperAdminUser();
+            const merchantOptions = isSuper ? getAllMerchantOptions() : [];
+            // 超管：默认选第一个商户（无则平台级）；非超管：锁定本商户
+            selectedMerchantId = isSuper
+                ? (merchantOptions.length ? merchantOptions[0].id : '')
+                : getCurrentMerchantContext().merchantId;
+            if (!isSuper && (!selectedMerchantId || !getCurrentMerchantContext().merchantName)) {
                 showToast('未获取登录商户信息');
                 return;
             }
@@ -4069,11 +4161,36 @@
             editingStaffId = null;
             updateStaffModalState();
             resetStaffForm();
+            renderStaffMerchantSelector();
             renderDevicePicker(selectedMerchantId, []);
             staffWizardStep = 1;
             staffWizardMaxReached = 1;
             renderStaffWizard();
             document.getElementById('staffModal').classList.add('active');
+        }
+
+        // 渲染「所属商户」选择器：仅超管可见/可改；含「平台级」空选项供平台角色使用
+        function renderStaffMerchantSelector() {
+            const item = document.getElementById('staffMerchantItem');
+            const select = document.getElementById('staffMerchantSelect');
+            if (!item || !select) return;
+            if (!isSuperAdminUser()) {
+                item.hidden = true;
+                return;
+            }
+            item.hidden = false;
+            const options = getAllMerchantOptions();
+            const optionHtml = ['<option value="">平台级（不绑定商户）</option>']
+                .concat(options.map((m) => `<option value="${m.id}">${m.name || m.id}</option>`));
+            select.innerHTML = optionHtml.join('');
+            select.value = selectedMerchantId || '';
+        }
+
+        function handleStaffMerchantChange(merchantId) {
+            selectedMerchantId = String(merchantId || '').trim();
+            // 切换商户后设备清单随之更新
+            renderDevicePicker(selectedMerchantId, []);
+            renderStaffWizard();
         }
 
         function closeStaffModal() {
@@ -4083,14 +4200,21 @@
         }
 
         function editStaff(staffId) {
+            if (!canManageStaff()) {
+                showToast('当前账号无权限管理人员');
+                return;
+            }
             const targetStaff = staffManagersData.find((item) => item.id === staffId);
             if (!targetStaff) {
                 showToast('未找到可编辑人员');
                 return;
             }
             editingStaffId = staffId;
+            // 编辑时以目标员工的商户为准（超管可改，非超管只能改本商户的人，商户已锁定）
+            selectedMerchantId = String(targetStaff.merchantId || getCurrentMerchantContext().merchantId || '');
             updateStaffModalState();
             fillStaffForm(targetStaff);
+            renderStaffMerchantSelector();
             renderDevicePicker(selectedMerchantId, targetStaff.devices || []);
             closeDeviceSelector();
             closeModuleDeviceScopeSelector();
@@ -4101,6 +4225,10 @@
         }
 
         function toggleStaffLoginStatus(staffId) {
+            if (!canManageStaff()) {
+                showToast('当前账号无权限管理人员');
+                return;
+            }
             const staffIndex = staffManagersData.findIndex((item) => item.id === staffId);
             if (staffIndex === -1) {
                 showToast('未找到可操作人员');
@@ -4474,7 +4602,12 @@
         }
 
         function saveStaff() {
-            selectedMerchantId = getCurrentMerchantContext().merchantId;
+            // 门禁（双保险）：无人员管理权限直接拒绝
+            if (!canManageStaff()) {
+                showToast('当前账号无权限管理人员');
+                return;
+            }
+
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
             const wechatOpenId = window.CofeFaultNotifyChannels
@@ -4482,20 +4615,51 @@
                 : String(document.getElementById('staffWechatOpenId').value || '').trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
-            const merchantName = getCurrentMerchantContext().merchantName || '';
             const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
 
-            if (!selectedMerchantId || !merchantName) {
-                showToast('未获取登录商户信息');
+            // 角色越权校验：committedRoleId 必须在当前登录者可创建范围内
+            const creatableIds = getCreatableRoleIds();
+            if (committedRoleId !== 'custom' && !creatableIds.includes(committedRoleId)) {
+                showToast('当前账号无权创建该角色');
                 return;
             }
+
+            // 角色数据范围：平台运维=all（全平台，不绑定商户）
+            const roleTemplate = committedRoleId !== 'custom' ? getRoleTemplate(committedRoleId) : null;
+            const deviceDataScope = (roleTemplate && roleTemplate.deviceDataScope === 'all') ? 'all' : 'merchant';
+
+            // 商户解析：全平台角色不绑商户；超管用所选商户；非超管锁定本商户
+            let resolvedMerchantId = '';
+            let resolvedMerchantName = '';
+            if (deviceDataScope === 'all') {
+                resolvedMerchantId = '';
+                resolvedMerchantName = '';
+            } else if (isSuperAdminUser()) {
+                resolvedMerchantId = String(selectedMerchantId || '').trim();
+                if (!resolvedMerchantId) {
+                    showToast('请选择该人员所属的商户');
+                    return;
+                }
+                const matchedMerchant = getAllMerchantOptions().find((m) => m.id === resolvedMerchantId);
+                resolvedMerchantName = matchedMerchant ? (matchedMerchant.name || matchedMerchant.id) : '';
+            } else {
+                const ctx = getCurrentMerchantContext();
+                resolvedMerchantId = ctx.merchantId;
+                resolvedMerchantName = ctx.merchantName;
+                if (!resolvedMerchantId || !resolvedMerchantName) {
+                    showToast('未获取登录商户信息');
+                    return;
+                }
+            }
+            selectedMerchantId = resolvedMerchantId;
 
             const validationResult = resolveStaffModalValidationResult({
                 username,
                 phone,
                 selectedPermissions,
                 selectedDevices,
-                moduleDeviceScopes: normalizedModuleDeviceScopes
+                moduleDeviceScopes: normalizedModuleDeviceScopes,
+                skipDeviceRequirement: deviceDataScope === 'all'
             });
             if (validationResult.message) {
                 focusStaffModalValidationTarget(validationResult.stepKey);
@@ -4504,13 +4668,14 @@
             }
 
             const staffPayload = {
-                merchantId: selectedMerchantId,
-                merchantName,
+                merchantId: resolvedMerchantId,
+                merchantName: resolvedMerchantName,
                 username,
                 phone,
                 wechatOpenId,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
+                deviceDataScope,
                 moduleDeviceScopes: normalizedModuleDeviceScopes,
                 role: committedRoleId !== 'custom' ? {
                     id: committedRoleId,

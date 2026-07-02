@@ -53,14 +53,33 @@ test('侧边栏：人员管理菜单应归属运营管理分组', () => {
   });
 });
 
-test('人员管理页：应提供管理人员列表区域，并去掉商户切换控件', () => {
+test('人员管理页：应提供管理人员列表区域与添加人员入口', () => {
   assert.ok(staffHtml.includes('<title>人员管理 - 运营控制台</title>'));
   assert.ok(staffHtml.includes('<h1 class="header-title">人员管理</h1>'));
-  assert.ok(!staffHtml.includes('id="merchantSelect"'));
-  assert.ok(!/function\s+handleMerchantChange\s*\(/.test(staffHtml));
-  assert.ok(!/function\s+renderMerchantSelect\s*\(/.test(staffHtml));
   assert.ok(staffHtml.includes('id="managerList"'));
   assert.ok(staffHtml.includes('onclick="openStaffModal()"'));
+});
+
+test('人员管理页：新增/编辑人员入口应受 ops.staff.manage 门禁保护', () => {
+  assert.ok(/function\s+canManageStaff\s*\(/.test(staffHtml), '应定义 canManageStaff 门禁');
+  assert.ok(staffHtml.includes("includes('ops.staff.manage')"), '门禁应基于 ops.staff.manage');
+  assert.ok(staffHtml.includes('id="addStaffBtn"'), '添加按钮应有 id 供按权限显隐');
+  // 门禁需覆盖：helper 定义 + renderManagers(按钮显隐 + 行内按钮) + openStaffModal/editStaff/toggleStaffLoginStatus/saveStaff
+  const count = (staffHtml.match(/canManageStaff\(\)/g) || []).length;
+  assert.ok(count >= 6, `canManageStaff 调用点应覆盖各入口，实际 ${count}`);
+});
+
+test('人员管理页：角色卡应按登录者可创建范围过滤', () => {
+  assert.ok(/getCreatableRoleIds\s*\(/.test(staffHtml), '应有 getCreatableRoleIds');
+  assert.ok(/getCreatableRoles\s*\(/.test(staffHtml), '应调用 role-definitions.getCreatableRoles 过滤角色卡');
+});
+
+test('人员管理页：应支持超管跨商户选择，并写入数据范围 deviceDataScope', () => {
+  assert.ok(staffHtml.includes('id="staffMerchantItem"'), '应有商户选择器容器');
+  assert.ok(staffHtml.includes('id="staffMerchantSelect"'), '应有商户选择下拉');
+  assert.ok(/function\s+renderStaffMerchantSelector\s*\(/.test(staffHtml), '应有 renderStaffMerchantSelector');
+  assert.ok(/function\s+handleStaffMerchantChange\s*\(/.test(staffHtml), '应有 handleStaffMerchantChange');
+  assert.ok(/deviceDataScope/.test(staffHtml), 'staffPayload 应写入 deviceDataScope');
 });
 
 test('人员管理页：移动端头部应与订单和商品页保持一致', () => {

@@ -13,6 +13,55 @@
       description: '拥有所有权限，可管理商户和人员',
       icon: '👑',
       order: 1,
+      deviceDataScope: 'all',
+      creatableBy: [],
+      permissions: [
+        'ops.overview',
+        'ops.devices',
+        'ops.products',
+        'ops.products.language',
+        'ops.products.currency',
+        'ops.products.edit',
+        'ops.products.recipe',
+        'ops.materials',
+        'ops.materials.laneNameEdit',
+        'ops.materials.laneMaterialEdit',
+        'ops.orders',
+        'ops.orders.refund',
+        'ops.faults',
+        'ops.staff',
+        'ops.staff.manage'
+      ],
+      defaultModuleScopes: {}
+    },
+
+    platform_ops: {
+      id: 'platform_ops',
+      name: '平台运维',
+      description: '平台方运维，可查看所有商户及未分配的机器，负责设备维护与故障处理',
+      icon: '🌐',
+      order: 2,
+      deviceDataScope: 'all',
+      creatableBy: ['super_admin'],
+      permissions: [
+        'ops.overview',
+        'ops.devices',
+        'ops.faults',
+        'ops.materials',
+        'ops.materials.laneNameEdit',
+        'ops.materials.laneMaterialEdit'
+      ],
+      defaultModuleScopes: {}
+    },
+
+    merchant_admin: {
+      id: 'merchant_admin',
+      name: '商户管理员',
+      description: '管理本商户的运营、设备与人员',
+      icon: '🏬',
+      order: 3,
+      deviceDataScope: 'merchant',
+      creatableBy: ['super_admin'],
       permissions: [
         'ops.overview',
         'ops.devices',
@@ -38,7 +87,9 @@
       name: '店长',
       description: '负责门店日常运营管理',
       icon: '🏪',
-      order: 2,
+      order: 4,
+      deviceDataScope: 'merchant',
+      creatableBy: ['super_admin', 'merchant_admin'],
       permissions: [
         'ops.overview',
         'ops.devices',
@@ -62,7 +113,9 @@
       name: '运维人员',
       description: '负责设备安装、维护和故障处理',
       icon: '🔧',
-      order: 3,
+      order: 5,
+      deviceDataScope: 'merchant',
+      creatableBy: ['super_admin', 'merchant_admin'],
       permissions: [
         'ops.overview',
         'ops.devices',
@@ -82,7 +135,9 @@
       name: '职员',
       description: '基础查看权限，可根据需要添加其他权限',
       icon: '💼',
-      order: 4,
+      order: 6,
+      deviceDataScope: 'merchant',
+      creatableBy: ['super_admin', 'merchant_admin'],
       permissions: [
         'ops.overview',
         'ops.devices',
@@ -100,6 +155,8 @@
       description: '完全自定义权限配置',
       icon: '⚙️',
       order: 99,
+      deviceDataScope: 'merchant',
+      creatableBy: ['super_admin', 'merchant_admin'],
       permissions: [],
       defaultModuleScopes: {}
     }
@@ -112,6 +169,16 @@
   function getAllRoleTemplates() {
     return Object.values(ROLE_TEMPLATES)
       .filter(role => role.id !== 'custom')
+      .sort((a, b) => a.order - b.order);
+  }
+
+  // 返回「当前角色」有权创建的角色列表（含 custom）。
+  // 依据每个模板的 creatableBy 白名单：super_admin 可建除自身外的全部；
+  // merchant_admin 只能建 store_manager/operations/staff/custom。
+  function getCreatableRoles(currentRoleId) {
+    const normalizedRoleId = String(currentRoleId || '').trim();
+    return Object.values(ROLE_TEMPLATES)
+      .filter(role => Array.isArray(role.creatableBy) && role.creatableBy.includes(normalizedRoleId))
       .sort((a, b) => a.order - b.order);
   }
 
@@ -167,6 +234,7 @@
     ROLE_TEMPLATES,
     getRoleTemplate,
     getAllRoleTemplates,
+    getCreatableRoles,
     getRolePermissions,
     getRoleDefaultModuleScopes,
     applyRoleWithCustomizations,

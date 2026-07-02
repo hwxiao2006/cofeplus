@@ -1891,6 +1891,11 @@
                 };
             }
 
+            // 设备范围不受限（超管 / 平台运维）→ 放行全部，功能权限仍由后续 hasModulePermission 卡
+            if (typeof helper.deviceScopeUnrestricted === 'function' && helper.deviceScopeUnrestricted()) {
+                return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
+            }
+
             const access = helper.resolveCurrentStaffAccess();
             if (!access || !access.isScoped || !access.currentStaff) {
                 return {
