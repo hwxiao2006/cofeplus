@@ -48,7 +48,7 @@
 
 **参考截图：**
 
-![UF-001 印花图片设置概览](../screenshots/menu-tag-imprint-prd/imprint-uf001-overview.svg)
+![UF-001 印花图片设置概览](../screenshots/menu-tag-imprint-prd/production/imprint-uf001-production-overview.png)
 
 ### UF-002：上传印花图片到当前设备
 
@@ -75,7 +75,7 @@
 
 **参考截图：**
 
-![UF-002 上传印花图片弹窗](../screenshots/menu-tag-imprint-prd/imprint-uf002-upload-modal.svg)
+![UF-002 上传印花图片弹窗](../screenshots/menu-tag-imprint-prd/production/imprint-uf002-production-upload-modal.png)
 
 ### UF-003：将印花图片复制到其他设备
 
@@ -100,7 +100,7 @@
 
 **参考截图：**
 
-![UF-003 复制印花图片到其他设备](../screenshots/menu-tag-imprint-prd/imprint-uf003-copy-modal.svg)
+![UF-003 复制印花图片到其他设备](../screenshots/menu-tag-imprint-prd/production/imprint-uf003-production-copy-modal.png)
 
 ### UF-004：删除印花图片后重新上传新版素材
 
@@ -121,7 +121,9 @@
 
 **参考截图：**
 
-![UF-004 删除印花图片确认](../screenshots/menu-tag-imprint-prd/imprint-uf004-delete-confirm.svg)
+> 生产页面当前通过浏览器原生确认弹窗完成删除确认，截图展示删除入口所在状态。
+
+![UF-004 删除印花图片入口](../screenshots/menu-tag-imprint-prd/production/imprint-uf004-production-delete-entry.png)
 
 ## 4. 功能需求
 

@@ -14,11 +14,26 @@ assert.ok(
 );
 
 for (const source of imageSources) {
+  const pngPrefix = 'data:image/png;base64,';
+
   assert.ok(
-    source.startsWith('data:image/svg+xml;base64,'),
-    'reference screenshots should be embedded SVG data URIs'
+    source.startsWith(pngPrefix),
+    'reference screenshots should be embedded PNG data URIs'
   );
 
-  const decoded = Buffer.from(source.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
-  assert.ok(decoded.includes('<svg '), 'embedded screenshot should decode to SVG markup');
+  const decoded = Buffer.from(source.slice(pngPrefix.length), 'base64');
+  assert.deepStrictEqual(
+    Array.from(decoded.subarray(0, 8)),
+    [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
+    'embedded screenshot should decode to PNG data'
+  );
 }
+
+assert.ok(
+  !html.includes('data:image/svg+xml;base64,'),
+  'PRD should not use generated SVG mock screenshots'
+);
+assert.ok(
+  html.includes('生产页面当前通过浏览器原生确认弹窗完成删除确认'),
+  'delete flow should explain why the native confirm dialog is not visible in the reference screenshot'
+);

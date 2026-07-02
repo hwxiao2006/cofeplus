@@ -525,10 +525,6 @@ def build_assets():
         "business-tag-uf002-form.svg": settings_screen(business_tags_drawer_form(), stats=(4, 0)),
         "business-tag-uf003-status-groups.svg": settings_screen(business_tags_drawer_status(), stats=(3, 1)),
         "business-tag-uf004-no-language.svg": settings_screen(business_tags_drawer_invalid(), stats=(3, 1)),
-        "imprint-uf001-overview.svg": latte_screen(""),
-        "imprint-uf002-upload-modal.svg": latte_screen(upload_modal()),
-        "imprint-uf003-copy-modal.svg": latte_screen(copy_modal()),
-        "imprint-uf004-delete-confirm.svg": latte_screen(delete_modal()),
     }
     for name, svg in files.items():
         (OUT_DIR / name).write_text(svg, encoding="utf-8")
