@@ -42,24 +42,27 @@ test('人员管理 PRD 应覆盖角色模板与两步切换完整流程', () => 
   });
 
   [
-    'v2.1（角色模板权限方案）',
+    '产品需求文档：人员管理（v2.1 角色模板权限方案）',
     '本版重点变化',
     '角色模板与权限模型',
     '角色切换状态机',
     '数据保存契约',
-    'permissionChanges',
+    '权限差异记录',
+    '模块设备范围',
     '同一商户下手机号不得重复',
-    'pendingRoleSwitch',
-    'uf004-role-template.svg',
-    'uf005-current-role.svg',
-    'uf006-role-switch-confirm.svg',
-    'uf007-role-undo.svg',
-    'uf008-role-customization.svg'
+    '待确认切换',
+    '撤销切换',
+    '2026-06-01-role-switch-state-C-pending.png',
+    '2026-06-01-role-switch-state-B-edit.png',
+    '2026-06-01-role-switch-state-D-confirmed.png',
+    'uf004-permissions.png'
   ].forEach(keyword => {
     assert.ok(markdown.includes(keyword), `missing optimized PRD keyword: ${keyword}`);
   });
 
   [
+    'permissionChanges',
+    'pendingRoleSwitch',
     'lastCommitSnapshot',
     'lastCommitSnapshot != null',
     'lastCommitSnapshot = null',
@@ -98,6 +101,8 @@ test('人员管理 HTML PRD 应同步 12 个用户流程并内联截图', () => 
   assert.ok(inlineSvgCount >= 5, 'expected role assignment SVG screenshots to be inlined');
   assert.ok(!html.includes('src="../screenshots/'), 'final HTML should not depend on relative screenshot paths');
   [
+    'permissionChanges',
+    'pendingRoleSwitch',
     'lastCommitSnapshot',
     'lastCommitSnapshot != null',
     'lastCommitSnapshot = null',
