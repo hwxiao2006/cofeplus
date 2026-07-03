@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960">
+    <rect width="1440" height="960" fill="#edf2f7"/>
+    <rect x="80" y="56" width="1280" height="848" rx="26" fill="#ffffff" stroke="#d7e2ee"/>
+    <rect x="80" y="56" width="1280" height="92" rx="26" fill="#f8fbfd"/>
+    <text x="122" y="112" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="800" fill="#172033" text-anchor="start">UF-014 商户管理员在本商户内新增人员</text>
+    <text x="122" y="138" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#667085" text-anchor="start">商户管理员不显示所属商户选择器，商户锁定为当前登录商户，且只能创建店长 / 运维人员 / 职员。</text>
+    <line x1="80" y1="148" x2="1360" y2="148" stroke="#d7e2ee"/>
+
+    <text x="122" y="202" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="24" font-weight="800" fill="#172033" text-anchor="start">基本信息</text>
+    <text x="238" y="196" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="900" fill="#ef4444" text-anchor="start">*</text>
+
+    <!-- 商户锁定标签（无下拉） -->
+    <rect x="122" y="224" width="360" height="34" rx="8" fill="#f3f4f6" stroke="#e5e7eb"/>
+    <text x="142" y="246" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#6b7280" text-anchor="start">所属商户：星巴克咖啡（当前商户 · 锁定）</text>
+
+    <!-- 用户名 必填 -->
+    <text x="122" y="298" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="700" fill="#374151" text-anchor="start">用户名</text>
+    <text x="176" y="298" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="900" fill="#ef4444" text-anchor="start">*</text>
+    <rect x="122" y="310" width="560" height="38" rx="8" fill="#ffffff" stroke="#d7e2ee"/>
+    <text x="142" y="334" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" fill="#9ca3af" text-anchor="start">请输入名称</text>
+
+    <!-- 手机号 必填 -->
+    <text x="722" y="298" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="700" fill="#374151" text-anchor="start">手机号</text>
+    <text x="768" y="298" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="900" fill="#ef4444" text-anchor="start">*</text>
+    <rect x="722" y="310" width="560" height="38" rx="8" fill="#ffffff" stroke="#d7e2ee"/>
+    <text x="742" y="334" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" fill="#9ca3af" text-anchor="start">请输入手机号</text>
+
+    <!-- 公众号 OpenID 选填 -->
+    <text x="122" y="384" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="700" fill="#374151" text-anchor="start">公众号 OpenID</text>
+    <text x="238" y="384" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="400" fill="#9ca3af" text-anchor="start">（选填）</text>
+    <rect x="122" y="396" width="1160" height="38" rx="8" fill="#ffffff" stroke="#d7e2ee"/>
+    <text x="142" y="420" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" fill="#9ca3af" text-anchor="start">员工本人在咖啡运营公众号下的 OpenID</text>
+
+    <line x1="122" y1="470" x2="1318" y2="470" stroke="#d7e2ee"/>
+
+    <text x="122" y="514" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="800" fill="#172033" text-anchor="start">选择角色</text>
+    <text x="122" y="540" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="500" fill="#667085" text-anchor="start">商户管理员只能创建以下 3 种本商户角色。</text>
+
+    <!-- 3 张角色卡：店长 / 运维人员 / 职员 -->
+    <g>
+      <rect x="122" y="570" width="370" height="150" rx="14" fill="#ffffff" stroke="#d7e2ee" stroke-width="2"/>
+      <circle cx="158" cy="606" r="20" fill="#dcfce7"/>
+      <text x="158" y="613" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#15803d" text-anchor="middle">店</text>
+      <text x="192" y="602" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="800" fill="#172033" text-anchor="start">店长</text>
+      <text x="192" y="628" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="500" fill="#667085" text-anchor="start">负责门店日常运营管理</text>
+      <text x="142" y="672" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#475467" text-anchor="start">默认：订单 / 物料 / 退款 / 故障</text>
+      <text x="142" y="698" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#15803d" text-anchor="start">数据范围：本商户</text>
+    </g>
+    <g>
+      <rect x="514" y="570" width="370" height="150" rx="14" fill="#ffffff" stroke="#d7e2ee" stroke-width="2"/>
+      <circle cx="550" cy="606" r="20" fill="#dbeafe"/>
+      <text x="550" y="613" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#1d4ed8" text-anchor="middle">维</text>
+      <text x="584" y="602" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="800" fill="#172033" text-anchor="start">运维人员</text>
+      <text x="584" y="628" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="500" fill="#667085" text-anchor="start">负责设备安装、维护和故障处理</text>
+      <text x="534" y="672" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#475467" text-anchor="start">默认：设备 / 故障 / 物料</text>
+      <text x="534" y="698" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="start">数据范围：指定设备</text>
+    </g>
+    <g>
+      <rect x="906" y="570" width="412" height="150" rx="14" fill="#ffffff" stroke="#d7e2ee" stroke-width="2"/>
+      <circle cx="942" cy="606" r="20" fill="#fef3c7"/>
+      <text x="942" y="613" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#92400e" text-anchor="middle">职</text>
+      <text x="976" y="602" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="800" fill="#172033" text-anchor="start">职员</text>
+      <text x="976" y="628" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="500" fill="#667085" text-anchor="start">基础查看权限，可根据需要添加</text>
+      <text x="926" y="672" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#475467" text-anchor="start">默认：总览 / 设备 / 订单查看</text>
+      <text x="926" y="698" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#92400e" text-anchor="start">数据范围：指定设备</text>
+    </g>
+
+    <rect x="122" y="748" width="1196" height="60" rx="14" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="154" y="784" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="700" fill="#b91c1c" text-anchor="start">平台运维、商户管理员、超级管理员不在商户管理员的可创建范围内，不会出现在角色卡中。</text>
+
+    <rect x="1120" y="838" width="128" height="42" rx="8" fill="#109c93"/>
+    <text x="1184" y="865" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">下一步</text>
+    <rect x="980" y="838" width="120" height="42" rx="8" fill="#fff" stroke="#d7e2ee"/>
+    <text x="1040" y="865" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="800" fill="#475467" text-anchor="middle">取消</text>
+</svg>
