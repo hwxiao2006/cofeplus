@@ -412,3 +412,27 @@ test('人员管理页：lastCommitSnapshot 必须仅在 confirmRoleSwitch 中被
   assert.ok(childFn && /invalidateRoleSnapshotOnManualEdit\(\)/.test(childFn[0]),
     'handlePermissionChildChange 必须调用 invalidateRoleSnapshotOnManualEdit');
 });
+
+test('人员管理页：种子员工必须带 role 与 deviceDataScope，避免编辑时误显示"自定义"', () => {
+  const seedMatch = staffHtml.match(/const\s+defaultManagers\s*=\s*\[[\s\S]*?\n\s{8}\];/);
+  assert.ok(seedMatch, '应能定位 defaultManagers 种子数据');
+  const seedBlock = seedMatch[0];
+  const roleCount = (seedBlock.match(/role:\s*\{\s*id:/g) || []).length;
+  const scopeCount = (seedBlock.match(/deviceDataScope:/g) || []).length;
+  assert.ok(roleCount >= 3, `种子员工应各自带 role 字段（找到 ${roleCount} 个），否则编辑弹窗会退回自定义`);
+  assert.ok(scopeCount >= 3, `种子员工应各自带 deviceDataScope 字段（找到 ${scopeCount} 个）`);
+});
+
+test('人员管理页：历史无 role 记录应可按权限精确回填角色，且必须同时匹配数据范围', () => {
+  const inferMatch = staffHtml.match(/function\s+inferRoleForLegacyRecord\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
+  assert.ok(inferMatch, '应定义 inferRoleForLegacyRecord 历史数据回填 helper');
+  const inferFn = inferMatch[0];
+  // operations 与 platform_ops 权限集相同、仅 deviceDataScope 不同，回填必须比对范围以防越权
+  assert.ok(/deviceDataScope/.test(inferFn), 'inferRoleForLegacyRecord 必须比对 deviceDataScope，避免本商户老数据被误判为全平台');
+  assert.ok(/templateScope\s*!==\s*recordScope/.test(inferFn) || /Scope[\s\S]*continue/.test(inferFn),
+    'inferRoleForLegacyRecord 应在范围不符时跳过该模板');
+  // bootstrap else 分支应调用回填 helper
+  assert.ok(/inferRoleForLegacyRecord\s*\(/.test(staffHtml.replace(inferFn, '')),
+    'bootstrapStaffManagers 应调用 inferRoleForLegacyRecord 回填历史记录');
+});
+

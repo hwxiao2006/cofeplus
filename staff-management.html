@@ -2997,6 +2997,32 @@
             return {};
         }
 
+        // 历史数据回填：老员工记录没有 role 字段。若其权限恰好等于某个角色模板的
+        // 完整权限集，则回填对应 role，让编辑弹窗显示真实角色而非"自定义"。
+        // 权限不完全相等时不猜测，保持无 role（即自定义）。
+        // 注意：运维人员(operations,本商户)与平台运维(platform_ops,全平台)权限集相同，
+        // 仅 deviceDataScope 不同——推断时必须同时匹配范围，避免把本商户老数据误判为全平台。
+        function inferRoleForLegacyRecord(record) {
+            if (record && record.role && record.role.id) return null;
+            const perms = normalizeStaffPermissions(record && record.permissions);
+            const sortedKey = perms.slice().sort().join('|');
+            const recordScope = record && record.deviceDataScope === 'all' ? 'all' : 'merchant';
+            const templates = getAllRoles();
+            for (const template of templates) {
+                const templateScope = template.deviceDataScope === 'all' ? 'all' : 'merchant';
+                if (templateScope !== recordScope) continue;
+                const templatePerms = getRolePermissions(template.id).slice().sort().join('|');
+                if (templatePerms && templatePerms === sortedKey) {
+                    return {
+                        id: template.id,
+                        name: template.name,
+                        appliedAt: record.createdAt || new Date().toISOString().slice(0, 10)
+                    };
+                }
+            }
+            return null;
+        }
+
         // 计算权限变更
         function calculatePermissionChanges(roleId, finalPermissions) {
             if (roleDefinitions.calculatePermissionChanges) {
@@ -3024,7 +3050,9 @@
                 phone: '13800138021',
                 wechatOpenId: '',
                 accountEnabled: true,
-                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.faults', 'ops.staff', 'ops.staff.manage'],
+                role: { id: 'merchant_admin', name: '商户管理员', appliedAt: '2026-02-15' },
+                deviceDataScope: 'merchant',
+                permissions: ['ops.overview', 'ops.devices', 'ops.products', 'ops.products.language', 'ops.products.currency', 'ops.products.edit', 'ops.products.recipe', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit', 'ops.orders', 'ops.orders.refund', 'ops.faults', 'ops.staff', 'ops.staff.manage'],
                 devices: ['RCK386', 'RCK385'],
                 moduleDeviceScopes: {
                     devices: { mode: 'inherit', deviceIds: [] },
@@ -3041,11 +3069,13 @@
                 phone: '13800138022',
                 wechatOpenId: '',
                 accountEnabled: false,
-                permissions: ['ops.orders'],
+                role: { id: 'staff', name: '职员', appliedAt: '2026-02-17' },
+                deviceDataScope: 'merchant',
+                permissions: ['ops.overview', 'ops.devices', 'ops.orders'],
                 devices: ['RCK384'],
                 moduleDeviceScopes: {
-                    devices: { mode: 'inherit', deviceIds: [] },
-                    orders: { mode: 'inherit', deviceIds: [] },
+                    devices: { mode: 'custom', deviceIds: ['RCK384'] },
+                    orders: { mode: 'custom', deviceIds: ['RCK384'] },
                     faults: { mode: 'inherit', deviceIds: [] }
                 },
                 createdAt: '2026-02-17'
@@ -3058,10 +3088,12 @@
                 phone: '13800138023',
                 wechatOpenId: '',
                 accountEnabled: true,
-                permissions: ['ops.devices', 'ops.faults'],
+                role: { id: 'operations', name: '运维人员', appliedAt: '2026-02-18' },
+                deviceDataScope: 'merchant',
+                permissions: ['ops.overview', 'ops.devices', 'ops.faults', 'ops.materials', 'ops.materials.laneNameEdit', 'ops.materials.laneMaterialEdit'],
                 devices: ['RCK410', 'RCK406'],
                 moduleDeviceScopes: {
-                    devices: { mode: 'inherit', deviceIds: [] },
+                    devices: { mode: 'custom', deviceIds: ['RCK410', 'RCK406'] },
                     orders: { mode: 'inherit', deviceIds: [] },
                     faults: { mode: 'custom', deviceIds: ['RCK410'] }
                 },
@@ -3361,11 +3393,13 @@
                     const normalizedWechatOpenId = window.CofeFaultNotifyChannels
                         ? window.CofeFaultNotifyChannels.normalizeOpenId(item.wechatOpenId)
                         : String(item.wechatOpenId || '').trim();
+                    const inferredRole = inferRoleForLegacyRecord({ ...item, permissions: normalizedPermissions });
                     if (
                         JSON.stringify(normalizedPermissions) !== JSON.stringify(item.permissions || [])
                         || normalizedAccountEnabled !== item.accountEnabled
                         || normalizedWechatOpenId !== (item.wechatOpenId || '')
                         || JSON.stringify(normalizedModuleDeviceScopes) !== JSON.stringify(item.moduleDeviceScopes || {})
+                        || inferredRole
                     ) {
                         shouldPersist = true;
                     }
@@ -3374,7 +3408,8 @@
                         accountEnabled: normalizedAccountEnabled,
                         permissions: normalizedPermissions,
                         wechatOpenId: normalizedWechatOpenId,
-                        moduleDeviceScopes: normalizedModuleDeviceScopes
+                        moduleDeviceScopes: normalizedModuleDeviceScopes,
+                        ...(inferredRole ? { role: inferredRole } : {})
                     };
                 });
             }
