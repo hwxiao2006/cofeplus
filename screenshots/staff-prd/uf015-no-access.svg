@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900">
+    <rect width="1440" height="900" fill="#edf2f7"/>
+    <rect x="80" y="56" width="1280" height="788" rx="26" fill="#ffffff" stroke="#d7e2ee"/>
+    <rect x="80" y="56" width="1280" height="92" rx="26" fill="#f8fbfd"/>
+    <text x="122" y="112" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="800" fill="#172033" text-anchor="start">UF-015 无人员维护能力的账号仅可查看</text>
+    <text x="122" y="138" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="15" font-weight="500" fill="#667085" text-anchor="start">平台运维、店长等没有人员维护能力的账号，进入人员管理只能查看，看不到新增或编辑入口。</text>
+    <line x1="80" y1="148" x2="1360" y2="148" stroke="#d7e2ee"/>
+
+    <!-- 页面头部：人员管理标题 + 右上角原「添加人员」位置为空 -->
+    <text x="122" y="212" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="26" font-weight="800" fill="#172033" text-anchor="start">人员管理</text>
+    <text x="122" y="240" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="500" fill="#667085" text-anchor="start">列出当前商户下所有管理人员</text>
+    <rect x="1066" y="190" width="216" height="44" rx="8" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="7 6"/>
+    <text x="1174" y="217" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="700" fill="#ef4444" text-anchor="middle">（无「添加人员」入口）</text>
+
+    <line x1="122" y1="266" x2="1318" y2="266" stroke="#d7e2ee"/>
+
+    <!-- 列表卡片 3 行 -->
+    <g>
+      <rect x="122" y="290" width="1196" height="88" rx="14" fill="#f8fbfd" stroke="#d7e2ee"/>
+      <text x="152" y="326" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#172033" text-anchor="start">王店长</text>
+      <rect x="252" y="312" width="72" height="24" rx="12" fill="#dcfce7"/><text x="288" y="329" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#15803d" text-anchor="middle">已启用</text>
+      <text x="152" y="356" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="500" fill="#667085" text-anchor="start">13800138001 · 负责设备 RCK386、RCK385</text>
+      <rect x="1058" y="316" width="224" height="40" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="1170" y="341" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">（无编辑 / 启停操作）</text>
+    </g>
+    <g>
+      <rect x="122" y="392" width="1196" height="88" rx="14" fill="#f8fbfd" stroke="#d7e2ee"/>
+      <text x="152" y="428" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#172033" text-anchor="start">李职员</text>
+      <rect x="252" y="414" width="72" height="24" rx="12" fill="#fee2e2"/><text x="288" y="431" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#b91c1c" text-anchor="middle">已停用</text>
+      <text x="152" y="458" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="500" fill="#667085" text-anchor="start">13800138002 · 负责设备 RCK384</text>
+      <rect x="1058" y="418" width="224" height="40" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="1170" y="443" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">（无编辑 / 启停操作）</text>
+    </g>
+    <g>
+      <rect x="122" y="494" width="1196" height="88" rx="14" fill="#f8fbfd" stroke="#d7e2ee"/>
+      <text x="152" y="530" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="800" fill="#172033" text-anchor="start">赵运维</text>
+      <rect x="252" y="516" width="72" height="24" rx="12" fill="#dcfce7"/><text x="288" y="533" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" fill="#15803d" text-anchor="middle">已启用</text>
+      <text x="152" y="560" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="500" fill="#667085" text-anchor="start">13800138003 · 负责设备 RCK390、RCK391 等 5 台</text>
+      <rect x="1058" y="520" width="224" height="40" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <text x="1170" y="545" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="middle">（无编辑 / 启停操作）</text>
+    </g>
+
+    <rect x="122" y="620" width="1196" height="88" rx="16" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="154" y="656" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="17" font-weight="800" fill="#9a3412" text-anchor="start">仅可查看</text>
+    <text x="154" y="684" font-family="PingFang SC, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="600" fill="#9a3412" text-anchor="start">当前账号无人员维护能力：不显示「添加人员」按钮与列表操作；即便直接触发新增 / 编辑，也会被拦截并提示无权限。</text>
+</svg>

@@ -42,19 +42,19 @@ test('人员管理 PRD 应覆盖角色模板与两步切换完整流程', () => 
   });
 
   [
-    'v2.1（角色模板权限方案）',
+    'v2.2 角色模板与分级授权方案',
     '本版重点变化',
     '角色模板与权限模型',
     '角色切换状态机',
     '数据保存契约',
-    'permissionChanges',
+    '分级授权与人员维护门禁',
+    '数据范围',
+    '平台运维',
+    '商户管理员',
     '同一商户下手机号不得重复',
-    'pendingRoleSwitch',
-    'uf004-role-template.svg',
-    'uf005-current-role.svg',
-    'uf006-role-switch-confirm.svg',
-    'uf007-role-undo.svg',
-    'uf008-role-customization.svg'
+    'uf013-superadmin-add.svg',
+    'uf014-merchant-admin-add.svg',
+    'uf015-no-access.svg'
   ].forEach(keyword => {
     assert.ok(markdown.includes(keyword), `missing optimized PRD keyword: ${keyword}`);
   });
@@ -70,7 +70,7 @@ test('人员管理 PRD 应覆盖角色模板与两步切换完整流程', () => 
   });
 });
 
-test('人员管理 HTML PRD 应同步 12 个用户流程并内联截图', () => {
+test('人员管理 HTML PRD 应同步 15 个用户流程并内联截图', () => {
   const html = fs.readFileSync(htmlPath, 'utf8');
 
   [
@@ -85,17 +85,30 @@ test('人员管理 HTML PRD 应同步 12 个用户流程并内联截图', () => 
     'UF-009',
     'UF-010',
     'UF-011',
-    'UF-012'
+    'UF-012',
+    'UF-013',
+    'UF-014',
+    'UF-015'
   ].forEach(flowId => {
     assert.ok(html.includes(flowId), `missing user flow section: ${flowId}`);
+  });
+
+  [
+    'v2.2 角色模板与分级授权方案',
+    '平台运维',
+    '商户管理员',
+    '数据范围',
+    '分级授权与人员维护门禁'
+  ].forEach(keyword => {
+    assert.ok(html.includes(keyword), `missing v2.2 PRD keyword in HTML: ${keyword}`);
   });
 
   const figureCount = (html.match(/<figure class="doc-image">/g) || []).length;
   const inlineImageCount = (html.match(/src="data:image\/png;base64,/g) || []).length;
   const inlineSvgCount = (html.match(/src="data:image\/svg\+xml;base64,/g) || []).length;
-  assert.ok(figureCount >= 12, 'expected screenshots for all twelve user flows');
-  assert.ok(inlineImageCount + inlineSvgCount >= 12, 'expected all flow screenshots to be inlined');
-  assert.ok(inlineSvgCount >= 5, 'expected role assignment SVG screenshots to be inlined');
+  assert.ok(figureCount >= 15, 'expected screenshots for all fifteen user flows');
+  assert.ok(inlineImageCount + inlineSvgCount >= 15, 'expected all flow screenshots to be inlined');
+  assert.ok(inlineSvgCount >= 8, 'expected role assignment SVG screenshots to be inlined');
   assert.ok(!html.includes('src="../screenshots/'), 'final HTML should not depend on relative screenshot paths');
   [
     'lastCommitSnapshot',
