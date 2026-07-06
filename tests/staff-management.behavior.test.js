@@ -100,6 +100,11 @@ test('人员管理页：添加人员表单应为 3 步向导并保留公众号 O
   assert.ok(staffHtml.includes('手机号'));
   assert.ok(staffHtml.includes('公众号 OpenID'));
   assert.ok(staffHtml.includes('id="staffWechatOpenId"'));
+  // 邮箱：Google 登录用，小程序/Google 二选一登录 → 选填 + 格式校验
+  assert.ok(staffHtml.includes('id="staffEmail"'), '基本信息应有邮箱输入框');
+  assert.ok(/for="staffEmail">邮箱<span class="form-label-optional">（选填）<\/span>/.test(staffHtml), '邮箱应标记为选填');
+  assert.ok(staffHtml.includes('用于 Google 账号登录'), '邮箱字段应说明 Google 登录用途');
+  assert.ok(/email\s*&&\s*!\/\^\[\^\\s@\]\+@\[\^\\s@\]\+\\\.\[\^\\s@\]\+\$\/\.test\(email\)/.test(staffHtml), '校验应为“填了才校验格式”，留空放行');
   // 添加员工弹窗应为 3 步向导结构
   assert.ok(/class="staff-modal-stepbar"/.test(staffHtml), '应使用分步向导步骤条');
   assert.ok((staffHtml.match(/class="staff-modal-step-section"/g) || []).length === 3, '应有 3 个步骤区块');
