@@ -82,7 +82,9 @@ Hosted on **Cloudflare Pages**, connected to this repo's GitHub `main` branch. P
 
 To verify a release, open https://cofeplus.pages.dev with gstack `/browse` after the build finishes.
 
-**PRD custom domain:** https://prd.cofeplus.dpdns.org is a separate Cloudflare Pages direct-upload project named `cofeplus-prd`. It serves the ignored `prd-site/` bundle, not the tracked `tasks/` files directly. After changing a PRD that must appear on this domain, copy the updated HTML into `prd-site/tasks/`, deploy with `npx wrangler pages deploy prd-site --project-name cofeplus-prd --branch main --commit-dirty=true`, then verify the custom-domain URL. Do not assume a GitHub `main` push has updated the PRD domain.
+**PRD custom domain:** https://prd.cofeplus.dpdns.org is a separate Cloudflare Pages direct-upload project named `cofeplus-prd`. It serves the ignored `prd-site/` bundle, not the tracked `tasks/` files directly. Do not assume a GitHub `main` push has updated the PRD domain.
+
+**WARNING — deploys REPLACE the whole site.** `wrangler pages deploy` swaps in the uploaded bundle wholesale: any PRD missing from `prd-site/` 404s after deploy. Never hand-copy one or two files into a fresh `prd-site/`. Always rebuild the full bundle with `scripts/deploy_prd_pages.sh` (copies ALL `tasks/prd-*.html`/`.md`, `tasks/screenshots/`, referenced `screenshots/*-prd` dirs, and the tracked landing page `scripts/prd_site_index.html`, then verifies every index link and screenshot reference resolves before deploying). When adding a new PRD to the site, add its link to `scripts/prd_site_index.html`. Manual deploy after building: `npx wrangler pages deploy prd-site --project-name cofeplus-prd --branch main --commit-dirty=true`, then verify the custom-domain URL.
 
 ```bash
 # Manual deploy (legacy fallback only; normal flow is auto-deploy from main)
