@@ -2239,7 +2239,7 @@
                         <span class="staff-modal-step-trigger-index">1</span>
                         <span class="staff-modal-step-trigger-text">
                             <span class="staff-modal-step-trigger-label">基本信息</span>
-                            <span class="staff-modal-step-trigger-hint">用户名 · 手机号 · OpenID</span>
+                            <span class="staff-modal-step-trigger-hint">用户名 · 手机号 · 邮箱 · OpenID</span>
                         </span>
                     </button>
                     <button type="button" class="staff-modal-step-trigger" data-step="2" data-state="locked" onclick="gotoStaffWizardStep(2)">
@@ -2275,6 +2275,13 @@
                         <div class="form-item">
                             <label class="form-label" for="staffPhone">手机号<span class="required">*</span></label>
                             <input type="text" class="form-input" id="staffPhone" placeholder="请输入手机号">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label" for="staffEmail">邮箱<span class="form-label-optional">（选填）</span></label>
+                            <input type="email" class="form-input" id="staffEmail" placeholder="employee@example.com" maxlength="254">
+                            <div class="form-hint" style="font-size:12px;color:#6b7280;margin-top:4px;">
+                                用于 Google 账号登录。员工可用小程序或 Google 登录，二选一；使用 Google 登录的员工必须配置邮箱
+                            </div>
                         </div>
                         <div class="form-item">
                             <label class="form-label" for="staffWechatOpenId">公众号 OpenID<span class="form-label-optional">（选填）</span></label>
@@ -3490,6 +3497,7 @@
         function resolveStaffModalValidationResult({
             username,
             phone,
+            email,
             selectedPermissions,
             selectedDevices,
             moduleDeviceScopes,
@@ -3500,6 +3508,10 @@
             }
             if (!/^1\d{10}$/.test(phone)) {
                 return { stepKey: '', message: '请输入正确的手机号' };
+            }
+            // 邮箱选填（登录方式为小程序/Google 二选一），填了必须是合法格式
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return { stepKey: '', message: '请输入正确的邮箱地址' };
             }
             if (!skipDeviceRequirement && (!Array.isArray(selectedDevices) || !selectedDevices.length)) {
                 return { stepKey: 'manageableDevices', message: '请至少选择一个可管理设备' };
@@ -4147,11 +4159,12 @@
         function validateStaffWizardStep(step) {
             const username = document.getElementById('staffUsername').value.trim();
             const phone = document.getElementById('staffPhone').value.trim();
+            const email = document.getElementById('staffEmail').value.trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
             const moduleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
             const result = resolveStaffModalValidationResult({
-                username, phone, selectedPermissions, selectedDevices, moduleDeviceScopes,
+                username, phone, email, selectedPermissions, selectedDevices, moduleDeviceScopes,
                 skipDeviceRequirement: isPlatformScopeRoleSelected()
             });
             if (!result.message) return true;
@@ -4316,6 +4329,7 @@
         function resetStaffForm() {
             document.getElementById('staffUsername').value = '';
             document.getElementById('staffPhone').value = '';
+            document.getElementById('staffEmail').value = '';
             document.getElementById('staffWechatOpenId').value = '';
             currentModuleDeviceScopes = createDefaultModuleDeviceScopes();
 
@@ -4339,6 +4353,7 @@
         function fillStaffForm(targetStaff) {
             document.getElementById('staffUsername').value = targetStaff.username || '';
             document.getElementById('staffPhone').value = targetStaff.phone || '';
+            document.getElementById('staffEmail').value = targetStaff.email || '';
             document.getElementById('staffWechatOpenId').value = targetStaff.wechatOpenId || '';
             currentModuleDeviceScopes = normalizeModuleDeviceScopes(targetStaff.moduleDeviceScopes, targetStaff.devices || []);
 
@@ -4656,6 +4671,7 @@
             const wechatOpenId = window.CofeFaultNotifyChannels
                 ? window.CofeFaultNotifyChannels.normalizeOpenId(document.getElementById('staffWechatOpenId').value)
                 : String(document.getElementById('staffWechatOpenId').value || '').trim();
+            const email = document.getElementById('staffEmail').value.trim();
             const selectedPermissions = getSelectedPermissionValues();
             const selectedDevices = Array.from(deviceSelectionSet);
             const normalizedModuleDeviceScopes = normalizeModuleDeviceScopes(currentModuleDeviceScopes, selectedDevices);
@@ -4699,6 +4715,7 @@
             const validationResult = resolveStaffModalValidationResult({
                 username,
                 phone,
+                email,
                 selectedPermissions,
                 selectedDevices,
                 moduleDeviceScopes: normalizedModuleDeviceScopes,
@@ -4715,6 +4732,7 @@
                 merchantName: resolvedMerchantName,
                 username,
                 phone,
+                email,
                 wechatOpenId,
                 permissions: selectedPermissions,
                 devices: selectedDevices,
