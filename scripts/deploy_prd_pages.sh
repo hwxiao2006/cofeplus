@@ -42,80 +42,55 @@ echo "Preparing PRD direct-upload bundle: $DIST_DIR"
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR/tasks" "$DIST_DIR/screenshots"
 
-cp "tasks/prd-product-management-user-flow.html" "$DIST_DIR/tasks/"
-cp "tasks/prd-product-management-user-flow.md" "$DIST_DIR/tasks/"
-cp "tasks/prd-staff-management-user-flow.html" "$DIST_DIR/tasks/"
-cp "tasks/prd-staff-management-user-flow.md" "$DIST_DIR/tasks/"
-cp -R "screenshots/product-prd" "$DIST_DIR/screenshots/"
-cp -R "screenshots/staff-prd" "$DIST_DIR/screenshots/"
+# IMPORTANT: Pages direct-upload REPLACES the whole deployment. The bundle
+# must contain EVERY PRD served on the domain, or the missing ones 404
+# after deploy. Always copy all PRD sources — never a hand-picked subset.
+cp tasks/prd-*.html tasks/prd-*.md "$DIST_DIR/tasks/"
 
-cat > "$DIST_DIR/index.html" <<'HTML'
-<!doctype html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>COFE+ PRD</title>
-    <style>
-        :root {
-            color-scheme: light;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            color: #17202a;
-            background: #f6f7f8;
-        }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-        }
-        main {
-            width: min(720px, calc(100vw - 48px));
-        }
-        h1 {
-            margin: 0 0 12px;
-            font-size: 32px;
-            line-height: 1.2;
-        }
-        p {
-            margin: 0 0 24px;
-            color: #5b6670;
-            font-size: 16px;
-            line-height: 1.7;
-        }
-        .links {
-            display: grid;
-            gap: 12px;
-        }
-        a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 44px;
-            padding: 0 18px;
-            border-radius: 6px;
-            background: #0b6bcb;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        a.secondary {
-            background: #109c93;
-        }
-    </style>
-</head>
-<body>
-    <main>
-        <h1>COFE+ PRD</h1>
-        <p>这里是独立的产品需求文档站点，和运营后台原型页面分开部署。</p>
-        <div class="links">
-            <a href="/tasks/prd-staff-management-user-flow.html" class="secondary">查看人员管理用户流程 PRD</a>
-            <a href="/tasks/prd-product-management-user-flow.html">查看商品管理用户流程 PRD</a>
-        </div>
-    </main>
-</body>
-</html>
-HTML
+# tasks-relative screenshots (materials PRD references screenshots/... )
+if [[ -d "tasks/screenshots" ]]; then
+    cp -R "tasks/screenshots" "$DIST_DIR/tasks/screenshots"
+fi
+
+# Top-level screenshot dirs referenced via ../screenshots/... from PRD htmls
+for shots_dir in device-prd product-prd menu-tag-imprint-prd staff-prd; do
+    if [[ -d "screenshots/$shots_dir" ]]; then
+        cp -R "screenshots/$shots_dir" "$DIST_DIR/screenshots/$shots_dir"
+    fi
+done
+
+# Landing page is a tracked source file, not an inline heredoc, so the
+# deployed index always lists the full PRD catalog.
+cp "scripts/prd_site_index.html" "$DIST_DIR/index.html"
+
+echo "Verifying bundle: index links and screenshot references must resolve"
+verify_failed=0
+
+# 1) Every /tasks/*.html link on the landing page must exist in the bundle.
+while IFS= read -r index_link; do
+    [[ -z "$index_link" ]] && continue
+    if [[ ! -f "$DIST_DIR${index_link}" ]]; then
+        echo "MISSING page for index link: $index_link" >&2
+        verify_failed=1
+    fi
+done < <(grep -oE 'href="/tasks/[^"]+"' "$DIST_DIR/index.html" | sed 's|href="||;s|"||' | sort -u)
+
+# 2) Every non-inline screenshot reference in every PRD must resolve.
+for prd_html in "$DIST_DIR"/tasks/prd-*.html; do
+    while IFS= read -r ref; do
+        [[ -z "$ref" ]] && continue
+        resolved="$(python3 -c "import os,sys;print(os.path.normpath(os.path.join(sys.argv[1], sys.argv[2])))" "$DIST_DIR/tasks" "$ref")"
+        if [[ ! -f "$resolved" ]]; then
+            echo "MISSING asset: $(basename "$prd_html") -> $ref" >&2
+            verify_failed=1
+        fi
+    done < <(grep -oE 'src="[^"]*screenshots/[^"]*"' "$prd_html" | grep -v 'data:image' | sed 's|src="||;s|"||' | sort -u)
+done
+
+if [[ "$verify_failed" -ne 0 ]]; then
+    echo "Bundle verification failed; aborting deploy." >&2
+    exit 1
+fi
 
 WRANGLER_ENV=(
     "HOME=$WRANGLER_HOME"
