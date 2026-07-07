@@ -37,9 +37,9 @@ test('getCreatableRoles：平台运维/运维/职员不能创建任何人', () =
   });
 });
 
-test('platform_ops：数据范围=全平台，且无订单/无人员权限', () => {
+test('platform_ops：默认全平台数据范围，且无订单/无人员权限（数据与操作权限正交）', () => {
   const t = Roles.getRoleTemplate('platform_ops');
-  assert.strictEqual(t.deviceDataScope, 'all');
+  assert.strictEqual(t.deviceDataScope, 'all', '平台运维默认动态可见全部设备（含新入网机器）');
   assert.ok(!t.permissions.includes('ops.orders'), '平台运维不应有订单权限');
   assert.ok(!t.permissions.includes('ops.staff'), '平台运维不应有人员查看权限');
   assert.ok(!t.permissions.includes('ops.staff.manage'), '平台运维不应有人员管理权限');
@@ -58,12 +58,12 @@ function setUser(profile, staff) {
   store.staffManagersData = JSON.stringify(staff || []);
 }
 
-test('deviceScopeUnrestricted：deviceDataScope=all 的员工 → true（且非超管）', () => {
+test('deviceScopeUnrestricted：deviceDataScope=all 的员工（如平台运维）→ true（动态全平台）', () => {
   setUser(
     { role: 'merchant', account: '13900139000', phone: '13900139000', merchantId: 'C001' },
     [{ id: 'S010', merchantId: 'C001', phone: '13900139000', accountEnabled: true, permissions: ['ops.devices'], devices: [], deviceDataScope: 'all' }]
   );
-  assert.strictEqual(Access.deviceScopeUnrestricted(), true);
+  assert.strictEqual(Access.deviceScopeUnrestricted(), true, '数据范围=all 的员工动态可见全部设备，无需逐台分配');
   assert.strictEqual(Access.isSuperAdmin(), false);
 });
 

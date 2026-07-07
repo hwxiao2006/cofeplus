@@ -38,7 +38,7 @@
     platform_ops: {
       id: 'platform_ops',
       name: '平台运维',
-      description: '平台方运维，可查看所有商户及未分配的机器，负责设备维护与故障处理',
+      description: '平台方运维，默认可见全部设备（含新入网机器），负责设备维护与故障处理',
       icon: '🌐',
       order: 2,
       deviceDataScope: 'all',

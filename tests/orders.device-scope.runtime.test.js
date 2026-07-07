@@ -51,12 +51,14 @@ function createDocument() {
   };
 }
 
+// 数据权限跟人走：按员工本人的订单页设备范围（getModuleVisibleDeviceIds）过滤，不再按商户
 function defaultAccessHelper(overrides = {}) {
   return {
     isSuperAdmin: () => false,
-    getMerchantScope: () => '',
-    getMerchantDeviceIds: () => [],
-    resolveCurrentStaffAccess: () => ({ merchantName: '' }),
+    deviceScopeUnrestricted: () => false,
+    resolveCurrentStaffAccess: () => ({ isScoped: false, currentStaff: null, merchantName: '' }),
+    hasModulePermission: () => true,
+    getModuleVisibleDeviceIds: () => [],
     ...overrides
   };
 }
@@ -105,13 +107,13 @@ test('订单页应显式引入共享员工权限脚本', () => {
 
 test('订单页：超管登录不应限制订单可见范围', () => {
   const sandbox = buildSandbox({
-    accessHelper: defaultAccessHelper({ isSuperAdmin: () => true })
+    accessHelper: defaultAccessHelper({
+      isSuperAdmin: () => true,
+      deviceScopeUnrestricted: () => true
+    })
   });
 
-  const access = sandbox.resolveCurrentStaffOrderAccess([
-    { id: 'RCK386', merchant: 'mer001' },
-    { id: 'RCK410', merchant: 'mer002' }
-  ]);
+  const access = sandbox.resolveCurrentStaffOrderAccess();
   assert.strictEqual(access.isScoped, false);
   assert.strictEqual(access.scopeMessage, '');
 
@@ -123,31 +125,24 @@ test('订单页：超管登录不应限制订单可见范围', () => {
   assert.deepStrictEqual(Array.from(passthrough.map((order) => order.id)), ['O-1', 'O-2', 'O-3']);
 });
 
-test('订单页：商户账号只看到该商户名下设备的订单', () => {
+test('订单页：受限员工只看到本人订单页设备范围内的订单（数据权限跟人走）', () => {
+  const staff = {
+    id: 'S001',
+    merchantId: 'C001',
+    devices: ['RCK386', 'RCK385'],
+    permissions: ['ops.orders']
+  };
   const sandbox = buildSandbox({
     accessHelper: defaultAccessHelper({
-      getMerchantScope: () => 'C001',
-      getMerchantDeviceIds: (merchantId, devices) => {
-        if (merchantId !== 'C001') return [];
-        return (devices || [])
-          .filter((d) => d && d.merchant === 'mer001')
-          .map((d) => d.id);
-      },
-      resolveCurrentStaffAccess: () => ({ merchantName: '星巴克咖啡' })
+      resolveCurrentStaffAccess: () => ({ isScoped: true, currentStaff: staff, merchantName: '星巴克咖啡' }),
+      getModuleVisibleDeviceIds: (record, moduleKey) => (moduleKey === 'orders' ? record.devices : [])
     })
   });
 
-  const runtimeDevices = [
-    { id: 'RCK386', merchant: 'mer001' },
-    { id: 'RCK385', merchant: 'mer001' },
-    { id: 'RCK410', merchant: 'mer002' }
-  ];
-  const access = sandbox.resolveCurrentStaffOrderAccess(runtimeDevices);
+  const access = sandbox.resolveCurrentStaffOrderAccess();
   assert.strictEqual(access.isScoped, true);
-  assert.strictEqual(access.merchantId, 'C001');
   assert.deepStrictEqual(Array.from(access.visibleDeviceIds), ['RCK386', 'RCK385']);
-  assert.ok(access.scopeMessage.includes('星巴克咖啡'), `期望 scopeMessage 含商户名：${access.scopeMessage}`);
-  assert.ok(access.scopeMessage.includes('共 2 台设备'), `期望含设备数：${access.scopeMessage}`);
+  assert.ok(access.scopeMessage.includes('2 台设备'), `期望含设备数：${access.scopeMessage}`);
 
   const scopedOrders = sandbox.applyScopedOrdersData([
     { id: 'O-1', deviceId: 'RCK386' },
@@ -157,64 +152,72 @@ test('订单页：商户账号只看到该商户名下设备的订单', () => {
   assert.deepStrictEqual(Array.from(scopedOrders.map((order) => order.id)), ['O-1', 'O-2']);
 });
 
-test('订单页：跨商户隔离 — 商户 A 不应看到商户 B 的订单', () => {
-  const merchantAHelper = defaultAccessHelper({
-    getMerchantScope: () => 'C001',
-    getMerchantDeviceIds: (_m, devices) => (devices || []).filter((d) => d.merchant === 'mer001').map((d) => d.id)
+test('订单页：设备白名单隔离 — 员工 A 不应看到员工 B 范围内的订单', () => {
+  const staffAHelper = defaultAccessHelper({
+    resolveCurrentStaffAccess: () => ({ isScoped: true, currentStaff: { devices: ['RCK386'] } }),
+    getModuleVisibleDeviceIds: (record) => record.devices
   });
-  const merchantBHelper = defaultAccessHelper({
-    getMerchantScope: () => 'C002',
-    getMerchantDeviceIds: (_m, devices) => (devices || []).filter((d) => d.merchant === 'mer002').map((d) => d.id)
+  const staffBHelper = defaultAccessHelper({
+    resolveCurrentStaffAccess: () => ({ isScoped: true, currentStaff: { devices: ['RCK410'] } }),
+    getModuleVisibleDeviceIds: (record) => record.devices
   });
-  const devices = [
-    { id: 'RCK386', merchant: 'mer001' },
-    { id: 'RCK410', merchant: 'mer002' }
-  ];
   const orders = [
     { id: 'O-A', deviceId: 'RCK386' },
     { id: 'O-B', deviceId: 'RCK410' }
   ];
 
-  const sandboxA = buildSandbox({ accessHelper: merchantAHelper });
-  const accessA = sandboxA.resolveCurrentStaffOrderAccess(devices);
+  const sandboxA = buildSandbox({ accessHelper: staffAHelper });
+  const accessA = sandboxA.resolveCurrentStaffOrderAccess();
   const seenByA = sandboxA.applyScopedOrdersData(orders, accessA);
   assert.deepStrictEqual(Array.from(seenByA.map((o) => o.id)), ['O-A']);
 
-  const sandboxB = buildSandbox({ accessHelper: merchantBHelper });
-  const accessB = sandboxB.resolveCurrentStaffOrderAccess(devices);
+  const sandboxB = buildSandbox({ accessHelper: staffBHelper });
+  const accessB = sandboxB.resolveCurrentStaffOrderAccess();
   const seenByB = sandboxB.applyScopedOrdersData(orders, accessB);
   assert.deepStrictEqual(Array.from(seenByB.map((o) => o.id)), ['O-B']);
 });
 
-test('订单页：商户名下无可见设备时应给出友好空状态文案', () => {
+test('订单页：有订单权限但未分配设备时应给出友好空状态文案', () => {
   const sandbox = buildSandbox({
     accessHelper: defaultAccessHelper({
-      getMerchantScope: () => 'C999',
-      getMerchantDeviceIds: () => [],
-      resolveCurrentStaffAccess: () => ({ merchantName: '未知商户' })
+      resolveCurrentStaffAccess: () => ({ isScoped: true, currentStaff: { devices: [] } }),
+      getModuleVisibleDeviceIds: () => []
     })
   });
-  const access = sandbox.resolveCurrentStaffOrderAccess([
-    { id: 'RCK386', merchant: 'mer001' }
-  ]);
+  const access = sandbox.resolveCurrentStaffOrderAccess();
   assert.strictEqual(access.isScoped, true);
   assert.deepStrictEqual(Array.from(access.visibleDeviceIds), []);
-  assert.strictEqual(access.scopeMessage, '当前商户名下暂无可见设备的订单');
+  assert.strictEqual(access.scopeMessage, '你已拥有订单页面权限，但当前未分配可查看的设备，请联系管理员调整');
 });
 
-test('订单页：未绑定商户也非超管 → 给出"未绑定商户"提示', () => {
+test('订单页：无订单页面权限 → 空范围并提示未开通', () => {
   const sandbox = buildSandbox({
     accessHelper: defaultAccessHelper({
-      isSuperAdmin: () => false,
-      getMerchantScope: () => ''
+      resolveCurrentStaffAccess: () => ({ isScoped: true, currentStaff: { devices: ['RCK386'] } }),
+      hasModulePermission: () => false
     })
   });
-  const access = sandbox.resolveCurrentStaffOrderAccess([
-    { id: 'RCK386', merchant: 'mer001' }
-  ]);
+  const access = sandbox.resolveCurrentStaffOrderAccess();
   assert.strictEqual(access.isScoped, true);
   assert.deepStrictEqual(Array.from(access.visibleDeviceIds), []);
-  assert.strictEqual(access.scopeMessage, '当前账号未绑定商户，无法查看订单');
+  assert.strictEqual(access.scopeMessage, '当前账号暂未开通订单页面权限');
+});
+
+test('订单页：全平台数据范围（平台运维）但无订单权限 → 仍被拒绝（数据与操作权限正交）', () => {
+  const sandbox = buildSandbox({
+    accessHelper: defaultAccessHelper({
+      deviceScopeUnrestricted: () => true,
+      resolveCurrentStaffAccess: () => ({
+        isScoped: true,
+        currentStaff: { devices: [], deviceDataScope: 'all', permissions: ['ops.devices', 'ops.faults'] }
+      }),
+      hasModulePermission: (record, moduleKey) => (record.permissions || []).includes(`ops.${moduleKey}`)
+    })
+  });
+  const access = sandbox.resolveCurrentStaffOrderAccess();
+  assert.strictEqual(access.isScoped, true, '权限门禁必须先于数据范围放行');
+  assert.deepStrictEqual(Array.from(access.visibleDeviceIds), []);
+  assert.strictEqual(access.scopeMessage, '当前账号暂未开通订单页面权限');
 });
 
 test('订单页：设备筛选选项应只来自当前可见设备订单', () => {

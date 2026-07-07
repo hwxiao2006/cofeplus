@@ -1007,25 +1007,31 @@
                 };
             }
 
-            // 设备范围不受限（超管 / 平台运维）→ 放行全部，功能权限仍由后续 hasModulePermission 卡
-            if (typeof helper.deviceScopeUnrestricted === 'function' && helper.deviceScopeUnrestricted()) {
-                return { isScoped: false, visibleDeviceIds: [], canViewAllOrders: true, scopeMessage: '' };
-            }
-
-            const access = helper.resolveCurrentStaffAccess();
-            if (!access || !access.isScoped || !access.currentStaff) {
+            // 操作权限先行：有人员记录但没有订单权限 → 一律降级（平台运维数据范围
+            // 虽为全平台，但默认无订单管理操作权限，数据与操作权限正交）
+            const gateAccess = helper.resolveCurrentStaffAccess();
+            const gateStaff = gateAccess && gateAccess.currentStaff ? gateAccess.currentStaff : null;
+            if (gateStaff
+                && typeof helper.hasModulePermission === 'function'
+                && !helper.hasModulePermission(gateStaff, 'orders')) {
                 return {
-                    ...(access || {}),
-                    isScoped: false,
+                    ...gateAccess,
                     visibleDeviceIds: [],
                     canViewAllOrders: false,
                     scopeMessage: '当前账号仅可查看我的发货单'
                 };
             }
 
-            if (typeof helper.hasModulePermission === 'function' && !helper.hasModulePermission(access.currentStaff, 'orders')) {
+            // 设备范围不受限（超管 / 平台运维）→ 放行全部
+            if (typeof helper.deviceScopeUnrestricted === 'function' && helper.deviceScopeUnrestricted()) {
+                return { isScoped: false, visibleDeviceIds: [], canViewAllOrders: true, scopeMessage: '' };
+            }
+
+            const access = gateAccess;
+            if (!access || !access.isScoped || !access.currentStaff) {
                 return {
-                    ...access,
+                    ...(access || {}),
+                    isScoped: false,
                     visibleDeviceIds: [],
                     canViewAllOrders: false,
                     scopeMessage: '当前账号仅可查看我的发货单'

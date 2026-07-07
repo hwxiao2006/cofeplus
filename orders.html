@@ -5233,7 +5233,7 @@
             const runtimeDevices = loadRuntimeDevices();
             const runtimeProducts = loadRuntimeProducts();
             deviceContextMap = buildDeviceContextMap(runtimeDevices);
-            currentStaffOrderAccess = resolveCurrentStaffOrderAccess(runtimeDevices);
+            currentStaffOrderAccess = resolveCurrentStaffOrderAccess();
             ordersData = applyScopedOrdersData(
                 mergeOrdersPrdDemoOrders(loadOrdersData(runtimeDevices, runtimeProducts), runtimeDevices, runtimeProducts, ordersPrdDemoState),
                 currentStaffOrderAccess
@@ -5246,13 +5246,30 @@
             applyOrdersPrdDemoState();
         }
 
-        function resolveCurrentStaffOrderAccess(runtimeDevices = []) {
+        function resolveCurrentStaffOrderAccess() {
             const helper = window.CofeAdminStaffAccess;
             if (!helper) {
                 return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
             }
 
-            // 1) 超管 / 平台运维：设备范围不受限，能看全部订单
+            // 1) 操作权限先行：有人员记录但没有订单页面权限 → 一律拒绝。
+            //    平台运维数据范围虽为全平台，但默认没有订单管理操作权限（数据与操作权限正交）。
+            const access = typeof helper.resolveCurrentStaffAccess === 'function'
+                ? helper.resolveCurrentStaffAccess()
+                : null;
+            const currentStaff = access && access.currentStaff ? access.currentStaff : null;
+            if (currentStaff
+                && typeof helper.hasModulePermission === 'function'
+                && !helper.hasModulePermission(currentStaff, 'orders')) {
+                return {
+                    ...access,
+                    isScoped: true,
+                    visibleDeviceIds: [],
+                    scopeMessage: '当前账号暂未开通订单页面权限'
+                };
+            }
+
+            // 2) 超管 / 全平台数据范围（如有订单权限的平台角色）：不限设备范围
             const orderScopeUnrestricted = typeof helper.deviceScopeUnrestricted === 'function'
                 ? helper.deviceScopeUnrestricted()
                 : (typeof helper.isSuperAdmin === 'function' && helper.isSuperAdmin());
@@ -5260,39 +5277,25 @@
                 return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
             }
 
-            // 2) 商户：按 merchantId 过滤设备 → 订单
-            const merchantId = typeof helper.getMerchantScope === 'function' ? helper.getMerchantScope() : '';
-            if (!merchantId) {
-                return {
-                    isScoped: true,
-                    visibleDeviceIds: [],
-                    scopeMessage: '当前账号未绑定商户，无法查看订单'
-                };
+            // 3) 数据权限跟人走：按员工本人的订单页设备范围过滤，不再按商户圈设备
+            if (!access || !access.isScoped || !currentStaff) {
+                return { isScoped: false, visibleDeviceIds: [], scopeMessage: '' };
             }
 
-            const allowedDeviceIds = typeof helper.getMerchantDeviceIds === 'function'
-                ? helper.getMerchantDeviceIds(merchantId, runtimeDevices)
+            const visibleDeviceIds = typeof helper.getModuleVisibleDeviceIds === 'function'
+                ? helper.getModuleVisibleDeviceIds(currentStaff, 'orders')
                 : [];
-            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(allowedDeviceIds) ? allowedDeviceIds : [])
+            const normalizedVisibleDeviceIds = Array.from(new Set((Array.isArray(visibleDeviceIds) ? visibleDeviceIds : [])
                 .map((deviceId) => String(deviceId || '').trim())
                 .filter(Boolean)));
 
-            let merchantName = '';
-            if (typeof helper.resolveCurrentStaffAccess === 'function') {
-                try {
-                    const access = helper.resolveCurrentStaffAccess();
-                    merchantName = String(access?.merchantName || '').trim();
-                } catch (e) { /* ignore */ }
-            }
-
             return {
+                ...access,
                 isScoped: true,
                 visibleDeviceIds: normalizedVisibleDeviceIds,
-                merchantId,
-                merchantName,
                 scopeMessage: normalizedVisibleDeviceIds.length
-                    ? `当前查看${merchantName || '本商户'}的订单 · 共 ${normalizedVisibleDeviceIds.length} 台设备`
-                    : '当前商户名下暂无可见设备的订单'
+                    ? `当前可查看 ${normalizedVisibleDeviceIds.length} 台设备的订单`
+                    : '你已拥有订单页面权限，但当前未分配可查看的设备，请联系管理员调整'
             };
         }
 

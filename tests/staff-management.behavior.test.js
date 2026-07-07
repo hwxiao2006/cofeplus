@@ -74,12 +74,31 @@ test('人员管理页：角色卡应按登录者可创建范围过滤', () => {
   assert.ok(/getCreatableRoles\s*\(/.test(staffHtml), '应调用 role-definitions.getCreatableRoles 过滤角色卡');
 });
 
-test('人员管理页：应支持超管跨商户选择，并写入数据范围 deviceDataScope', () => {
-  assert.ok(staffHtml.includes('id="staffMerchantItem"'), '应有商户选择器容器');
-  assert.ok(staffHtml.includes('id="staffMerchantSelect"'), '应有商户选择下拉');
-  assert.ok(/function\s+renderStaffMerchantSelector\s*\(/.test(staffHtml), '应有 renderStaffMerchantSelector');
-  assert.ok(/function\s+handleStaffMerchantChange\s*\(/.test(staffHtml), '应有 handleStaffMerchantChange');
-  assert.ok(/deviceDataScope/.test(staffHtml), 'staffPayload 应写入 deviceDataScope');
+test('人员管理页：商户归属不再手动指定，设备范围跟人走', () => {
+  // 「所属商户」选择器已整体移除：商户由所选设备体现，超管新建暂不归属
+  assert.ok(!staffHtml.includes('id="staffMerchantItem"'), '不应再有商户选择器容器');
+  assert.ok(!staffHtml.includes('id="staffMerchantSelect"'), '不应再有商户选择下拉');
+  assert.ok(!/function\s+renderStaffMerchantSelector\s*\(/.test(staffHtml), '不应再有 renderStaffMerchantSelector');
+  assert.ok(!/function\s+handleStaffMerchantChange\s*\(/.test(staffHtml), '不应再有 handleStaffMerchantChange');
+  assert.ok(!staffHtml.includes('平台级（不绑定商户）'), '不应再有平台级选项文案');
+  // 设备清单跟登录者本人数据权限走；跨商户自由勾选，无锁定交互
+  assert.ok(/function\s+getDeviceOptionsForCurrentEditor\s*\(/.test(staffHtml), '设备清单应按当前登录身份解析');
+  assert.ok(/function\s+isEditorDeviceScopeUnrestricted\s*\(/.test(staffHtml), '应有登录者本人数据范围判定');
+  assert.ok(!/function\s+getLockedMerchantIdForSelection\s*\(/.test(staffHtml), '不应再有第一台锁定商户的判定');
+  assert.ok(!staffHtml.includes('跨商户不可选'), '不应再有跨商户禁用徽标');
+  assert.ok(!staffHtml.includes('所选设备必须属于同一商户'), '不应再有同商户防御校验');
+  // 原则 2：给他人分配的设备不能超过自己本身的数据权限（保存兜底）
+  assert.ok(staffHtml.includes('分配的设备不能超过你本人的数据权限'), '保存前应有本人数据权限上限防御');
+});
+
+test('人员管理页：角色只在首次分配时有效，编辑不再出现角色', () => {
+  // 原则 3：编辑人员时隐藏角色选择区，只能通过勾选变更权限
+  assert.ok(/roleSection\.hidden\s*=\s*isEditing/.test(staffHtml), '编辑时应隐藏角色选择区');
+  assert.ok(/if\s*\(!editingStaffRecord\)\s*\{[\s\S]{0,220}staffPayload\.role\s*=/.test(staffHtml), '仅新建时写入 role 字段');
+  // 原则 1：全平台数据范围（如平台运维）动态可见全部设备，无需逐台分配
+  assert.ok(/function\s+isAllScopeForCurrentEditor\s*\(/.test(staffHtml), '应有全平台范围判定（新建看角色模板，编辑看人员记录）');
+  assert.ok(/skipDeviceRequirement/.test(staffHtml), '全平台范围应豁免设备必选');
+  assert.ok(/deviceDataScope,/.test(staffHtml), '保存时应把数据范围落到人员记录');
 });
 
 test('人员管理页：移动端头部应与订单和商品页保持一致', () => {
@@ -169,12 +188,14 @@ test('人员管理页：应仅使用登录态商户过滤管理人员，并校�
   assert.ok(/const\s+DEFAULT_SIDEBAR_LOGIN_PROFILE\s*=\s*\{[\s\S]*merchantId:\s*'C001'[\s\S]*merchantName:\s*'星巴克咖啡'[\s\S]*\}/.test(staffHtml));
   assert.ok(/function\s+getCurrentMerchantContext\s*\(\)/.test(staffHtml));
   assert.ok(/selectedMerchantId\s*=\s*getCurrentMerchantContext\(\)\.merchantId;/.test(staffHtml));
-  assert.ok(/listTitle\.textContent\s*=\s*`\$\{getCurrentMerchantContext\(\)\.merchantName\s*\|\|\s*'未获取登录商户'\}\s*·\s*管理人员列表`/.test(staffHtml));
+  // 超管跨商户看全部人员；非超管仍按登录商户过滤
+  assert.ok(/全平台 · 管理人员列表/.test(staffHtml), '超管列表标题应为全平台');
+  assert.ok(/listTitle\.textContent\s*=\s*isSuper[\s\S]*getCurrentMerchantContext\(\)\.merchantName\s*\|\|\s*'未获取登录商户'/.test(staffHtml));
   assert.ok(!/function\s+resolveInitialMerchantId\s*\(/.test(staffHtml));
   assert.ok(!/new URLSearchParams\(window\.location\.search \|\| ''\)/.test(staffHtml));
   assert.ok(!/currentMerchantId/.test(staffHtml));
   assert.ok(/function\s+getManagersByMerchant\s*\(merchantId\)/.test(staffHtml));
-  assert.ok(/const\s+filteredManagers\s*=\s*getManagersByMerchant\(selectedMerchantId\);/.test(staffHtml));
+  assert.ok(/isSuper\s*\?\s*staffManagersData\s*:\s*getManagersByMerchant\(selectedMerchantId\)/.test(staffHtml), '超管应展示全部人员');
   assert.ok(/function\s+getSelectedPermissionValues\s*\(\)/.test(staffHtml));
   assert.ok(/if\s*\(!username\s*\|\|\s*!phone\)/.test(staffHtml));
   assert.ok(/function\s+resolveStaffModalValidationResult\s*\(/.test(staffHtml));
@@ -191,7 +212,7 @@ test('人员管理页：应支持编辑人员信息和负责设备', () => {
   assert.ok(/editingStaffId\s*=\s*staffId;/.test(staffHtml));
   assert.ok(/const\s+targetStaff\s*=\s*staffManagersData\.find\(\(item\)\s*=>\s*item\.id\s*===\s*staffId\);/.test(staffHtml));
   assert.ok(!/selectedMerchantId\s*=\s*targetStaff\.merchantId\s*\|\|\s*selectedMerchantId;/.test(staffHtml));
-  assert.ok(/renderDevicePicker\(selectedMerchantId,\s*targetStaff\.devices\s*\|\|\s*\[\]\)/.test(staffHtml));
+  assert.ok(/renderDevicePicker\(targetStaff\.devices\s*\|\|\s*\[\]\)/.test(staffHtml), '编辑回填设备清单不再依赖商户参数');
   assert.ok(/function\s+normalizeStaffPermissions\s*\(permissions\)/.test(staffHtml));
   assert.ok(/const\s+staffIndex\s*=\s*staffManagersData\.findIndex\(\(item\)\s*=>\s*item\.id\s*===\s*editingStaffId\);/.test(staffHtml));
   assert.ok(/nextStaff\s*=\s*\{[\s\S]*devices:\s*selectedDevices[\s\S]*nextStaffManagersData\[staffIndex\]\s*=\s*nextStaff/.test(staffHtml));
@@ -428,14 +449,14 @@ test('人员管理页：种子员工必须带 role 与 deviceDataScope，避免�
   assert.ok(scopeCount >= 3, `种子员工应各自带 deviceDataScope 字段（找到 ${scopeCount} 个）`);
 });
 
-test('人员管理页：历史无 role 记录应可按权限精确回填角色，且必须同时匹配数据范围', () => {
+test('人员管理页：历史无 role 记录应可按权限精确回填角色，且不得误判为平台运维', () => {
   const inferMatch = staffHtml.match(/function\s+inferRoleForLegacyRecord\s*\([^)]*\)\s*\{[\s\S]*?\n\s{8}\}/);
   assert.ok(inferMatch, '应定义 inferRoleForLegacyRecord 历史数据回填 helper');
   const inferFn = inferMatch[0];
-  // operations 与 platform_ops 权限集相同、仅 deviceDataScope 不同，回填必须比对范围以防越权
-  assert.ok(/deviceDataScope/.test(inferFn), 'inferRoleForLegacyRecord 必须比对 deviceDataScope，避免本商户老数据被误判为全平台');
-  assert.ok(/templateScope\s*!==\s*recordScope/.test(inferFn) || /Scope[\s\S]*continue/.test(inferFn),
-    'inferRoleForLegacyRecord 应在范围不符时跳过该模板');
+  // operations 与 platform_ops 权限集完全相同（均逐台分配设备），无法靠权限区分；
+  // 历史无 role 记录一律是商户内员工，回填必须跳过 platform_ops 防止越权
+  assert.ok(/filter\s*\(\s*\(?template\)?\s*=>\s*template\.id\s*!==\s*'platform_ops'\s*\)/.test(inferFn),
+    'inferRoleForLegacyRecord 必须跳过 platform_ops，避免商户老数据被误判为平台角色');
   // bootstrap else 分支应调用回填 helper
   assert.ok(/inferRoleForLegacyRecord\s*\(/.test(staffHtml.replace(inferFn, '')),
     'bootstrapStaffManagers 应调用 inferRoleForLegacyRecord 回填历史记录');

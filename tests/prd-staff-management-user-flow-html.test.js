@@ -21,10 +21,10 @@ test('人员管理 PRD 应提供独立 HTML 产物', () => {
   assert.ok(fs.existsSync(mdPath), 'missing markdown PRD source');
 });
 
-test('人员管理 PRD v2.3 应采用规则单点定义结构', () => {
+test('人员管理 PRD v2.4 应采用规则单点定义结构', () => {
   const markdown = fs.readFileSync(mdPath, 'utf8');
 
-  // 11 个用户流程（v2.3 合并后）
+  // 11 个用户流程（v2.3 合并后延续）
   [
     'UF-001',
     'UF-002',
@@ -44,7 +44,7 @@ test('人员管理 PRD v2.3 应采用规则单点定义结构', () => {
 
   // 顶级结构：版本记录 + 单点定义章节
   [
-    'v2.3 分级授权与账号体系',
+    'v2.4 设备逐台分配与范围跟人走',
     '## 0. 版本记录',
     '## 2. 角色与授权模型',
     '### 2.1 角色模板总表',
@@ -56,7 +56,18 @@ test('人员管理 PRD v2.3 应采用规则单点定义结构', () => {
     '## 5. 数据保存契约',
     '## 7. 发布检查清单'
   ].forEach(keyword => {
-    assert.ok(markdown.includes(keyword), `missing v2.3 structure keyword: ${keyword}`);
+    assert.ok(markdown.includes(keyword), `missing v2.4 structure keyword: ${keyword}`);
+  });
+
+  // v2.4 四条分配原则的核心口径
+  [
+    '角色只在首次分配时有效',
+    '数据范围跟人走',
+    '分配的设备不能超过你本人的数据权限',
+    '暂不归属商户',
+    '未归属商户'
+  ].forEach(keyword => {
+    assert.ok(markdown.includes(keyword), `missing v2.4 principle keyword: ${keyword}`);
   });
 
   // 关键领域内容：角色 / 数据范围 / 登录绑定
@@ -64,13 +75,12 @@ test('人员管理 PRD v2.3 应采用规则单点定义结构', () => {
     '平台运维',
     '商户管理员',
     '全平台',
-    '本商户',
     '指定设备',
     '邮箱',
     'Google',
     '同一商户下手机号不得重复',
-    'uf013-superadmin-add.svg',
-    'uf014-merchant-admin-add.svg',
+    'uf013-superadmin-add.png',
+    'uf014-merchant-admin-add.png',
     'uf015-no-access.svg'
   ].forEach(keyword => {
     assert.ok(markdown.includes(keyword), `missing domain keyword: ${keyword}`);
@@ -80,9 +90,15 @@ test('人员管理 PRD v2.3 应采用规则单点定义结构', () => {
   assert.ok(/邮箱.*选填|选填.*邮箱/s.test(markdown), 'email must be documented as optional');
   assert.ok(markdown.includes('二选一'), 'must document mini-program/Google either-or login');
 
+  // 回归护栏：不得再出现「所属商户」选择、「本商户」三档数据范围、同商户锁定
+  assert.ok(!markdown.includes('平台级（不绑定商户）'), 'v2.4 removed the platform-level merchant option');
+  assert.ok(!markdown.includes('目标商户'), 'v2.4 removed target-merchant selection');
+  assert.ok(!markdown.includes('跨商户不可选'), 'v2.4 removed the cross-merchant lock');
+  assert.ok(!/数据范围[^，。]*本商户[^，。]*指定设备/.test(markdown), 'v2.4 collapsed data scope to two tiers');
+
   // 结构去重：v2.2 的 FR 编号清单与规则矩阵不应回归
   ['FR-1：', 'FR-63：', '## 8. 关键规则矩阵', '## 7. 功能需求'].forEach(legacy => {
-    assert.ok(!markdown.includes(legacy), `v2.3 should not reintroduce duplicated structure: ${legacy}`);
+    assert.ok(!markdown.includes(legacy), `v2.4 should not reintroduce duplicated structure: ${legacy}`);
   });
 
   // PRD 不应包含实现级标识符
@@ -117,23 +133,25 @@ test('人员管理 HTML PRD 应同步 11 个用户流程并内联全部截图', 
   });
 
   [
-    'v2.3 分级授权与账号体系',
+    'v2.4 设备逐台分配与范围跟人走',
     '平台运维',
     '商户管理员',
     '数据范围',
     '分级授权与人员维护门禁',
     '登录方式与账号绑定',
-    '邮箱'
+    '邮箱',
+    '角色只在首次分配时有效',
+    '数据范围跟人走'
   ].forEach(keyword => {
-    assert.ok(html.includes(keyword), `missing v2.3 PRD keyword in HTML: ${keyword}`);
+    assert.ok(html.includes(keyword), `missing v2.4 PRD keyword in HTML: ${keyword}`);
   });
 
   const figureCount = (html.match(/<figure class="doc-image">/g) || []).length;
   const inlineImageCount = (html.match(/src="data:image\/png;base64,/g) || []).length;
   const inlineSvgCount = (html.match(/src="data:image\/svg\+xml;base64,/g) || []).length;
-  assert.ok(figureCount >= 15, `expected >=15 screenshots across flows, got ${figureCount}`);
+  assert.ok(figureCount >= 14, `expected >=14 screenshots across flows, got ${figureCount}`);
   assert.strictEqual(figureCount, inlineImageCount + inlineSvgCount, 'every figure must be inlined');
-  assert.ok(inlineSvgCount >= 3, 'expected tiered-authorization SVG screenshots to be inlined');
+  assert.ok(inlineSvgCount >= 1, 'expected the no-access SVG screenshot to be inlined');
   assert.ok(!html.includes('src="../screenshots/'), 'final HTML should not depend on relative screenshot paths');
 
   // 紧凑目录：只列顶级章节
