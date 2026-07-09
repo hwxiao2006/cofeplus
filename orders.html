@@ -2704,6 +2704,24 @@
             flex-shrink: 0;
         }
 
+        .btn-download-orders {
+            height: 40px;
+            padding: 0 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            background: #ffffff;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-download-orders:focus {
+            border-color: rgba(13, 148, 136, 0.5);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+            outline: none;
+        }
+
         .toolbar-pagination {
             display: flex;
             align-items: center;
@@ -3669,6 +3687,12 @@
                 display: inline-flex;
             }
 
+            .btn-download-orders {
+                width: 100%;
+                min-height: 44px;
+                font-size: 16px;
+            }
+
             .toolbar-summary-sep {
                 display: none;
             }
@@ -4170,6 +4194,7 @@
                         <button type="button" class="mobile-sort-trigger" id="mobileSortTrigger" onclick="openMobileSortSheet()">
                             <span id="mobileSortTriggerText">最新下单</span>
                         </button>
+                        <button type="button" class="btn-download-orders" id="downloadOrdersBtn" onclick="downloadFilteredOrders()">下载订单</button>
                         <div class="toolbar-pagination">
                             <span class="page-info">第 <span id="currentPage">1</span> 页</span>
                             <div class="page-buttons">
@@ -4797,6 +4822,62 @@
                 return '--';
             }
             return pickupCode;
+        }
+
+        function escapeCsvField(value) {
+            const text = String(value ?? '');
+            if (/[",\n\r]/.test(text)) {
+                return `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
+        }
+
+        function buildOrdersCsv(orderList) {
+            const header = ['点位', '商品', '时间', '设备', '取货码', '订单号', '状态', '金额'];
+            const rows = (Array.isArray(orderList) ? orderList : []).map(order => {
+                const deviceContext = deviceContextMap[order.deviceId] || { location: '-' };
+                const productText = normalizeOrderItems(order).map(item => {
+                    const specsText = item.specs ? `(${item.specs})` : '';
+                    return `${item.name}${specsText} ×${item.quantity}`;
+                }).join('；');
+                return [
+                    deviceContext.location,
+                    productText,
+                    order.createTime,
+                    order.deviceId,
+                    getOrderPickupCodeDisplay(order),
+                    order.id,
+                    statusMap[order.status] || order.status,
+                    formatMoneyByCurrency(order.amount, getOrderCurrency(order))
+                ];
+            });
+            return [header, ...rows]
+                .map(row => row.map(escapeCsvField).join(','))
+                .join('\r\n');
+        }
+
+        function downloadFilteredOrders() {
+            if (!Array.isArray(filteredData) || !filteredData.length) {
+                showToast('当前筛选条件下暂无订单可下载', 'error');
+                return;
+            }
+            const csv = buildOrdersCsv(filteredData);
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const now = new Date();
+            const dateText = [
+                now.getFullYear(),
+                String(now.getMonth() + 1).padStart(2, '0'),
+                String(now.getDate()).padStart(2, '0')
+            ].join('-');
+            link.href = url;
+            link.download = `orders-export-${dateText}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`已导出 ${filteredData.length} 条订单`);
         }
 
         function formatOrderTotalsByCurrency(orderList, successfulOnly = false) {
