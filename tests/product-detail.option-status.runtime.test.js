@@ -135,10 +135,11 @@ test('选项状态：恢复为 active 永远允许，且不触发迁移', () => 
 
 test('选项状态：数据模型与保存链路（静态断言）', () => {
   assert.ok(productHtml.includes('tagOptionStatus: productData.tagOptionStatus || {}'), '保存草稿应携带 tagOptionStatus');
-  assert.ok(productHtml.includes('option-item-status-trigger'), '选项 chip 应有状态触发按钮');
-  assert.ok(productHtml.includes('optionStatusMenu'), '应存在共享状态菜单元素');
-  assert.ok(/option-item\[data-status="disabled"\]/.test(productHtml), '应有不可用状态样式');
-  assert.ok(/option-item\[data-status="hidden"\]/.test(productHtml), '应有隐藏状态样式');
-  assert.ok(productHtml.includes('不能设为默认选项'), '非正常选项点击应被拦截');
+  assert.ok(productHtml.includes('name="drawerTagStatus"'), '多语言编辑器应有点单屏展示状态 radio');
+  assert.ok(productHtml.includes('点单屏展示状态'), '编辑器应有状态区标题');
+  assert.ok(productHtml.includes('handleDrawerTagStatusChange'), '状态 radio 应接立即生效的处理函数');
+  assert.ok(/existing-tag-item\[data-status="disabled"\]/.test(productHtml), '标签 chip 应有不可用状态徽标样式');
+  assert.ok(/existing-tag-item\[data-status="hidden"\]/.test(productHtml), '标签 chip 应有隐藏状态徽标样式');
   assert.ok(productHtml.includes('每组至少保留一个正常选项'), '最后一个正常选项被停时应有提示');
+  assert.ok(!productHtml.includes('optionStatusMenu'), 'chip 浮层状态菜单应已移除（功能移入多语言编辑器）');
 });

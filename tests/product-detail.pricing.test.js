@@ -430,7 +430,7 @@ test('复制模式确认页在图片未变化时应隐藏图片对比区块', ()
 });
 
 test('复制模式保存标签文案时应只更新当前复制商品，不弹批量同步弹窗', () => {
-  assert.ok(/function\s+saveTagConfigDrawer\s*\([\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?closeTagConfigDrawer\(\);[\s\S]*?showToast\('标签配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
+  assert.ok(/function\s+saveTagConfigPanel\s*\([\s\S]*?persistRecipeChanges\(productData\s*\?\s*\[productData\]\s*:\s*\[\]\);[\s\S]*?if\s*\(isCopyWorkflowActive\(\)\)\s*\{[\s\S]*?showToast\('标签配置已更新'\);[\s\S]*?return;[\s\S]*?\}/.test(html));
 });
 
 test('保存配方时应遍历所有杯型变体并持久化', () => {
@@ -520,7 +520,12 @@ test('详情页应将选项配置独立到顶层分页签并移除隐藏副本',
   ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'].forEach(specKey => {
     assert.ok(html.includes(`data-spec-key="${specKey}"`));
   });
-  assert.ok(html.includes('openTagConfigDrawerBtn'));
+  // 多语言配置直接内嵌在页签里，不再经过抽屉
+  assert.ok(html.includes('saveTagConfigPanelBtn'));
+  assert.ok(html.includes('id="tagTree"'));
+  assert.ok(html.includes('id="tagDrawerEditor"'));
+  assert.ok(!html.includes('id="tagConfigDrawer"'), '抽屉 overlay 应已移除');
+  assert.ok(!html.includes('openTagConfigDrawerBtn'), '编辑多语言文案按钮应已移除');
 });
 
 test('详情页仍保留配方分组排序和关联饮品确认能力', () => {

@@ -54,12 +54,14 @@ test('选项配置 tab 内容应保持生产版结构，不迁入配方配置', 
     const recipePanel = html.slice(recipeStart, html.indexOf('<!-- recipeHiddenOptions removed', recipeStart));
 
     assert.ok(tagsPanel.includes('id="tagOptionsGrid"'));
-    assert.ok(tagsPanel.includes('id="openTagConfigDrawerBtn"'));
+    assert.ok(tagsPanel.includes('id="saveTagConfigPanelBtn"'), '选项配置页签应有内嵌保存按钮');
+    assert.ok(tagsPanel.includes('id="tagTree"'), '选项配置页签应内嵌标签类型树');
+    assert.ok(tagsPanel.includes('id="tagDrawerEditor"'), '选项配置页签应内嵌多语言编辑器');
     ['beans', 'temperature', 'strength', 'syrup', 'sweetness', 'cupsize', 'lid', 'latteArt'].forEach(specKey => {
         assert.ok(tagsPanel.includes(`data-spec-key="${specKey}"`), `${specKey} missing from option config`);
     });
     assert.ok(!recipePanel.includes('id="tagOptionsGrid"'));
-    assert.ok(!recipePanel.includes('id="openTagConfigDrawerBtn"'));
+    assert.ok(!recipePanel.includes('id="saveTagConfigPanelBtn"'));
     assert.ok(!recipePanel.includes('编辑多语言文案'));
 });
 
