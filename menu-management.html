@@ -4508,6 +4508,15 @@
             background: #ecfbf9;
         }
 
+        .order-preview-detail-option-btn.is-disabled,
+        .order-preview-detail-bean-btn.is-disabled {
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            color: #b6bcc6;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
         .order-preview-detail-option-extra {
             color: #6b7280;
         }
@@ -10304,6 +10313,11 @@
             return normalized;
         }
 
+        function getOrderPreviewOptionStatus(product, specKey, key) {
+            const status = product?.tagOptionStatus?.[specKey]?.[key];
+            return status === 'hidden' || status === 'disabled' ? status : 'active';
+        }
+
         function getOrderPreviewOptionItems(product, specKey, lang) {
             const libraryList = ORDER_PREVIEW_OPTION_LIBRARY[specKey] || [];
             const keys = new Set(Object.keys(product?.tagI18n?.[specKey] || {}));
@@ -10345,14 +10359,18 @@
                 }
             }
 
-            return orderedKeys.map(key => {
-                return {
-                    key,
-                    label: getOrderPreviewOptionLabel(product, specKey, key, lang),
-                    desc: getOrderPreviewOptionDesc(product, specKey, key, lang),
-                    extraPrice: getOrderPreviewOptionExtraPrice(product, specKey, key)
-                };
-            });
+            return orderedKeys
+                // 隐藏的选项客户完全不可见；不可用的仍展示但灰显禁点
+                .filter(key => getOrderPreviewOptionStatus(product, specKey, key) !== 'hidden')
+                .map(key => {
+                    return {
+                        key,
+                        label: getOrderPreviewOptionLabel(product, specKey, key, lang),
+                        desc: getOrderPreviewOptionDesc(product, specKey, key, lang),
+                        extraPrice: getOrderPreviewOptionExtraPrice(product, specKey, key),
+                        disabled: getOrderPreviewOptionStatus(product, specKey, key) === 'disabled'
+                    };
+                });
         }
 
         function getOrderPreviewActiveRecipeEntries(product, lang) {
@@ -10406,10 +10424,15 @@
         }
 
         function getOrderPreviewPreferredOptionKey(product, specKey, lang) {
-            const preferred = getOrderPreviewPreferredOptionCandidate(product, specKey, lang);
-            if (preferred) return preferred;
-
             const list = getOrderPreviewOptionItems(product, specKey, lang);
+            const usable = (key) => key && list.some(item => item.key === key && !item.disabled);
+
+            const preferred = getOrderPreviewPreferredOptionCandidate(product, specKey, lang);
+            // 默认候选被隐藏（不在列表）或不可用 → 降级为第一个可点的选项
+            if (usable(preferred)) return preferred;
+
+            const firstUsable = list.find(item => !item.disabled);
+            if (firstUsable) return firstUsable.key;
             return list[0] ? list[0].key : '';
         }
 
@@ -10440,6 +10463,13 @@
             Object.entries(defaults).forEach(([specKey, value]) => {
                 if (!orderPreviewDetailState.selected[specKey]) {
                     orderPreviewDetailState.selected[specKey] = value;
+                    return;
+                }
+                // 残留选中已被隐藏 / 停用 → 回落到默认（默认已保证可用）
+                const list = getOrderPreviewOptionItems(product, specKey, lang);
+                const current = orderPreviewDetailState.selected[specKey];
+                if (!list.some(item => item.key === current && !item.disabled)) {
+                    orderPreviewDetailState.selected[specKey] = value;
                 }
             });
         }
@@ -10456,7 +10486,7 @@
                     <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle('beans', lang))}</div>
                     <div class="order-preview-detail-bean-grid">
                         ${options.map(item => `
-                            <button type="button" class="order-preview-detail-bean-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('beans','${encodeURIComponent(item.key)}')">
+                            <button type="button" class="order-preview-detail-bean-btn ${selected === item.key ? 'active' : ''}${item.disabled ? ' is-disabled' : ''}" ${item.disabled ? 'disabled' : ''} onclick="selectOrderPreviewDetailOption('beans','${encodeURIComponent(item.key)}')">
                                 ${escapePreviewText(item.label)}${item.extraPrice ? `<span class="order-preview-detail-option-extra"> + ${escapePreviewText(formatOrderPreviewDisplayMoney(item.extraPrice, priceInfo.currency))}</span>` : ''}
                             </button>
                         `).join('')}
@@ -10480,7 +10510,7 @@
                     <div class="order-preview-detail-section-title">${escapePreviewText(getOrderPreviewSectionTitle(specKey, lang))}</div>
                     <div class="order-preview-detail-option-row">
                         ${options.map(item => `
-                            <button type="button" class="order-preview-detail-option-btn ${selected === item.key ? 'active' : ''}" onclick="selectOrderPreviewDetailOption('${specKey}','${encodeURIComponent(item.key)}')">
+                            <button type="button" class="order-preview-detail-option-btn ${selected === item.key ? 'active' : ''}${item.disabled ? ' is-disabled' : ''}" ${item.disabled ? 'disabled' : ''} onclick="selectOrderPreviewDetailOption('${specKey}','${encodeURIComponent(item.key)}')">
                                 ${escapePreviewText(item.label)}${item.extraPrice ? `<span class="order-preview-detail-option-extra"> + ${escapePreviewText(formatOrderPreviewDisplayMoney(item.extraPrice, priceInfo.currency))}</span>` : ''}
                             </button>
                         `).join('')}
