@@ -1632,7 +1632,7 @@
 
         .tag-status-menu {
             display: none;
-            position: fixed;
+            position: absolute; /* 锚定文档坐标：页面滚动时跟随所点的标签移动 */
             z-index: 3000;
             min-width: 240px;
             background: #fff;
@@ -1647,6 +1647,7 @@
         }
 
         .tag-status-menu.sheet {
+            position: fixed; /* 底部动作面板仍钉在视口 */
             left: 0 !important;
             right: 0;
             bottom: 0;
@@ -4993,7 +4994,9 @@
                 return;
             }
 
-            // 桌面端：锚定在被点 chip 下方，越界时翻转/贴边
+            // 桌面端：锚定在被点 chip 下方，越界时翻转/贴边。
+            // 菜单是 position:absolute（文档坐标），视口内算好位置后加滚动偏移，
+            // 这样页面滚动时菜单跟着 chip 一起走。
             const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 100, top: 100, bottom: 100 };
             const menuWidth = menu.offsetWidth || 240;
             const menuHeight = menu.offsetHeight || 180;
@@ -5001,8 +5004,8 @@
             let top = rect.bottom + 6;
             if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
             if (top + menuHeight > window.innerHeight - 8) top = rect.top - menuHeight - 6;
-            menu.style.left = `${Math.max(8, left)}px`;
-            menu.style.top = `${Math.max(8, top)}px`;
+            menu.style.left = `${Math.max(8, left) + window.scrollX}px`;
+            menu.style.top = `${Math.max(8, top) + window.scrollY}px`;
         }
 
         function closeTagStatusMenu() {
