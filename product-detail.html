@@ -1619,67 +1619,113 @@
             border-style: dashed;
         }
 
-        /* 点单屏展示状态 radio 组 */
-        .tag-status-group {
-            margin: 4px 0 18px;
-            padding: 14px 16px;
-            border-radius: 10px;
-            background: #f7f9fa;
-            border: 1px solid var(--border);
+        /* 点单屏状态菜单：桌面锚定浮层；移动端 .sheet 变底部动作面板 */
+        .tag-status-menu-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 2990;
         }
 
-        .tag-status-group-label {
+        .tag-status-menu-backdrop.active {
+            display: block;
+        }
+
+        .tag-status-menu {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            min-width: 240px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+            padding: 8px;
+        }
+
+        .tag-status-menu.active {
+            display: block;
+        }
+
+        .tag-status-menu.sheet {
+            left: 0 !important;
+            right: 0;
+            bottom: 0;
+            top: auto !important;
+            border-radius: 16px 16px 0 0;
+            padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+            box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .tag-status-menu-title {
             font-size: 13px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 10px;
+            padding: 6px 10px 8px;
         }
 
-        .tag-status-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        .tag-status-menu.sheet .tag-status-menu-title {
+            font-size: 15px;
+            padding: 8px 4px 10px;
         }
 
-        .tag-status-option {
+        .tag-status-menu-item {
             display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            padding: 9px 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-            min-width: 180px;
-            background: #fff;
         }
 
-        .tag-status-option:hover {
-            border-color: var(--primary);
+        .tag-status-menu.sheet .tag-status-menu-item {
+            padding: 14px 8px;
+            border-top: 1px solid #f2f4f5;
         }
 
-        .tag-status-option.checked {
-            border-color: var(--primary);
+        .tag-status-menu-item:hover {
+            background: #f5f7f7;
+        }
+
+        .tag-status-menu-item.current {
             background: var(--primary-light);
         }
 
-        .tag-status-option input {
-            margin-top: 3px;
-            accent-color: var(--primary);
-        }
-
-        .tag-status-option-name {
+        .tag-status-menu-name {
             font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
         }
 
-        .tag-status-option-desc {
+        .tag-status-menu.sheet .tag-status-menu-name {
+            font-size: 15px;
+        }
+
+        .tag-status-menu-desc {
             display: block;
             font-size: 11px;
             color: var(--text-secondary);
             margin-top: 2px;
-            font-weight: 400;
+        }
+
+        .tag-status-menu.sheet .tag-status-menu-desc {
+            font-size: 12px;
+        }
+
+        .tag-status-menu-check {
+            color: var(--primary);
+            font-weight: 700;
+            visibility: hidden;
+        }
+
+        .tag-status-menu-item.current .tag-status-menu-check {
+            visibility: visible;
         }
 
         .existing-tag-helper {
@@ -4045,6 +4091,10 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- 标签点单屏状态菜单：桌面端锚定所点 chip 的浮层；移动端为底部动作面板 -->
+    <div class="tag-status-menu-backdrop" id="tagStatusMenuBackdrop" onclick="closeTagStatusMenu()"></div>
+    <div class="tag-status-menu" id="tagStatusMenu" role="menu"></div>
+
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script src="shared/admin-staff-access.js"></script>
@@ -4905,10 +4955,71 @@
 
         // 内嵌编辑器状态 radio 变更：立即生效（守卫：最后一个正常项拦截、默认自动迁移+toast）。
         // 先落盘当前输入（重渲会重置输入框），无论成功与否都重渲——失败时 radio 回弹到真实状态。
-        function handleDrawerTagStatusChange(nextStatus) {
-            if (!drawerActiveSpecKey || !drawerSelectedTagKey) return;
+        // ---- 标签状态菜单：点击 chip 弹出（桌面锚定浮层 / 移动端底部面板） ----
+        let tagStatusMenuTagKey = '';
+
+        function isMobileViewport() {
+            return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+        }
+
+        function openTagStatusMenu(tagKey, anchorEl) {
+            if (!drawerActiveSpecKey || !tagKey) return;
+            const menu = document.getElementById('tagStatusMenu');
+            const backdrop = document.getElementById('tagStatusMenuBackdrop');
+            if (!menu) return;
+            tagStatusMenuTagKey = tagKey;
+
+            const currentStatus = getTagOptionStatus(drawerActiveSpecKey, tagKey);
+            const label = getTagLabel(drawerActiveSpecKey, tagKey, currentLang);
+            menu.innerHTML = `
+                <div class="tag-status-menu-title">「${label}」点单屏展示状态</div>
+                ${TAG_OPTION_STATUSES.map(status => `
+                    <button type="button" class="tag-status-menu-item ${status === currentStatus ? 'current' : ''}" onclick="handleTagStatusMenuPick('${status}')">
+                        <span>
+                            <span class="tag-status-menu-name">${TAG_OPTION_STATUS_LABELS[status]}</span>
+                            <span class="tag-status-menu-desc">${TAG_OPTION_STATUS_MENU_DESCS[status]}</span>
+                        </span>
+                        <span class="tag-status-menu-check">✓</span>
+                    </button>
+                `).join('')}
+            `;
+
+            const mobile = isMobileViewport();
+            menu.classList.toggle('sheet', mobile);
+            menu.classList.add('active');
+            if (backdrop) backdrop.classList.toggle('active', mobile);
+
+            if (mobile) {
+                menu.style.left = '';
+                menu.style.top = '';
+                return;
+            }
+
+            // 桌面端：锚定在被点 chip 下方，越界时翻转/贴边
+            const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 100, top: 100, bottom: 100 };
+            const menuWidth = menu.offsetWidth || 240;
+            const menuHeight = menu.offsetHeight || 180;
+            let left = rect.left;
+            let top = rect.bottom + 6;
+            if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
+            if (top + menuHeight > window.innerHeight - 8) top = rect.top - menuHeight - 6;
+            menu.style.left = `${Math.max(8, left)}px`;
+            menu.style.top = `${Math.max(8, top)}px`;
+        }
+
+        function closeTagStatusMenu() {
+            const menu = document.getElementById('tagStatusMenu');
+            const backdrop = document.getElementById('tagStatusMenuBackdrop');
+            if (menu) menu.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('active');
+            tagStatusMenuTagKey = '';
+        }
+
+        function handleTagStatusMenuPick(nextStatus) {
+            if (!drawerActiveSpecKey || !tagStatusMenuTagKey) return;
             persistInlineTagConfigIfActive();
-            setTagOptionStatus(drawerActiveSpecKey, drawerSelectedTagKey, nextStatus);
+            setTagOptionStatus(drawerActiveSpecKey, tagStatusMenuTagKey, nextStatus);
+            closeTagStatusMenu();
             renderDrawerEditor();
         }
 
@@ -5137,6 +5248,7 @@
                 : (isCopyWorkflowActive() && tabKey === 'confirm' ? 'confirm' : 'basic');
             // 离开选项配置页签时先落盘内嵌编辑器的未保存输入（带守卫，防误删）
             if (currentProductDetailTab === 'tags' && nextTab !== 'tags') {
+                closeTagStatusMenu();
                 persistInlineTagConfigIfActive();
             }
             currentProductDetailTab = nextTab;
@@ -8090,10 +8202,22 @@
                 if (selector && !selector.contains(e.target)) {
                     toggleProductCategorySelector(false);
                 }
+                // 点菜单与 chip 之外的区域 → 关闭标签状态菜单
+                const statusMenu = document.getElementById('tagStatusMenu');
+                if (statusMenu && statusMenu.classList.contains('active')
+                    && !statusMenu.contains(e.target)
+                    && !e.target.closest('.existing-tag-item')) {
+                    closeTagStatusMenu();
+                }
             });
 
             document.addEventListener('keydown', function(e) {
                 if (e.key !== 'Escape') return;
+                const statusMenu = document.getElementById('tagStatusMenu');
+                if (statusMenu && statusMenu.classList.contains('active')) {
+                    closeTagStatusMenu();
+                    return;
+                }
                 if (isProductCategorySelectorOpen) {
                     toggleProductCategorySelector(false);
                     return;
@@ -9416,34 +9540,14 @@
                 '<div class="multilang-sheet is-group-name" data-editor-key="tag-drawer-group-name"'
             );
 
-            html += `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
+            html += `<div class="existing-tag-helper">现有标签（点击标签可切换编辑对象，并设置点单屏展示状态）</div>`;
             html += `<div class="existing-tags">`;
             html += tagKeys.map(tagKey => `
-                <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" data-status="${getTagOptionStatus(cfg.specKey, tagKey)}" onclick="selectDrawerTag('${tagKey}')">
+                <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" data-status="${getTagOptionStatus(cfg.specKey, tagKey)}" data-tag-key="${escAttr(tagKey)}" onclick="selectDrawerTag('${tagKey}')">
                     ${getTagLabel(cfg.specKey, tagKey, currentLang)}
                 </button>
             `).join('');
             html += `</div>`;
-
-            // 点单屏展示状态：紧跟标签选择区，选中哪个标签立刻能改它的状态。
-            // 立即生效（含守卫与默认迁移），不随「保存」延迟。
-            const currentTagStatus = getTagOptionStatus(cfg.specKey, drawerSelectedTagKey);
-            html += `
-                <div class="tag-status-group">
-                    <div class="tag-status-group-label">「${getTagLabel(cfg.specKey, drawerSelectedTagKey, currentLang)}」点单屏展示状态</div>
-                    <div class="tag-status-options">
-                        ${TAG_OPTION_STATUSES.map(status => `
-                            <label class="tag-status-option ${status === currentTagStatus ? 'checked' : ''}">
-                                <input type="radio" name="drawerTagStatus" value="${status}" ${status === currentTagStatus ? 'checked' : ''} onchange="handleDrawerTagStatusChange('${status}')">
-                                <span>
-                                    <span class="tag-status-option-name">${TAG_OPTION_STATUS_LABELS[status]}</span>
-                                    <span class="tag-status-option-desc">${TAG_OPTION_STATUS_MENU_DESCS[status]}</span>
-                                </span>
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
 
             html += buildMultilangGridMarkup({
                 editorKey: 'tag-drawer',
@@ -9493,6 +9597,7 @@
                 </div>
             `;
 
+            const currentTagStatus = getTagOptionStatus(cfg.specKey, drawerSelectedTagKey);
             html += `
                 <div class="tag-default-wrap">
                     <label class="tag-default-check">
@@ -9559,9 +9664,18 @@
             persistDrawerCurrentGroupName();
             drawerSelectedTagKey = tagKey;
             renderDrawerEditor();
+            // 点击标签同时弹出状态菜单：渲染后重新定位到新 DOM 里的对应 chip
+            const chip = document.querySelector(`.existing-tag-item[data-tag-key="${cssEscape(tagKey)}"]`);
+            if (chip) openTagStatusMenu(tagKey, chip);
+        }
+
+        function cssEscape(value) {
+            if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(value);
+            return String(value).replace(/["\\]/g, '\\$&');
         }
 
         function switchDrawerTag(specKey) {
+            closeTagStatusMenu();
             persistDrawerCurrentTag();
             if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             drawerActiveSpecKey = specKey;

@@ -135,11 +135,16 @@ test('选项状态：恢复为 active 永远允许，且不触发迁移', () => 
 
 test('选项状态：数据模型与保存链路（静态断言）', () => {
   assert.ok(productHtml.includes('tagOptionStatus: productData.tagOptionStatus || {}'), '保存草稿应携带 tagOptionStatus');
-  assert.ok(productHtml.includes('name="drawerTagStatus"'), '多语言编辑器应有点单屏展示状态 radio');
-  assert.ok(productHtml.includes('点单屏展示状态'), '编辑器应有状态区标题');
-  assert.ok(productHtml.includes('handleDrawerTagStatusChange'), '状态 radio 应接立即生效的处理函数');
+  assert.ok(productHtml.includes('id="tagStatusMenu"'), '应有点击标签弹出的状态菜单元素');
+  assert.ok(productHtml.includes('id="tagStatusMenuBackdrop"'), '移动端底部面板应有遮罩');
+  assert.ok(productHtml.includes('点单屏展示状态'), '状态菜单应有标题');
+  assert.ok(productHtml.includes('handleTagStatusMenuPick'), '菜单项应接立即生效的处理函数');
+  assert.ok(/function\s+selectDrawerTag\([\s\S]*?openTagStatusMenu\(/.test(productHtml), '点击标签 chip 应同时弹出状态菜单');
+  assert.ok(productHtml.includes('isMobileViewport'), '应按视口区分桌面浮层与移动端底部面板');
+  assert.ok(/tag-status-menu\.sheet/.test(productHtml), '移动端应有底部动作面板样式');
   assert.ok(/existing-tag-item\[data-status="disabled"\]/.test(productHtml), '标签 chip 应有不可用状态徽标样式');
   assert.ok(/existing-tag-item\[data-status="hidden"\]/.test(productHtml), '标签 chip 应有隐藏状态徽标样式');
   assert.ok(productHtml.includes('每组至少保留一个正常选项'), '最后一个正常选项被停时应有提示');
-  assert.ok(!productHtml.includes('optionStatusMenu'), 'chip 浮层状态菜单应已移除（功能移入多语言编辑器）');
+  assert.ok(!productHtml.includes('optionStatusMenu'), '旧选项 chip 网格的浮层菜单应已移除');
+  assert.ok(!productHtml.includes('name="drawerTagStatus"'), '编辑器内嵌 radio 已被 chip 点击菜单取代');
 });
