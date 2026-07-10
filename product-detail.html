@@ -5429,7 +5429,16 @@
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
                     : null,
-                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false,
+                // 选项配置草稿：文案 / 状态（隐藏 · 不可用）/ 默认项 / 附加价，
+                // 让「不保存直接预览」时点单屏看到的与编辑器一致。
+                tagI18n: cloneProductValue(productData.tagI18n) || {},
+                tagOptionStatus: cloneProductValue(productData.tagOptionStatus) || {},
+                defaultOptions: cloneProductValue(productData.defaultOptions) || {},
+                tagExtraPrices: cloneProductValue(productData.tagExtraPrices) || {},
+                tagDescI18n: cloneProductValue(productData.tagDescI18n) || {},
+                specs: cloneProductValue(productData.specs) || {},
+                options: cloneProductValue(productData.options) || {}
             };
         }
 
@@ -5468,6 +5477,8 @@
         }
 
         function saveProductAndOpenOrderPreview() {
+            // 选项配置编辑器可能有未落盘输入，先同步进 productData 再生成预览草稿
+            persistInlineTagConfigIfActive();
             return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
         }
 
@@ -9793,7 +9804,16 @@
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
                     : null,
-                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false,
+                // 选项配置草稿：文案 / 状态（隐藏 · 不可用）/ 默认项 / 附加价，
+                // 让「不保存直接预览」时点单屏看到的与编辑器一致。
+                tagI18n: cloneProductValue(productData.tagI18n) || {},
+                tagOptionStatus: cloneProductValue(productData.tagOptionStatus) || {},
+                defaultOptions: cloneProductValue(productData.defaultOptions) || {},
+                tagExtraPrices: cloneProductValue(productData.tagExtraPrices) || {},
+                tagDescI18n: cloneProductValue(productData.tagDescI18n) || {},
+                specs: cloneProductValue(productData.specs) || {},
+                options: cloneProductValue(productData.options) || {}
             };
         }
 
@@ -9832,6 +9852,8 @@
         }
 
         function saveProductAndOpenOrderPreview() {
+            // 选项配置编辑器可能有未落盘输入，先同步进 productData 再生成预览草稿
+            persistInlineTagConfigIfActive();
             return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
         }
 

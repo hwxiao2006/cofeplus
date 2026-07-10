@@ -9847,6 +9847,7 @@
             const normalized = payload && typeof payload === 'object' ? payload : {};
             const productId = Number(normalized.productId);
             if (!Number.isFinite(productId)) return null;
+            const cloneMap = (value) => (value && typeof value === 'object' ? cloneSharedMenuProducts(value) : undefined);
             return {
                 productId,
                 names: normalized.names && typeof normalized.names === 'object' ? cloneSharedMenuProducts(normalized.names) : {},
@@ -9858,7 +9859,15 @@
                 originalPrice: normalized.originalPrice === null
                     ? null
                     : (Number.isFinite(Number(normalized.originalPrice)) ? Number(normalized.originalPrice) : undefined),
-                onSale: typeof normalized.onSale === 'boolean' ? normalized.onSale : undefined
+                onSale: typeof normalized.onSale === 'boolean' ? normalized.onSale : undefined,
+                // 选项配置草稿（含隐藏 / 不可用状态）：未保存也能在点单屏预览生效
+                tagI18n: cloneMap(normalized.tagI18n),
+                tagOptionStatus: cloneMap(normalized.tagOptionStatus),
+                defaultOptions: cloneMap(normalized.defaultOptions),
+                tagExtraPrices: cloneMap(normalized.tagExtraPrices),
+                tagDescI18n: cloneMap(normalized.tagDescI18n),
+                specs: cloneMap(normalized.specs),
+                options: cloneMap(normalized.options)
             };
         }
 
@@ -9913,6 +9922,13 @@
             if (typeof orderPreviewDraftPayload.onSale === 'boolean') {
                 merged.onSale = orderPreviewDraftPayload.onSale;
             }
+
+            // 选项配置草稿整包覆盖（与编辑器一致的完整快照，非增量补丁）
+            ['tagI18n', 'tagOptionStatus', 'defaultOptions', 'tagExtraPrices', 'tagDescI18n', 'specs', 'options'].forEach((field) => {
+                if (orderPreviewDraftPayload[field] && typeof orderPreviewDraftPayload[field] === 'object') {
+                    merged[field] = orderPreviewDraftPayload[field];
+                }
+            });
 
             return merged;
         }
