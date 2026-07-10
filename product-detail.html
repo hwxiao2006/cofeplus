@@ -1337,6 +1337,122 @@
             font-weight: 500;
         }
 
+        /* ---- 选项状态（隐藏 / 不可用）---- */
+        .option-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .option-item-status-trigger {
+            border: none;
+            background: transparent;
+            color: inherit;
+            font-size: 14px;
+            line-height: 1;
+            padding: 0 2px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .option-item:hover .option-item-status-trigger,
+        .option-item[data-status="disabled"] .option-item-status-trigger,
+        .option-item[data-status="hidden"] .option-item-status-trigger {
+            opacity: 0.7;
+        }
+
+        .option-item-status-trigger:hover {
+            opacity: 1 !important;
+        }
+
+        .option-item[data-status="disabled"] {
+            background: #ececec;
+            color: #aaa;
+        }
+
+        .option-item[data-status="hidden"] {
+            background: transparent;
+            border: 1px dashed #ccc;
+            color: #bbb;
+            opacity: 0.75;
+        }
+
+        .option-item[data-status="disabled"]::after,
+        .option-item[data-status="hidden"]::after {
+            font-size: 10px;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 2px;
+        }
+
+        .option-item[data-status="disabled"]::after {
+            content: '不可用';
+            background: #ffa50222;
+            color: var(--warning);
+        }
+
+        .option-item[data-status="hidden"]::after {
+            content: '已隐藏';
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .option-status-menu {
+            position: fixed;
+            z-index: 3000;
+            min-width: 200px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 6px;
+            display: none;
+        }
+
+        .option-status-menu.active {
+            display: block;
+        }
+
+        .option-status-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .option-status-menu-item:hover {
+            background: #f5f7f7;
+        }
+
+        .option-status-menu-item .option-status-menu-desc {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .option-status-menu-item .option-status-menu-check {
+            color: var(--primary);
+            font-weight: 600;
+            visibility: hidden;
+        }
+
+        .option-status-menu-item.current .option-status-menu-check {
+            visibility: visible;
+        }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -3967,6 +4083,9 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- 选项状态小菜单（全局共享，定位到触发 chip） -->
+    <div class="option-status-menu" id="optionStatusMenu"></div>
+
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
     <script src="shared/admin-staff-access.js"></script>
@@ -4721,6 +4840,156 @@
             return tagConfigs.find(cfg => cfg.specKey === specKey);
         }
 
+        // ==================== 选项状态（隐藏 / 不可用） ====================
+        // productData.tagOptionStatus[specKey][tagKey] = 'active' | 'disabled' | 'hidden'
+        // 缺省视为 active。与 tagI18n / tagExtraPrices 同构的平行 map，随商品保存。
+        // 点单屏语义：hidden = 不显示；disabled = 灰显禁点。
+        const TAG_OPTION_STATUSES = ['active', 'disabled', 'hidden'];
+        const TAG_OPTION_STATUS_LABELS = {
+            active: '正常',
+            disabled: '不可用',
+            hidden: '隐藏'
+        };
+
+        function normalizeTagOptionStatus(value) {
+            return TAG_OPTION_STATUSES.includes(value) ? value : 'active';
+        }
+
+        function getTagOptionStatus(specKey, tagKey, targetProduct = productData) {
+            return normalizeTagOptionStatus(targetProduct?.tagOptionStatus?.[specKey]?.[tagKey]);
+        }
+
+        function ensureTagOptionStatusStore(specKey, targetProduct = productData) {
+            if (!targetProduct || typeof targetProduct !== 'object') return {};
+            if (!targetProduct.tagOptionStatus || typeof targetProduct.tagOptionStatus !== 'object') {
+                targetProduct.tagOptionStatus = {};
+            }
+            if (specKey && (!targetProduct.tagOptionStatus[specKey] || typeof targetProduct.tagOptionStatus[specKey] !== 'object')) {
+                targetProduct.tagOptionStatus[specKey] = {};
+            }
+            return specKey ? targetProduct.tagOptionStatus[specKey] : targetProduct.tagOptionStatus;
+        }
+
+        // 纯函数：计算一次状态变更的结果（不碰 DOM，供 vm 测试）。
+        // 返回 { ok, statusMap, needsMigration, migrateTo, reason }：
+        // - 最后一个 active 被停/隐藏 → ok:false, reason:'last_active'
+        // - 被停的是当前选中（默认）项 → needsMigration:true, migrateTo=第一个 active
+        function resolveOptionStatusChange({ tagKeys, statusMap, targetKey, nextStatus, selectedKey }) {
+            const keys = Array.isArray(tagKeys) ? tagKeys : [];
+            const normalizedNext = normalizeTagOptionStatus(nextStatus);
+            const currentOf = (key) => normalizeTagOptionStatus(statusMap && statusMap[key]);
+            if (!keys.includes(targetKey)) {
+                return { ok: false, reason: 'unknown_key' };
+            }
+
+            const nextMap = {};
+            keys.forEach((key) => {
+                nextMap[key] = key === targetKey ? normalizedNext : currentOf(key);
+            });
+
+            const activeKeys = keys.filter((key) => nextMap[key] === 'active');
+            if (!activeKeys.length) {
+                return { ok: false, reason: 'last_active' };
+            }
+
+            const needsMigration = targetKey === selectedKey && normalizedNext !== 'active';
+            return {
+                ok: true,
+                statusMap: nextMap,
+                needsMigration,
+                migrateTo: needsMigration ? activeKeys[0] : ''
+            };
+        }
+
+        // 应用状态变更：更新数据 + 必要时把选中/默认迁移到第一个正常选项。
+        function setTagOptionStatus(specKey, tagKey, nextStatus) {
+            const cfg = getTagConfigBySpec(specKey);
+            if (!cfg) return false;
+            const result = resolveOptionStatusChange({
+                tagKeys: getTagKeys(specKey),
+                statusMap: ensureTagOptionStatusStore(specKey),
+                targetKey: tagKey,
+                nextStatus,
+                selectedKey: getCurrentSelectedTagKey(specKey)
+            });
+            if (!result.ok) {
+                if (result.reason === 'last_active') {
+                    showToast('每组至少保留一个正常选项', 'error');
+                }
+                return false;
+            }
+
+            productData.tagOptionStatus[specKey] = result.statusMap;
+
+            if (result.needsMigration && result.migrateTo) {
+                syncSelectedOption(cfg.listId, result.migrateTo);
+                setSpec(currentLang, { [specKey]: result.migrateTo });
+                if (getDefaultOption(specKey) === tagKey) {
+                    setDefaultOption(specKey, result.migrateTo);
+                }
+                showToast(`“${getTagLabel(specKey, tagKey, currentLang)}”已${TAG_OPTION_STATUS_LABELS[normalizeTagOptionStatus(nextStatus)]}，默认选项自动改为“${getTagLabel(specKey, result.migrateTo, currentLang)}”`);
+            }
+
+            refreshOptionListLabels(specKey);
+            if ((specKey === 'temperature' || specKey === 'cupsize') && typeof renderRecipeCupComboHeader === 'function') {
+                try { renderRecipeCupComboHeader(); } catch (err) { /* keep going */ }
+            }
+            return true;
+        }
+
+        // ---- 状态小菜单：正常 / 不可用 / 隐藏 ----
+        const TAG_OPTION_STATUS_MENU_DESCS = {
+            active: '客户点单屏正常展示',
+            disabled: '点单屏灰显禁点（临时缺货）',
+            hidden: '点单屏不显示（长期下架）'
+        };
+        let optionStatusMenuContext = null; // { specKey, tagKey }
+
+        function openOptionStatusMenu(specKey, optionItem) {
+            const menu = document.getElementById('optionStatusMenu');
+            if (!menu || !optionItem) return;
+            if (!optionItem.dataset.tagKey) optionItem.dataset.tagKey = optionItem.dataset.value;
+            const tagKey = optionItem.dataset.tagKey;
+            optionStatusMenuContext = { specKey, tagKey };
+
+            const currentStatus = getTagOptionStatus(specKey, tagKey);
+            menu.innerHTML = TAG_OPTION_STATUSES.map(status => `
+                <button type="button" class="option-status-menu-item ${status === currentStatus ? 'current' : ''}" onclick="handleOptionStatusMenuPick('${status}')">
+                    <span>
+                        ${TAG_OPTION_STATUS_LABELS[status]}
+                        <span class="option-status-menu-desc">${TAG_OPTION_STATUS_MENU_DESCS[status]}</span>
+                    </span>
+                    <span class="option-status-menu-check">✓</span>
+                </button>
+            `).join('');
+
+            const rect = optionItem.getBoundingClientRect();
+            menu.classList.add('active');
+            const menuWidth = menu.offsetWidth || 200;
+            const menuHeight = menu.offsetHeight || 120;
+            let left = rect.left;
+            let top = rect.bottom + 6;
+            if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
+            if (top + menuHeight > window.innerHeight - 8) top = rect.top - menuHeight - 6;
+            menu.style.left = `${Math.max(8, left)}px`;
+            menu.style.top = `${Math.max(8, top)}px`;
+        }
+
+        function closeOptionStatusMenu() {
+            const menu = document.getElementById('optionStatusMenu');
+            if (menu) menu.classList.remove('active');
+            optionStatusMenuContext = null;
+        }
+
+        function handleOptionStatusMenuPick(nextStatus) {
+            if (!optionStatusMenuContext) return;
+            const { specKey, tagKey } = optionStatusMenuContext;
+            setTagOptionStatus(specKey, tagKey, nextStatus);
+            closeOptionStatusMenu();
+        }
+
+
+
         function getTagKeys(specKey) {
             const cfg = getTagConfigBySpec(specKey);
             if (!cfg) return [];
@@ -4869,10 +5138,26 @@
                 // 注意：这里**只**读商品自己的 productData.tagI18n，
                 // 不会触发 i18n 字典翻译，所以英文模式下没有英文数据时会诚实显示中文。
                 const i18n = productData?.tagI18n?.[specKey]?.[key] || {};
-                item.textContent = i18n[displayLang]
+                const label = i18n[displayLang]
                     || i18n[currentLang]
                     || i18n.zh
                     || key;
+                let labelNode = item.querySelector('.option-item-label');
+                if (!labelNode) {
+                    // 升级旧结构：文案挪进 label span，并补上状态触发按钮
+                    item.textContent = '';
+                    labelNode = document.createElement('span');
+                    labelNode.className = 'option-item-label';
+                    item.appendChild(labelNode);
+                    const trigger = document.createElement('button');
+                    trigger.type = 'button';
+                    trigger.className = 'option-item-status-trigger';
+                    trigger.title = '设置选项状态';
+                    trigger.textContent = '⋯';
+                    item.appendChild(trigger);
+                }
+                labelNode.textContent = label;
+                item.dataset.status = getTagOptionStatus(specKey, key);
             });
         }
 
@@ -7152,6 +7437,7 @@
                     defaultOptions: productData.defaultOptions || {},
                     tagI18n: productData.tagI18n || {},
                     tagExtraPrices: productData.tagExtraPrices || {},
+                    tagOptionStatus: productData.tagOptionStatus || {},
                     optionRecipes: productData.optionRecipes || {},
                     optionRecipeLinks: productData.optionRecipeLinks || {},
                     options: getSelectedOptions()
@@ -7787,25 +8073,39 @@
             // 选项点击事件
             document.querySelectorAll('.option-list').forEach(list => {
                 list.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('option-item')) {
-                        this.querySelectorAll('.option-item').forEach(item => {
-                            item.classList.remove('selected');
-                        });
-                        e.target.classList.add('selected');
+                    const optionItem = e.target.closest('.option-item');
+                    if (!optionItem || !this.contains(optionItem)) return;
+                    const meta = tagConfigs.find(cfg => cfg.listId === this.id);
 
-                        const meta = tagConfigs.find(cfg => cfg.listId === this.id);
-                        if (meta) {
-                            if (!e.target.dataset.tagKey) e.target.dataset.tagKey = e.target.dataset.value;
-                            setSpec(currentLang, { [meta.specKey]: e.target.dataset.tagKey });
-                            setActiveRecipeSpec(meta.specKey);
-                            if (drawerActiveSpecKey === meta.specKey) {
-                                drawerSelectedTagKey = e.target.dataset.tagKey;
-                            }
-                            // 温度 / 杯型变化时，配方面板的「当前杯型」头部需要同步刷新
-                            if ((meta.specKey === 'temperature' || meta.specKey === 'cupsize')
-                                && typeof renderRecipeCupComboHeader === 'function') {
-                                try { renderRecipeCupComboHeader(); } catch (err) { /* keep going */ }
-                            }
+                    // 点「⋯」= 打开状态菜单，不触发选中
+                    if (e.target.closest('.option-item-status-trigger')) {
+                        e.stopPropagation();
+                        if (meta) openOptionStatusMenu(meta.specKey, optionItem);
+                        return;
+                    }
+
+                    // 隐藏 / 不可用的选项不能设为默认
+                    if ((optionItem.dataset.status || 'active') !== 'active') {
+                        showToast(`该选项已${TAG_OPTION_STATUS_LABELS[normalizeTagOptionStatus(optionItem.dataset.status)]}，不能设为默认选项`, 'error');
+                        return;
+                    }
+
+                    this.querySelectorAll('.option-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    optionItem.classList.add('selected');
+
+                    if (meta) {
+                        if (!optionItem.dataset.tagKey) optionItem.dataset.tagKey = optionItem.dataset.value;
+                        setSpec(currentLang, { [meta.specKey]: optionItem.dataset.tagKey });
+                        setActiveRecipeSpec(meta.specKey);
+                        if (drawerActiveSpecKey === meta.specKey) {
+                            drawerSelectedTagKey = optionItem.dataset.tagKey;
+                        }
+                        // 温度 / 杯型变化时，配方面板的「当前杯型」头部需要同步刷新
+                        if ((meta.specKey === 'temperature' || meta.specKey === 'cupsize')
+                            && typeof renderRecipeCupComboHeader === 'function') {
+                            try { renderRecipeCupComboHeader(); } catch (err) { /* keep going */ }
                         }
                     }
                 });
@@ -7859,6 +8159,13 @@
                 const selector = document.getElementById('productCategorySelector');
                 if (selector && !selector.contains(e.target)) {
                     toggleProductCategorySelector(false);
+                }
+                // 点菜单外 / 非 chip 触发器 → 关闭选项状态菜单
+                const statusMenu = document.getElementById('optionStatusMenu');
+                if (statusMenu && statusMenu.classList.contains('active')
+                    && !statusMenu.contains(e.target)
+                    && !e.target.closest('.option-item-status-trigger')) {
+                    closeOptionStatusMenu();
                 }
             });
 
@@ -8021,7 +8328,15 @@
                 ensureTagI18n(meta.specKey);
                 refreshOptionListLabels(meta.specKey);
                 const spec = getSpec(currentLang);
-                const preferred = getDefaultOption(meta.specKey) || resolveTagKey(meta.specKey, spec[meta.specKey]) || resolveTagKey(meta.specKey, productData.options?.[meta.optionTitle]);
+                let preferred = getDefaultOption(meta.specKey) || resolveTagKey(meta.specKey, spec[meta.specKey]) || resolveTagKey(meta.specKey, productData.options?.[meta.optionTitle]);
+                // 默认项已被隐藏 / 停用（旧数据）→ 迁移到第一个正常选项
+                if (preferred && getTagOptionStatus(meta.specKey, preferred) !== 'active') {
+                    const firstActive = getTagKeys(meta.specKey).find(key => getTagOptionStatus(meta.specKey, key) === 'active') || '';
+                    if (firstActive && getDefaultOption(meta.specKey) === preferred) {
+                        setDefaultOption(meta.specKey, firstActive);
+                    }
+                    preferred = firstActive || preferred;
+                }
                 if (preferred) {
                     syncSelectedOption(meta.listId, preferred);
                     setSpec(currentLang, { [meta.specKey]: preferred });
@@ -9240,10 +9555,11 @@
             html += `
                 <div class="tag-default-wrap">
                     <label class="tag-default-check">
-                        <input type="checkbox" id="drawerTagDefaultSingle" ${(currentDefault && currentDefault === drawerSelectedTagKey) ? 'checked' : ''}>
+                        <input type="checkbox" id="drawerTagDefaultSingle" ${(currentDefault && currentDefault === drawerSelectedTagKey) ? 'checked' : ''} ${getTagOptionStatus(cfg.specKey, drawerSelectedTagKey) !== 'active' ? 'disabled' : ''}>
                         <span class="tag-default-box"></span>
                         <span class="tag-default-text">客户购买时默认选中</span>
                     </label>
+                    ${getTagOptionStatus(cfg.specKey, drawerSelectedTagKey) !== 'active' ? '<div class="tag-extra-price-hint">该选项当前为「' + TAG_OPTION_STATUS_LABELS[getTagOptionStatus(cfg.specKey, drawerSelectedTagKey)] + '」，恢复正常后才能设为默认</div>' : ''}
                 </div>
             `;
             container.innerHTML = html;
