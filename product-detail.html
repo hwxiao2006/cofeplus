@@ -1345,114 +1345,6 @@
             gap: 6px;
         }
 
-        .option-item-status-trigger {
-            border: none;
-            background: transparent;
-            color: inherit;
-            font-size: 14px;
-            line-height: 1;
-            padding: 0 2px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.15s;
-        }
-
-        .option-item:hover .option-item-status-trigger,
-        .option-item[data-status="disabled"] .option-item-status-trigger,
-        .option-item[data-status="hidden"] .option-item-status-trigger {
-            opacity: 0.7;
-        }
-
-        .option-item-status-trigger:hover {
-            opacity: 1 !important;
-        }
-
-        .option-item[data-status="disabled"] {
-            background: #ececec;
-            color: #aaa;
-        }
-
-        .option-item[data-status="hidden"] {
-            background: transparent;
-            border: 1px dashed #ccc;
-            color: #bbb;
-            opacity: 0.75;
-        }
-
-        .option-item[data-status="disabled"]::after,
-        .option-item[data-status="hidden"]::after {
-            font-size: 10px;
-            line-height: 1;
-            padding: 2px 6px;
-            border-radius: 8px;
-            margin-left: 2px;
-        }
-
-        .option-item[data-status="disabled"]::after {
-            content: '不可用';
-            background: #ffa50222;
-            color: var(--warning);
-        }
-
-        .option-item[data-status="hidden"]::after {
-            content: '已隐藏';
-            background: #f0f0f0;
-            color: #999;
-        }
-
-        .option-status-menu {
-            position: fixed;
-            z-index: 3000;
-            min-width: 200px;
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            padding: 6px;
-            display: none;
-        }
-
-        .option-status-menu.active {
-            display: block;
-        }
-
-        .option-status-menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: left;
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-
-        .option-status-menu-item:hover {
-            background: #f5f7f7;
-        }
-
-        .option-status-menu-item .option-status-menu-desc {
-            display: block;
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .option-status-menu-item .option-status-menu-check {
-            color: var(--primary);
-            font-weight: 600;
-            visibility: hidden;
-        }
-
-        .option-status-menu-item.current .option-status-menu-check {
-            visibility: visible;
-        }
-
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -1556,32 +1448,20 @@
             background: var(--success);
         }
 
-        .tag-drawer-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1200;
-            align-items: stretch;
-            justify-content: flex-end;
-        }
-
-        .tag-drawer-overlay.active {
-            display: flex;
-        }
-
-        .tag-drawer {
-            background: #fff;
-            width: min(1160px, 96vw);
-            box-shadow: var(--shadow);
-            height: 100vh;
-            overflow: hidden;
+        /* ---- 选项配置内嵌布局（原抽屉的树 + 编辑器，现直接嵌在页签里） ---- */
+        .tag-config-layout {
             display: flex;
             flex-direction: row;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 480px;
+            background: #fff;
         }
 
         .tag-drawer-side {
             width: 260px;
+            flex-shrink: 0;
             border-right: 1px solid var(--border);
             background: #fafcfd;
             display: flex;
@@ -1666,7 +1546,6 @@
 
         .tag-drawer-body {
             padding: 14px 20px 18px;
-            overflow-y: auto;
             flex: 1;
         }
 
@@ -1707,18 +1586,151 @@
             font-weight: 600;
         }
 
+        /* 标签 chip 上的状态徽标：让运营一眼看到整组的隐藏 / 不可用分布 */
+        .existing-tag-item[data-status="disabled"]::after,
+        .existing-tag-item[data-status="hidden"]::after {
+            font-size: 10px;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+        }
+
+        .existing-tag-item[data-status="disabled"]::after {
+            content: '不可用';
+            background: #ffa50222;
+            color: var(--warning);
+        }
+
+        .existing-tag-item[data-status="hidden"]::after {
+            content: '已隐藏';
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .existing-tag-item[data-status="disabled"]:not(.active),
+        .existing-tag-item[data-status="hidden"]:not(.active) {
+            color: #aab2bd;
+        }
+
+        .existing-tag-item[data-status="hidden"]:not(.active) {
+            border-style: dashed;
+        }
+
+        /* 点单屏状态菜单：桌面锚定浮层；移动端 .sheet 变底部动作面板 */
+        .tag-status-menu-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 2990;
+        }
+
+        .tag-status-menu-backdrop.active {
+            display: block;
+        }
+
+        .tag-status-menu {
+            display: none;
+            position: absolute; /* 锚定文档坐标：页面滚动时跟随所点的标签移动 */
+            z-index: 3000;
+            min-width: 240px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+            padding: 8px;
+        }
+
+        .tag-status-menu.active {
+            display: block;
+        }
+
+        .tag-status-menu.sheet {
+            position: fixed; /* 底部动作面板仍钉在视口 */
+            left: 0 !important;
+            right: 0;
+            bottom: 0;
+            top: auto !important;
+            border-radius: 16px 16px 0 0;
+            padding: 12px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+            box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .tag-status-menu-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding: 6px 10px 8px;
+        }
+
+        .tag-status-menu.sheet .tag-status-menu-title {
+            font-size: 15px;
+            padding: 8px 4px 10px;
+        }
+
+        .tag-status-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            padding: 9px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tag-status-menu.sheet .tag-status-menu-item {
+            padding: 14px 8px;
+            border-top: 1px solid #f2f4f5;
+        }
+
+        .tag-status-menu-item:hover {
+            background: #f5f7f7;
+        }
+
+        .tag-status-menu-item.current {
+            background: var(--primary-light);
+        }
+
+        .tag-status-menu-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tag-status-menu.sheet .tag-status-menu-name {
+            font-size: 15px;
+        }
+
+        .tag-status-menu-desc {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .tag-status-menu.sheet .tag-status-menu-desc {
+            font-size: 12px;
+        }
+
+        .tag-status-menu-check {
+            color: var(--primary);
+            font-weight: 700;
+            visibility: hidden;
+        }
+
+        .tag-status-menu-item.current .tag-status-menu-check {
+            visibility: visible;
+        }
+
         .existing-tag-helper {
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 8px;
-        }
-
-        .tag-drawer-footer {
-            padding: 14px 20px 20px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            border-top: 1px solid var(--border);
         }
 
         .modal-close {
@@ -3331,8 +3343,7 @@
                 font-weight: 700;
             }
 
-            .tag-drawer {
-                width: 100%;
+            .tag-config-layout {
                 flex-direction: column;
             }
 
@@ -3712,9 +3723,25 @@
                     <div class="form-card" style="margin-bottom:16px;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
                             <h2 class="form-section-title" style="margin-bottom:0;">选项配置</h2>
-                            <button class="btn btn-default" id="openTagConfigDrawerBtn" onclick="openTagConfigDrawer('beans')">编辑多语言文案</button>
+                            <button class="btn btn-primary" id="saveTagConfigPanelBtn" onclick="saveTagConfigPanel()">保存选项配置</button>
                         </div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="tagOptionsGrid" data-admin-i18n-ignore="true">
+                        <!-- 内嵌多语言配置：左侧标签类型树 + 右侧编辑器（含文案 / 附加价格 / 展示状态 / 默认选中） -->
+                        <div class="tag-config-layout">
+                            <aside class="tag-drawer-side">
+                                <div class="tag-drawer-side-header">标签类型</div>
+                                <div class="tag-tree" id="tagTree"></div>
+                            </aside>
+                            <section class="tag-drawer-main">
+                                <div class="tag-drawer-header">
+                                    <div class="tag-drawer-title" id="tagDrawerTitle">标签配置</div>
+                                </div>
+                                <div class="tag-drawer-body" id="tagDrawerEditor"></div>
+                            </section>
+                        </div>
+                        <!-- 机器件（勿删）：option-item chips 是标签 key 的事实来源，
+                             getTagKeys / getSelectedOptions / syncSelectedOption 等都从这里读写；
+                             新商品无 tagI18n 时靠这些硬编码 chip 播种。UI 已由上方内嵌编辑器承担。 -->
+                        <div style="display:none;" id="tagOptionsGrid" data-admin-i18n-ignore="true" hidden>
                             <div class="option-card active-spec" data-spec-key="beans">
                                 <div class="option-title">BEAN / 咖啡豆</div>
                                 <div class="option-list" id="beanOptions">
@@ -3917,26 +3944,6 @@
         </main>
     </div>
 
-    <div class="tag-drawer-overlay" id="tagConfigDrawer">
-        <div class="tag-drawer">
-            <aside class="tag-drawer-side">
-                <div class="tag-drawer-side-header">标签类型</div>
-                <div class="tag-tree" id="tagTree"></div>
-            </aside>
-            <section class="tag-drawer-main">
-                <div class="tag-drawer-header">
-                    <div class="tag-drawer-title" id="tagDrawerTitle">标签配置</div>
-                    <button class="modal-close" onclick="closeTagConfigDrawer()">×</button>
-                </div>
-                <div class="tag-drawer-body" id="tagDrawerEditor"></div>
-                <div class="tag-drawer-footer">
-                    <button class="btn btn-default" onclick="closeTagConfigDrawer()">取消</button>
-                    <button class="btn btn-primary" onclick="saveTagConfigDrawer()">保存</button>
-                </div>
-            </section>
-        </div>
-    </div>
-
     <div class="recipe-editor-overlay" id="recipeEditorModal">
         <div class="recipe-editor-modal">
             <div class="recipe-editor-header">
@@ -4083,8 +4090,9 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- 选项状态小菜单（全局共享，定位到触发 chip） -->
-    <div class="option-status-menu" id="optionStatusMenu"></div>
+    <!-- 标签点单屏状态菜单：桌面端锚定所点 chip 的浮层；移动端为底部动作面板 -->
+    <div class="tag-status-menu-backdrop" id="tagStatusMenuBackdrop" onclick="closeTagStatusMenu()"></div>
+    <div class="tag-status-menu" id="tagStatusMenu" role="menu"></div>
 
     <script src="shared/admin-mock-data.js"></script>
     <script src="shared/business-tag-library.js"></script>
@@ -4937,58 +4945,84 @@
             return true;
         }
 
-        // ---- 状态小菜单：正常 / 不可用 / 隐藏 ----
+        // ---- 点单屏展示状态说明（内嵌编辑器 radio 用）：正常 / 不可用 / 隐藏 ----
         const TAG_OPTION_STATUS_MENU_DESCS = {
             active: '客户点单屏正常展示',
             disabled: '点单屏灰显禁点（临时缺货）',
             hidden: '点单屏不显示（长期下架）'
         };
-        let optionStatusMenuContext = null; // { specKey, tagKey }
 
-        function openOptionStatusMenu(specKey, optionItem) {
-            const menu = document.getElementById('optionStatusMenu');
-            if (!menu || !optionItem) return;
-            if (!optionItem.dataset.tagKey) optionItem.dataset.tagKey = optionItem.dataset.value;
-            const tagKey = optionItem.dataset.tagKey;
-            optionStatusMenuContext = { specKey, tagKey };
+        // 内嵌编辑器状态 radio 变更：立即生效（守卫：最后一个正常项拦截、默认自动迁移+toast）。
+        // 先落盘当前输入（重渲会重置输入框），无论成功与否都重渲——失败时 radio 回弹到真实状态。
+        // ---- 标签状态菜单：点击 chip 弹出（桌面锚定浮层 / 移动端底部面板） ----
+        let tagStatusMenuTagKey = '';
 
-            const currentStatus = getTagOptionStatus(specKey, tagKey);
-            menu.innerHTML = TAG_OPTION_STATUSES.map(status => `
-                <button type="button" class="option-status-menu-item ${status === currentStatus ? 'current' : ''}" onclick="handleOptionStatusMenuPick('${status}')">
-                    <span>
-                        ${TAG_OPTION_STATUS_LABELS[status]}
-                        <span class="option-status-menu-desc">${TAG_OPTION_STATUS_MENU_DESCS[status]}</span>
-                    </span>
-                    <span class="option-status-menu-check">✓</span>
-                </button>
-            `).join('');
+        function isMobileViewport() {
+            return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+        }
 
-            const rect = optionItem.getBoundingClientRect();
+        function openTagStatusMenu(tagKey, anchorEl) {
+            if (!drawerActiveSpecKey || !tagKey) return;
+            const menu = document.getElementById('tagStatusMenu');
+            const backdrop = document.getElementById('tagStatusMenuBackdrop');
+            if (!menu) return;
+            tagStatusMenuTagKey = tagKey;
+
+            const currentStatus = getTagOptionStatus(drawerActiveSpecKey, tagKey);
+            const label = getTagLabel(drawerActiveSpecKey, tagKey, currentLang);
+            menu.innerHTML = `
+                <div class="tag-status-menu-title">「${label}」点单屏展示状态</div>
+                ${TAG_OPTION_STATUSES.map(status => `
+                    <button type="button" class="tag-status-menu-item ${status === currentStatus ? 'current' : ''}" onclick="handleTagStatusMenuPick('${status}')">
+                        <span>
+                            <span class="tag-status-menu-name">${TAG_OPTION_STATUS_LABELS[status]}</span>
+                            <span class="tag-status-menu-desc">${TAG_OPTION_STATUS_MENU_DESCS[status]}</span>
+                        </span>
+                        <span class="tag-status-menu-check">✓</span>
+                    </button>
+                `).join('')}
+            `;
+
+            const mobile = isMobileViewport();
+            menu.classList.toggle('sheet', mobile);
             menu.classList.add('active');
-            const menuWidth = menu.offsetWidth || 200;
-            const menuHeight = menu.offsetHeight || 120;
+            if (backdrop) backdrop.classList.toggle('active', mobile);
+
+            if (mobile) {
+                menu.style.left = '';
+                menu.style.top = '';
+                return;
+            }
+
+            // 桌面端：锚定在被点 chip 下方，越界时翻转/贴边。
+            // 菜单是 position:absolute（文档坐标），视口内算好位置后加滚动偏移，
+            // 这样页面滚动时菜单跟着 chip 一起走。
+            const rect = anchorEl ? anchorEl.getBoundingClientRect() : { left: 100, top: 100, bottom: 100 };
+            const menuWidth = menu.offsetWidth || 240;
+            const menuHeight = menu.offsetHeight || 180;
             let left = rect.left;
             let top = rect.bottom + 6;
             if (left + menuWidth > window.innerWidth - 8) left = window.innerWidth - menuWidth - 8;
             if (top + menuHeight > window.innerHeight - 8) top = rect.top - menuHeight - 6;
-            menu.style.left = `${Math.max(8, left)}px`;
-            menu.style.top = `${Math.max(8, top)}px`;
+            menu.style.left = `${Math.max(8, left) + window.scrollX}px`;
+            menu.style.top = `${Math.max(8, top) + window.scrollY}px`;
         }
 
-        function closeOptionStatusMenu() {
-            const menu = document.getElementById('optionStatusMenu');
+        function closeTagStatusMenu() {
+            const menu = document.getElementById('tagStatusMenu');
+            const backdrop = document.getElementById('tagStatusMenuBackdrop');
             if (menu) menu.classList.remove('active');
-            optionStatusMenuContext = null;
+            if (backdrop) backdrop.classList.remove('active');
+            tagStatusMenuTagKey = '';
         }
 
-        function handleOptionStatusMenuPick(nextStatus) {
-            if (!optionStatusMenuContext) return;
-            const { specKey, tagKey } = optionStatusMenuContext;
-            setTagOptionStatus(specKey, tagKey, nextStatus);
-            closeOptionStatusMenu();
+        function handleTagStatusMenuPick(nextStatus) {
+            if (!drawerActiveSpecKey || !tagStatusMenuTagKey) return;
+            persistInlineTagConfigIfActive();
+            setTagOptionStatus(drawerActiveSpecKey, tagStatusMenuTagKey, nextStatus);
+            closeTagStatusMenu();
+            renderDrawerEditor();
         }
-
-
 
         function getTagKeys(specKey) {
             const cfg = getTagConfigBySpec(specKey);
@@ -5142,21 +5176,7 @@
                     || i18n[currentLang]
                     || i18n.zh
                     || key;
-                let labelNode = item.querySelector('.option-item-label');
-                if (!labelNode) {
-                    // 升级旧结构：文案挪进 label span，并补上状态触发按钮
-                    item.textContent = '';
-                    labelNode = document.createElement('span');
-                    labelNode.className = 'option-item-label';
-                    item.appendChild(labelNode);
-                    const trigger = document.createElement('button');
-                    trigger.type = 'button';
-                    trigger.className = 'option-item-status-trigger';
-                    trigger.title = '设置选项状态';
-                    trigger.textContent = '⋯';
-                    item.appendChild(trigger);
-                }
-                labelNode.textContent = label;
+                item.textContent = label;
                 item.dataset.status = getTagOptionStatus(specKey, key);
             });
         }
@@ -5227,6 +5247,11 @@
                 : tabKey === 'tags'
                 ? 'tags'
                 : (isCopyWorkflowActive() && tabKey === 'confirm' ? 'confirm' : 'basic');
+            // 离开选项配置页签时先落盘内嵌编辑器的未保存输入（带守卫，防误删）
+            if (currentProductDetailTab === 'tags' && nextTab !== 'tags') {
+                closeTagStatusMenu();
+                persistInlineTagConfigIfActive();
+            }
             currentProductDetailTab = nextTab;
 
             const isBasic = nextTab === 'basic';
@@ -5286,6 +5311,31 @@
             if (isRecipe) {
                 renderInlineRecipe();
             }
+
+            if (isTags) {
+                initTagConfigPanel();
+            }
+        }
+
+        // 进入选项配置页签：初始化内嵌多语言编辑器（原抽屉打开逻辑）。
+        // productData 未就绪时跳过（initPage 的 URL 参数分支早于数据加载），
+        // fillFormData 会在数据就绪后补一次。
+        function initTagConfigPanel() {
+            if (!productData) return;
+            drawerActiveSpecKey = drawerActiveSpecKey || 'beans';
+            drawerSelectedTagKey = getCurrentSelectedTagKey(drawerActiveSpecKey) || getTagKeys(drawerActiveSpecKey)[0] || '';
+            renderTagTree();
+            renderDrawerEditor();
+        }
+
+        // 内嵌编辑器有未保存输入时落盘。守卫：编辑器输入框必须在 DOM 里，
+        // 否则 persistDrawerCurrentTag 会把不存在的输入当空串、误删多语言文案。
+        function persistInlineTagConfigIfActive() {
+            const editor = document.getElementById('tagDrawerEditor');
+            if (!editor || typeof editor.querySelector !== 'function') return;
+            if (!editor.querySelector('[class*="drawer-tag-lang-"]')) return;
+            persistDrawerCurrentTag();
+            if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
         }
 
         function updateCopyWorkflowActions() {
@@ -5379,7 +5429,16 @@
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
                     : null,
-                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false,
+                // 选项配置草稿：文案 / 状态（隐藏 · 不可用）/ 默认项 / 附加价，
+                // 让「不保存直接预览」时点单屏看到的与编辑器一致。
+                tagI18n: cloneProductValue(productData.tagI18n) || {},
+                tagOptionStatus: cloneProductValue(productData.tagOptionStatus) || {},
+                defaultOptions: cloneProductValue(productData.defaultOptions) || {},
+                tagExtraPrices: cloneProductValue(productData.tagExtraPrices) || {},
+                tagDescI18n: cloneProductValue(productData.tagDescI18n) || {},
+                specs: cloneProductValue(productData.specs) || {},
+                options: cloneProductValue(productData.options) || {}
             };
         }
 
@@ -5418,6 +5477,8 @@
         }
 
         function saveProductAndOpenOrderPreview() {
+            // 选项配置编辑器可能有未落盘输入，先同步进 productData 再生成预览草稿
+            persistInlineTagConfigIfActive();
             return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
         }
 
@@ -8070,19 +8131,12 @@
             document.getElementById('productPrice').addEventListener('input', updatePricePreview);
             document.getElementById('productOriginalPrice').addEventListener('input', updatePricePreview);
 
-            // 选项点击事件
+            // 选项点击事件（chips 现为隐藏机器件，保留守卫以防复用）
             document.querySelectorAll('.option-list').forEach(list => {
                 list.addEventListener('click', function(e) {
                     const optionItem = e.target.closest('.option-item');
                     if (!optionItem || !this.contains(optionItem)) return;
                     const meta = tagConfigs.find(cfg => cfg.listId === this.id);
-
-                    // 点「⋯」= 打开状态菜单，不触发选中
-                    if (e.target.closest('.option-item-status-trigger')) {
-                        e.stopPropagation();
-                        if (meta) openOptionStatusMenu(meta.specKey, optionItem);
-                        return;
-                    }
 
                     // 隐藏 / 不可用的选项不能设为默认
                     if ((optionItem.dataset.status || 'active') !== 'active') {
@@ -8160,24 +8214,24 @@
                 if (selector && !selector.contains(e.target)) {
                     toggleProductCategorySelector(false);
                 }
-                // 点菜单外 / 非 chip 触发器 → 关闭选项状态菜单
-                const statusMenu = document.getElementById('optionStatusMenu');
+                // 点菜单与 chip 之外的区域 → 关闭标签状态菜单
+                const statusMenu = document.getElementById('tagStatusMenu');
                 if (statusMenu && statusMenu.classList.contains('active')
                     && !statusMenu.contains(e.target)
-                    && !e.target.closest('.option-item-status-trigger')) {
-                    closeOptionStatusMenu();
+                    && !e.target.closest('.existing-tag-item')) {
+                    closeTagStatusMenu();
                 }
             });
 
             document.addEventListener('keydown', function(e) {
                 if (e.key !== 'Escape') return;
-                if (isProductCategorySelectorOpen) {
-                    toggleProductCategorySelector(false);
+                const statusMenu = document.getElementById('tagStatusMenu');
+                if (statusMenu && statusMenu.classList.contains('active')) {
+                    closeTagStatusMenu();
                     return;
                 }
-                const drawer = document.getElementById('tagConfigDrawer');
-                if (drawer && drawer.classList.contains('active')) {
-                    closeTagConfigDrawer();
+                if (isProductCategorySelectorOpen) {
+                    toggleProductCategorySelector(false);
                     return;
                 }
                 const recipeUpload = document.getElementById('baseRecipeUploadModal');
@@ -8346,6 +8400,9 @@
 
             if (currentProductDetailTab === 'recipe') {
                 renderInlineRecipe();
+            }
+            if (currentProductDetailTab === 'tags') {
+                initTagConfigPanel();
             }
         }
 
@@ -9495,10 +9552,10 @@
                 '<div class="multilang-sheet is-group-name" data-editor-key="tag-drawer-group-name"'
             );
 
-            html += `<div class="existing-tag-helper">现有标签（点击选择一个进行编辑）</div>`;
+            html += `<div class="existing-tag-helper">现有标签（点击标签可切换编辑对象，并设置点单屏展示状态）</div>`;
             html += `<div class="existing-tags">`;
             html += tagKeys.map(tagKey => `
-                <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" onclick="selectDrawerTag('${tagKey}')">
+                <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" data-status="${getTagOptionStatus(cfg.specKey, tagKey)}" data-tag-key="${escAttr(tagKey)}" onclick="selectDrawerTag('${tagKey}')">
                     ${getTagLabel(cfg.specKey, tagKey, currentLang)}
                 </button>
             `).join('');
@@ -9552,14 +9609,15 @@
                 </div>
             `;
 
+            const currentTagStatus = getTagOptionStatus(cfg.specKey, drawerSelectedTagKey);
             html += `
                 <div class="tag-default-wrap">
                     <label class="tag-default-check">
-                        <input type="checkbox" id="drawerTagDefaultSingle" ${(currentDefault && currentDefault === drawerSelectedTagKey) ? 'checked' : ''} ${getTagOptionStatus(cfg.specKey, drawerSelectedTagKey) !== 'active' ? 'disabled' : ''}>
+                        <input type="checkbox" id="drawerTagDefaultSingle" ${(currentDefault && currentDefault === drawerSelectedTagKey) ? 'checked' : ''} ${currentTagStatus !== 'active' ? 'disabled' : ''}>
                         <span class="tag-default-box"></span>
                         <span class="tag-default-text">客户购买时默认选中</span>
                     </label>
-                    ${getTagOptionStatus(cfg.specKey, drawerSelectedTagKey) !== 'active' ? '<div class="tag-extra-price-hint">该选项当前为「' + TAG_OPTION_STATUS_LABELS[getTagOptionStatus(cfg.specKey, drawerSelectedTagKey)] + '」，恢复正常后才能设为默认</div>' : ''}
+                    ${currentTagStatus !== 'active' ? '<div class="tag-extra-price-hint">该选项当前为「' + TAG_OPTION_STATUS_LABELS[currentTagStatus] + '」，恢复正常后才能设为默认</div>' : ''}
                 </div>
             `;
             container.innerHTML = html;
@@ -9594,9 +9652,13 @@
             const extraPriceValue = extraPriceInput ? extraPriceInput.value : 0;
             setTagExtraPrice(cfg.specKey, drawerSelectedTagKey, extraPriceValue);
 
-            const shouldDefault = !!(document.getElementById('drawerTagDefaultSingle') && document.getElementById('drawerTagDefaultSingle').checked);
-            if (shouldDefault) setDefaultOption(cfg.specKey, drawerSelectedTagKey);
-            if (!shouldDefault) setDefaultOption(cfg.specKey, '');
+            const defaultCheckbox = document.getElementById('drawerTagDefaultSingle');
+            // 禁用态（隐藏/不可用标签）下 checked 恒为 false，跳过写入，避免误清组默认
+            if (defaultCheckbox && !defaultCheckbox.disabled) {
+                const shouldDefault = !!defaultCheckbox.checked;
+                if (shouldDefault) setDefaultOption(cfg.specKey, drawerSelectedTagKey);
+                if (!shouldDefault && getDefaultOption(cfg.specKey) === drawerSelectedTagKey) setDefaultOption(cfg.specKey, '');
+            }
 
             refreshOptionListLabels(cfg.specKey);
             updatePricePreview();
@@ -9614,9 +9676,18 @@
             persistDrawerCurrentGroupName();
             drawerSelectedTagKey = tagKey;
             renderDrawerEditor();
+            // 点击标签同时弹出状态菜单：渲染后重新定位到新 DOM 里的对应 chip
+            const chip = document.querySelector(`.existing-tag-item[data-tag-key="${cssEscape(tagKey)}"]`);
+            if (chip) openTagStatusMenu(tagKey, chip);
+        }
+
+        function cssEscape(value) {
+            if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(value);
+            return String(value).replace(/["\\]/g, '\\$&');
         }
 
         function switchDrawerTag(specKey) {
+            closeTagStatusMenu();
             persistDrawerCurrentTag();
             if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             drawerActiveSpecKey = specKey;
@@ -9625,19 +9696,8 @@
             renderDrawerEditor();
         }
 
-        function openTagConfigDrawer(initialSpecKey = 'beans') {
-            drawerActiveSpecKey = initialSpecKey;
-            drawerSelectedTagKey = getCurrentSelectedTagKey(initialSpecKey) || getTagKeys(initialSpecKey)[0] || '';
-            renderTagTree();
-            renderDrawerEditor();
-            document.getElementById('tagConfigDrawer').classList.add('active');
-        }
-
-        function closeTagConfigDrawer() {
-            document.getElementById('tagConfigDrawer').classList.remove('active');
-        }
-
-        function saveTagConfigDrawer() {
+        // 保存内嵌选项配置（原抽屉保存逻辑，去掉关闭动作——保存后留在页签）
+        function saveTagConfigPanel() {
             const cfg = getTagConfigBySpec(drawerActiveSpecKey);
             const tagKey = drawerSelectedTagKey;
             const previousLabels = (cfg && tagKey) ? cloneTagLabels(cfg.specKey, tagKey, productData) : {};
@@ -9645,7 +9705,6 @@
             persistDrawerCurrentTag();
             if (persistDrawerCurrentGroupName()) applyDrawerGroupNameUpdates();
             if (!cfg || !tagKey) {
-                closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
             }
@@ -9655,7 +9714,6 @@
             persistRecipeChanges(productData ? [productData] : []);
 
             if (isCopyWorkflowActive()) {
-                closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
             }
@@ -9663,14 +9721,12 @@
             const labelChanged = hasTagLabelChanged(previousLabels, nextLabels);
             const descChanged = hasTagDescChanged(previousDescs, nextDescs);
             if (!labelChanged && !descChanged) {
-                closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
             }
 
             const affectedEntries = getTagSyncEntries(cfg.specKey, tagKey, previousLabels);
             if (!affectedEntries.length) {
-                closeTagConfigDrawer();
                 showToast('标签配置已更新');
                 return;
             }
@@ -9689,7 +9745,6 @@
                 selectedIds: new Set()
             };
 
-            closeTagConfigDrawer();
             openTagSyncModal();
         }
 
@@ -9749,7 +9804,16 @@
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
                     : null,
-                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false
+                onSale: onSaleEl ? Boolean(onSaleEl.checked) : productData.onSale !== false,
+                // 选项配置草稿：文案 / 状态（隐藏 · 不可用）/ 默认项 / 附加价，
+                // 让「不保存直接预览」时点单屏看到的与编辑器一致。
+                tagI18n: cloneProductValue(productData.tagI18n) || {},
+                tagOptionStatus: cloneProductValue(productData.tagOptionStatus) || {},
+                defaultOptions: cloneProductValue(productData.defaultOptions) || {},
+                tagExtraPrices: cloneProductValue(productData.tagExtraPrices) || {},
+                tagDescI18n: cloneProductValue(productData.tagDescI18n) || {},
+                specs: cloneProductValue(productData.specs) || {},
+                options: cloneProductValue(productData.options) || {}
             };
         }
 
@@ -9788,11 +9852,15 @@
         }
 
         function saveProductAndOpenOrderPreview() {
+            // 选项配置编辑器可能有未落盘输入，先同步进 productData 再生成预览草稿
+            persistInlineTagConfigIfActive();
             return openEmbeddedOrderPreviewModal(buildOrderPreviewDraftPayload());
         }
 
         function saveProduct() {
             if (!productData) return false;
+            // 选项配置页签内嵌编辑器可能有未落盘输入（运营直接点头部保存）
+            persistInlineTagConfigIfActive();
             if (isProductBusinessTagEditorBlocked()) {
                 showToast('业务标签保存状态异常，请关闭标签弹窗后重试', 'error');
                 return false;
