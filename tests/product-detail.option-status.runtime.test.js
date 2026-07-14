@@ -139,7 +139,10 @@ test('选项状态：数据模型与保存链路（静态断言）', () => {
   assert.ok(productHtml.includes('id="tagStatusMenuBackdrop"'), '移动端底部面板应有遮罩');
   assert.ok(productHtml.includes('点单屏展示状态'), '状态菜单应有标题');
   assert.ok(productHtml.includes('handleTagStatusMenuPick'), '菜单项应接立即生效的处理函数');
-  assert.ok(/function\s+selectDrawerTag\([\s\S]*?openTagStatusMenu\(/.test(productHtml), '点击标签 chip 应同时弹出状态菜单');
+  assert.ok(productHtml.includes('existing-tag-status-trigger'), '标签 chip 应有独立的状态设置热区（▾）');
+  assert.ok(productHtml.includes('openTagStatusMenuFromChip'), '状态热区应有专属打开函数');
+  const selectDrawerTagSource = extractFunctionSource(productHtml, 'selectDrawerTag');
+  assert.ok(!selectDrawerTagSource.includes('openTagStatusMenu('), '点击标签主体只切换编辑对象，不应弹状态菜单');
   assert.ok(productHtml.includes('isMobileViewport'), '应按视口区分桌面浮层与移动端底部面板');
   assert.ok(/tag-status-menu\.sheet/.test(productHtml), '移动端应有底部动作面板样式');
   assert.ok(/existing-tag-item\[data-status="disabled"\]/.test(productHtml), '标签 chip 应有不可用状态徽标样式');

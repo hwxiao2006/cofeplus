@@ -1558,19 +1558,20 @@
             border-bottom: 1px dashed var(--border);
         }
 
+        /* 标签 chip 拆成两个热区：主体点击只切换编辑对象，
+           右侧「状态徽标 + ▾」小热区才弹出点单屏展示状态菜单，避免切换时误弹 */
         .existing-tag-item {
+            display: inline-flex;
+            align-items: stretch;
             border: 1px solid var(--border);
             background: #fff;
             color: var(--text-secondary);
             border-radius: 999px;
-            padding: 6px 12px;
+            padding: 0;
             font-size: 13px;
-            cursor: pointer;
             transition: all 0.2s;
-            max-width: 240px;
-            white-space: nowrap;
+            max-width: 280px;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .existing-tag-item:hover {
@@ -1586,26 +1587,72 @@
             font-weight: 600;
         }
 
-        /* 标签 chip 上的状态徽标：让运营一眼看到整组的隐藏 / 不可用分布 */
-        .existing-tag-item[data-status="disabled"]::after,
-        .existing-tag-item[data-status="hidden"]::after {
+        .existing-tag-label {
+            border: none;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            padding: 6px 8px 6px 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+
+        .existing-tag-status-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            border-left: 1px dashed rgba(14, 35, 52, 0.18);
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            padding: 6px 10px 6px 8px;
+            cursor: pointer;
+            flex: none;
+        }
+
+        .existing-tag-status-trigger:hover {
+            background: rgba(14, 35, 52, 0.08);
+        }
+
+        .existing-tag-item.active .existing-tag-status-trigger {
+            border-left-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .existing-tag-item.active .existing-tag-status-trigger:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .existing-tag-status-caret {
+            font-size: 9px;
+            opacity: 0.7;
+        }
+
+        /* 状态徽标（真实元素，兼做热区内容）：让运营一眼看到整组的隐藏 / 不可用分布 */
+        .existing-tag-status-badge {
             font-size: 10px;
             line-height: 1;
             padding: 2px 6px;
             border-radius: 8px;
-            margin-left: 6px;
         }
 
-        .existing-tag-item[data-status="disabled"]::after {
-            content: '不可用';
+        .existing-tag-item[data-status="disabled"] .existing-tag-status-badge {
             background: #ffa50222;
             color: var(--warning);
         }
 
-        .existing-tag-item[data-status="hidden"]::after {
-            content: '已隐藏';
+        .existing-tag-item[data-status="hidden"] .existing-tag-status-badge {
             background: #f0f0f0;
             color: #999;
+        }
+
+        .existing-tag-item.active[data-status="disabled"] .existing-tag-status-badge,
+        .existing-tag-item.active[data-status="hidden"] .existing-tag-status-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
         }
 
         .existing-tag-item[data-status="disabled"]:not(.active),
@@ -1615,6 +1662,17 @@
 
         .existing-tag-item[data-status="hidden"]:not(.active) {
             border-style: dashed;
+        }
+
+        /* 移动端加大两个热区的可点面积 */
+        @media (max-width: 768px) {
+            .existing-tag-label {
+                padding: 9px 8px 9px 14px;
+            }
+
+            .existing-tag-status-trigger {
+                padding: 9px 12px 9px 10px;
+            }
         }
 
         /* 点单屏状态菜单：桌面锚定浮层；移动端 .sheet 变底部动作面板 */
@@ -8214,11 +8272,11 @@
                 if (selector && !selector.contains(e.target)) {
                     toggleProductCategorySelector(false);
                 }
-                // 点菜单与 chip 之外的区域 → 关闭标签状态菜单
+                // 点菜单与 chip 上「▾」状态热区之外的区域 → 关闭标签状态菜单
                 const statusMenu = document.getElementById('tagStatusMenu');
                 if (statusMenu && statusMenu.classList.contains('active')
                     && !statusMenu.contains(e.target)
-                    && !e.target.closest('.existing-tag-item')) {
+                    && !e.target.closest('.existing-tag-status-trigger')) {
                     closeTagStatusMenu();
                 }
             });
@@ -9552,13 +9610,24 @@
                 '<div class="multilang-sheet is-group-name" data-editor-key="tag-drawer-group-name"'
             );
 
-            html += `<div class="existing-tag-helper">现有标签（点击标签可切换编辑对象，并设置点单屏展示状态）</div>`;
+            html += `<div class="existing-tag-helper">现有标签（点击标签切换编辑对象；点右侧「▾」设置点单屏展示状态）</div>`;
             html += `<div class="existing-tags">`;
-            html += tagKeys.map(tagKey => `
-                <button class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" data-status="${getTagOptionStatus(cfg.specKey, tagKey)}" data-tag-key="${escAttr(tagKey)}" onclick="selectDrawerTag('${tagKey}')">
-                    ${getTagLabel(cfg.specKey, tagKey, currentLang)}
-                </button>
-            `).join('');
+            html += tagKeys.map(tagKey => {
+                const status = getTagOptionStatus(cfg.specKey, tagKey);
+                const badgeHtml = status === 'active'
+                    ? ''
+                    : `<span class="existing-tag-status-badge">${status === 'disabled' ? '不可用' : '已隐藏'}</span>`;
+                return `
+                <span class="existing-tag-item ${tagKey === drawerSelectedTagKey ? 'active' : ''}" data-status="${status}" data-tag-key="${escAttr(tagKey)}">
+                    <button type="button" class="existing-tag-label" onclick="selectDrawerTag('${tagKey}')">
+                        ${getTagLabel(cfg.specKey, tagKey, currentLang)}
+                    </button>
+                    <button type="button" class="existing-tag-status-trigger" title="设置点单屏展示状态" onclick="openTagStatusMenuFromChip(event, '${tagKey}')">
+                        ${badgeHtml}<span class="existing-tag-status-caret">▾</span>
+                    </button>
+                </span>
+            `;
+            }).join('');
             html += `</div>`;
 
             html += buildMultilangGridMarkup({
@@ -9672,13 +9741,24 @@
         }
 
         function selectDrawerTag(tagKey) {
+            // 只切换编辑对象，不再自动弹状态菜单（状态菜单走 chip 右侧 ▾ 热区）
+            closeTagStatusMenu();
             persistDrawerCurrentTag();
             persistDrawerCurrentGroupName();
             drawerSelectedTagKey = tagKey;
             renderDrawerEditor();
-            // 点击标签同时弹出状态菜单：渲染后重新定位到新 DOM 里的对应 chip
+        }
+
+        function openTagStatusMenuFromChip(event, tagKey) {
+            if (event) event.stopPropagation();
+            // 再点一次同一个 ▾ 收起菜单
+            const menu = document.getElementById('tagStatusMenu');
+            if (menu && menu.classList.contains('active') && tagStatusMenuTagKey === tagKey) {
+                closeTagStatusMenu();
+                return;
+            }
             const chip = document.querySelector(`.existing-tag-item[data-tag-key="${cssEscape(tagKey)}"]`);
-            if (chip) openTagStatusMenu(tagKey, chip);
+            openTagStatusMenu(tagKey, chip);
         }
 
         function cssEscape(value) {
