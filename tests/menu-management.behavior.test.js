@@ -2214,7 +2214,7 @@ test('菜单管理工作区：桌面端工具栏应分组布局，商品网格�
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*minmax\(220px,\s*260px\)\s+minmax\(0,\s*1fr\);[^}]*\}/.test(html));
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(html));
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(html));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fill,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(html), '结果少时卡片不应被拉伸（auto-fill 保留空轨道）');
   assert.ok(!/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*repeat\(5,/.test(html));
 });
 

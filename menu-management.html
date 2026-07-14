@@ -5029,7 +5029,8 @@
             }
 
             .menu-manage-content .product-grid {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                /* auto-fill 保留空轨道：单个搜索结果时卡片不会被拉伸到整行 */
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
                 gap: 16px;
                 padding: 0;
             }
