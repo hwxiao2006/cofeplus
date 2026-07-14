@@ -838,38 +838,63 @@
         }
 
         .menu-shared-sale-toggle {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 4px;
-            padding: 4px;
-            min-height: 48px;
-            border-radius: 16px;
-            border: 1px solid rgba(14, 35, 52, 0.12);
-            background: #f3f4f6;
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            min-height: 46px;
         }
 
         .menu-shared-sale-btn {
             min-width: 0;
-            padding: 0 12px;
-            border: none;
-            border-radius: 12px;
-            background: transparent;
+            padding: 0 16px;
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
             color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 600;
             white-space: nowrap;
             cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        .menu-shared-sale-btn .menu-shared-sale-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 6px;
+            background: var(--text-muted);
+            transition: background 0.2s ease;
         }
 
         .menu-shared-sale-btn:hover {
-            color: var(--text-primary);
+            border-color: var(--primary);
+            color: var(--primary-dark);
         }
 
         .menu-shared-sale-btn.active {
-            background: #fff;
+            background: var(--primary-light);
+            border-color: var(--primary);
             color: var(--primary-dark);
-            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+        }
+
+        .menu-shared-sale-btn.active .menu-shared-sale-dot {
+            background: var(--primary);
+        }
+
+        /* 「仅下架」激活时用警示色，一眼区分当前看的是下架商品 */
+        #menuSaleFilterOffBtn.active {
+            background: #fff2f2;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        #menuSaleFilterOffBtn.active .menu-shared-sale-dot {
+            background: var(--danger);
         }
 
         .menu-shared-category-mobile-trigger {
@@ -5973,8 +5998,8 @@
                                         <label class="form-label">上架状态</label>
                                         <div class="menu-shared-sale-toggle" role="group" aria-label="上架状态">
                                             <button type="button" class="menu-shared-sale-btn active" id="menuSaleFilterAllBtn" aria-pressed="true" onclick="setMenuSharedSaleFilter('all')">全部</button>
-                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOnBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('on')">仅在售</button>
-                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOffBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('off')">仅下架</button>
+                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOnBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('on')"><span class="menu-shared-sale-dot" aria-hidden="true"></span>仅在售</button>
+                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOffBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('off')"><span class="menu-shared-sale-dot" aria-hidden="true"></span>仅下架</button>
                                         </div>
                                     </div>
                                     <div class="menu-shared-context-actions">
