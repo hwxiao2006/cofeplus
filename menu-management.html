@@ -818,7 +818,7 @@
 
         .menu-shared-context-controls {
             display: grid;
-            grid-template-columns: minmax(220px, 280px) minmax(280px, 1fr) auto;
+            grid-template-columns: minmax(200px, 260px) minmax(220px, 1fr) auto auto;
             gap: 12px;
             align-items: end;
         }
@@ -835,6 +835,41 @@
         .menu-shared-context-actions .btn {
             min-height: 48px;
             white-space: nowrap;
+        }
+
+        .menu-shared-sale-toggle {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 4px;
+            padding: 4px;
+            min-height: 48px;
+            border-radius: 16px;
+            border: 1px solid rgba(14, 35, 52, 0.12);
+            background: #f3f4f6;
+        }
+
+        .menu-shared-sale-btn {
+            min-width: 0;
+            padding: 0 12px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .menu-shared-sale-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .menu-shared-sale-btn.active {
+            background: #fff;
+            color: var(--primary-dark);
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
         }
 
         .menu-shared-category-mobile-trigger {
@@ -5088,7 +5123,7 @@
             }
 
             .menu-shared-context-actions {
-                grid-column: 1 / -1;
+                grid-column: auto;
             }
 
             .menu-manage-workspace {
@@ -5933,6 +5968,14 @@
                                     <div class="form-group">
                                         <label class="form-label" for="menuManageProductKeyword">商品搜索</label>
                                         <input type="text" class="form-input" id="menuManageProductKeyword" placeholder="输入商品名或 ID" oninput="setMenuSharedProductKeyword(this.value)">
+                                    </div>
+                                    <div class="form-group menu-shared-sale-group">
+                                        <label class="form-label">上架状态</label>
+                                        <div class="menu-shared-sale-toggle" role="group" aria-label="上架状态">
+                                            <button type="button" class="menu-shared-sale-btn active" id="menuSaleFilterAllBtn" aria-pressed="true" onclick="setMenuSharedSaleFilter('all')">全部</button>
+                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOnBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('on')">仅在售</button>
+                                            <button type="button" class="menu-shared-sale-btn" id="menuSaleFilterOffBtn" aria-pressed="false" onclick="setMenuSharedSaleFilter('off')">仅下架</button>
+                                        </div>
                                     </div>
                                     <div class="menu-shared-context-actions">
                                         <button type="button" class="btn btn-default" id="menuSharedClearBtn" onclick="clearMenuSharedFilters()">清空</button>
@@ -7473,6 +7516,7 @@
         let menuManageActiveCategory = '';
         let menuManageProductKeyword = '';
         let menuManageProductScope = 'current';
+        let menuManageSaleFilter = 'all';
         let menuManageProductSortMode = false;
         let menuManageProductSortDraftOrder = [];
         let menuManageProductSortDraggedProductId = null;
@@ -7804,6 +7848,7 @@
                 activeCategory: String(menuManageActiveCategory || '').trim(),
                 productKeyword: String(menuManageProductKeyword || ''),
                 productScope: menuManageProductScope === 'all' ? 'all' : 'current',
+                saleFilter: normalizeMenuManageSaleFilter(menuManageSaleFilter),
                 scrollY: Math.max(0, Number(window.scrollY) || 0)
             };
         }
@@ -7864,6 +7909,9 @@
             }
             if (state.productScope === 'all' || state.productScope === 'current') {
                 menuManageProductScope = state.productScope;
+            }
+            if (typeof state.saleFilter === 'string') {
+                menuManageSaleFilter = normalizeMenuManageSaleFilter(state.saleFilter);
             }
 
             const nextScrollY = Number(state.scrollY);
@@ -8926,7 +8974,8 @@
         }
 
         function getBatchFixedPriceFilteredEntries(categoryKey = batchFixedPriceActiveCategory, keyword = batchFixedPriceKeyword) {
-            const entries = getBatchFixedPriceEntries(categoryKey);
+            const entries = getBatchFixedPriceEntries(categoryKey)
+                .filter(entry => matchesMenuManageSaleFilter(entry.product));
             const normalizedKeyword = normalizeBatchFixedPriceKeyword(keyword);
             if (!normalizedKeyword) return entries;
             return entries.filter(entry => {
@@ -9003,9 +9052,14 @@
                     : getCategoryName(batchFixedPriceActiveCategory);
                 const categoryCount = getMenuSharedCategoryCount(batchFixedPriceActiveCategory === '__ALL__' ? '__ALL__' : batchFixedPriceActiveCategory);
                 const keyword = String(batchFixedPriceKeyword || '').trim();
-                contextSummary.textContent = keyword
-                    ? `当前范围：${categoryLabel}（${categoryCount}个商品） / 关键词“${keyword}”`
-                    : `当前范围：${categoryLabel}（${categoryCount}个商品）`;
+                const summaryParts = [`当前范围：${categoryLabel}（${categoryCount}个商品）`];
+                if (normalizeMenuManageSaleFilter(menuManageSaleFilter) !== 'all') {
+                    summaryParts.push(`上架状态“${getMenuManageSaleFilterLabel()}”`);
+                }
+                if (keyword) {
+                    summaryParts.push(`关键词“${keyword}”`);
+                }
+                contextSummary.textContent = summaryParts.join(' / ');
             }
 
             const visibleEntries = getBatchFixedPriceFilteredEntries(batchFixedPriceActiveCategory);
@@ -12127,6 +12181,22 @@
             }
             productKeywordInput.value = menuManageProductKeyword;
 
+            const saleFilterButtons = [
+                { id: 'menuSaleFilterAllBtn', value: 'all' },
+                { id: 'menuSaleFilterOnBtn', value: 'on' },
+                { id: 'menuSaleFilterOffBtn', value: 'off' }
+            ];
+            const activeSaleFilter = normalizeMenuManageSaleFilter(menuManageSaleFilter);
+            saleFilterButtons.forEach(({ id, value }) => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                const isActive = activeSaleFilter === value;
+                btn.classList.toggle('active', isActive);
+                if (typeof btn.setAttribute === 'function') {
+                    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                }
+            });
+
             if ((!isMenuSharedMobileViewport() || !categoryKeys.length) && menuSharedMobileCategoryDrawerOpen) {
                 closeMenuSharedMobileCategoryDrawer();
             } else if (menuSharedMobileCategoryDrawerOpen) {
@@ -12183,9 +12253,37 @@
             }
         }
 
+        function normalizeMenuManageSaleFilter(raw = 'all') {
+            return raw === 'on' || raw === 'off' ? raw : 'all';
+        }
+
+        function matchesMenuManageSaleFilter(product, saleFilter = menuManageSaleFilter) {
+            const normalized = normalizeMenuManageSaleFilter(saleFilter);
+            if (normalized === 'all') return true;
+            return normalized === 'on' ? isProductOnSale(product) : !isProductOnSale(product);
+        }
+
+        function getMenuManageSaleFilterLabel(saleFilter = menuManageSaleFilter) {
+            const normalized = normalizeMenuManageSaleFilter(saleFilter);
+            return normalized === 'on' ? '仅在售' : (normalized === 'off' ? '仅下架' : '全部');
+        }
+
+        function setMenuSharedSaleFilter(saleFilter = 'all') {
+            menuManageSaleFilter = normalizeMenuManageSaleFilter(saleFilter);
+            renderMenuSharedContext();
+
+            if (currentMenuInnerTab === 'batch') {
+                renderBatchFixedPricePanel();
+                renderBatchFixedPriceList();
+            } else if (currentMenuInnerTab === 'manage') {
+                renderMenu();
+            }
+        }
+
         function clearMenuSharedFilters() {
             menuManageProductKeyword = '';
             batchFixedPriceKeyword = '';
+            menuManageSaleFilter = 'all';
             setMenuSharedCategoryFilter(getMenuManageCategoryKeys().length ? getMenuManageCategoryKeys()[0] : '');
         }
 
@@ -12214,10 +12312,11 @@
             ensureMenuManageActiveCategory();
             const category = productsData[menuManageActiveCategory];
             const items = Array.isArray(category?.items) ? category.items : [];
+            const saleFiltered = items.filter(product => matchesMenuManageSaleFilter(product));
             const normalizedKeyword = normalizeMenuManageKeyword(menuManageProductKeyword);
-            if (!normalizedKeyword) return items;
+            if (!normalizedKeyword) return saleFiltered;
 
-            return items.filter(product => {
+            return saleFiltered.filter(product => {
                 const names = product?.names || {};
                 const candidates = Object.values(names).map(value => String(value || '').toLowerCase());
                 const idCandidate = String(product?.id || '').toLowerCase();
@@ -12226,11 +12325,8 @@
         }
 
         function getMenuManageGlobalSearchEntries() {
-            const normalizedKeyword = normalizeMenuManageKeyword(menuManageProductKeyword);
-            const entries = normalizedKeyword
-                ? getBatchFixedPriceFilteredEntries('__ALL__', menuManageProductKeyword)
-                : getBatchFixedPriceEntries('__ALL__');
-            return entries;
+            // 统一走 filtered 版本，让上架状态筛选在无关键词时也生效
+            return getBatchFixedPriceFilteredEntries('__ALL__', menuManageProductKeyword);
         }
 
         function normalizeMenuManageProductSortDraftOrder(order = []) {
@@ -12606,10 +12702,12 @@
             const activeCategory = productsData[menuManageActiveCategory] || { items: [] };
             const currentItems = getMenuManageCurrentCategoryItems();
             const globalEntries = getMenuManageGlobalSearchEntries();
+            const isSaleFilterActive = normalizeMenuManageSaleFilter(menuManageSaleFilter) !== 'all';
+            const saleFilterLabel = getMenuManageSaleFilterLabel();
 
             let title = `${getCategoryName(menuManageActiveCategory)} · 商品列表`;
-            let desc = normalizeMenuManageKeyword(menuManageProductKeyword)
-                ? `当前分类搜索结果 ${currentItems.length} 个商品`
+            let desc = normalizeMenuManageKeyword(menuManageProductKeyword) || isSaleFilterActive
+                ? `当前分类筛选结果 ${currentItems.length} 个商品${isSaleFilterActive ? `（${saleFilterLabel}）` : ''}`
                 : '默认只展示当前分类，分类很多时页面也不会无限拉长。';
             let summary = `${currentItems.length} 个商品`;
             let contentHtml = '';
@@ -12620,8 +12718,8 @@
             }
 
             if (isGlobalScope) {
-                title = normalizeMenuManageKeyword(menuManageProductKeyword) ? '全部分类搜索结果' : '全部分类商品';
-                desc = '按商品 ID 去重展示，避免多分类商品重复出现。';
+                title = normalizeMenuManageKeyword(menuManageProductKeyword) || isSaleFilterActive ? '全部分类搜索结果' : '全部分类商品';
+                desc = `按商品 ID 去重展示，避免多分类商品重复出现。${isSaleFilterActive ? `当前筛选：${saleFilterLabel}。` : ''}`;
                 summary = `${globalEntries.length} 个去重结果`;
                 contentHtml = globalEntries.length
                     ? `
