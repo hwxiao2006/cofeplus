@@ -36,6 +36,7 @@ function loadMenuContext(options = {}) {
     .replace("let menuManageCategoryKeyword = '';", "globalThis.menuManageCategoryKeyword = '';")
     .replace("let menuManageProductKeyword = '';", "globalThis.menuManageProductKeyword = '';")
     .replace("let menuManageProductScope = 'current';", "globalThis.menuManageProductScope = 'current';")
+    .replace("let menuManageSaleFilter = 'all';", "globalThis.menuManageSaleFilter = 'all';")
     .replace(/let nextProductId = (\d+);/, (_, id) => `globalThis.nextProductId = ${id};`)
     .replace("let selectedCategoryIcon = '☕';", "globalThis.selectedCategoryIcon = '☕';")
     .replace('let editingProductId = null;', 'globalThis.editingProductId = null;')
@@ -2213,7 +2214,7 @@ test('菜单管理工作区：桌面端工具栏应分组布局，商品网格�
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*minmax\(220px,\s*260px\)\s+minmax\(0,\s*1fr\);[^}]*\}/.test(html));
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*display:\s*inline-flex;[^}]*\}/.test(html));
   assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-toolbar-actions\s*\{[^}]*justify-self:\s*end;[^}]*\}/.test(html));
-  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(html));
+  assert.ok(/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fill,\s*minmax\(240px,\s*1fr\)\);[^}]*\}/.test(html), '结果少时卡片不应被拉伸（auto-fill 保留空轨道）');
   assert.ok(!/@media \(min-width:\s*1025px\)\s*\{[\s\S]*?\.menu-manage-content\s+\.product-grid\s*\{[^}]*repeat\(5,/.test(html));
 });
 
@@ -2965,6 +2966,170 @@ test('共享上下文：清空后应恢复默认分类并清除商品搜索条�
 
   assert.strictEqual(ctx.document.getElementById('menuManageCategorySelect').value, '奶咖系列');
   assert.strictEqual(ctx.document.getElementById('menuManageProductKeyword').value, '');
+});
+
+test('共享上下文：应提供上架状态三态筛选并默认选中全部', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'menu-management.html'), 'utf8');
+  assert.ok(html.includes('class="menu-shared-sale-toggle"'));
+  assert.ok(html.includes('id="menuSaleFilterAllBtn"'));
+  assert.ok(html.includes('id="menuSaleFilterOnBtn"'));
+  assert.ok(html.includes('id="menuSaleFilterOffBtn"'));
+  assert.ok(html.includes("setMenuSharedSaleFilter('all')"));
+  assert.ok(html.includes("setMenuSharedSaleFilter('on')"));
+  assert.ok(html.includes("setMenuSharedSaleFilter('off')"));
+  assert.ok(html.includes('仅在售'));
+  assert.ok(html.includes('仅下架'));
+});
+
+test('上架状态筛选：当前分类应按在售/下架过滤商品列表', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    奶咖系列: {
+      icon: '☕',
+      names: { zh: '奶咖系列' },
+      items: [
+        { id: 1, price: 18, names: { zh: '生椰拿铁' }, onSale: true },
+        { id: 2, price: 16, names: { zh: '榛果拿铁' }, onSale: false },
+        { id: 3, price: 15, names: { zh: '燕麦拿铁' } }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('manage');
+  ctx.setMenuSharedCategoryFilter('奶咖系列');
+
+  ctx.setMenuSharedSaleFilter('on');
+  let workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('生椰拿铁'), '在售商品应保留');
+  assert.ok(workspaceHtml.includes('燕麦拿铁'), '未声明 onSale 的商品视为在售');
+  assert.ok(!workspaceHtml.includes('榛果拿铁'), '下架商品应被过滤');
+  assert.ok(ctx.document.getElementById('menuSaleFilterOnBtn').classList.contains('active'));
+  assert.ok(!ctx.document.getElementById('menuSaleFilterAllBtn').classList.contains('active'));
+
+  ctx.setMenuSharedSaleFilter('off');
+  workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('榛果拿铁'), '仅下架时应展示下架商品');
+  assert.ok(!workspaceHtml.includes('生椰拿铁'));
+  assert.ok(!workspaceHtml.includes('燕麦拿铁'));
+
+  ctx.setMenuSharedSaleFilter('all');
+  workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('生椰拿铁'));
+  assert.ok(workspaceHtml.includes('榛果拿铁'));
+});
+
+test('上架状态筛选：全部分类范围与关键词应叠加生效', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    奶咖系列: {
+      icon: '☕',
+      names: { zh: '奶咖系列' },
+      items: [
+        { id: 1, price: 18, names: { zh: '生椰拿铁' }, onSale: true },
+        { id: 2, price: 16, names: { zh: '榛果拿铁' }, onSale: false }
+      ]
+    },
+    精品咖啡: {
+      icon: '⭐',
+      names: { zh: '精品咖啡' },
+      items: [{ id: 3, price: 14, names: { zh: '冷萃美式' }, onSale: false }]
+    }
+  };
+
+  ctx.switchMenuInnerTab('manage');
+  ctx.setMenuManageProductScope('all');
+  ctx.setMenuSharedSaleFilter('off');
+
+  let workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('榛果拿铁'));
+  assert.ok(workspaceHtml.includes('冷萃美式'));
+  assert.ok(!workspaceHtml.includes('生椰拿铁'));
+
+  ctx.setMenuSharedProductKeyword('拿铁');
+  workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('榛果拿铁'), '关键词与状态筛选应同时生效');
+  assert.ok(!workspaceHtml.includes('冷萃美式'));
+  assert.ok(!workspaceHtml.includes('生椰拿铁'));
+});
+
+test('上架状态筛选：批量改价列表应联动过滤并在摘要展示筛选条件', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    奶咖系列: {
+      icon: '☕',
+      names: { zh: '奶咖系列' },
+      items: [
+        { id: 1, price: 18, originalPrice: 22, names: { zh: '生椰拿铁' }, onSale: true },
+        { id: 2, price: 16, originalPrice: 20, names: { zh: '榛果拿铁' }, onSale: false }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('batch');
+  ctx.setMenuSharedCategoryFilter('奶咖系列');
+  ctx.setMenuSharedSaleFilter('off');
+
+  const listHtml = ctx.document.getElementById('batchFixedListContainer').innerHTML;
+  assert.ok(listHtml.includes('榛果拿铁'));
+  assert.ok(!listHtml.includes('生椰拿铁'));
+
+  const summaryText = ctx.document.getElementById('batchFixedContextSummary').textContent;
+  assert.ok(summaryText.includes('仅下架'), '批量面板摘要应说明当前上架状态筛选');
+});
+
+test('上架状态筛选：清空筛选应重置为全部', () => {
+  const ctx = loadMenuContext();
+  ctx.renderMenu = ctx.__realRenderMenu;
+  ctx.productsData = {
+    奶咖系列: {
+      icon: '☕',
+      names: { zh: '奶咖系列' },
+      items: [
+        { id: 1, price: 18, names: { zh: '生椰拿铁' }, onSale: true },
+        { id: 2, price: 16, names: { zh: '榛果拿铁' }, onSale: false }
+      ]
+    }
+  };
+
+  ctx.switchMenuInnerTab('manage');
+  ctx.setMenuSharedSaleFilter('off');
+  assert.strictEqual(ctx.menuManageSaleFilter, 'off');
+
+  ctx.clearMenuSharedFilters();
+
+  assert.strictEqual(ctx.menuManageSaleFilter, 'all');
+  assert.ok(ctx.document.getElementById('menuSaleFilterAllBtn').classList.contains('active'));
+  const workspaceHtml = ctx.document.getElementById('categoriesContainer').innerHTML;
+  assert.ok(workspaceHtml.includes('生椰拿铁'));
+  assert.ok(workspaceHtml.includes('榛果拿铁'));
+});
+
+test('上架状态筛选：跳转商品详情并返回后应恢复筛选状态', () => {
+  const ctx = loadMenuContext();
+  ctx.currentMenuInnerTab = 'manage';
+  ctx.menuManageSaleFilter = 'off';
+
+  ctx.goToDetail(2);
+
+  const raw = ctx.sessionStorage.getItem('menuManagementReturnState');
+  assert.ok(raw, '会话存储中缺少返回列表上下文');
+  assert.strictEqual(JSON.parse(raw).saleFilter, 'off');
+
+  const ctx2 = loadMenuContext();
+  ctx2.window.location.search = '?tab=menu&innerTab=manage';
+  ctx2.sessionStorage.setItem('menuManagementReturnState', JSON.stringify({
+    tab: 'menu',
+    innerTab: 'manage',
+    saleFilter: 'off',
+    scrollY: 0
+  }));
+
+  ctx2.init();
+
+  assert.strictEqual(ctx2.menuManageSaleFilter, 'off');
 });
 
 test('保存基础设置后，应仅将币种应用到菜单商品并忽略税率旧字段', () => {
