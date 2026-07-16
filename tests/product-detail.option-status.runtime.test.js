@@ -120,6 +120,35 @@ test('选项状态：最后一个正常选项不允许被停用或隐藏', () =>
   });
 });
 
+test('选项状态：整组不可能被全部隐藏或全部不可用（逐个操作到最后一个必被拦）', () => {
+  ['disabled', 'hidden'].forEach((nextStatus) => {
+    const tagKeys = ['蔗糖糖浆', '香草糖浆', '榛果糖浆'];
+    const statusMap = {};
+    let blockedAt = -1;
+    // 模拟运营从头到尾逐个把选项设为 隐藏 / 不可用
+    tagKeys.forEach((targetKey, index) => {
+      const result = sandbox.resolveOptionStatusChange({
+        tagKeys,
+        statusMap,
+        targetKey,
+        nextStatus,
+        selectedKey: tagKeys[0]
+      });
+      if (result.ok) {
+        // 生效：把这次结果写回，继续尝试下一个
+        Object.assign(statusMap, result.statusMap);
+      } else if (blockedAt === -1) {
+        blockedAt = index;
+        assert.strictEqual(result.reason, 'last_active');
+      }
+    });
+    // 最后一个（第 3 个）必被拦，且组内始终至少剩一个正常选项
+    assert.strictEqual(blockedAt, tagKeys.length - 1, `${nextStatus}：应在处理最后一个选项时被拦截`);
+    const stillActive = tagKeys.filter((key) => sandbox.normalizeTagOptionStatus(statusMap[key]) === 'active');
+    assert.ok(stillActive.length >= 1, `${nextStatus}：整组必须至少保留一个正常选项`);
+  });
+});
+
 test('选项状态：恢复为 active 永远允许，且不触发迁移', () => {
   const result = sandbox.resolveOptionStatusChange({
     tagKeys: ['热', '标准冰'],

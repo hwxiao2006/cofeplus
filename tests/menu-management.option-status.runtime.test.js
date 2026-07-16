@@ -66,12 +66,25 @@ function buildSandbox() {
       const keys = Object.keys(product?.tagI18n?.[specKey] || {});
       return keys.includes(value) ? value : '';
     }
+    // cloneProductForCopy / sanitizeMenuProductRecord 的依赖替身
+    let nextProductId = 1000;
+    const menuBasicSettings = { currency: 'CNY' };
+    function cloneProductValue(value) {
+      if (value == null) return value;
+      return JSON.parse(JSON.stringify(value));
+    }
+    function normalizeProductCurrency({ currency } = {}) { return currency || 'CNY'; }
+    function getProductBusinessTagIds(product) {
+      return Array.isArray(product?.businessTagIds) ? product.businessTagIds : [];
+    }
   `, sandbox);
   [
     'getOrderPreviewOptionStatus',
     'getOrderPreviewOptionItems',
     'getOrderPreviewPreferredOptionCandidate',
-    'getOrderPreviewPreferredOptionKey'
+    'getOrderPreviewPreferredOptionKey',
+    'sanitizeMenuProductRecord',
+    'cloneProductForCopy'
   ].forEach((functionName) => {
     vm.runInContext(extractFunctionSource(menuHtml, functionName), sandbox);
   });
@@ -135,4 +148,33 @@ test('点单屏预览：渲染器为 disabled 选项输出禁点按钮（静态�
   assert.ok(/order-preview-detail-bean-btn[^`]*is-disabled/.test(menuHtml), '咖啡豆按钮应有 is-disabled class 分支');
   assert.ok(/\.order-preview-detail-option-btn\.is-disabled/.test(menuHtml), '应有 is-disabled 样式');
   assert.ok(menuHtml.includes("${item.disabled ? 'disabled' : ''}"), '按钮应输出原生 disabled 属性');
+});
+
+test('复制商品：克隆结果保留选项状态（隐藏 / 不可用）', () => {
+  const source = {
+    id: 999,
+    price: 10,
+    names: { zh: '测试商品' },
+    descs: {},
+    specs: {},
+    options: {},
+    defaultOptions: { beans: '豆A' },
+    tagI18n: { beans: { 豆A: { zh: '豆A' }, 豆B: { zh: '豆B' } } },
+    tagExtraPrices: {},
+    tagOptionStatus: { beans: { 豆A: 'active', 豆B: 'disabled' }, syrup: { 香草糖浆: 'hidden' } },
+    optionRecipes: {},
+    optionRecipeLinks: {},
+    onSale: true
+  };
+  const copy = sandbox.cloneProductForCopy(source);
+  // 注意：copy 来自 vm 沙箱，原型属于沙箱 realm，deepStrictEqual 会因原型不同而误判；
+  // 用 JSON 归一化把两边拉回同一 realm 再比内容。
+  assert.strictEqual(
+    JSON.stringify(copy.tagOptionStatus),
+    JSON.stringify(source.tagOptionStatus),
+    '复制出的商品应原样带上 tagOptionStatus，隐藏 / 不可用设置不能丢'
+  );
+  // 深拷贝而非共享引用：改复制品不能影响源商品
+  copy.tagOptionStatus.beans.豆B = 'active';
+  assert.strictEqual(source.tagOptionStatus.beans.豆B, 'disabled', '复制品与源商品的状态数据不应共享引用');
 });
