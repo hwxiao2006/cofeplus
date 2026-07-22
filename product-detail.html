@@ -2153,6 +2153,17 @@
             font-size: 15px;
             line-height: 1.4;
         }
+        .recipe-theoretical-notice-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            min-width: 0;
+        }
+        .recipe-theoretical-notice-divider {
+            height: 1px;
+            background: #f1c97b;
+            opacity: 0.7;
+        }
         @media (max-width: 768px) {
             .recipe-theoretical-notice {
                 font-size: 12px;
@@ -3883,7 +3894,11 @@
 
                     <div class="recipe-theoretical-notice" role="note">
                         <span class="recipe-theoretical-notice-icon" aria-hidden="true">💡</span>
-                        <span>修改配方后显示的容量为理论计算值。若与实际出杯量存在偏差，请检查水路、奶路及糖路是否存在堵塞情况。</span>
+                        <div class="recipe-theoretical-notice-lines">
+                            <span>修改配方需整机重启后生效，请安排在营业低峰期操作。</span>
+                            <span class="recipe-theoretical-notice-divider" aria-hidden="true"></span>
+                            <span>修改配方后显示的容量为理论计算值，若与实际出杯量存在偏差，请检查水路、奶路及糖路是否存在堵塞情况。</span>
+                        </div>
                     </div>
 
                     <div class="recipe-main-layout recipe-fetch-layout">
