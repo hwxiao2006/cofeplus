@@ -1029,11 +1029,11 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">经度（可选）</label>
+                        <label class="form-label">经度 <span class="required">*</span></label>
                         <input type="text" class="form-input" id="locationLongitude" placeholder="例如 121.473700">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">纬度（可选）</label>
+                        <label class="form-label">纬度 <span class="required">*</span></label>
                         <input type="text" class="form-input" id="locationLatitude" placeholder="例如 31.230400">
                     </div>
                 </div>
@@ -1307,11 +1307,11 @@
 
         // 默认点位数据
         const defaultLocations = [
-            { id: 'L001', code: 'k8298', name: '上海市中心店', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市浦东新区陆家嘴环路1000号', manager: '张店长', phone: '13800138001', status: 'operational', pointCategory: 'operation', createTime: '2024-01-15', remark: '核心商圈' },
-            { id: 'L002', code: 'k8667', name: '北京朝阳门店', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京市朝阳区建国路88号', manager: '李经理', phone: '13800138002', status: 'operational', pointCategory: 'exhibition', createTime: '2024-02-20', remark: '' },
-            { id: 'L003', code: 'k9001', name: '广州天河店', customerId: 'C003', customerName: '太平洋咖啡', address: '广州市天河区天河路208号', manager: '王店长', phone: '13800138003', status: 'operational', pointCategory: 'operation', createTime: '2024-03-10', remark: '' },
-            { id: 'L004', code: 'k9002', name: '深圳南山会展店', customerId: 'C004', customerName: 'Costa咖啡', address: '深圳市南山区科技园南路88号', manager: '赵经理', phone: '13800138004', status: 'closed', pointCategory: 'exhibition', createTime: '2024-04-05', remark: '会展档期暂停营业' },
-            { id: 'L005', code: 'k9100', name: '上海国家会展中心A馆', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市青浦区崧泽大道333号 A馆 1层', manager: '周运营', phone: '13800138100', status: 'operational', pointCategory: 'exhibition', createTime: '2024-04-18', remark: '展会高峰点位' },
+            { id: 'L001', code: 'k8298', name: '上海市中心店', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市浦东新区陆家嘴环路1000号', longitude: '121.506377', latitude: '31.245105', manager: '张店长', phone: '13800138001', status: 'operational', pointCategory: 'operation', createTime: '2024-01-15', remark: '核心商圈' },
+            { id: 'L002', code: 'k8667', name: '北京朝阳门店', customerId: 'C002', customerName: '瑞幸咖啡', address: '北京市朝阳区建国路88号', longitude: '116.457413', latitude: '39.909187', manager: '李经理', phone: '13800138002', status: 'operational', pointCategory: 'exhibition', createTime: '2024-02-20', remark: '' },
+            { id: 'L003', code: 'k9001', name: '广州天河店', customerId: 'C003', customerName: '太平洋咖啡', address: '广州市天河区天河路208号', longitude: '113.330780', latitude: '23.135308', manager: '王店长', phone: '13800138003', status: 'operational', pointCategory: 'operation', createTime: '2024-03-10', remark: '' },
+            { id: 'L004', code: 'k9002', name: '深圳南山会展店', customerId: 'C004', customerName: 'Costa咖啡', address: '深圳市南山区科技园南路88号', longitude: '113.947350', latitude: '22.541230', manager: '赵经理', phone: '13800138004', status: 'closed', pointCategory: 'exhibition', createTime: '2024-04-05', remark: '会展档期暂停营业' },
+            { id: 'L005', code: 'k9100', name: '上海国家会展中心A馆', customerId: 'C001', customerName: '星巴克咖啡', address: '上海市青浦区崧泽大道333号 A馆 1层', longitude: '121.298500', latitude: '31.190800', manager: '周运营', phone: '13800138100', status: 'operational', pointCategory: 'exhibition', createTime: '2024-04-18', remark: '展会高峰点位' },
         ];
 
         function normalizePointCategory(value, fallbackIndex = 0) {
@@ -1490,6 +1490,17 @@
             localStorage.setItem('locationsData', JSON.stringify(locationsData));
         }
 
+        // 统计某点位（按编码匹配）当前绑定的设备数量
+        function countDevicesBoundToLocation(locationCode) {
+            const normalizedCode = String(locationCode || '').trim().toLowerCase();
+            if (!normalizedCode) return 0;
+            const devicesData = JSON.parse(localStorage.getItem('devicesData') || '[]');
+            if (!Array.isArray(devicesData)) return 0;
+            return devicesData.filter(device =>
+                String(device?.location || '').trim().toLowerCase() === normalizedCode
+            ).length;
+        }
+
         // 更新统计
         function updateStats() {
             const total = locationsData.length;
@@ -1538,7 +1549,13 @@
                 return;
             }
 
-            list.innerHTML = filtered.map(location => `
+            list.innerHTML = filtered.map(location => {
+                const boundCount = countDevicesBoundToLocation(location.code);
+                const deviceMeta = boundCount > 0 ? `<span>⚙️ ${boundCount} 台设备</span>` : '';
+                const deleteAttrs = boundCount > 0
+                    ? `title="已绑定 ${boundCount} 台设备，不可删除" style="opacity:.45;cursor:not-allowed"`
+                    : 'title="删除"';
+                return `
                 <div class="location-item">
                     <div class="location-icon">📍</div>
                     <div class="location-info">
@@ -1547,6 +1564,7 @@
                             <span>🏷️ ${location.code}</span>
                             <span>🏢 ${location.customerName || '未关联商户'}</span>
                             <span>🧭 ${resolvePointCategoryLabel(location.pointCategory)}</span>
+                            ${deviceMeta}
                             <span>📍 ${location.address}</span>
                         </div>
                     </div>
@@ -1555,10 +1573,11 @@
                     </div>
                     <div class="location-actions">
                         <button class="btn-icon" onclick="editLocation('${location.id}')" title="编辑">✏️</button>
-                        <button class="btn-icon" onclick="deleteLocation('${location.id}')" title="删除">🗑️</button>
+                        <button class="btn-icon" onclick="deleteLocation('${location.id}')" ${deleteAttrs}>🗑️</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // 搜索点位
@@ -1690,6 +1709,10 @@
                 showToast('请填写必填项', 'error');
                 return;
             }
+            if (!longitude || !latitude) {
+                showToast('请填写经纬度，可点击「获取当前位置」自动获取', 'error');
+                return;
+            }
 
             // 获取客户名称
             const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
@@ -1728,8 +1751,18 @@
 
         // 删除点位
         function deleteLocation(id) {
+            const location = locationsData.find(l => l.id === id);
+            if (!location) return;
+
+            // 绑定了设备的点位不允许删除，避免设备点位引用悬空
+            const boundCount = countDevicesBoundToLocation(location.code);
+            if (boundCount > 0) {
+                showToast(`该点位已绑定 ${boundCount} 台设备，需先迁移或解绑设备后再删除`, 'error');
+                return;
+            }
+
             if (!confirm('确定要删除该点位吗？')) return;
-            
+
             locationsData = locationsData.filter(l => l.id !== id);
             saveToStorage();
             renderLocations();

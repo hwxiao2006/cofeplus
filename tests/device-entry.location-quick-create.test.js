@@ -43,6 +43,13 @@ test('设备入场：快速新增点位应默认写入当前商户', () => {
   assert.ok(/gpsAction:\s*'新增点位时录入'/.test(html));
 });
 
+test('设备入场：快速新增点位应校验经纬度必填', () => {
+  assert.ok(/String\(location\.longitude\s*\|\|\s*''\)\.trim\(\)/.test(html), 'validateQuickCreateLocation 应校验经度');
+  assert.ok(/String\(location\.latitude\s*\|\|\s*''\)\.trim\(\)/.test(html), 'validateQuickCreateLocation 应校验纬度');
+  assert.ok(!/经度（可选）/.test(html), '不应再出现「经度（可选）」');
+  assert.ok(!/纬度（可选）/.test(html), '不应再出现「纬度（可选）」');
+});
+
 test('设备入场：快速新增点位应支持获取当前位置填充经纬度', () => {
   assert.ok(/navigator\.geolocation\.getCurrentPosition/.test(html));
   assert.ok(/document\.getElementById\('quickLocationLongitude'\)\.value\s*=\s*longitude/.test(html));

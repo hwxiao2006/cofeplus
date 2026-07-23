@@ -1218,11 +1218,11 @@
                     <input id="quickLocationAddress" placeholder="请输入详细地址">
                 </label>
                 <label class="quick-location-field">
-                    <span>经度（可选）</span>
+                    <span>经度 *</span>
                     <input id="quickLocationLongitude" placeholder="例如 121.473700">
                 </label>
                 <label class="quick-location-field">
-                    <span>纬度（可选）</span>
+                    <span>纬度 *</span>
                     <input id="quickLocationLatitude" placeholder="例如 31.230400">
                 </label>
                 <div class="quick-location-field">
@@ -1789,6 +1789,9 @@
         function validateQuickCreateLocation(location) {
             if (!location.name || !location.code || !location.address) {
                 return '请填写点位名称、编码和地址';
+            }
+            if (!String(location.longitude || '').trim() || !String(location.latitude || '').trim()) {
+                return '请填写经纬度，可点击「获取当前位置」自动获取';
             }
             const selectedCategory = String(document.getElementById('quickLocationCategory')?.value || '').trim();
             if (!selectedCategory) {
