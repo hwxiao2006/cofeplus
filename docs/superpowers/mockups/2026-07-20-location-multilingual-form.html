@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup · 点位多语言（5 语言压力测试）</title>
+<style>
+    :root {
+        --primary: #4ecdc4;
+        --primary-dark: #3dbdb4;
+        --primary-light: #e8f8f7;
+        --danger: #ef4444;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --text-tertiary: #9ca3af;
+        --bg-body: #f3f4f6;
+        --border: #e5e7eb;
+        --radius: 12px;
+        --radius-sm: 8px;
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+        background: var(--bg-body);
+        color: var(--text-primary);
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 32px 24px 80px;
+    }
+    .page-head { max-width: 1160px; margin: 0 auto 24px; }
+    .page-head h1 { font-size: 22px; margin-bottom: 6px; }
+    .page-head p { color: var(--text-secondary); font-size: 13px; max-width: 880px; }
+    .stage {
+        max-width: 1160px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+    .panel-label {
+        font-size: 13px; font-weight: 700; color: var(--text-secondary);
+        margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .panel-label .tag {
+        font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+        background: var(--primary-light); color: var(--primary-dark);
+    }
+    .panel-label .tag.bad { background: #fee2e2; color: #b91c1c; }
+
+    .modal { background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden; }
+    .modal-header { padding: 20px 24px 0; display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 18px; font-weight: 700; }
+    .modal-close { width: 36px; height: 36px; border: none; background: #f5f5f5; border-radius: 50%; font-size: 20px; color: var(--text-secondary); }
+    .modal-body { padding: 20px 24px 8px; }
+    .modal-footer { padding: 16px 24px 24px; display: flex; gap: 12px; justify-content: flex-end; }
+    .btn { padding: 10px 20px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-default { background: var(--bg-body); color: var(--text-secondary); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;
+    }
+    .form-label .required { color: var(--danger); }
+    .form-input, .form-select {
+        width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+        font-size: 14px; color: var(--text-primary); background: #fff; outline: none;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .note { margin-top: 4px; font-size: 12px; color: var(--text-tertiary); }
+
+    /* ===== 方案一（反例）：逐行全部平铺 ===== */
+    .translation-rows { margin-top: 8px; display: grid; gap: 6px; }
+    .translation-row {
+        display: flex; align-items: center; gap: 8px;
+        padding: 7px 10px; background: #f8fafc;
+        border: 1px dashed var(--border); border-radius: var(--radius-sm);
+    }
+    .lang-chip {
+        flex: 0 0 34px; text-align: center;
+        font-size: 11px; font-weight: 700; padding: 3px 0; border-radius: 6px;
+        background: #e0f2fe; color: #0369a1; letter-spacing: .02em;
+    }
+    .translation-row input { flex: 1; border: none; background: transparent; font-size: 13px; outline: none; color: var(--text-primary); }
+    .translation-row input::placeholder { color: var(--text-tertiary); }
+    .mini-btn {
+        flex: 0 0 auto; border: 1px solid var(--border); background: #fff; border-radius: 6px;
+        padding: 3px 8px; font-size: 11px; color: var(--text-secondary); cursor: pointer; white-space: nowrap;
+    }
+    .row-remove { flex: 0 0 auto; border: none; background: transparent; color: var(--text-tertiary); cursor: pointer; font-size: 13px; }
+
+    /* ===== 方案二（推荐）：摘要行 + 弹层集中编辑 ===== */
+    .i18n-summary {
+        margin-top: 8px;
+        display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        padding: 8px 10px;
+        background: #f8fafc; border: 1px dashed var(--border); border-radius: var(--radius-sm);
+        cursor: pointer;
+    }
+    .i18n-summary:hover { border-color: var(--primary); }
+    .pill {
+        font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+        letter-spacing: .02em;
+    }
+    .pill.done { background: #d1fae5; color: #047857; }
+    .pill.todo { background: #f3f4f6; color: #9ca3af; }
+    .i18n-summary .go {
+        margin-left: auto; font-size: 12px; font-weight: 600; color: var(--primary-dark); white-space: nowrap;
+    }
+
+    /* 集中编辑弹层（静态展示） */
+    .i18n-editor {
+        background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;
+        border: 2px solid var(--primary-light);
+    }
+    .i18n-editor .modal-header { padding-bottom: 8px; }
+    .i18n-editor .sub { padding: 0 24px 4px; font-size: 12px; color: var(--text-secondary); }
+    .i18n-table { width: 100%; border-collapse: collapse; }
+    .i18n-table th {
+        text-align: left; font-size: 12px; font-weight: 600; color: var(--text-tertiary);
+        padding: 10px 12px; border-bottom: 1px solid var(--border); background: #fafbfc;
+    }
+    .i18n-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .i18n-table td:first-child { width: 90px; }
+    .i18n-table .lang-name { font-size: 13px; font-weight: 600; }
+    .i18n-table .lang-code { font-size: 11px; color: var(--text-tertiary); }
+    .i18n-table input {
+        width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+        font-size: 13px; outline: none;
+    }
+    .i18n-table input::placeholder { color: var(--text-tertiary); }
+    .i18n-table td:last-child { width: 84px; text-align: right; }
+    .original-banner {
+        margin: 12px 24px 4px; padding: 10px 14px;
+        background: var(--primary-light); border-radius: var(--radius-sm);
+        font-size: 13px;
+    }
+    .original-banner b { font-weight: 700; }
+    .original-banner .cap { font-size: 11px; color: var(--primary-dark); font-weight: 700; margin-right: 8px; }
+
+    .verdict {
+        max-width: 1160px; margin: 24px auto 0;
+        background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg);
+        padding: 20px 24px;
+    }
+    .verdict h2 { font-size: 15px; margin-bottom: 10px; }
+    .verdict table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    .verdict th, .verdict td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+    .verdict th { background: #f8fafc; font-size: 12px; }
+    .verdict .good { color: #047857; font-weight: 600; }
+    .verdict .bad { color: #b91c1c; font-weight: 600; }
+
+    /* 新增语种流程 */
+    .newlang {
+        max-width: 1160px; margin: 24px auto 0;
+        background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg);
+        padding: 20px 24px;
+    }
+    .newlang h2 { font-size: 15px; margin-bottom: 14px; }
+    .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .step { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+    .step .t { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 12px; color: var(--text-secondary); margin: 8px 0 0; }
+    .pill-demo { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .pill-demo .arrow { color: var(--text-tertiary); margin: 0 4px; font-weight: 700; }
+    .pill.new { background: #fef3c7; color: #b45309; }
+    @media (max-width: 920px) { .flow { grid-template-columns: 1fr; } }
+
+    @media (max-width: 920px) { .stage { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page-head">
+    <h1>点位多语言 · 5 语言压力测试</h1>
+    <p>设备语言体系扩到 5 种（中 / 英 / 日 / 韩 / 西）时的两种交互对比。左：把译文行全部平铺在主表单里（上一版方案直接放大后的样子，作为反例）；右：主表单只保留一条「覆盖状态摘要」，点开后在独立弹层里集中编辑（推荐）。</p>
+</div>
+
+<div class="stage">
+    <!-- 反例：全部平铺 -->
+    <div>
+        <div class="panel-label">方案一 · 译文行平铺在主表单 <span class="tag bad">5 语言下失控</span></div>
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑点位</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="form-label"><span>点位名称 <span class="required">*</span></span></div>
+                    <input type="text" class="form-input" value="上海国家会展中心A馆">
+                    <div class="translation-rows">
+                        <div class="translation-row"><span class="lang-chip">EN</span><input value="NECC (Shanghai) Hall A"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">JA</span><input value="上海国家会展中心 Aホール"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">KO</span><input placeholder="未填写，将显示原文"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">ES</span><input placeholder="未填写，将显示原文"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label"><span>详细地址 <span class="required">*</span></span></div>
+                    <input type="text" class="form-input" value="上海市青浦区崧泽大道333号 A馆 1层">
+                    <div class="translation-rows">
+                        <div class="translation-row"><span class="lang-chip">EN</span><input value="1F, Hall A, 333 Songze Ave, Qingpu, Shanghai"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">JA</span><input placeholder="未填写，将显示原文"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">KO</span><input placeholder="未填写，将显示原文"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                        <div class="translation-row"><span class="lang-chip">ES</span><input placeholder="未填写，将显示原文"><button class="mini-btn">机翻预填</button><button class="row-remove">🗑</button></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="form-label"><span>点位分类 <span class="required">*</span></span></div>
+                        <select class="form-select"><option>展会点位</option></select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>点位状态</span></div>
+                        <select class="form-select"><option>运营中</option></select>
+                    </div>
+                </div>
+                <p class="note">问题：两个字段 × 4 条译文行 = 8 行附属输入，主字段（分类 / 状态 / 地址）被挤散，「哪些语言还没配」也要逐行数。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default">取消</button>
+                <button class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 推荐：摘要 + 集中编辑 -->
+    <div>
+        <div class="panel-label">方案二 · 摘要行 + 集中编辑弹层 <span class="tag">推荐：主表单恒定一行</span></div>
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑点位</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="form-label"><span>点位名称 <span class="required">*</span></span></div>
+                    <input type="text" class="form-input" value="上海国家会展中心A馆">
+                    <div class="i18n-summary" title="点击进入多语言编辑">
+                        <span class="pill done">EN ✓</span>
+                        <span class="pill done">日 ✓</span>
+                        <span class="pill todo">韩</span>
+                        <span class="pill todo">西</span>
+                        <span class="go">管理翻译 ›</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label"><span>详细地址 <span class="required">*</span></span></div>
+                    <input type="text" class="form-input" value="上海市青浦区崧泽大道333号 A馆 1层">
+                    <div class="i18n-summary" title="点击进入多语言编辑">
+                        <span class="pill done">EN ✓</span>
+                        <span class="pill todo">日</span>
+                        <span class="pill todo">韩</span>
+                        <span class="pill todo">西</span>
+                        <span class="go">管理翻译 ›</span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="form-label"><span>点位分类 <span class="required">*</span></span></div>
+                        <select class="form-select"><option>展会点位</option></select>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label"><span>点位状态</span></div>
+                        <select class="form-select"><option>运营中</option></select>
+                    </div>
+                </div>
+                <p class="note">主表单不随语言数增长：摘要行永远一行，绿色 = 已覆盖、灰色 = 未覆盖（显示原文），一眼读出配置状态。没配任何翻译的点位连摘要行都不出现，只显示「+ 翻译」小入口（同上一版状态 A）。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default">取消</button>
+                <button class="btn btn-primary">保存</button>
+            </div>
+        </div>
+
+        <!-- 集中编辑弹层 -->
+        <div style="margin-top:20px;">
+        <div class="panel-label">点「管理翻译 ›」后的集中编辑弹层（点位名称）</div>
+        <div class="i18n-editor">
+            <div class="modal-header">
+                <h3 class="modal-title">点位名称 · 翻译</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <p class="sub">留空 = 该语言显示原文，不强制填满。语言清单跟随设备语言体系自动扩展。</p>
+            <div class="original-banner"><span class="cap">原文</span><b>上海国家会展中心A馆</b></div>
+            <div style="padding: 8px 24px 4px;">
+                <table class="i18n-table">
+                    <thead><tr><th>语言</th><th>译文（选填）</th><th></th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="lang-name">English</div><div class="lang-code">EN</div></td>
+                            <td><input value="NECC (Shanghai) Hall A"></td>
+                            <td><button class="mini-btn">机翻预填</button></td>
+                        </tr>
+                        <tr>
+                            <td><div class="lang-name">日本語</div><div class="lang-code">JA</div></td>
+                            <td><input value="上海国家会展中心 Aホール"></td>
+                            <td><button class="mini-btn">机翻预填</button></td>
+                        </tr>
+                        <tr>
+                            <td><div class="lang-name">한국어</div><div class="lang-code">KO</div></td>
+                            <td><input placeholder="留空显示原文"></td>
+                            <td><button class="mini-btn">机翻预填</button></td>
+                        </tr>
+                        <tr>
+                            <td><div class="lang-name">Español</div><div class="lang-code">ES</div></td>
+                            <td><input placeholder="留空显示原文"></td>
+                            <td><button class="mini-btn">机翻预填</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" style="margin-right:auto;">全部机翻预填</button>
+                <button class="btn btn-default">取消</button>
+                <button class="btn btn-primary">完成</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="verdict">
+    <h2>两种方案在语言数增长下的表现</h2>
+    <table>
+        <thead><tr><th></th><th>方案一 · 平铺</th><th>方案二 · 摘要 + 集中编辑</th></tr></thead>
+        <tbody>
+            <tr><td>主表单高度（2 字段 × N 语言）</td><td class="bad">随 N 线性增长：5 语言 = 8 行附属输入</td><td class="good">恒定：每字段 1 行摘要</td></tr>
+            <tr><td>「哪些语言没配」</td><td class="bad">逐行找空输入框</td><td class="good">摘要 pill 绿 / 灰一眼可读</td></tr>
+            <tr><td>大多数点位（不配翻译）</td><td class="good">无译文行，与现状一致</td><td class="good">连摘要行都没有，仅「+ 翻译」入口，与现状一致</td></tr>
+            <tr><td>批量补翻译效率</td><td class="bad">两个字段的行交错，逐行操作</td><td class="good">弹层内按字段集中编辑 + 「全部机翻预填」一键出草稿</td></tr>
+            <tr><td>语言体系再扩展（6、7 种…）</td><td class="bad">表单继续变长</td><td class="good">只影响弹层表格行数，主表单不变</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="newlang">
+    <h2>新增语种时发生什么（例：语言体系加入「Français 法语」）</h2>
+    <div class="flow">
+        <div class="step">
+            <div class="t">① 语种在设备语言体系里加，不在点位页加</div>
+            <p>点位模块<strong>没有自己的语言清单</strong>——弹层里的语言行、摘要里的 pill 都是从设备语言体系动态读的。设备侧开通法语后，点位侧自动多出一行 / 一个 pill，点位页零改动、零发版。</p>
+        </div>
+        <div class="step">
+            <div class="t">② 存量点位不迁移、不报错</div>
+            <div class="pill-demo">
+                <span class="pill done">EN ✓</span><span class="pill done">日 ✓</span><span class="pill todo">韩</span><span class="pill todo">西</span>
+                <span class="arrow">→</span>
+                <span class="pill done">EN ✓</span><span class="pill done">日 ✓</span><span class="pill todo">韩</span><span class="pill todo">西</span><span class="pill new">法 · 新</span>
+            </div>
+            <p>所有存量点位的法语列天然为「未覆盖」，摘要里出现一个灰色（可带「新」标）pill。没有任何批量任务被强加——法语设备当天就能开卖，点位文案先显示原文。</p>
+        </div>
+        <div class="step">
+            <div class="t">③ 按需补翻，可全局盘点</div>
+            <p>哪些点位值得补法语，运营自己决定（通常只有法语设备落位的少数点位）。如果要盘点，点位列表可加「某语言未覆盖」筛选，一次看全缺口；配合「全部机翻预填」快速出草稿再人工确认。</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
