@@ -4,7 +4,7 @@
 - 状态：已获用户确认（基于 v2 可视化 mockup）
 - 目标应用：机器人咖啡亭配置采集（妙搭云端全栈应用，app_id `app_17artejsm44`）
 - 配套 mockup：`docs/superpowers/mockups/2026-07-27-part-collection-redesign.html`
-- 本地参考代码：`cofeconfig/`（由 `lark-cli apps +init` 克隆，仅作阅读参考；实际改动须通过妙搭云端会话进行）
+- 本地参考代码：`cofeconfig/`（由 `lark-cli apps +init` 克隆，remote 为妙搭代码托管，可直接开发并经 `+release-create` 发布）
 
 ## 1. 背景与问题
 
@@ -148,4 +148,11 @@
 
 ## 7. 实施说明
 
-本应用为妙搭云端全栈应用，实施须通过云端会话下发需求（`lark-apps` 的 `+chat`），不能直接修改本地 `cofeconfig/` 克隆并推送。下一步：基于本文档制定实施计划（writing-plans），把改动拆分为可分批发给云端 AI 的需求描述。
+实施路径：**本地开发 + 妙搭发布链路**（已确认，2026-07-27）。
+
+- `cofeconfig/` 是妙搭官方支持的本地开发仓库（remote 为妙搭代码托管，工作分支 `sprint/default`），直接在其中实现全部改动。
+- 本地验证：`npm run dev` 起前后端联调；`npm run lint` / `npm run type:check` / `npm run test` 过质量门禁。
+- 发布：`git push origin sprint/default` → `lark-cli apps +release-create --app-id app_17artejsm44` → `+release-get` 轮询至 `finished` 拿线上链接。`main` 为发布态快照，由服务端在发布成功后推进，禁止直推。
+- 注意 `.spark_project` 的受限路径（`client/src/api/gen`、`package.json` 等）尽量不动；改动集中在 `client/src/pages/`、`client/src/components/`、`client/src/api/bitable/`。
+
+下一步：基于本文档制定实施计划（writing-plans），按可独立验证的批次拆分本地改动。
