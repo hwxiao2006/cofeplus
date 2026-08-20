@@ -2324,6 +2324,36 @@
             color: var(--text-secondary);
             font-size: 13px;
         }
+        .recipe-fetch-brew-section {
+            margin-top: 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-body);
+            padding: 14px 16px;
+        }
+        .recipe-fetch-brew-head {
+            margin-bottom: 12px;
+        }
+        .recipe-fetch-brew-title {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .recipe-fetch-brew-desc {
+            margin-top: 4px;
+            color: var(--text-secondary);
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+        .recipe-fetch-brew-section .recipe-ingredient-editor {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #fff;
+            margin-bottom: 8px;
+        }
+        .recipe-fetch-brew-section .recipe-ingredient-editor:last-child {
+            margin-bottom: 0;
+        }
         .recipe-editor-head {
             display: flex;
             align-items: flex-start;
@@ -4506,6 +4536,17 @@
             concentrates: { unit: 'ml', step: 5, min: 0, max: 500, continuous: false },
             decorToppings: { unit: 'g', step: 1, min: 0, max: 200, continuous: false }
         };
+        // 咖啡萃取参数：设备萃取层的工艺参数（tick / mm / kg / s），
+        // 与上面的物料用量（ml / g）是两类数据。仅含咖啡豆（beans 维度）
+        // 的饮品组合开放调整；不计入容量条与容量总量，随配方一起保存与同步。
+        const RECIPE_BREW_PARAM_CONFIGS = [
+            { key: 'waterQuantity', label: '萃取水量', unit: 'tick', step: 1, min: 0, max: 300, defaults: 90, hint: '通过咖啡粉饼的水量，调大杯量增加、浓度通常降低' },
+            { key: 'cakeThickness', label: '粉饼厚度', unit: 'mm', step: 0.5, min: 0, max: 30, defaults: 11, hint: '进入萃取腔的粉饼厚度，调大阻力增大、咖啡更浓' },
+            { key: 'tamping', label: '压粉力度', unit: 'kg', step: 1, min: 0, max: 40, defaults: 20, hint: '压粉压力，调大粉饼更紧、流速变慢' },
+            { key: 'preInfusion', label: '预浸泡时间', unit: 's', step: 0.5, min: 0, max: 20, defaults: 0, hint: '萃取前先润湿粉饼的等待时间' },
+            { key: 'relaxTime', label: '松弛时间', unit: 's', step: 0.5, min: 0, max: 20, defaults: 1, hint: '压粉后松开等待，让粉饼回弹均匀' },
+            { key: 'secondTamping', label: '二次压粉', unit: 'mm', step: 0.5, min: -10, max: 10, defaults: -0.5, hint: '二次压粉位置，负值表示回退行程' }
+        ];
         let recipeComponentHoldTimer = null;
         let recipeComponentHoldInterval = null;
         const sharedAdminMockData = window.COFE_SHARED_MOCK_DATA || {};
@@ -5589,6 +5630,51 @@
             return RECIPE_COMPONENT_RULES[groupKey] || { unit: 'ml', step: 1, min: 0, max: 500, continuous: false };
         }
 
+        function getRecipeBrewParamConfig(paramKey) {
+            return RECIPE_BREW_PARAM_CONFIGS.find(item => item.key === paramKey) || null;
+        }
+
+        function normalizeRecipeBrewParamValue(value, config) {
+            return normalizeRecipeComponentValue(value, config || { step: 1, min: 0, max: 0 });
+        }
+
+        // 「有咖啡豆的饮品」的判据：页面加载时快照的商品原始 tagI18n.beans（见 initPage）。
+        // 运行期 tagI18n 会被标签播种污染（getTagLabel→ensureTagI18n 给所有商品补设备级
+        // beans 文案），specs.beans 在 mock 数据里恒为空，都不能用；快照缺失时（测试等
+        // 场景）退回当前 tagI18n，保持行为可注入。
+        let productBeansSnapshot = null;
+
+        function hasBeansTagInProduct(targetProduct = productData) {
+            const tagMap = targetProduct?.tagI18n?.beans;
+            return Boolean(tagMap && Object.keys(tagMap).length);
+        }
+
+        function productHasBeansOption(targetProduct = productData) {
+            if (typeof productBeansSnapshot === 'boolean') return productBeansSnapshot;
+            return hasBeansTagInProduct(targetProduct);
+        }
+
+        // 有咖啡豆的饮品：无 brewParams 时补默认值，
+        // 让编辑器与 diff 始终工作在同一份完整数据上；首次保存后随配方落地。
+        // 无豆饮品强制剥离，避免历史数据把参数带到非咖啡饮品上。
+        function ensureRecipeBrewParams(recipe) {
+            if (!recipe || typeof recipe !== 'object') return recipe;
+            if (!productHasBeansOption()) {
+                delete recipe.brewParams;
+                return recipe;
+            }
+            if (!recipe.brewParams || typeof recipe.brewParams !== 'object') {
+                recipe.brewParams = {};
+            }
+            RECIPE_BREW_PARAM_CONFIGS.forEach(config => {
+                recipe.brewParams[config.key] = normalizeRecipeBrewParamValue(
+                    recipe.brewParams[config.key] ?? config.defaults,
+                    config
+                );
+            });
+            return recipe;
+        }
+
         // 只读成分的提示文案：不同成分原因不同（浓缩 = 配方文件、奶泡 = 设备打奶量），
         // 不在这一页修改时给出对应解释。
         const RECIPE_READONLY_HINTS = {
@@ -5697,9 +5783,23 @@
                 };
             });
 
+            // 萃取参数只在配方本身带有时保留并清洗（按参数表 clamp + 步进对齐），
+            // 不在这里补默认 —— 是否默认开启由「组合是否含咖啡豆」决定（ensureRecipeBrewParams）。
+            let brewParams;
+            if (recipe.brewParams && typeof recipe.brewParams === 'object') {
+                brewParams = {};
+                RECIPE_BREW_PARAM_CONFIGS.forEach(config => {
+                    brewParams[config.key] = normalizeRecipeBrewParamValue(
+                        recipe.brewParams[config.key] ?? config.defaults,
+                        config
+                    );
+                });
+            }
+
             return {
                 groupOrder: dedupedOrder,
-                groups
+                groups,
+                ...(brewParams ? { brewParams } : {})
             };
         }
 
@@ -6274,6 +6374,24 @@
                     delta: after - before
                 });
             });
+            // 萃取参数：任一侧带有 brewParams 就纳入对比（fetch 时已对含豆组合补默认），
+            // 让「修改前后对比」与影响弹窗都能看到工艺参数的变化。
+            if (beforeRecipe?.brewParams || afterRecipe?.brewParams) {
+                RECIPE_BREW_PARAM_CONFIGS.forEach(config => {
+                    const before = normalizeRecipeBrewParamValue(beforeRecipe?.brewParams?.[config.key] ?? config.defaults, config);
+                    const after = normalizeRecipeBrewParamValue(afterRecipe?.brewParams?.[config.key] ?? config.defaults, config);
+                    if (before === after) return;
+                    diffs.push({
+                        groupKey: `brew:${config.key}`,
+                        label: config.label,
+                        unit: config.unit,
+                        before,
+                        after,
+                        delta: after - before,
+                        isBrewParam: true
+                    });
+                });
+            }
             return diffs;
         }
 
@@ -8176,6 +8294,10 @@
                     });
                     productData = cloneProductValue(productData);
                 }
+                // 在页面渲染 / 标签播种污染 tagI18n 之前，快照商品是否为含豆饮品。
+                // 运行期 getTagLabel→ensureTagI18n 会把设备级 beans 文案写进所有商品，
+                // 之后 tagI18n 已无法区分冰水这类无豆饮品。
+                productBeansSnapshot = hasBeansTagInProduct(productData);
                 document.getElementById('productId').textContent = 'ID: ' + productData.id;
                 if (!Array.isArray(linkedProductCatalog) || linkedProductCatalog.length === 0) {
                     linkedProductCatalog = [{
@@ -8841,6 +8963,7 @@
                 return;
             }
             const recipe = getRecipeForCombination(combo);
+            ensureRecipeBrewParams(recipe);
             recipeEditorState = {
                 variants: [{
                     specKey: combo.specKey,
@@ -8942,6 +9065,7 @@
                 .filter((cfg) => (Number(recipe.groups?.[cfg.groupKey]?.ml) || 0) > 0)
                 .map((cfg) => renderFetchedRecipeIngredient(variant, cfg))
                 .join('');
+            const brewRows = renderFetchedBrewParamRows(variant);
             const isChanged = getFetchedRecipeChanged();
             editor.innerHTML = `
                 <div class="recipe-fetch-summary">
@@ -8979,6 +9103,7 @@
                 </div>
                 ${renderFetchedRecipeCompareHtml()}
                 ${rows || '<div class="recipe-change-empty">当前配方暂无成分。</div>'}
+                ${brewRows}
                 <div class="recipe-fetch-save-note">保存后只更新当前选项组合对应的配方。</div>
             `;
         }
@@ -9041,6 +9166,60 @@
             if (rule.editable === false) return;
             variant.recipe.groups[groupKey].ml = normalizeRecipeComponentValue(value, rule);
             renderRecipeMainEditorAll();
+        }
+
+        // 萃取参数分区：仅有咖啡豆的饮品（商品选项含 beans）且配方带 brewParams 时渲染。
+        // 参数行复用物料行的步进器样式，但走独立的读写函数（规则/单位与物料不同）。
+        function renderFetchedBrewParamRows(variant) {
+            const recipe = variant?.recipe;
+            if (!recipe?.brewParams) return '';
+            if (!productHasBeansOption()) return '';
+
+            const rows = RECIPE_BREW_PARAM_CONFIGS.map(config => {
+                const value = normalizeRecipeBrewParamValue(recipe.brewParams[config.key], config);
+                return `
+                    <div class="recipe-ingredient-editor">
+                        <div>
+                            <div class="recipe-ingredient-name">${escAttr(config.label)}</div>
+                            <div class="recipe-ingredient-hint">${escAttr(config.hint)} · 每次 ${config.step}${config.unit}</div>
+                        </div>
+                        <div class="recipe-stepper">
+                            <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', -${config.step})">−</button>
+                            <label class="recipe-value-field">
+                                <input value="${value}" inputmode="numeric" onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)" onchange="setFetchedBrewParamValue('${config.key}', this.value)" onblur="setFetchedBrewParamValue('${config.key}', this.value)" />
+                                <span class="recipe-value-unit">${config.unit}</span>
+                            </label>
+                            <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', ${config.step})">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="recipe-fetch-brew-section">
+                    <div class="recipe-fetch-brew-head">
+                        <div class="recipe-fetch-brew-title">咖啡萃取参数</div>
+                        <div class="recipe-fetch-brew-desc">含咖啡豆的饮品可调；不计入容量总量，保存后随配方同步到关联商品。</div>
+                    </div>
+                    ${rows}
+                </div>
+            `;
+        }
+
+        function setFetchedBrewParamValue(paramKey, value) {
+            const variant = getFetchedRecipeVariant();
+            const config = getRecipeBrewParamConfig(paramKey);
+            if (!variant?.recipe?.brewParams || !config) return;
+            variant.recipe.brewParams[paramKey] = normalizeRecipeBrewParamValue(value, config);
+            renderRecipeMainEditorAll();
+        }
+
+        function adjustFetchedBrewParam(paramKey, delta) {
+            const variant = getFetchedRecipeVariant();
+            const config = getRecipeBrewParamConfig(paramKey);
+            if (!variant?.recipe?.brewParams || !config) return;
+            const current = Number(variant.recipe.brewParams[paramKey]) || 0;
+            setFetchedBrewParamValue(paramKey, current + Number(delta || 0));
         }
 
         function adjustFetchedRecipeIngredient(groupKey, delta) {
