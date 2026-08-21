@@ -2391,6 +2391,36 @@
         .recipe-fetch-brew-section .recipe-ingredient-editor:last-child {
             margin-bottom: 0;
         }
+        .recipe-brew-options {
+            display: inline-grid;
+            grid-auto-flow: column;
+            gap: 4px;
+            padding: 4px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-body);
+        }
+        .recipe-brew-option-btn {
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            padding: 6px 14px;
+            min-width: 56px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .recipe-brew-option-btn:hover {
+            color: var(--text-primary);
+        }
+        .recipe-brew-option-btn.active {
+            background: #fff;
+            color: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+        }
         .recipe-editor-head {
             display: flex;
             align-items: flex-start;
@@ -4578,12 +4608,20 @@
         // 的饮品组合开放调整；不计入容量条与容量总量，随配方一起保存与同步。
         // 范围口径对齐配方下发字段文档（Eversys 28 列基础列）：
         // WaterQ 模板机 [0,262]；CakeTh [3.0,32.0]mm；PreBrew/RelaxT [0,10.0]s；
-        // PressAf [-5.0,5.0]mm 有符号。压粉力度按产品参数口径（kg）保留，
-        // 不按模板机 PowderP 的二值退化处理。
+        // PressAf [-5.0,5.0]mm 有符号。压粉力度（PowderP）为三档离散值
+        // 64/92/120，对应 20/40/60kg，按档位切换而非连续步进。
         const RECIPE_BREW_PARAM_CONFIGS = [
             { key: 'waterQuantity', label: '萃取水量', unit: 'tick', step: 1, min: 0, max: 262, defaults: 90, hint: '通过咖啡粉饼的水量，调大杯量增加、浓度通常降低' },
             { key: 'cakeThickness', label: '粉饼厚度', unit: 'mm', step: 0.5, min: 3, max: 32, defaults: 23, hint: '进入萃取腔的粉饼厚度，调大阻力增大、咖啡更浓' },
-            { key: 'tamping', label: '压粉力度', unit: 'kg', step: 1, min: 0, max: 40, defaults: 20, hint: '压粉压力，调大粉饼更紧、流速变慢' },
+            {
+                key: 'tamping', label: '压粉力度', unit: 'kg', discrete: true, defaults: 64,
+                options: [
+                    { value: 64, label: '20kg' },
+                    { value: 92, label: '40kg' },
+                    { value: 120, label: '60kg' }
+                ],
+                hint: '压粉压力三档，调大粉饼更紧、流速变慢'
+            },
             { key: 'preInfusion', label: '预浸泡时间', unit: 's', step: 0.5, min: 0, max: 10, defaults: 0, hint: '萃取前先润湿粉饼的等待时间' },
             { key: 'relaxTime', label: '松弛时间', unit: 's', step: 0.5, min: 0, max: 10, defaults: 1, hint: '压粉后松开等待，让粉饼回弹均匀' },
             { key: 'secondTamping', label: '二次压粉', unit: 'mm', step: 0.5, min: -5, max: 5, defaults: -0.5, hint: '二次压粉位置，负值表示回退行程' }
@@ -5675,8 +5713,28 @@
             return RECIPE_BREW_PARAM_CONFIGS.find(item => item.key === paramKey) || null;
         }
 
+        // 离散档位参数（如压粉力度 64/92/120）：归一到最近档位，取不到时回第一档。
+        // 旧数据存的 kg 数值（20/21/22…）也会自然落到最近的 64 档（= 20kg）。
         function normalizeRecipeBrewParamValue(value, config) {
+            if (config?.discrete && Array.isArray(config.options) && config.options.length) {
+                const parsed = Number(value);
+                const fallback = config.options[0];
+                if (!Number.isFinite(parsed)) return fallback.value;
+                return config.options.reduce((best, option) => (
+                    Math.abs(option.value - parsed) < Math.abs(best.value - parsed) ? option : best
+                ), fallback).value;
+            }
             return normalizeRecipeComponentValue(value, config || { step: 1, min: 0, max: 0 });
+        }
+
+        // 展示口径：离散参数用档位 label（20kg/40kg/60kg），连续参数用 数值+单位。
+        function formatRecipeBrewParamValue(value, config) {
+            const normalized = normalizeRecipeBrewParamValue(value, config);
+            if (config?.discrete) {
+                const matched = config.options.find(option => option.value === normalized);
+                return matched ? matched.label : `${normalized}${config.unit}`;
+            }
+            return `${normalized}${config.unit}`;
         }
 
         // 「有咖啡豆的饮品」的判据：页面加载时快照的商品原始 tagI18n（见 initPage）。
@@ -6433,7 +6491,14 @@
                         before,
                         after,
                         delta: after - before,
-                        isBrewParam: true
+                        isBrewParam: true,
+                        // 离散档位（如压粉 64→92）对外统一展示 20kg/40kg 档位口径；
+                        // 连续参数仍走 数值+单位 / delta 增量的常规显示。
+                        ...(config.discrete ? {
+                            displayBefore: formatRecipeBrewParamValue(before, config),
+                            displayAfter: formatRecipeBrewParamValue(after, config),
+                            isDiscrete: true
+                        } : {})
                     });
                 });
             }
@@ -6441,6 +6506,9 @@
         }
 
         function formatRecipeDiffDelta(diff) {
+            if (diff.displayBefore !== undefined) {
+                return `${diff.displayBefore} → ${diff.displayAfter}`;
+            }
             const sign = diff.delta > 0 ? '+' : '';
             return `${sign}${diff.delta}${diff.unit}`;
         }
@@ -6551,8 +6619,8 @@
                     ? diffs.map(diff => `
                         <tr>
                             <td>${escAttr(diff.label)}</td>
-                            <td>${diff.before}${diff.unit}</td>
-                            <td>${diff.after}${diff.unit}</td>
+                            <td>${diff.displayBefore ?? diff.before + diff.unit}</td>
+                            <td>${diff.displayAfter ?? diff.after + diff.unit}</td>
                             <td class="recipe-impact-diff-delta ${diff.delta >= 0 ? 'positive' : 'negative'}">${formatRecipeDiffDelta(diff)}</td>
                         </tr>
                     `).join('')
@@ -9076,9 +9144,9 @@
                         </div>
                         <div class="recipe-change-list">
                             ${diffs.map((diff) => `
-                                <div class="recipe-change-item" title="${escAttr(diff.label)} ${diff.before}${diff.unit} → ${diff.after}${diff.unit}">
+                                <div class="recipe-change-item" title="${escAttr(diff.label)} ${diff.displayBefore ?? diff.before + diff.unit} → ${diff.displayAfter ?? diff.after + diff.unit}">
                                     <span>${escAttr(diff.label)}</span>
-                                    <strong>${diff.before}${diff.unit} → ${diff.after}${diff.unit}</strong>
+                                    <strong>${diff.displayBefore ?? diff.before + diff.unit} → ${diff.displayAfter ?? diff.after + diff.unit}</strong>
                                 </div>
                             `).join('')}
                         </div>
@@ -9242,6 +9310,21 @@
             const brewChanged = hasFetchedBrewParamChanges();
             const rowsHtml = recipeBrewSectionOpen
                 ? RECIPE_BREW_PARAM_CONFIGS.map(config => {
+                    if (config.discrete) {
+                        const current = normalizeRecipeBrewParamValue(recipe.brewParams[config.key], config);
+                        const optionButtons = config.options.map(option => `
+                            <button type="button" class="recipe-brew-option-btn${option.value === current ? ' active' : ''}" aria-pressed="${option.value === current}" onclick="setFetchedBrewParamValue('${config.key}', ${option.value})">${escAttr(option.label)}</button>
+                        `).join('');
+                        return `
+                            <div class="recipe-ingredient-editor">
+                                <div>
+                                    <div class="recipe-ingredient-name">${escAttr(config.label)}</div>
+                                    <div class="recipe-ingredient-hint">${escAttr(config.hint)}</div>
+                                </div>
+                                <div class="recipe-brew-options" role="group" aria-label="${escAttr(config.label)}">${optionButtons}</div>
+                            </div>
+                        `;
+                    }
                     const value = normalizeRecipeBrewParamValue(recipe.brewParams[config.key], config);
                     return `
                         <div class="recipe-ingredient-editor">
