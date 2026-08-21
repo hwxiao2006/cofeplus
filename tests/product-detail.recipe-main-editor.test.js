@@ -238,6 +238,9 @@ test('萃取参数应定义六项工艺参数并接入渲染与取数入口', ()
     // 收起时有未保存修改要能看到
     assert.ok(/function\s+hasFetchedBrewParamChanges\s*\(/.test(html), 'missing brew change detector');
     assert.ok(html.includes('recipe-fetch-brew-badge'), 'missing changed badge');
+    // 压粉力度为离散档位：渲染三档按钮组而非步进器
+    assert.ok(html.includes('recipe-brew-option-btn'), 'missing discrete option button class');
+    assert.ok(html.includes('20kg') && html.includes('40kg') && html.includes('60kg'), 'missing kg gear labels');
 });
 
 test('萃取参数分区应排在物料行（牛奶）之前', () => {
@@ -284,6 +287,7 @@ function createBrewRuntime() {
         'getRecipeBrewParamConfig',
         'normalizeRecipeComponentValue',
         'normalizeRecipeBrewParamValue',
+        'formatRecipeBrewParamValue',
         'hasBeansTagInProduct',
         'productHasBeansOption',
         'normalizeRecipePercent',
@@ -320,6 +324,24 @@ test('萃取参数数值应按步进对齐并 clamp 到范围（含负值）', (
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -5, '负向超限应截断（PressAf 口径 ±5）');
 });
 
+test('压粉力度应为三档离散值 64/92/120（20/40/60kg）', () => {
+    const runtime = createBrewRuntime();
+    const cfg = brewConfig(runtime, 'tamping');
+    assert.strictEqual(cfg.discrete, true, '压粉力度应为离散参数');
+    assert.strictEqual(
+        JSON.stringify(cfg.options.map(option => option.value)),
+        '[64,92,120]',
+        '档位值应为下发口径 64/92/120'
+    );
+    // 旧数据存的 kg 数值（20/21）自然迁移到最近的 64 档（=20kg）
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(20, cfg), 64, '旧 kg 值应迁移到 20kg 档');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(21, cfg), 64);
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(50, cfg), 64, '中间值归最近档');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, cfg), 120, '超限归最高档');
+    assert.strictEqual(runtime.formatRecipeBrewParamValue(64, cfg), '20kg', '档位应显示 kg 口径');
+    assert.strictEqual(runtime.formatRecipeBrewParamValue(120, cfg), '60kg');
+});
+
 test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品不携带', () => {
     const runtime = createBrewRuntime();
     runtime.productBeansSnapshot = true;
@@ -327,7 +349,7 @@ test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品�
     assert.strictEqual(JSON.stringify(withBeans.brewParams), JSON.stringify({
         waterQuantity: 90,
         cakeThickness: 23,
-        tamping: 20,
+        tamping: 64,
         preInfusion: 0,
         relaxTime: 1,
         secondTamping: -0.5
@@ -360,7 +382,7 @@ test('normalizeRecipeData 应保留并补齐已有萃取参数，无则不凭空
         brewParams: { waterQuantity: 85, tamping: 999 }
     });
     assert.strictEqual(withParams.brewParams.waterQuantity, 85, '已有合法值应保留');
-    assert.strictEqual(withParams.brewParams.tamping, 40, '超限值应 clamp');
+    assert.strictEqual(withParams.brewParams.tamping, 120, '离散参数超限应归到最近档（60kg）');
     assert.strictEqual(withParams.brewParams.secondTamping, -0.5, '缺失项应按默认补齐');
     assert.strictEqual(Object.keys(withParams.brewParams).length, 6);
 
@@ -372,14 +394,23 @@ test('萃取参数变化应进入修改前后 diff，且不影响容量合计口
     const runtime = createBrewRuntime();
     runtime.productBeansSnapshot = true;
     const base = runtime.ensureRecipeBrewParams({});
-    const edited = runtime.ensureRecipeBrewParams({ brewParams: { ...base.brewParams, tamping: 22 } });
+    // 压粉从默认 64（20kg）切到 92（40kg）：档位变化
+    const discreteEdited = runtime.ensureRecipeBrewParams({ brewParams: { ...base.brewParams, tamping: 92 } });
+    const discreteDiffs = runtime.getRecipeVariantDiffs(base, discreteEdited);
+    assert.strictEqual(discreteDiffs.length, 1, '只切压粉档位应恰好一条 diff');
+    assert.strictEqual(discreteDiffs[0].label, '压粉力度');
+    assert.strictEqual(discreteDiffs[0].isDiscrete, true);
+    assert.strictEqual(discreteDiffs[0].displayBefore, '20kg', 'diff 应展示 kg 档位口径');
+    assert.strictEqual(discreteDiffs[0].displayAfter, '40kg');
 
+    // 连续参数变化：保持数值+单位 / delta 增量的常规显示
+    const edited = runtime.ensureRecipeBrewParams({ brewParams: { ...base.brewParams, relaxTime: 2 } });
     const diffs = runtime.getRecipeVariantDiffs(base, edited);
-    assert.strictEqual(diffs.length, 1, '只改压粉力度应恰好一条 diff');
-    assert.strictEqual(diffs[0].label, '压粉力度');
-    assert.strictEqual(diffs[0].unit, 'kg');
-    assert.strictEqual(diffs[0].delta, 2);
-    assert.strictEqual(diffs[0].isBrewParam, true);
+    assert.strictEqual(diffs.length, 1, '只改松弛时间应恰好一条 diff');
+    assert.strictEqual(diffs[0].label, '松弛时间');
+    assert.strictEqual(diffs[0].unit, 's');
+    assert.strictEqual(diffs[0].delta, 1);
+    assert.strictEqual(diffs[0].displayBefore, undefined, '连续参数不应带档位展示字段');
 
     assert.strictEqual(runtime.getRecipeVariantDiffs(base, base).length, 0, '无变化应无 diff');
 
