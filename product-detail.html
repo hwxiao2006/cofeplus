@@ -2329,18 +2329,55 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             background: var(--bg-body);
-            padding: 14px 16px;
+            overflow: hidden;
         }
         .recipe-fetch-brew-head {
-            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 12px 14px;
+            cursor: pointer;
+            text-align: left;
+            font-size: inherit;
+        }
+        .recipe-fetch-brew-head:hover {
+            background: rgba(78, 205, 196, 0.08);
+        }
+        .recipe-fetch-brew-caret {
+            display: inline-block;
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: transform 0.2s ease;
+        }
+        .recipe-fetch-brew-section.is-open .recipe-fetch-brew-caret {
+            transform: rotate(90deg);
         }
         .recipe-fetch-brew-title {
             color: var(--text-primary);
             font-size: 14px;
             font-weight: 800;
         }
+        .recipe-fetch-brew-badge {
+            background: var(--warning);
+            color: #fff;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 1px 8px;
+        }
         .recipe-fetch-brew-desc {
-            margin-top: 4px;
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .recipe-fetch-brew-body {
+            padding: 0 14px 12px;
+        }
+        .recipe-fetch-brew-note {
+            margin-bottom: 10px;
             color: var(--text-secondary);
             font-size: 12.5px;
             line-height: 1.5;
@@ -5638,14 +5675,19 @@
             return normalizeRecipeComponentValue(value, config || { step: 1, min: 0, max: 0 });
         }
 
-        // 「有咖啡豆的饮品」的判据：页面加载时快照的商品原始 tagI18n.beans（见 initPage）。
+        // 「有咖啡豆的饮品」的判据：页面加载时快照的商品原始 tagI18n（见 initPage）。
         // 运行期 tagI18n 会被标签播种污染（getTagLabel→ensureTagI18n 给所有商品补设备级
         // beans 文案），specs.beans 在 mock 数据里恒为空，都不能用；快照缺失时（测试等
         // 场景）退回当前 tagI18n，保持行为可注入。
+        // 商品级判据的边界：mock 数据给所有商品同一套选项模板，未编辑过选项的商品
+        // 在 tagI18n 里没有任何差异信号 —— 因此语义定为「编辑过选项的按其真实选项判断，
+        // 未编辑过的跟随系统默认模板（含豆）」，仅剩从未编辑的无豆饮品会被误放行。
         let productBeansSnapshot = null;
 
         function hasBeansTagInProduct(targetProduct = productData) {
-            const tagMap = targetProduct?.tagI18n?.beans;
+            const tagI18n = targetProduct?.tagI18n;
+            if (!tagI18n || !Object.keys(tagI18n).length) return true;
+            const tagMap = tagI18n.beans;
             return Boolean(tagMap && Object.keys(tagMap).length);
         }
 
@@ -5675,10 +5717,9 @@
             return recipe;
         }
 
-        // 只读成分的提示文案：不同成分原因不同（浓缩 = 配方文件、奶泡 = 设备打奶量），
-        // 不在这一页修改时给出对应解释。
+        // 只读成分的提示文案：不同成分原因不同（奶泡 = 设备打奶量），
+        // 不在这一页修改时给出对应解释。浓缩行已下线（工艺参数改到萃取参数分区）。
         const RECIPE_READONLY_HINTS = {
-            baseCoffeeLiquid: '基底咖啡数值由配方文件维护，不可在此修改。',
             foam: '奶泡数值由设备出奶口出料控制，不可在此修改。'
         };
         function getRecipeReadonlyHint(groupKey) {
@@ -8296,7 +8337,7 @@
                 }
                 // 在页面渲染 / 标签播种污染 tagI18n 之前，快照商品是否为含豆饮品。
                 // 运行期 getTagLabel→ensureTagI18n 会把设备级 beans 文案写进所有商品，
-                // 之后 tagI18n 已无法区分冰水这类无豆饮品。
+                // 之后 tagI18n 已无法区分无豆饮品；判定语义见 hasBeansTagInProduct。
                 productBeansSnapshot = hasBeansTagInProduct(productData);
                 document.getElementById('productId').textContent = 'ID: ' + productData.id;
                 if (!Array.isArray(linkedProductCatalog) || linkedProductCatalog.length === 0) {
@@ -9061,10 +9102,14 @@
 
             const recipe = variant.recipe || getDefaultRecipeData(variant.label);
             const total = getRecipeVolumeTotal(recipe);
+            // 浓缩（基底咖啡液）行不再展示：数值由配方文件维护且不可改，
+            // 其工艺参数已开放到上方「咖啡萃取参数」分区，保留只读行只会占位。
             const rows = RECIPE_COMP_CONFIGS
+                .filter((cfg) => cfg.groupKey !== 'baseCoffeeLiquid')
                 .filter((cfg) => (Number(recipe.groups?.[cfg.groupKey]?.ml) || 0) > 0)
                 .map((cfg) => renderFetchedRecipeIngredient(variant, cfg))
                 .join('');
+            // 萃取参数分区排在物料行（牛奶打头）之前
             const brewRows = renderFetchedBrewParamRows(variant);
             const isChanged = getFetchedRecipeChanged();
             editor.innerHTML = `
@@ -9102,8 +9147,8 @@
                     </div>
                 </div>
                 ${renderFetchedRecipeCompareHtml()}
-                ${rows || '<div class="recipe-change-empty">当前配方暂无成分。</div>'}
                 ${brewRows}
+                ${rows || '<div class="recipe-change-empty">当前配方暂无成分。</div>'}
                 <div class="recipe-fetch-save-note">保存后只更新当前选项组合对应的配方。</div>
             `;
         }
@@ -9169,39 +9214,64 @@
         }
 
         // 萃取参数分区：仅有咖啡豆的饮品（商品选项含 beans）且配方带 brewParams 时渲染。
-        // 参数行复用物料行的步进器样式，但走独立的读写函数（规则/单位与物料不同）。
+        // 默认收起，点击标题行展开/收起；收起时若参数有未保存修改，标题旁给出徽标提示。
+        let recipeBrewSectionOpen = false;
+
+        function toggleRecipeBrewSection() {
+            recipeBrewSectionOpen = !recipeBrewSectionOpen;
+            renderRecipeMainEditorAll();
+        }
+
+        function hasFetchedBrewParamChanges() {
+            const variant = getFetchedRecipeVariant();
+            const initial = recipeEditorInitialState?.variants?.[0];
+            if (!variant?.recipe?.brewParams || !initial?.recipe?.brewParams) return false;
+            return getRecipeVariantDiffs(initial.recipe, variant.recipe)
+                .some(diff => diff.isBrewParam);
+        }
+
         function renderFetchedBrewParamRows(variant) {
             const recipe = variant?.recipe;
             if (!recipe?.brewParams) return '';
             if (!productHasBeansOption()) return '';
 
-            const rows = RECIPE_BREW_PARAM_CONFIGS.map(config => {
-                const value = normalizeRecipeBrewParamValue(recipe.brewParams[config.key], config);
-                return `
-                    <div class="recipe-ingredient-editor">
-                        <div>
-                            <div class="recipe-ingredient-name">${escAttr(config.label)}</div>
-                            <div class="recipe-ingredient-hint">${escAttr(config.hint)} · 每次 ${config.step}${config.unit}</div>
+            const brewChanged = hasFetchedBrewParamChanges();
+            const rowsHtml = recipeBrewSectionOpen
+                ? RECIPE_BREW_PARAM_CONFIGS.map(config => {
+                    const value = normalizeRecipeBrewParamValue(recipe.brewParams[config.key], config);
+                    return `
+                        <div class="recipe-ingredient-editor">
+                            <div>
+                                <div class="recipe-ingredient-name">${escAttr(config.label)}</div>
+                                <div class="recipe-ingredient-hint">${escAttr(config.hint)} · 每次 ${config.step}${config.unit}</div>
+                            </div>
+                            <div class="recipe-stepper">
+                                <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', -${config.step})">−</button>
+                                <label class="recipe-value-field">
+                                    <input value="${value}" inputmode="numeric" onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)" onchange="setFetchedBrewParamValue('${config.key}', this.value)" onblur="setFetchedBrewParamValue('${config.key}', this.value)" />
+                                    <span class="recipe-value-unit">${config.unit}</span>
+                                </label>
+                                <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', ${config.step})">+</button>
+                            </div>
                         </div>
-                        <div class="recipe-stepper">
-                            <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', -${config.step})">−</button>
-                            <label class="recipe-value-field">
-                                <input value="${value}" inputmode="numeric" onfocus="selectCupInputValue(this)" onclick="selectCupInputValue(this, event)" onchange="setFetchedBrewParamValue('${config.key}', this.value)" onblur="setFetchedBrewParamValue('${config.key}', this.value)" />
-                                <span class="recipe-value-unit">${config.unit}</span>
-                            </label>
-                            <button class="recipe-stepper-btn" type="button" onclick="adjustFetchedBrewParam('${config.key}', ${config.step})">+</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('')
+                : '';
 
             return `
-                <div class="recipe-fetch-brew-section">
-                    <div class="recipe-fetch-brew-head">
-                        <div class="recipe-fetch-brew-title">咖啡萃取参数</div>
-                        <div class="recipe-fetch-brew-desc">含咖啡豆的饮品可调；不计入容量总量，保存后随配方同步到关联商品。</div>
-                    </div>
-                    ${rows}
+                <div class="recipe-fetch-brew-section${recipeBrewSectionOpen ? ' is-open' : ''}">
+                    <button type="button" class="recipe-fetch-brew-head" onclick="toggleRecipeBrewSection()" aria-expanded="${recipeBrewSectionOpen}">
+                        <span class="recipe-fetch-brew-caret" aria-hidden="true">▸</span>
+                        <span class="recipe-fetch-brew-title">咖啡萃取参数</span>
+                        ${brewChanged ? '<span class="recipe-fetch-brew-badge">已修改</span>' : ''}
+                        <span class="recipe-fetch-brew-desc">含咖啡豆的饮品可调 · 点击${recipeBrewSectionOpen ? '收起' : '展开'}</span>
+                    </button>
+                    ${recipeBrewSectionOpen
+                        ? `<div class="recipe-fetch-brew-body">
+                            <div class="recipe-fetch-brew-note">不计入容量总量，保存后随配方同步到关联商品。</div>
+                            ${rowsHtml}
+                        </div>`
+                        : ''}
                 </div>
             `;
         }
