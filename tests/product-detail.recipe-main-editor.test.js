@@ -204,3 +204,149 @@ test('恢复当前杯型只应重置该杯型', () => {
     assert.strictEqual(iced.ingredients.find((item) => item.key === 'ice').value, 100);
     assert.strictEqual(runtime.isRecipeCupChanged(hot), false);
 });
+
+// =============== 咖啡萃取参数（brewParams）tests ===============
+
+test('萃取参数应定义六项工艺参数并接入渲染与取数入口', () => {
+    assert.ok(/const\s+RECIPE_BREW_PARAM_CONFIGS\s*=\s*\[/.test(html), 'missing RECIPE_BREW_PARAM_CONFIGS');
+    ['waterQuantity', 'cakeThickness', 'tamping', 'preInfusion', 'relaxTime', 'secondTamping'].forEach((key) => {
+        assert.ok(html.includes(`key: '${key}'`), `brew param ${key} missing`);
+    });
+    assert.ok(/function\s+renderFetchedBrewParamRows\s*\(/.test(html));
+    assert.ok(/function\s+setFetchedBrewParamValue\s*\(/.test(html));
+    assert.ok(/function\s+adjustFetchedBrewParam\s*\(/.test(html));
+    assert.ok(/function\s+ensureRecipeBrewParams\s*\(/.test(html));
+    assert.ok(/function\s+productHasBeansOption\s*\(/.test(html), 'should judge by product-level option data');
+    assert.ok(html.includes('咖啡萃取参数'), 'brew section title missing');
+    assert.ok(html.includes('含咖啡豆的饮品可调'), 'brew section scope note missing');
+    // 获取配方后必须先补默认，否则含豆组合无存量数据时编辑区不出现参数行
+    assert.ok(/const recipe = getRecipeForCombination\(combo\);\s*ensureRecipeBrewParams\(recipe\);/.test(html), 'fetch should ensure brew params');
+});
+
+function extractConstSource(name) {
+    const marker = `const ${name} = `;
+    const start = html.indexOf(marker);
+    if (start === -1) {
+        throw new Error(`未找到常量 ${name}`);
+    }
+    let depth = 0;
+    let index = start;
+    for (; index < html.length; index += 1) {
+        const char = html[index];
+        if (char === '[' || char === '(' || char === '{') depth += 1;
+        if (char === ']' || char === ')' || char === '}') {
+            depth -= 1;
+            if (depth === 0) {
+                return html.slice(start, html.indexOf(';', index) + 1);
+            }
+        }
+    }
+    throw new Error(`常量 ${name} 未正常结束`);
+}
+
+function createBrewRuntime() {
+    const context = { console };
+    vm.createContext(context);
+    ['RECIPE_GROUP_CONFIGS', 'RECIPE_GROUP_KEYS', 'RECIPE_COMP_CONFIGS', 'RECIPE_COMPONENT_RULES', 'RECIPE_BREW_PARAM_CONFIGS'].forEach((name) => {
+        vm.runInContext(extractConstSource(name), context);
+    });
+    [
+        'getRecipeComponentRule',
+        'getRecipeBrewParamConfig',
+        'normalizeRecipeComponentValue',
+        'normalizeRecipeBrewParamValue',
+        'hasBeansTagInProduct',
+        'productHasBeansOption',
+        'normalizeRecipePercent',
+        'getDefaultRecipeData',
+        'normalizeRecipeData',
+        'ensureRecipeBrewParams',
+        'getRecipeVariantDiffs'
+    ].forEach((name) => {
+        vm.runInContext(extractFunctionSource(name), context);
+    });
+    // const 声明不进 context 全局对象，用求值方式取引用；对象比较也用 JSON 规避跨 realm 原型差异
+    context.__brewConfigs = vm.runInContext('RECIPE_BREW_PARAM_CONFIGS', context);
+    // 页面加载期快照 + 商品数据均为可注入的全局（var 声明挂 context 对象）
+    vm.runInContext('var productBeansSnapshot = null; var productData = {};', context);
+    return context;
+}
+
+function brewConfig(runtime, key) {
+    return runtime.__brewConfigs.find(item => item.key === key);
+}
+
+const BEAN_PRODUCT = { tagI18n: { beans: { '金奖黑咖-浓香意式': { zh: '金奖黑咖-浓香意式' } } } };
+const NO_BEAN_PRODUCT = { tagI18n: { temperature: { 热: { zh: '热' } } } };
+
+test('萃取参数数值应按步进对齐并 clamp 到范围（含负值）', () => {
+    const runtime = createBrewRuntime();
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, brewConfig(runtime, 'waterQuantity')), 300, '超出上限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-5, brewConfig(runtime, 'waterQuantity')), 0, '低于下限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.3, brewConfig(runtime, 'cakeThickness')), 11.5, '0.5 步进应四舍五入到最近档');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.2, brewConfig(runtime, 'cakeThickness')), 11, '0.5 步进向下档应对齐');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-0.5, brewConfig(runtime, 'secondTamping')), -0.5, '负值默认应保留');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -10, '负向超限应截断');
+});
+
+test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品不携带', () => {
+    const runtime = createBrewRuntime();
+    runtime.productBeansSnapshot = true;
+    const withBeans = runtime.ensureRecipeBrewParams({});
+    assert.strictEqual(JSON.stringify(withBeans.brewParams), JSON.stringify({
+        waterQuantity: 90,
+        cakeThickness: 11,
+        tamping: 20,
+        preInfusion: 0,
+        relaxTime: 1,
+        secondTamping: -0.5
+    }));
+
+    runtime.productBeansSnapshot = false;
+    const noBeans = runtime.ensureRecipeBrewParams({ brewParams: { tamping: 22 } });
+    assert.strictEqual('brewParams' in noBeans, false, '无豆饮品应剥离 brewParams');
+
+    // 快照缺失时退回当前 tagI18n（测试等注入场景），且快照优先于被播种污染的 tagI18n
+    runtime.productBeansSnapshot = null;
+    runtime.productData = BEAN_PRODUCT;
+    assert.strictEqual(runtime.productHasBeansOption(), true);
+    runtime.productData = NO_BEAN_PRODUCT;
+    assert.strictEqual(runtime.productHasBeansOption(), false);
+    runtime.productBeansSnapshot = false;
+    runtime.productData = BEAN_PRODUCT;
+    assert.strictEqual(runtime.productHasBeansOption(), false, '快照 false 应压过 tagI18n 有豆');
+});
+
+test('normalizeRecipeData 应保留并补齐已有萃取参数，无则不凭空添加', () => {
+    const runtime = createBrewRuntime();
+    const withParams = runtime.normalizeRecipeData({
+        groups: {},
+        brewParams: { waterQuantity: 85, tamping: 999 }
+    });
+    assert.strictEqual(withParams.brewParams.waterQuantity, 85, '已有合法值应保留');
+    assert.strictEqual(withParams.brewParams.tamping, 40, '超限值应 clamp');
+    assert.strictEqual(withParams.brewParams.secondTamping, -0.5, '缺失项应按默认补齐');
+    assert.strictEqual(Object.keys(withParams.brewParams).length, 6);
+
+    const withoutParams = runtime.normalizeRecipeData({ groups: {} });
+    assert.strictEqual('brewParams' in withoutParams, false, '无 brewParams 时不应添加');
+});
+
+test('萃取参数变化应进入修改前后 diff，且不影响容量合计口径', () => {
+    const runtime = createBrewRuntime();
+    runtime.productBeansSnapshot = true;
+    const base = runtime.ensureRecipeBrewParams({});
+    const edited = runtime.ensureRecipeBrewParams({ brewParams: { ...base.brewParams, tamping: 22 } });
+
+    const diffs = runtime.getRecipeVariantDiffs(base, edited);
+    assert.strictEqual(diffs.length, 1, '只改压粉力度应恰好一条 diff');
+    assert.strictEqual(diffs[0].label, '压粉力度');
+    assert.strictEqual(diffs[0].unit, 'kg');
+    assert.strictEqual(diffs[0].delta, 2);
+    assert.strictEqual(diffs[0].isBrewParam, true);
+
+    assert.strictEqual(runtime.getRecipeVariantDiffs(base, base).length, 0, '无变化应无 diff');
+
+    const noneAfter = runtime.getRecipeVariantDiffs(base, runtime.ensureRecipeBrewParams({}));
+    assert.strictEqual(noneAfter.length, 0, '两侧同为默认值应无 diff');
+});
