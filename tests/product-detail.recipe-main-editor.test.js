@@ -311,12 +311,13 @@ const UNEDITED_PRODUCT = { names: { zh: '未编辑过选项的商品' } };
 
 test('萃取参数数值应按步进对齐并 clamp 到范围（含负值）', () => {
     const runtime = createBrewRuntime();
-    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, brewConfig(runtime, 'waterQuantity')), 300, '超出上限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, brewConfig(runtime, 'waterQuantity')), 262, '超出上限应截断（WaterQ 模板机口径）');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-5, brewConfig(runtime, 'waterQuantity')), 0, '低于下限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(1.4, brewConfig(runtime, 'cakeThickness')), 3, '粉饼厚度下限应为 3mm（CakeTh DB 口径）');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.3, brewConfig(runtime, 'cakeThickness')), 11.5, '0.5 步进应四舍五入到最近档');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.2, brewConfig(runtime, 'cakeThickness')), 11, '0.5 步进向下档应对齐');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-0.5, brewConfig(runtime, 'secondTamping')), -0.5, '负值默认应保留');
-    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -10, '负向超限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -5, '负向超限应截断（PressAf 口径 ±5）');
 });
 
 test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品不携带', () => {
@@ -325,7 +326,7 @@ test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品�
     const withBeans = runtime.ensureRecipeBrewParams({});
     assert.strictEqual(JSON.stringify(withBeans.brewParams), JSON.stringify({
         waterQuantity: 90,
-        cakeThickness: 11,
+        cakeThickness: 23,
         tamping: 20,
         preInfusion: 0,
         relaxTime: 1,

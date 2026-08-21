@@ -4576,13 +4576,17 @@
         // 咖啡萃取参数：设备萃取层的工艺参数（tick / mm / kg / s），
         // 与上面的物料用量（ml / g）是两类数据。仅含咖啡豆（beans 维度）
         // 的饮品组合开放调整；不计入容量条与容量总量，随配方一起保存与同步。
+        // 范围口径对齐配方下发字段文档（Eversys 28 列基础列）：
+        // WaterQ 模板机 [0,262]；CakeTh [3.0,32.0]mm；PreBrew/RelaxT [0,10.0]s；
+        // PressAf [-5.0,5.0]mm 有符号。压粉力度按产品参数口径（kg）保留，
+        // 不按模板机 PowderP 的二值退化处理。
         const RECIPE_BREW_PARAM_CONFIGS = [
-            { key: 'waterQuantity', label: '萃取水量', unit: 'tick', step: 1, min: 0, max: 300, defaults: 90, hint: '通过咖啡粉饼的水量，调大杯量增加、浓度通常降低' },
-            { key: 'cakeThickness', label: '粉饼厚度', unit: 'mm', step: 0.5, min: 0, max: 30, defaults: 11, hint: '进入萃取腔的粉饼厚度，调大阻力增大、咖啡更浓' },
+            { key: 'waterQuantity', label: '萃取水量', unit: 'tick', step: 1, min: 0, max: 262, defaults: 90, hint: '通过咖啡粉饼的水量，调大杯量增加、浓度通常降低' },
+            { key: 'cakeThickness', label: '粉饼厚度', unit: 'mm', step: 0.5, min: 3, max: 32, defaults: 23, hint: '进入萃取腔的粉饼厚度，调大阻力增大、咖啡更浓' },
             { key: 'tamping', label: '压粉力度', unit: 'kg', step: 1, min: 0, max: 40, defaults: 20, hint: '压粉压力，调大粉饼更紧、流速变慢' },
-            { key: 'preInfusion', label: '预浸泡时间', unit: 's', step: 0.5, min: 0, max: 20, defaults: 0, hint: '萃取前先润湿粉饼的等待时间' },
-            { key: 'relaxTime', label: '松弛时间', unit: 's', step: 0.5, min: 0, max: 20, defaults: 1, hint: '压粉后松开等待，让粉饼回弹均匀' },
-            { key: 'secondTamping', label: '二次压粉', unit: 'mm', step: 0.5, min: -10, max: 10, defaults: -0.5, hint: '二次压粉位置，负值表示回退行程' }
+            { key: 'preInfusion', label: '预浸泡时间', unit: 's', step: 0.5, min: 0, max: 10, defaults: 0, hint: '萃取前先润湿粉饼的等待时间' },
+            { key: 'relaxTime', label: '松弛时间', unit: 's', step: 0.5, min: 0, max: 10, defaults: 1, hint: '压粉后松开等待，让粉饼回弹均匀' },
+            { key: 'secondTamping', label: '二次压粉', unit: 'mm', step: 0.5, min: -5, max: 5, defaults: -0.5, hint: '二次压粉位置，负值表示回退行程' }
         ];
         let recipeComponentHoldTimer = null;
         let recipeComponentHoldInterval = null;
