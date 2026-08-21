@@ -65,8 +65,18 @@ test('选项配置 tab 内容应保持生产版结构，不迁入配方配置', 
     assert.ok(!recipePanel.includes('编辑多语言文案'));
 });
 
-test('浓缩应保持只读说明', () => {
-    assert.ok(html.includes('基底咖啡数值由配方文件维护，不可在此修改'), 'readonly espresso note missing');
+test('浓缩行应下线：主编辑区不渲染 baseCoffeeLiquid，奶泡保留只读说明', () => {
+    // 主 UI（fetch 编辑器）过滤浓缩行；RECIPE_READONLY_HINTS 不再为浓缩提供文案。
+    // 旧弹窗/隐藏兜底渲染器（renderRecipeEditor / renderRecipeIngredientEditor）中的
+    // 同款只读文案属于死代码路径，不在本次清理范围。
+    const editorFn = html.slice(
+        html.indexOf('function renderFetchedRecipeEditor('),
+        html.indexOf('function revertFetchedRecipeChanges(')
+    );
+    assert.ok(editorFn.includes(".filter((cfg) => cfg.groupKey !== 'baseCoffeeLiquid')"), '主编辑区应过滤浓缩行');
+    const hints = html.slice(html.indexOf('const RECIPE_READONLY_HINTS'), html.indexOf('};', html.indexOf('const RECIPE_READONLY_HINTS')));
+    assert.ok(!hints.includes('baseCoffeeLiquid'), '只读提示表不应再有浓缩条目');
+    assert.ok(html.includes('奶泡数值由设备出奶口出料控制'), '奶泡只读说明应保留');
 });
 
 test('旧版修改配方弹窗不应作为新版杯型成分编辑的主入口', () => {
@@ -221,6 +231,25 @@ test('萃取参数应定义六项工艺参数并接入渲染与取数入口', ()
     assert.ok(html.includes('含咖啡豆的饮品可调'), 'brew section scope note missing');
     // 获取配方后必须先补默认，否则含豆组合无存量数据时编辑区不出现参数行
     assert.ok(/const recipe = getRecipeForCombination\(combo\);\s*ensureRecipeBrewParams\(recipe\);/.test(html), 'fetch should ensure brew params');
+    // 默认收起 + 点击展开
+    assert.ok(/let recipeBrewSectionOpen = false;/.test(html), 'brew section should default to collapsed');
+    assert.ok(/function\s+toggleRecipeBrewSection\s*\(/.test(html), 'missing toggle handler');
+    assert.ok(/aria-expanded/.test(html), 'head button should expose aria-expanded');
+    // 收起时有未保存修改要能看到
+    assert.ok(/function\s+hasFetchedBrewParamChanges\s*\(/.test(html), 'missing brew change detector');
+    assert.ok(html.includes('recipe-fetch-brew-badge'), 'missing changed badge');
+});
+
+test('萃取参数分区应排在物料行（牛奶）之前', () => {
+    const editorFn = html.slice(
+        html.indexOf('function renderFetchedRecipeEditor('),
+        html.indexOf('function revertFetchedRecipeChanges(')
+    );
+    assert.ok(editorFn.includes('${brewRows}') && editorFn.includes('${rows'), 'editor should render both blocks');
+    assert.ok(
+        editorFn.indexOf('${brewRows}') < editorFn.indexOf("${rows ||"),
+        'brew section should come before ingredient rows'
+    );
 });
 
 function extractConstSource(name) {
@@ -278,15 +307,17 @@ function brewConfig(runtime, key) {
 
 const BEAN_PRODUCT = { tagI18n: { beans: { '金奖黑咖-浓香意式': { zh: '金奖黑咖-浓香意式' } } } };
 const NO_BEAN_PRODUCT = { tagI18n: { temperature: { 热: { zh: '热' } } } };
+const UNEDITED_PRODUCT = { names: { zh: '未编辑过选项的商品' } };
 
 test('萃取参数数值应按步进对齐并 clamp 到范围（含负值）', () => {
     const runtime = createBrewRuntime();
-    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, brewConfig(runtime, 'waterQuantity')), 300, '超出上限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(999, brewConfig(runtime, 'waterQuantity')), 262, '超出上限应截断（WaterQ 模板机口径）');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-5, brewConfig(runtime, 'waterQuantity')), 0, '低于下限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(1.4, brewConfig(runtime, 'cakeThickness')), 3, '粉饼厚度下限应为 3mm（CakeTh DB 口径）');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.3, brewConfig(runtime, 'cakeThickness')), 11.5, '0.5 步进应四舍五入到最近档');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(11.2, brewConfig(runtime, 'cakeThickness')), 11, '0.5 步进向下档应对齐');
     assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-0.5, brewConfig(runtime, 'secondTamping')), -0.5, '负值默认应保留');
-    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -10, '负向超限应截断');
+    assert.strictEqual(runtime.normalizeRecipeBrewParamValue(-99, brewConfig(runtime, 'secondTamping')), -5, '负向超限应截断（PressAf 口径 ±5）');
 });
 
 test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品不携带', () => {
@@ -295,7 +326,7 @@ test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品�
     const withBeans = runtime.ensureRecipeBrewParams({});
     assert.strictEqual(JSON.stringify(withBeans.brewParams), JSON.stringify({
         waterQuantity: 90,
-        cakeThickness: 11,
+        cakeThickness: 23,
         tamping: 20,
         preInfusion: 0,
         relaxTime: 1,
@@ -306,12 +337,17 @@ test('有咖啡豆的饮品应补全六项萃取参数默认值，无豆饮品�
     const noBeans = runtime.ensureRecipeBrewParams({ brewParams: { tamping: 22 } });
     assert.strictEqual('brewParams' in noBeans, false, '无豆饮品应剥离 brewParams');
 
-    // 快照缺失时退回当前 tagI18n（测试等注入场景），且快照优先于被播种污染的 tagI18n
+    // 快照缺失时退回当前 tagI18n（测试等注入场景），且快照优先于被播种污染的 tagI18n。
+    // 三态语义：编辑过且有豆 true / 编辑过且无豆 false / 未编辑过（无 tagI18n）默认含豆 true。
     runtime.productBeansSnapshot = null;
     runtime.productData = BEAN_PRODUCT;
-    assert.strictEqual(runtime.productHasBeansOption(), true);
+    assert.strictEqual(runtime.hasBeansTagInProduct(), true);
     runtime.productData = NO_BEAN_PRODUCT;
-    assert.strictEqual(runtime.productHasBeansOption(), false);
+    assert.strictEqual(runtime.hasBeansTagInProduct(), false);
+    runtime.productData = UNEDITED_PRODUCT;
+    assert.strictEqual(runtime.hasBeansTagInProduct(), true, '未编辑过选项的商品应跟随默认模板视为含豆');
+    runtime.productData = {};
+    assert.strictEqual(runtime.hasBeansTagInProduct(), true, '空商品数据应跟随默认模板视为含豆');
     runtime.productBeansSnapshot = false;
     runtime.productData = BEAN_PRODUCT;
     assert.strictEqual(runtime.productHasBeansOption(), false, '快照 false 应压过 tagI18n 有豆');
