@@ -53,7 +53,7 @@ if [[ -d "tasks/screenshots" ]]; then
 fi
 
 # Top-level screenshot dirs referenced via ../screenshots/... from PRD htmls
-for shots_dir in device-prd product-prd menu-tag-imprint-prd staff-prd; do
+for shots_dir in device-prd product-prd menu-tag-imprint-prd staff-prd location-prd recipe-brew-prd; do
     if [[ -d "screenshots/$shots_dir" ]]; then
         cp -R "screenshots/$shots_dir" "$DIST_DIR/screenshots/$shots_dir"
     fi
