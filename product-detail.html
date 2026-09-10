@@ -9913,6 +9913,7 @@
         let optionGroupDraggedKey = '';
         let optionGroupTouchDragState = null;
         let optionGroupTouchListenersBound = false;
+        let optionGroupTreeListenersBound = false;
         let optionGroupIgnoreClickUntil = 0;
 
         function createOptionGroupDropPlaceholder(height = 56) {
@@ -10035,7 +10036,33 @@
         }
 
         function handleOptionGroupDragEnd() {
+            // 松手落在虚线占位（行与行之间的空隙）上时，占位覆盖 pointer-events:none，
+            // 事件会穿透到 #tagTree 容器而不是某一行，由 handleOptionGroupTreeDrop 负责提交；
+            // 这里只在没有任何 drop 提交过（仍处于拖拽中）时才当作取消处理。
+            if (!optionGroupDraggedElement) return;
             resetOptionGroupDragState();
+        }
+
+        function handleOptionGroupTreeDragOver(event) {
+            if (!optionGroupDraggedElement || !optionGroupDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+        }
+
+        function handleOptionGroupTreeDrop(event) {
+            if (!optionGroupDraggedElement) return;
+            event.preventDefault();
+            commitOptionGroupDrag();
+        }
+
+        function ensureOptionGroupTreeListeners() {
+            const tree = document.getElementById('tagTree');
+            if (!tree || optionGroupTreeListenersBound || typeof tree.addEventListener !== 'function') return;
+            tree.addEventListener('dragover', handleOptionGroupTreeDragOver);
+            tree.addEventListener('drop', handleOptionGroupTreeDrop);
+            optionGroupTreeListenersBound = true;
         }
 
         function handleOptionGroupTouchStart(event) {
@@ -10147,6 +10174,7 @@
                 row.querySelector('.drag-handle').addEventListener('touchstart', handleOptionGroupTouchStart, { passive: false });
             });
             ensureOptionGroupTouchListeners();
+            ensureOptionGroupTreeListeners();
         }
 
         function getTagGroupLabel(specKey, lang = currentLang) {

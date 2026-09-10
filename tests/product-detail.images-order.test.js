@@ -97,7 +97,7 @@ test('拖拽只接受完整分组列表，取消拖动不提交，触屏取消�
         productData, getOrderedTagConfigs: () => keys.map(specKey => ({specKey})),
         document: {getElementById: () => ({querySelectorAll: () => rows})},
         resetOptionGroupDragState: () => resets++, commitOptionGroupDrag: () => commits++,
-        optionGroupTouchDragState: {identifier: 1}, getOptionGroupTouchByIdentifier: () => ({identifier:1}), optionGroupIgnoreClickUntil: 0
+        optionGroupDraggedElement: {}, optionGroupTouchDragState: {identifier: 1}, getOptionGroupTouchByIdentifier: () => ({identifier:1}), optionGroupIgnoreClickUntil: 0
     });
     rows = ['temperature', ...keys.filter(key => key !== 'temperature')].map(specKey => ({dataset:{specKey}}));
     c.saveOptionGroupOrderByDom();
@@ -111,6 +111,46 @@ test('拖拽只接受完整分组列表，取消拖动不提交，触屏取消�
     assert.equal(commits, 0);
     c.handleOptionGroupTouchEnd({type:'touchend',preventDefault(){}});
     assert.equal(commits, 1);
+});
+test('dragend 在已提交后不再重置；未提交时（松在占位/容器空白）dragend 才取消', () => {
+    let resets = 0;
+    const cCommitted = context(detail, ['handleOptionGroupDragEnd'], {
+        optionGroupDraggedElement: null, // commitOptionGroupDrag 已把它清空，说明某个 drop 处理过了
+        resetOptionGroupDragState: () => resets++
+    });
+    cCommitted.handleOptionGroupDragEnd();
+    assert.equal(resets, 0, '已经 commit 过（draggedElement 已清空）时，dragend 不应再重置顺序');
+
+    const cCancelled = context(detail, ['handleOptionGroupDragEnd'], {
+        optionGroupDraggedElement: {}, // 没有任何 drop 处理过，仍在拖拽中
+        resetOptionGroupDragState: () => resets++
+    });
+    cCancelled.handleOptionGroupDragEnd();
+    assert.equal(resets, 1, '没有 drop 命中（Esc/拖出画面等）时，dragend 应该重置恢复原顺序');
+});
+test('松手落在虚线占位或行与行之间的容器空白处也应提交（树级 dragover/drop 兜底）', () => {
+    const calls = [];
+    const c = context(detail, ['handleOptionGroupTreeDragOver', 'handleOptionGroupTreeDrop', 'handleOptionGroupDragEnd'], {
+        optionGroupDraggedElement: {},
+        optionGroupDropPlaceholder: {},
+        commitOptionGroupDrag() { calls.push('commit'); this._afterCommit && this._afterCommit(); },
+        resetOptionGroupDragState() { calls.push('reset'); }
+    });
+    const dragOverEvent = {preventDefault(){calls.push('preventDefault');}};
+    c.handleOptionGroupTreeDragOver(dragOverEvent);
+    assert.deepEqual(calls, ['preventDefault'], '容器级 dragover 必须 preventDefault，否则浏览器不会派发 drop');
+
+    calls.length = 0;
+    const dropEvent = {preventDefault(){calls.push('preventDefault');}};
+    c.handleOptionGroupTreeDrop(dropEvent);
+    assert.deepEqual(calls, ['preventDefault', 'commit'], '松在占位/容器空白上应等同于命中某一行：同样调用 commitOptionGroupDrag');
+
+    // drop 已经提交过（commitOptionGroupDrag 内部会清空 optionGroupDraggedElement），
+    // 随后浏览器仍会在拖拽源上派发 dragend，此时不应再把刚提交的顺序重置掉。
+    calls.length = 0;
+    c.optionGroupDraggedElement = null;
+    c.handleOptionGroupDragEnd();
+    assert.deepEqual(calls, [], 'drop 提交之后紧跟着到来的 dragend 不应重复重置');
 });
 test('拖动提交按顺序放置节点、更新草稿、清理并重绘分组导航', () => {
     const calls = [];
