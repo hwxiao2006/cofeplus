@@ -388,6 +388,15 @@ test('物料页：编辑货道关联物料应按商户物料表和独立权限�
   assert.ok(/material\.materialNumber/.test(html));
 });
 
+test('物料页：没有专属配置的新商户应使用基础物料表，不应伪装成 C001', () => {
+  const start = html.indexOf('function getCurrentMerchantMaterialOptions(');
+  const end = html.indexOf('\n        function ', start + 30);
+  const fn = html.slice(start, end > 0 ? end : start + 1200);
+  assert.ok(/String\(getCurrentMerchantContext\(\)\.merchantId\s*\|\|\s*''\)\.trim\(\)\.toUpperCase\(\)/.test(fn), '商户编号匹配前应统一大小写');
+  assert.ok(/MERCHANT_MATERIAL_MASTER_DATA\[merchantId\]\s*\|\|\s*MATERIAL_MASTER_DATA/.test(fn));
+  assert.ok(!/MERCHANT_MATERIAL_MASTER_DATA\.C001/.test(fn));
+});
+
 test('物料页：编辑关联物料应使用补充物料页同类的分类搜索卡片选择器', () => {
   assert.ok(/class="lane-material-picker"/.test(html));
   assert.ok(/id="laneMaterialCategoryList"/.test(html));

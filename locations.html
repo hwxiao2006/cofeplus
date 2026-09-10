@@ -1473,16 +1473,30 @@
 
         // 加载客户列表到下拉框
         function loadCustomers() {
-            const customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
+            let customersData = [];
+            try {
+                const parsed = JSON.parse(localStorage.getItem('customersData') || '[]');
+                customersData = Array.isArray(parsed) ? parsed : [];
+            } catch (error) {
+                customersData = [];
+            }
             const select = document.getElementById('customerSelect');
-            
-            let html = '<option value="">选择客户</option>';
+            if (!select) return;
+
+            select.innerHTML = '';
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = '选择客户';
+            select.appendChild(placeholder);
             customersData.forEach(c => {
                 if (c.status === 'active') {
-                    html += `<option value="${c.id}" data-name="${c.name}">${c.name}</option>`;
+                    const option = document.createElement('option');
+                    option.value = String(c.id || '');
+                    option.dataset.name = String(c.name || '');
+                    option.textContent = String(c.name || '');
+                    select.appendChild(option);
                 }
             });
-            select.innerHTML = html;
         }
 
         // 保存到 localStorage

@@ -20,5 +20,5 @@ test('客户管理页：客户列表应包含客户编号列标题', () => {
 });
 
 test('客户管理页：客户列表项应渲染客户编号字段', () => {
-  assert.ok(/class="customer-code-value">\$\{customer\.id\}<\/span>/.test(customersHtml), '缺少客户编号字段渲染');
+  assert.ok(/class="customer-code-value">\$\{escapeHtml\(customer\.id\)\}<\/span>/.test(customersHtml), '客户编号应经过 HTML 转义后渲染');
 });
