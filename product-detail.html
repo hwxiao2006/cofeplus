@@ -275,6 +275,7 @@
 
         .main {
             flex: 1;
+            min-width: 0;
             margin-left: 240px;
             min-height: 100vh;
             display: flex;
@@ -3714,6 +3715,17 @@
                 box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
             }
         }
+        .product-image-fields { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px; }
+        .product-image-fields .form-input { min-width:0; }
+        @media (max-width: 900px) { .product-image-fields { grid-template-columns:1fr;gap:0; } }
+        .option-group-sort-hint { font-size:12px;color:var(--text-muted);padding:0 8px 8px; }
+        .option-group-row { border-radius:10px; }
+        .option-group-row .tag-tree-item { display:flex;align-items:center;gap:10px;width:100%;min-width:0; }
+        .option-group-row .drag-handle { flex-shrink:0;color:#c8cfd6;font-size:16px;line-height:1;cursor:grab;user-select:none;touch-action:none; }
+        .option-group-row:hover .drag-handle, .option-group-row.dragging .drag-handle { color:#0ba699; }
+        .option-group-row.dragging { opacity:.5;transform:rotate(1deg);box-shadow:0 4px 12px rgba(0,0,0,.12);cursor:grabbing; }
+        .option-group-drop-placeholder { border:2px dashed #0ba699;background:rgba(11,166,153,.05);border-radius:10px;min-height:44px;flex-shrink:0;pointer-events:none; }
+        @media (max-width:768px) { #tagTree { flex-direction:column;max-height:340px; } }
     </style>
 </head>
 <body>
@@ -3822,9 +3834,10 @@
                     <div class="form-card">
                         <h2 class="form-section-title">基本信息</h2>
 
+                        <div class="product-image-fields">
                         <!-- 商品图片 -->
                         <div class="form-group">
-                            <label class="form-label">商品图片</label>
+                            <label class="form-label">列表页图片</label>
                             <div id="productImagePreview" style="margin-bottom: 12px;">
                                 <!-- 动态显示图片 -->
                             </div>
@@ -3833,6 +3846,19 @@
                             <input type="file" class="form-input" id="productImageFile" accept="image/*" style="margin-top: 8px; padding: 9px 12px;">
                         </div>
                         
+                        <div class="form-group">
+                            <label class="form-label" for="productDetailImage">详情页图片</label>
+                            <div id="productDetailImagePreview" style="margin-bottom:12px;"></div>
+                            <input type="text" class="form-input" id="productDetailImage" placeholder="默认使用列表页图片，可输入独立图片 URL" oninput="updateDetailImagePreview()">
+                            <div style="display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap;">
+                                <input type="file" class="form-input" accept="image/*" id="productDetailImageFile" onchange="handleProductImageFileChange(event, 'productDetailImage')" style="flex:1;padding:9px 12px;">
+                                <button type="button" class="btn btn-default" onclick="resetProductDetailImage()">使用列表页图片</button>
+                            </div>
+                            <div id="productDetailImageStatus" style="font-size:12px;color:var(--text-muted);margin-top:6px;"></div>
+                        </div>
+
+                        </div>
+
                         <!-- 多语言名称和描述 -->
                         <div id="multiLangInputs">
                             <!-- 动态生成 -->
@@ -4561,6 +4587,7 @@
             { specKey: 'lid', title: '杯盖', listId: 'lidOptions', optionTitle: 'LID' },
             { specKey: 'latteArt', title: '拉花', listId: 'latteArtOptions', optionTitle: 'LATTE-ART' }
         ];
+        const DEFAULT_OPTION_GROUP_ORDER = ['beans', 'syrup', 'sweetness', 'temperature', 'strength', 'cupsize', 'lid', 'latteArt'];
         const PRODUCT_CATEGORY_ASSIGNMENTS_KEY = 'menuProductCategoryAssignments';
         const MENU_MANAGEMENT_RETURN_STATE_KEY = 'menuManagementReturnState';
         const COPY_PRODUCT_DEVICE_CATEGORY_CATALOG_KEY = 'menuCopyDeviceCategoryCatalog';
@@ -4646,6 +4673,27 @@
                 }, {});
             }
             return value;
+        }
+
+        function normalizeOptionGroupOrder(rawOrder, validKeys = tagConfigs.map(cfg => cfg.specKey)) {
+            const allowed = Array.from(new Set((Array.isArray(validKeys) ? validKeys : []).map(key => String(key || '').trim()).filter(Boolean)));
+            const fallback = DEFAULT_OPTION_GROUP_ORDER.filter(key => allowed.includes(key));
+            allowed.forEach(key => {
+                if (!fallback.includes(key)) fallback.push(key);
+            });
+            const normalized = [];
+            if (Array.isArray(rawOrder)) {
+                rawOrder.forEach(key => {
+                    const normalizedKey = String(key || '').trim();
+                    if (allowed.includes(normalizedKey) && !normalized.includes(normalizedKey)) {
+                        normalized.push(normalizedKey);
+                    }
+                });
+            }
+            fallback.forEach(key => {
+                if (!normalized.includes(key)) normalized.push(key);
+            });
+            return normalized;
         }
 
         function normalizeBusinessTagIds(tagIds) {
@@ -5618,6 +5666,8 @@
                 names,
                 descs,
                 image: imageEl ? String(imageEl.value || '').trim() : (productData.image || ''),
+                detailImage: document.getElementById('productDetailImage')?.value.trim() || null,
+                optionGroupOrder: normalizeOptionGroupOrder(productData.optionGroupOrder),
                 price: Number.isFinite(parsedPrice) ? parsedPrice : Number(productData.price || 0),
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))
@@ -7794,6 +7844,8 @@
                     names,
                     descs,
                     image: document.getElementById('productImage').value.trim() || null,
+                    detailImage: document.getElementById('productDetailImage')?.value.trim() || null,
+                    optionGroupOrder: normalizeOptionGroupOrder(productData.optionGroupOrder),
                     price: Number.isFinite(price) ? price : null,
                     originalPrice,
                     businessTagIds: selectedBusinessTagIds,
@@ -8670,6 +8722,7 @@
 
             // 图片
             document.getElementById('productImage').value = productData.image || '';
+            document.getElementById('productDetailImage').value = productData.detailImage || '';
             updateImagePreview();
 
             // 价格
@@ -9756,7 +9809,35 @@
             body.innerHTML = `<div class="cup-grid">${cardsHtml}</div>`;
         }
 
+        function updateDetailImagePreview() {
+            const container = document.getElementById('productDetailImagePreview');
+            if (!container) return;
+            const custom = document.getElementById('productDetailImage').value.trim();
+            const url = custom || document.getElementById('productImage').value.trim();
+            container.replaceChildren();
+            if (url) {
+                const image = document.createElement('img');
+                image.alt = '详情页图片预览';
+                image.style.cssText = 'width:200px;height:150px;object-fit:contain;border:1px solid var(--border);border-radius:8px;background:#f5f7fa';
+                image.onerror = () => { container.textContent = '图片加载失败，请检查图片链接'; };
+                image.src = url;
+                container.appendChild(image);
+            } else {
+                container.textContent = '暂无图片，请先添加列表页图片或单独上传详情图';
+            }
+            document.getElementById('productDetailImageStatus').textContent = custom
+                ? '使用独立详情图 · 修改列表页图片不会影响此图'
+                : '当前跟随列表页图片 · 支持 JPG、PNG，上传大小不超过 6MB';
+        }
+
+        function resetProductDetailImage() {
+            document.getElementById('productDetailImage').value = '';
+            document.getElementById('productDetailImageFile').value = '';
+            updateDetailImagePreview();
+        }
+
         function updateImagePreview() {
+            updateDetailImagePreview();
             const previewContainer = document.getElementById('productImagePreview');
             const imageUrl = document.getElementById('productImage').value.trim();
             
@@ -9776,7 +9857,7 @@
             }
         }
 
-        function handleProductImageFileChange(event) {
+        function handleProductImageFileChange(event, targetId = 'productImage') {
             const input = event && event.target;
             const file = input && input.files && input.files[0];
             if (!file) return;
@@ -9802,7 +9883,7 @@
                     input.value = '';
                     return;
                 }
-                document.getElementById('productImage').value = result;
+                document.getElementById(targetId).value = result;
                 updateImagePreview();
                 showToast('本地图片已加载');
                 input.value = '';
@@ -9827,13 +9908,273 @@
             return options;
         }
 
-        function renderTagTree() {
+        let optionGroupDropPlaceholder = null;
+        let optionGroupDraggedElement = null;
+        let optionGroupDraggedKey = '';
+        let optionGroupTouchDragState = null;
+        let optionGroupTouchListenersBound = false;
+        let optionGroupTreeListenersBound = false;
+        let optionGroupIgnoreClickUntil = 0;
+
+        function createOptionGroupDropPlaceholder(height = 56) {
+            if (!optionGroupDropPlaceholder || !optionGroupDropPlaceholder.classList) {
+                optionGroupDropPlaceholder = document.createElement('div');
+                optionGroupDropPlaceholder.className = 'option-group-drop-placeholder';
+            }
+            optionGroupDropPlaceholder.style.height = `${Math.max(44, Number(height) || 56)}px`;
+            return optionGroupDropPlaceholder;
+        }
+
+        function saveOptionGroupOrderByDom() {
             const tree = document.getElementById('tagTree');
-            tree.innerHTML = tagConfigs.map(cfg => `
-                <button class="tag-tree-item ${cfg.specKey === drawerActiveSpecKey ? 'active' : ''}" onclick="switchDrawerTag('${cfg.specKey}')">
-                    ${escAttr(getTagGroupLabel(cfg.specKey, currentLang))}
-                </button>
+            if (!tree) return;
+            const nextOrder = Array.from(tree.querySelectorAll('.option-group-row[data-spec-key]')).map(row => row.dataset.specKey);
+            const validKeys = getOrderedTagConfigs().map(cfg => cfg.specKey);
+            if (nextOrder.length !== validKeys.length || new Set(nextOrder).size !== validKeys.length || nextOrder.some(key => !validKeys.includes(key))) return;
+            productData.optionGroupOrder = nextOrder;
+        }
+
+        function resetOptionGroupDragState() {
+            if (optionGroupDropPlaceholder && optionGroupDropPlaceholder.parentNode) {
+                optionGroupDropPlaceholder.parentNode.removeChild(optionGroupDropPlaceholder);
+            }
+            optionGroupDropPlaceholder = null;
+
+            if (optionGroupDraggedElement) {
+                optionGroupDraggedElement.classList.remove('dragging');
+                optionGroupDraggedElement.style.display = '';
+            }
+            optionGroupDraggedElement = null;
+            optionGroupDraggedKey = '';
+            optionGroupTouchDragState = null;
+        }
+
+        function ensureOptionGroupTouchListeners() {
+            if (optionGroupTouchListenersBound || !document || typeof document.addEventListener !== 'function') return;
+            document.addEventListener('touchmove', handleOptionGroupTouchMove, { passive: false });
+            document.addEventListener('touchend', handleOptionGroupTouchEnd);
+            document.addEventListener('touchcancel', handleOptionGroupTouchEnd);
+            optionGroupTouchListenersBound = true;
+        }
+
+        function getOptionGroupTouchByIdentifier(touchList, identifier) {
+            if (!touchList || typeof touchList.length !== 'number') return null;
+            for (let index = 0; index < touchList.length; index += 1) {
+                const touch = touchList[index];
+                if (!touch) continue;
+                if (Number(touch.identifier) === Number(identifier)) return touch;
+            }
+            return null;
+        }
+
+        function commitOptionGroupDrag() {
+            optionGroupIgnoreClickUntil = Date.now() + 500;
+            if (optionGroupDraggedElement && optionGroupDropPlaceholder && optionGroupDropPlaceholder.parentNode) {
+                optionGroupDropPlaceholder.parentNode.insertBefore(optionGroupDraggedElement, optionGroupDropPlaceholder);
+            }
+            saveOptionGroupOrderByDom();
+            resetOptionGroupDragState();
+            renderTagTree();
+        }
+
+        function handleOptionGroupDragStart(event) {
+            const target = event.currentTarget;
+            if (!target || !target.dataset) return;
+            const categoryKey = String(target.dataset.specKey || '').trim();
+            if (!categoryKey) return;
+
+            optionGroupDraggedKey = categoryKey;
+            optionGroupDraggedElement = target;
+            target.classList.add('dragging');
+            setTimeout(() => {
+                if (optionGroupDraggedElement === target) {
+                    target.style.display = 'none';
+                }
+            }, 0);
+
+            const placeholder = createOptionGroupDropPlaceholder(target.offsetHeight);
+            if (target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.dropEffect = 'move';
+                try {
+                    event.dataTransfer.setData('text/plain', categoryKey);
+                } catch (e) {
+                    // ignore unsupported dataTransfer implementations
+                }
+            }
+        }
+
+        function handleOptionGroupDragOver(event) {
+            if (!optionGroupDraggedElement || !optionGroupDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+
+            const target = event.currentTarget;
+            if (!target || target === optionGroupDraggedElement || target === optionGroupDropPlaceholder) return;
+            const list = document.getElementById('tagTree');
+            if (!list || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (event.clientY < midpoint) {
+                list.insertBefore(optionGroupDropPlaceholder, target);
+            } else {
+                list.insertBefore(optionGroupDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function handleOptionGroupDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            commitOptionGroupDrag();
+        }
+
+        function handleOptionGroupDragEnd() {
+            // 松手落在虚线占位（行与行之间的空隙）上时，占位覆盖 pointer-events:none，
+            // 事件会穿透到 #tagTree 容器而不是某一行，由 handleOptionGroupTreeDrop 负责提交；
+            // 这里只在没有任何 drop 提交过（仍处于拖拽中）时才当作取消处理。
+            if (!optionGroupDraggedElement) return;
+            resetOptionGroupDragState();
+        }
+
+        function handleOptionGroupTreeDragOver(event) {
+            if (!optionGroupDraggedElement || !optionGroupDropPlaceholder) return;
+            event.preventDefault();
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+        }
+
+        function handleOptionGroupTreeDrop(event) {
+            if (!optionGroupDraggedElement) return;
+            event.preventDefault();
+            commitOptionGroupDrag();
+        }
+
+        function ensureOptionGroupTreeListeners() {
+            const tree = document.getElementById('tagTree');
+            if (!tree || optionGroupTreeListenersBound || typeof tree.addEventListener !== 'function') return;
+            tree.addEventListener('dragover', handleOptionGroupTreeDragOver);
+            tree.addEventListener('drop', handleOptionGroupTreeDrop);
+            optionGroupTreeListenersBound = true;
+        }
+
+        function handleOptionGroupTouchStart(event) {
+            if (!event || !event.currentTarget) return;
+            const handle = event.currentTarget;
+            const target = typeof handle.closest === 'function'
+                ? handle.closest('.option-group-row[data-spec-key]')
+                : null;
+            if (!target || !target.dataset || !event.changedTouches || !event.changedTouches.length) return;
+
+            const categoryKey = String(target.dataset.specKey || '').trim();
+            if (!categoryKey) return;
+            const touch = event.changedTouches[0];
+
+            event.preventDefault();
+            if (typeof event.stopPropagation === 'function') {
+                event.stopPropagation();
+            }
+
+            optionGroupIgnoreClickUntil = Date.now() + 500;
+            optionGroupTouchDragState = { identifier: Number(touch.identifier) };
+            optionGroupDraggedKey = categoryKey;
+            optionGroupDraggedElement = target;
+            target.classList.add('dragging');
+            const placeholder = createOptionGroupDropPlaceholder(target.offsetHeight);
+            target.style.display = 'none';
+            if (target.parentNode) {
+                target.parentNode.insertBefore(placeholder, target.nextSibling);
+            }
+        }
+
+        function handleOptionGroupTouchMove(event) {
+            if (!optionGroupTouchDragState || !optionGroupDraggedElement || !optionGroupDropPlaceholder) return;
+            const touch = getOptionGroupTouchByIdentifier(event.touches, optionGroupTouchDragState.identifier);
+            if (!touch) return;
+            event.preventDefault();
+
+            const list = document.getElementById('tagTree');
+            if (!list || typeof document.elementFromPoint !== 'function') return;
+            const source = document.elementFromPoint(touch.clientX, touch.clientY);
+            const target = source && typeof source.closest === 'function'
+                ? source.closest('.option-group-row[data-spec-key]')
+                : null;
+            if (!target || target === optionGroupDraggedElement || target === optionGroupDropPlaceholder || target.parentNode !== list) return;
+
+            const rect = target.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            if (touch.clientY < midpoint) {
+                list.insertBefore(optionGroupDropPlaceholder, target);
+            } else {
+                list.insertBefore(optionGroupDropPlaceholder, target.nextSibling);
+            }
+        }
+
+        function handleOptionGroupTouchEnd(event) {
+            if (!optionGroupTouchDragState) return;
+            const touch = getOptionGroupTouchByIdentifier(event.changedTouches, optionGroupTouchDragState.identifier);
+            if (!touch && event.type !== 'touchcancel') return;
+            event.preventDefault();
+            optionGroupIgnoreClickUntil = Date.now() + 500;
+            if (event.type === 'touchcancel') resetOptionGroupDragState();
+            else commitOptionGroupDrag();
+        }
+
+        function getOrderedTagConfigs() {
+            const order = normalizeOptionGroupOrder(productData?.optionGroupOrder);
+            return order.map(key => tagConfigs.find(cfg => cfg.specKey === key)).filter(Boolean);
+        }
+
+        function moveOptionGroup(specKey, delta) {
+            const order = getOrderedTagConfigs().map(cfg => cfg.specKey);
+            const index = order.indexOf(specKey);
+            const next = index + delta;
+            if (index < 0 || next < 0 || next >= order.length || ![-1, 1].includes(delta)) return;
+            [order[index], order[next]] = [order[next], order[index]];
+            productData.optionGroupOrder = order;
+            renderTagTree();
+        }
+
+        function selectOptionGroup(specKey) {
+            if (Date.now() < optionGroupIgnoreClickUntil) return;
+            switchDrawerTag(specKey);
+        }
+
+        function handleOptionGroupKeydown(event, specKey) {
+            if (!event.altKey || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+            event.preventDefault();
+            moveOptionGroup(specKey, event.key === 'ArrowUp' ? -1 : 1);
+            document.querySelector(`[data-spec-key="${specKey}"] .tag-tree-item`)?.focus();
+        }
+
+        function renderTagTree() {
+            resetOptionGroupDragState();
+            const tree = document.getElementById('tagTree');
+            const hint = '<div class="option-group-sort-hint">拖动 ⠿ 调整分组顺序，调整后可直接预览</div>';
+            tree.innerHTML = hint + getOrderedTagConfigs().map(cfg => `
+                <div class="option-group-row ${cfg.specKey === drawerActiveSpecKey ? 'active' : ''}" data-spec-key="${cfg.specKey}" draggable="true">
+                    <button type="button" class="tag-tree-item ${cfg.specKey === drawerActiveSpecKey ? 'active' : ''}" onclick="selectOptionGroup('${cfg.specKey}')" onkeydown="handleOptionGroupKeydown(event, '${cfg.specKey}')" title="拖动调整顺序；键盘 Alt + ↑ / ↓">
+                        <span class="drag-handle" aria-hidden="true">⠿</span>
+                        <span>${escAttr(getTagGroupLabel(cfg.specKey, currentLang))}</span>
+                    </button>
+                </div>
             `).join('');
+            tree.querySelectorAll('.option-group-row').forEach(row => {
+                row.addEventListener('dragstart', handleOptionGroupDragStart);
+                row.addEventListener('dragover', handleOptionGroupDragOver);
+                row.addEventListener('drop', handleOptionGroupDrop);
+                row.addEventListener('dragend', handleOptionGroupDragEnd);
+                row.querySelector('.drag-handle').addEventListener('touchstart', handleOptionGroupTouchStart, { passive: false });
+            });
+            ensureOptionGroupTouchListeners();
+            ensureOptionGroupTreeListeners();
         }
 
         function getTagGroupLabel(specKey, lang = currentLang) {
@@ -10231,6 +10572,8 @@
                 names,
                 descs,
                 image: imageEl ? String(imageEl.value || '').trim() : (productData.image || ''),
+                detailImage: document.getElementById('productDetailImage')?.value.trim() || null,
+                optionGroupOrder: normalizeOptionGroupOrder(productData.optionGroupOrder),
                 price: Number.isFinite(parsedPrice) ? parsedPrice : Number(productData.price || 0),
                 originalPrice: originalPriceEl && String(originalPriceEl.value || '').trim()
                     ? (Number.isFinite(parsedOriginalPrice) ? parsedOriginalPrice : Number(productData.originalPrice || 0))

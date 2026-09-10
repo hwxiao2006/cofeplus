@@ -7675,6 +7675,7 @@
             { specKey: 'lid', titleKey: 'chooseLid', variant: 'default' },
             { specKey: 'latteArt', titleKey: 'chooseLatteArt', variant: 'default' }
         ];
+        const DEFAULT_ORDER_PREVIEW_OPTION_GROUP_ORDER = ['beans', 'syrup', 'sweetness', 'temperature', 'strength', 'cupsize', 'lid', 'latteArt'];
         const ORDER_PREVIEW_RECIPE_GROUP_CONFIGS = [
             { key: 'baseCoffeeLiquid', labels: { zh: '基底咖啡液', en: 'Base Coffee' } },
             { key: 'syrup', labels: { zh: '糖浆', en: 'Syrup' } },
@@ -9922,6 +9923,27 @@
             return product.descs?.[lang] || product.descs?.['zh'] || product.descs?.['en'] || '';
         }
 
+        function normalizeOrderPreviewOptionGroupOrder(rawOrder) {
+            const validKeys = ORDER_PREVIEW_DETAIL_SECTION_CONFIG.map(section => section.specKey);
+            const fallback = DEFAULT_ORDER_PREVIEW_OPTION_GROUP_ORDER.filter(key => validKeys.includes(key));
+            validKeys.forEach(key => {
+                if (!fallback.includes(key)) fallback.push(key);
+            });
+            const normalized = [];
+            if (Array.isArray(rawOrder)) {
+                rawOrder.forEach(key => {
+                    const normalizedKey = String(key || '').trim();
+                    if (validKeys.includes(normalizedKey) && !normalized.includes(normalizedKey)) {
+                        normalized.push(normalizedKey);
+                    }
+                });
+            }
+            fallback.forEach(key => {
+                if (!normalized.includes(key)) normalized.push(key);
+            });
+            return normalized;
+        }
+
         function normalizeOrderPreviewDraftPayload(payload) {
             if (!payload || typeof payload !== 'object') return null;
             const normalized = payload && typeof payload === 'object' ? payload : {};
@@ -9940,6 +9962,9 @@
                     ? null
                     : (Number.isFinite(Number(normalized.originalPrice)) ? Number(normalized.originalPrice) : undefined),
                 onSale: typeof normalized.onSale === 'boolean' ? normalized.onSale : undefined,
+                detailImage: Object.prototype.hasOwnProperty.call(normalized, 'detailImage')
+                    ? String(normalized.detailImage || '').trim() : undefined,
+                optionGroupOrder: normalizeOrderPreviewOptionGroupOrder(normalized.optionGroupOrder),
                 // 选项配置草稿（含隐藏 / 不可用状态）：未保存也能在点单屏预览生效
                 tagI18n: cloneMap(normalized.tagI18n),
                 tagOptionStatus: cloneMap(normalized.tagOptionStatus),
@@ -9990,6 +10015,12 @@
 
             if (Object.prototype.hasOwnProperty.call(orderPreviewDraftPayload, 'image')) {
                 merged.image = orderPreviewDraftPayload.image || null;
+            }
+            if (orderPreviewDraftPayload.detailImage !== undefined) {
+                merged.detailImage = orderPreviewDraftPayload.detailImage || null;
+            }
+            if (Array.isArray(orderPreviewDraftPayload.optionGroupOrder)) {
+                merged.optionGroupOrder = [...orderPreviewDraftPayload.optionGroupOrder];
             }
             if (Number.isFinite(orderPreviewDraftPayload.price)) {
                 merged.price = orderPreviewDraftPayload.price;
@@ -10616,7 +10647,8 @@
         }
 
         function renderOrderPreviewDetailSections(product, lang) {
-            return ORDER_PREVIEW_DETAIL_SECTION_CONFIG.map(section => {
+            const keys = normalizeOrderPreviewOptionGroupOrder(product?.optionGroupOrder);
+            return keys.map(key => ORDER_PREVIEW_DETAIL_SECTION_CONFIG.find(section => section.specKey === key)).filter(Boolean).map(section => {
                 if (section.variant === 'bean') {
                     return renderOrderPreviewBeanSection(product, lang);
                 }
@@ -10659,8 +10691,8 @@
                 </div>
                 <div class="order-preview-detail-body">
                     <div class="order-preview-detail-image-wrap">
-                        ${product.image
-                            ? `<img class="order-preview-detail-image" src="${escapePreviewText(product.image)}" alt="${escapePreviewText(productName)}">`
+                        ${(product.detailImage || product.image)
+                            ? `<img class="order-preview-detail-image" src="${escapePreviewText(product.detailImage || product.image)}" alt="${escapePreviewText(productName)}">`
                             : '<div class="order-preview-detail-image-placeholder">☕</div>'
                         }
                     </div>
