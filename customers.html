@@ -1215,6 +1215,13 @@
                         🔒 商户名称由平台运营维护,如需修改请联系运营
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">商户编号 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="customerCode" placeholder="输入商户编号,例如:C005" maxlength="32" autocomplete="off">
+                    <div class="form-hint" id="customerCodeHint" style="display:none;margin-top:6px;color:#9ca3af;font-size:12px;">
+                        🔒 商户编号创建后不可修改
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">联系人 <span class="required">*</span></label>
@@ -1496,15 +1503,82 @@
             fitSidebarLoginInline();
         });
 
-        // 客户数据
-        let customersData = JSON.parse(localStorage.getItem('customersData') || '[]');
-        let editingCustomerId = null;
-
         // HTML 实体转义,用于安全嵌入文本节点;不要直接拼到 onclick 等 JS-context 属性
         function escapeHtml(s) {
             return String(s == null ? '' : s)
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        const CUSTOMER_DATA_STORAGE_KEY = 'customersData';
+
+        function readJsonArrayFromStorage(key) {
+            try {
+                if (typeof localStorage === 'undefined' || !localStorage) return [];
+                const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function normalizeCustomerCode(value) {
+            return String(value == null ? '' : value).trim().toUpperCase();
+        }
+
+        function isValidCustomerCode(value) {
+            const normalized = normalizeCustomerCode(value);
+            return normalized.length <= 32 && /^C\d{3,}$/.test(normalized);
+        }
+
+        function getReferencedCustomerIds() {
+            const referenced = new Set();
+            const add = (value) => {
+                const normalized = normalizeCustomerCode(value);
+                if (normalized) referenced.add(normalized);
+            };
+            readJsonArrayFromStorage('locationsData').forEach((location) => add(location && location.customerId));
+            readJsonArrayFromStorage('staffManagersData').forEach((staff) => add(staff && staff.merchantId));
+            readJsonArrayFromStorage('devicesData').forEach((device) => {
+                const matched = String(device && device.merchant || '').trim().match(/^mer(\d+)$/i);
+                if (matched) add(`C${matched[1].padStart(3, '0')}`);
+            });
+            return referenced;
+        }
+
+        function customerCodeExists(code, excludeId) {
+            const normalized = normalizeCustomerCode(code);
+            if (!normalized) return false;
+            const exclude = excludeId == null ? null : normalizeCustomerCode(excludeId);
+            if (getReferencedCustomerIds().has(normalized) && normalized !== exclude) return true;
+            return customersData.some((c) => {
+                if (exclude !== null && normalizeCustomerCode(c.id) === exclude) return false;
+                return normalizeCustomerCode(c.id) === normalized;
+            });
+        }
+
+        function suggestCustomerCode() {
+            const used = new Set(getReferencedCustomerIds());
+            customersData.forEach((customer) => {
+                const normalized = normalizeCustomerCode(customer && customer.id);
+                if (normalized) used.add(normalized);
+            });
+            let number = 1;
+            while (used.has('C' + String(number).padStart(3, '0'))) {
+                number += 1;
+            }
+            return 'C' + String(number).padStart(3, '0');
+        }
+
+        function setCustomerCodeFieldReadonly(readonly) {
+            const input = document.getElementById('customerCode');
+            const hint = document.getElementById('customerCodeHint');
+            if (!input) return;
+            input.readOnly = readonly;
+            input.style.background = readonly ? '#f3f4f6' : '';
+            input.style.color = readonly ? '#6b7280' : '';
+            input.style.cursor = readonly ? 'not-allowed' : '';
+            if (hint) hint.style.display = readonly ? 'block' : 'none';
         }
 
         // 默认客户数据
@@ -1514,6 +1588,11 @@
             { id: 'C003', name: '太平洋咖啡', type: 'agent', contact: '王经理', phone: '13800138003', notifyEmail: '', address: '广州市天河区', status: 'active', createTime: '2024-03-10', remark: '' },
             { id: 'C004', name: 'Costa咖啡', type: 'franchise', contact: '赵总', phone: '13800138004', notifyEmail: 'ops.costa@example.com', address: '深圳市南山区', status: 'inactive', createTime: '2024-04-05', remark: '暂停合作' },
         ];
+
+        // 客户数据及页面打开时的快照,用于检测多标签页并发覆盖
+        let customersData = readJsonArrayFromStorage(CUSTOMER_DATA_STORAGE_KEY);
+        let customersDataStorageSnapshot = localStorage.getItem(CUSTOMER_DATA_STORAGE_KEY);
+        let editingCustomerId = null;
 
         // 初始化
         function init() {
@@ -1645,6 +1724,8 @@
                 nameInput.style.cursor = '';
                 if (nameHint) nameHint.style.display = 'none';
             }
+            setCustomerCodeFieldReadonly(true);
+            document.getElementById('customerCode').value = merchant.id || '';
             document.getElementById('contactName').value = merchant.contact || '';
             document.getElementById('contactPhone').value = merchant.phone || '';
             document.getElementById('customerNotifyEmail').value = merchant.notifyEmail || '';
@@ -1655,8 +1736,21 @@
         }
 
         // 保存到 localStorage
-        function saveToStorage() {
-            localStorage.setItem('customersData', JSON.stringify(customersData));
+        function saveToStorage(nextCustomersData = customersData) {
+            try {
+                const latestRaw = localStorage.getItem(CUSTOMER_DATA_STORAGE_KEY);
+                if (latestRaw !== customersDataStorageSnapshot) {
+                    showToast('商户数据已在其他页面更新,请刷新后重试', 'error');
+                    return false;
+                }
+                const serialized = JSON.stringify(nextCustomersData);
+                localStorage.setItem(CUSTOMER_DATA_STORAGE_KEY, serialized);
+                customersDataStorageSnapshot = serialized;
+                return true;
+            } catch (error) {
+                showToast('商户数据保存失败,请重试', 'error');
+                return false;
+            }
         }
 
         function getFaultNotifyModule() {
@@ -1798,11 +1892,12 @@
             let filtered = customersData;
             if (filterText) {
                 const lower = filterText.toLowerCase();
-                filtered = customersData.filter(c => 
-                    c.name.toLowerCase().includes(lower) ||
-                    c.contact.toLowerCase().includes(lower) ||
-                    c.phone.includes(lower)
-                );
+                filtered = customersData.filter(c => {
+                    const name = String(c.name || '').toLowerCase();
+                    const contact = String(c.contact || '').toLowerCase();
+                    const phone = String(c.phone || '');
+                    return name.includes(lower) || contact.includes(lower) || phone.includes(lower);
+                });
             }
 
             if (filtered.length === 0) {
@@ -1825,16 +1920,16 @@
                 </div>
                 ${filtered.map(customer => `
                     <div class="customer-item">
-                        <div class="customer-avatar">${customer.name.charAt(0)}</div>
+                        <div class="customer-avatar">${escapeHtml(String(customer.name || '').charAt(0))}</div>
                         <div class="customer-code">
                             <span class="customer-code-label">客户编号</span>
-                            <span class="customer-code-value">${customer.id}</span>
+                            <span class="customer-code-value">${escapeHtml(customer.id)}</span>
                         </div>
                         <div class="customer-info">
-                            <div class="customer-name">${customer.name}</div>
+                            <div class="customer-name">${escapeHtml(customer.name)}</div>
                             <div class="customer-meta">
-                                <span>👤 ${customer.contact}</span>
-                                <span>📞 ${customer.phone}</span>
+                                <span>👤 ${escapeHtml(customer.contact)}</span>
+                                <span>📞 ${escapeHtml(customer.phone)}</span>
                                 ${renderCustomerNotifyBadges(customer)}
                             </div>
                         </div>
@@ -1860,6 +1955,8 @@
         function openModal() {
             editingCustomerId = null;
             document.getElementById('modalTitle').textContent = '新增客户';
+            setCustomerCodeFieldReadonly(false);
+            document.getElementById('customerCode').value = suggestCustomerCode();
             document.getElementById('customerName').value = '';
             document.getElementById('contactName').value = '';
             document.getElementById('contactPhone').value = '';
@@ -1883,6 +1980,8 @@
 
             editingCustomerId = id;
             document.getElementById('modalTitle').textContent = '编辑客户';
+            setCustomerCodeFieldReadonly(true);
+            document.getElementById('customerCode').value = customer.id;
             document.getElementById('customerName').value = customer.name;
             document.getElementById('contactName').value = customer.contact;
             document.getElementById('contactPhone').value = customer.phone;
@@ -1903,14 +2002,28 @@
         // 保存客户
         function saveCustomer() {
             const name = document.getElementById('customerName').value.trim();
+            const customerCode = normalizeCustomerCode(document.getElementById('customerCode').value);
             const contact = document.getElementById('contactName').value.trim();
             const phone = document.getElementById('contactPhone').value.trim();
             const notifyEmail = document.getElementById('customerNotifyEmail').value.trim();
             const address = document.getElementById('customerAddress').value.trim();
             const remark = document.getElementById('customerRemark').value.trim();
 
-            if (!name || !contact || !phone) {
+            if (!name || !customerCode || !contact || !phone) {
                 showToast('请填写必填项', 'error');
+                return;
+            }
+            if (editingCustomerId && normalizeCustomerCode(editingCustomerId) !== customerCode) {
+                showToast('商户编号创建后不可修改', 'error');
+                return;
+            }
+            // 新建商户使用统一编号格式;历史商户编号允许原样编辑资料,避免旧数据无法维护。
+            if (!editingCustomerId && !isValidCustomerCode(customerCode)) {
+                showToast('商户编号格式不正确,请输入 C 加至少三位数字', 'error');
+                return;
+            }
+            if (customerCodeExists(customerCode, editingCustomerId)) {
+                showToast('商户编号已存在,请更换', 'error');
                 return;
             }
             if (!isValidNotifyEmail(notifyEmail)) {
@@ -1946,6 +2059,9 @@
                 }
             }
 
+            const previousCustomersData = customersData.map((customer) => ({ ...customer }));
+            let successMessage = '';
+            let renameSync = null;
             if (editingCustomerId) {
                 // 编辑
                 const index = customersData.findIndex(c => c.id === editingCustomerId);
@@ -1960,23 +2076,30 @@
                     if (isSuper && previousName !== effectiveName
                         && typeof CofeAdminStaffAccess !== 'undefined'
                         && typeof CofeAdminStaffAccess.syncMerchantNameAcrossStorage === 'function') {
-                        CofeAdminStaffAccess.syncMerchantNameAcrossStorage(editingCustomerId, effectiveName);
+                        renameSync = { merchantId: editingCustomerId, name: effectiveName };
                     }
                 }
-                showToast('商户信息已更新');
+                successMessage = '商户信息已更新';
             } else {
                 // 新增
-                const newId = 'C' + String(customersData.length + 1).padStart(3, '0');
+                const newId = customerCode;
                 customersData.push({
                     id: newId,
                     name, contact, phone, notifyEmail, notifyChannels: checkedChannels, address, remark,
                     status: 'active',
                     createTime: new Date().toISOString().split('T')[0]
                 });
-                showToast('客户添加成功');
+                successMessage = '客户添加成功';
             }
 
-            saveToStorage();
+            if (!saveToStorage()) {
+                customersData = previousCustomersData;
+                return;
+            }
+            if (renameSync) {
+                CofeAdminStaffAccess.syncMerchantNameAcrossStorage(renameSync.merchantId, renameSync.name);
+            }
+            showToast(successMessage);
             // 普通用户保留 profile 视图,超管刷新列表
             const scope = (typeof CofeAdminStaffAccess !== 'undefined'
                 && typeof CofeAdminStaffAccess.getMerchantScope === 'function')
@@ -1993,10 +2116,20 @@
 
         // 删除客户
         function deleteCustomer(id) {
+            const normalizedId = normalizeCustomerCode(id);
+            if (!normalizedId) return;
+            if (getReferencedCustomerIds().has(normalizedId)) {
+                showToast('该商户仍被点位、员工或设备引用,请先解除关联', 'error');
+                return;
+            }
             if (!confirm('确定要删除该客户吗？')) return;
-            
-            customersData = customersData.filter(c => c.id !== id);
-            saveToStorage();
+
+            const previousCustomersData = customersData;
+            customersData = customersData.filter(c => normalizeCustomerCode(c.id) !== normalizedId);
+            if (!saveToStorage()) {
+                customersData = previousCustomersData;
+                return;
+            }
             renderCustomers();
             updateStats();
             showToast('客户已删除');

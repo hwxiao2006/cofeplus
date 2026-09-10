@@ -2721,8 +2721,9 @@
         }
 
         function getCurrentMerchantMaterialOptions() {
-            const merchantId = getCurrentMerchantContext().merchantId;
-            return MERCHANT_MATERIAL_MASTER_DATA[merchantId] || MERCHANT_MATERIAL_MASTER_DATA.C001 || [];
+            const merchantId = String(getCurrentMerchantContext().merchantId || '').trim().toUpperCase();
+            // 新商户尚未配置专属物料时使用基础物料表,避免把数据语义伪装成 C001 商户。
+            return MERCHANT_MATERIAL_MASTER_DATA[merchantId] || MATERIAL_MASTER_DATA || [];
         }
 
         function findCurrentMerchantMaterial(materialCode) {
